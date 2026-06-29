@@ -1,0 +1,201 @@
+/*
+ * Aomi design tokens
+ * Source of truth for the visual language. Consumed by the Tailwind preset
+ * and by raw CSS. Every value is exposed as a CSS custom property so it can
+ * be themed at runtime (light / dark) and overridden per surface.
+ *
+ * Brand: pink #EC6C83 · purple #416CAC · warm paper #FCF7F6
+ * Fonts: PT Serif (display) · Geist (body) · Geist Mono (code)
+ */
+
+@layer aomi.tokens {
+  :root {
+    /* ---- Brand ramps ---------------------------------------------------- */
+    --aomi-pink-50: #fdf3f5;
+    --aomi-pink-100: #fce7eb;
+    --aomi-pink-200: #f9d0d7;
+    --aomi-pink-300: #f5b3bf;
+    --aomi-pink-400: #f18fa1;
+    --aomi-pink-500: #ec6c83;
+    --aomi-pink-600: #d26175;
+    --aomi-pink-700: #b35465;
+    --aomi-pink-800: #904653;
+    --aomi-pink-900: #6d3741;
+    --aomi-pink-950: #4e2a31;
+
+    --aomi-purple-50: #f0f3f8;
+    --aomi-purple-100: #e1e7f2;
+    --aomi-purple-200: #c2d0e4;
+    --aomi-purple-300: #9cb3d4;
+    --aomi-purple-400: #6f8fc0;
+    --aomi-purple-500: #416cac;
+    --aomi-purple-600: #3b6199;
+    --aomi-purple-700: #355484;
+    --aomi-purple-800: #2d466b;
+    --aomi-purple-900: #253752;
+    --aomi-purple-950: #1e2a3c;
+
+    /* ---- Neutral ramp (warm, paper-tinted) ------------------------------ */
+    --aomi-neutral-0: #ffffff;
+    --aomi-neutral-50: #fcf7f6;
+    --aomi-neutral-100: #f5efed;
+    --aomi-neutral-200: #e9e1df;
+    --aomi-neutral-300: #d5cbc8;
+    --aomi-neutral-400: #a99f9c;
+    --aomi-neutral-500: #7c7370;
+    --aomi-neutral-600: #5b5350;
+    --aomi-neutral-700: #423b39;
+    --aomi-neutral-800: #2a2523;
+    --aomi-neutral-900: #1a1614;
+    --aomi-neutral-950: #100d0c;
+
+    /* ---- Status --------------------------------------------------------- */
+    --aomi-success-500: #2e9e6b;
+    --aomi-warning-500: #d9982b;
+    --aomi-danger-500: #d2495b;
+    --aomi-info-500: #416cac;
+
+    /* ---- Typography ----------------------------------------------------- */
+    --aomi-font-display: "PT Serif", ui-serif, Georgia, Cambria, serif;
+    --aomi-font-sans: "Geist", ui-sans-serif, system-ui, -apple-system,
+      "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --aomi-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo,
+      Consolas, monospace;
+
+    --aomi-text-xs: 0.75rem;
+    --aomi-text-sm: 0.875rem;
+    --aomi-text-base: 1rem;
+    --aomi-text-lg: 1.125rem;
+    --aomi-text-xl: 1.25rem;
+    --aomi-text-2xl: 1.5rem;
+    --aomi-text-3xl: 1.875rem;
+    --aomi-text-4xl: 2.5rem;
+    --aomi-text-5xl: 3.25rem;
+
+    --aomi-leading-tight: 1.15;
+    --aomi-leading-snug: 1.3;
+    --aomi-leading-normal: 1.55;
+    --aomi-leading-relaxed: 1.75;
+
+    --aomi-tracking-tight: -0.02em;
+    --aomi-tracking-normal: 0em;
+    --aomi-tracking-wide: 0.04em;
+
+    --aomi-weight-regular: 400;
+    --aomi-weight-medium: 500;
+    --aomi-weight-bold: 700;
+
+    /* ---- Spacing (4px base) -------------------------------------------- */
+    --aomi-space-0: 0;
+    --aomi-space-1: 0.25rem;
+    --aomi-space-2: 0.5rem;
+    --aomi-space-3: 0.75rem;
+    --aomi-space-4: 1rem;
+    --aomi-space-5: 1.25rem;
+    --aomi-space-6: 1.5rem;
+    --aomi-space-8: 2rem;
+    --aomi-space-10: 2.5rem;
+    --aomi-space-12: 3rem;
+    --aomi-space-16: 4rem;
+
+    /* ---- Radius (pill-first, for liquid-glass controls) ----------------- */
+    --aomi-radius-sm: 0.5rem;
+    --aomi-radius-md: 0.75rem;
+    --aomi-radius-lg: 1rem;
+    --aomi-radius-xl: 1.5rem;
+    --aomi-radius-pill: 9999px;
+
+    /* ---- Elevation / liquid glass -------------------------------------- */
+    --aomi-shadow-sm: 0 1px 2px rgba(26, 22, 20, 0.06);
+    --aomi-shadow-md: 0 4px 16px rgba(26, 22, 20, 0.08);
+    --aomi-shadow-lg: 0 12px 40px rgba(26, 22, 20, 0.12);
+    /* The signature "liquid glass" lift: inner highlight + soft outer drop */
+    --aomi-glass-blur: 14px;
+    --aomi-glass-bg: rgba(255, 255, 255, 0.62);
+    --aomi-glass-border: rgba(255, 255, 255, 0.5);
+    --aomi-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 6px 24px rgba(26, 22, 20, 0.12);
+
+    /* ---- Motion --------------------------------------------------------- */
+    --aomi-duration-fast: 120ms;
+    --aomi-duration-base: 200ms;
+    --aomi-duration-slow: 320ms;
+    --aomi-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --aomi-ease-emphasized: cubic-bezier(0.3, 0, 0, 1.2);
+
+    /* ---- Semantic roles (light theme) ----------------------------------- */
+    --aomi-bg: var(--aomi-neutral-50);
+    --aomi-bg-subtle: var(--aomi-neutral-100);
+    --aomi-surface: var(--aomi-neutral-0);
+    --aomi-surface-raised: var(--aomi-neutral-0);
+    --aomi-overlay: rgba(16, 13, 12, 0.45);
+
+    --aomi-text: var(--aomi-neutral-900);
+    --aomi-text-muted: var(--aomi-neutral-500);
+    --aomi-text-subtle: var(--aomi-neutral-400);
+    --aomi-text-on-brand: var(--aomi-neutral-0);
+
+    --aomi-border: var(--aomi-neutral-200);
+    --aomi-border-strong: var(--aomi-neutral-300);
+
+    --aomi-primary: var(--aomi-pink-500);
+    --aomi-primary-hover: var(--aomi-pink-600);
+    --aomi-primary-active: var(--aomi-pink-700);
+    --aomi-primary-subtle: var(--aomi-pink-100);
+
+    --aomi-accent: var(--aomi-purple-500);
+    --aomi-accent-hover: var(--aomi-purple-600);
+    --aomi-accent-active: var(--aomi-purple-700);
+    --aomi-accent-subtle: var(--aomi-purple-100);
+
+    --aomi-ring: var(--aomi-pink-400);
+
+    /* Chat surface — deliberately monochrome (ChatGPT-style B&W) */
+    --aomi-chat-bg: var(--aomi-neutral-0);
+    --aomi-chat-bubble-user: var(--aomi-neutral-900);
+    --aomi-chat-bubble-user-text: var(--aomi-neutral-0);
+    --aomi-chat-bubble-agent: var(--aomi-neutral-100);
+    --aomi-chat-bubble-agent-text: var(--aomi-neutral-900);
+  }
+
+  /* ---- Dark theme ------------------------------------------------------- */
+  .dark,
+  [data-theme="dark"] {
+    --aomi-bg: var(--aomi-neutral-950);
+    --aomi-bg-subtle: var(--aomi-neutral-900);
+    --aomi-surface: var(--aomi-neutral-900);
+    --aomi-surface-raised: var(--aomi-neutral-800);
+    --aomi-overlay: rgba(0, 0, 0, 0.6);
+
+    --aomi-text: var(--aomi-neutral-50);
+    --aomi-text-muted: var(--aomi-neutral-400);
+    --aomi-text-subtle: var(--aomi-neutral-500);
+    --aomi-text-on-brand: var(--aomi-neutral-0);
+
+    --aomi-border: var(--aomi-neutral-800);
+    --aomi-border-strong: var(--aomi-neutral-700);
+
+    --aomi-primary: var(--aomi-pink-500);
+    --aomi-primary-hover: var(--aomi-pink-400);
+    --aomi-primary-active: var(--aomi-pink-300);
+    --aomi-primary-subtle: var(--aomi-pink-950);
+
+    --aomi-accent: var(--aomi-purple-400);
+    --aomi-accent-hover: var(--aomi-purple-300);
+    --aomi-accent-active: var(--aomi-purple-200);
+    --aomi-accent-subtle: var(--aomi-purple-950);
+
+    --aomi-ring: var(--aomi-pink-500);
+
+    --aomi-glass-bg: rgba(26, 22, 20, 0.55);
+    --aomi-glass-border: rgba(255, 255, 255, 0.12);
+    --aomi-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 6px 24px rgba(0, 0, 0, 0.4);
+
+    --aomi-chat-bg: var(--aomi-neutral-950);
+    --aomi-chat-bubble-user: var(--aomi-neutral-0);
+    --aomi-chat-bubble-user-text: var(--aomi-neutral-950);
+    --aomi-chat-bubble-agent: var(--aomi-neutral-800);
+    --aomi-chat-bubble-agent-text: var(--aomi-neutral-50);
+  }
+}
