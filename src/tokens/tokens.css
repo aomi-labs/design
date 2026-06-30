@@ -4,24 +4,27 @@
  * and by raw CSS. Every value is exposed as a CSS custom property so it can
  * be themed at runtime (light / dark) and overridden per surface.
  *
- * Brand: pink #EC6C83 · purple #416CAC · warm paper #FCF7F6
+ * Brand: ink #09090B (primary) · lilac #D3C2D8 (accent) · cool/pure-white
+ *   surface. Pink (rosy #DF5D90) and sky #5288C2 are decorative accent ramps;
+ *   the warm paper + pink/purple ramps below are legacy (charts / back-compat).
  * Fonts: PT Serif (display) · Geist (body) · Geist Mono (code)
  */
 
 @layer aomi.tokens {
   :root {
     /* ---- Brand ramps ---------------------------------------------------- */
-    --aomi-pink-50: #fdf3f5;
-    --aomi-pink-100: #fce7eb;
-    --aomi-pink-200: #f9d0d7;
-    --aomi-pink-300: #f5b3bf;
-    --aomi-pink-400: #f18fa1;
-    --aomi-pink-500: #ec6c83;
-    --aomi-pink-600: #d26175;
-    --aomi-pink-700: #b35465;
-    --aomi-pink-800: #904653;
-    --aomi-pink-900: #6d3741;
-    --aomi-pink-950: #4e2a31;
+    /* Rosy pink — hue ~336° (softer rose, less salmon-red). */
+    --aomi-pink-50: #fdf2f7;
+    --aomi-pink-100: #fbe4ef;
+    --aomi-pink-200: #f6cbdd;
+    --aomi-pink-300: #efa6c5;
+    --aomi-pink-400: #e77ba6;
+    --aomi-pink-500: #df5d90;
+    --aomi-pink-600: #c8527f;
+    --aomi-pink-700: #a64668;
+    --aomi-pink-800: #843a54;
+    --aomi-pink-900: #642e41;
+    --aomi-pink-950: #45202e;
 
     --aomi-purple-50: #f0f3f8;
     --aomi-purple-100: #e1e7f2;
@@ -34,6 +37,47 @@
     --aomi-purple-800: #2d466b;
     --aomi-purple-900: #253752;
     --aomi-purple-950: #1e2a3c;
+
+    /* ---- Lilac ramp (landing accent — soft mauve cards/badges) ---------- */
+    --aomi-lilac-50: #f6f3f7;
+    --aomi-lilac-100: #efe9f1;
+    --aomi-lilac-200: #e3d8e6; /* signature card fill on aomi.dev */
+    --aomi-lilac-300: #d3c2d8;
+    --aomi-lilac-400: #b9a3c1;
+    --aomi-lilac-500: #9c83a8;
+
+    /* ---- Variant accent ramps (brand explorations) --------------------- */
+    /* Coral — warm hero gradient start. */
+    --aomi-coral-50: #fdf4f1;
+    --aomi-coral-100: #fbe7e0;
+    --aomi-coral-200: #f6cebf;
+    --aomi-coral-300: #efaf99;
+    --aomi-coral-400: #e6886b;
+    --aomi-coral-500: #d96a4b;
+    /* Sky — light-blue gradient end + tinted card fill. */
+    --aomi-sky-50: #f1f7fc;
+    --aomi-sky-100: #e2eef8;
+    --aomi-sky-200: #cfe1f3;
+    --aomi-sky-300: #aecbe8;
+    --aomi-sky-400: #7facd6;
+    --aomi-sky-500: #5288c2;
+
+    /* ---- Cool neutral ramp (matches the live landing surface) ----------- */
+    /* The live site is cool/pure white, not warm paper. Use these for the
+       landing/marketing surfaces; the warm ramp below stays for app chrome. */
+    /* Tailwind "zinc" — the exact ramp the portal chat (shadcn) is built on. */
+    --aomi-cool-0: #ffffff;
+    --aomi-cool-50: #fafafa;
+    --aomi-cool-100: #f4f4f5;
+    --aomi-cool-200: #e4e4e7;
+    --aomi-cool-300: #d4d4d8;
+    --aomi-cool-400: #a1a1aa;
+    --aomi-cool-500: #71717a;
+    --aomi-cool-600: #52525b;
+    --aomi-cool-700: #3f3f46;
+    --aomi-cool-800: #27272a;
+    --aomi-cool-900: #18181b;
+    --aomi-cool-950: #09090b;
 
     /* ---- Neutral ramp (warm, paper-tinted) ------------------------------ */
     --aomi-neutral-0: #ffffff;
@@ -51,6 +95,7 @@
 
     /* ---- Status --------------------------------------------------------- */
     --aomi-success-500: #2e9e6b;
+    --aomi-success-subtle: #e4f3ec; /* "Open access" badge fill */
     --aomi-warning-500: #d9982b;
     --aomi-danger-500: #d2495b;
     --aomi-info-500: #416cac;
@@ -103,18 +148,20 @@
     --aomi-radius-md: 0.75rem;
     --aomi-radius-lg: 1rem;
     --aomi-radius-xl: 1.5rem;
+    --aomi-radius-2xl: 2rem; /* 32px — landing cards (rounded-4xl on aomi.dev) */
+    --aomi-radius-composer: 1.875rem; /* 30px — the hero chat composer */
     --aomi-radius-pill: 9999px;
 
     /* ---- Elevation / liquid glass -------------------------------------- */
-    --aomi-shadow-sm: 0 1px 2px rgba(26, 22, 20, 0.06);
-    --aomi-shadow-md: 0 4px 16px rgba(26, 22, 20, 0.08);
-    --aomi-shadow-lg: 0 12px 40px rgba(26, 22, 20, 0.12);
-    /* The signature "liquid glass" lift: inner highlight + soft outer drop */
+    /* Cool-tinted and deliberately soft — the brand reads flat. */
+    --aomi-shadow-sm: 0 1px 2px rgba(13, 13, 15, 0.04);
+    --aomi-shadow-md: 0 4px 16px rgba(13, 13, 15, 0.06);
+    --aomi-shadow-lg: 0 12px 40px rgba(13, 13, 15, 0.1);
+    /* Frosted composer glass: cool, subtle, no drop shadow */
     --aomi-glass-blur: 14px;
-    --aomi-glass-bg: rgba(255, 255, 255, 0.62);
-    --aomi-glass-border: rgba(255, 255, 255, 0.5);
-    --aomi-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6),
-      0 6px 24px rgba(26, 22, 20, 0.12);
+    --aomi-glass-bg: rgba(255, 255, 255, 0.6);
+    --aomi-glass-border: rgba(255, 255, 255, 0.45);
+    --aomi-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
 
     /* ---- Motion --------------------------------------------------------- */
     --aomi-duration-fast: 120ms;
@@ -124,78 +171,115 @@
     --aomi-ease-emphasized: cubic-bezier(0.3, 0, 0, 1.2);
 
     /* ---- Semantic roles (light theme) ----------------------------------- */
-    --aomi-bg: var(--aomi-neutral-50);
-    --aomi-bg-subtle: var(--aomi-neutral-100);
-    --aomi-surface: var(--aomi-neutral-0);
-    --aomi-surface-raised: var(--aomi-neutral-0);
-    --aomi-overlay: rgba(16, 13, 12, 0.45);
+    /* Cool, flat, editorial — matches the aomi.dev landing surface. */
+    --aomi-bg: var(--aomi-cool-0);
+    --aomi-bg-subtle: var(--aomi-cool-100);
+    --aomi-surface: var(--aomi-cool-0);
+    --aomi-surface-raised: var(--aomi-cool-0);
+    --aomi-overlay: rgba(13, 13, 15, 0.45);
 
-    --aomi-text: var(--aomi-neutral-900);
-    --aomi-text-muted: var(--aomi-neutral-500);
-    --aomi-text-subtle: var(--aomi-neutral-400);
-    --aomi-text-on-brand: var(--aomi-neutral-0);
+    --aomi-text: var(--aomi-cool-950);
+    --aomi-text-muted: var(--aomi-cool-500);
+    --aomi-text-subtle: var(--aomi-cool-400);
+    --aomi-text-on-brand: var(--aomi-cool-0);
 
-    --aomi-border: var(--aomi-neutral-200);
-    --aomi-border-strong: var(--aomi-neutral-300);
+    --aomi-border: var(--aomi-cool-200);
+    --aomi-border-strong: var(--aomi-cool-300);
 
-    --aomi-primary: var(--aomi-pink-500);
-    --aomi-primary-hover: var(--aomi-pink-600);
-    --aomi-primary-active: var(--aomi-pink-700);
-    --aomi-primary-subtle: var(--aomi-pink-100);
+    /* Primary action is near-black "ink" (the site's main CTA), not pink. */
+    --aomi-primary: var(--aomi-cool-950);
+    --aomi-primary-hover: var(--aomi-cool-800);
+    --aomi-primary-active: var(--aomi-cool-700);
+    --aomi-primary-subtle: var(--aomi-cool-100);
 
-    --aomi-accent: var(--aomi-purple-500);
-    --aomi-accent-hover: var(--aomi-purple-600);
-    --aomi-accent-active: var(--aomi-purple-700);
-    --aomi-accent-subtle: var(--aomi-purple-100);
+    /* Accent is the soft lilac brand pop. */
+    --aomi-accent: var(--aomi-lilac-300);
+    --aomi-accent-hover: var(--aomi-lilac-400);
+    --aomi-accent-active: var(--aomi-lilac-500);
+    --aomi-accent-subtle: var(--aomi-lilac-100);
 
-    --aomi-ring: var(--aomi-pink-400);
+    --aomi-ring: var(--aomi-cool-400);
 
-    /* Chat surface — deliberately monochrome (ChatGPT-style B&W) */
-    --aomi-chat-bg: var(--aomi-neutral-0);
-    --aomi-chat-bubble-user: var(--aomi-neutral-900);
-    --aomi-chat-bubble-user-text: var(--aomi-neutral-0);
-    --aomi-chat-bubble-agent: var(--aomi-neutral-100);
-    --aomi-chat-bubble-agent-text: var(--aomi-neutral-900);
+    /* Pink/purple remain available as brand ramps for charts & accents. */
+
+    /* Chat surface — mirrors the portal (assistant-ui / shadcn zinc).
+       User turn: light "muted" bubble with dark text. Assistant turn: no
+       bubble — plain foreground text on the page. */
+    --aomi-chat-bg: var(--aomi-cool-0);
+    --aomi-chat-bubble-user: var(--aomi-cool-100);
+    --aomi-chat-bubble-user-text: var(--aomi-cool-950);
+    --aomi-chat-bubble-agent: transparent;
+    --aomi-chat-bubble-agent-text: var(--aomi-cool-950);
+    --aomi-chat-composer-bg: var(--aomi-cool-100);
+    --aomi-welcome-title: #52525b; /* cool-600 */
+    --aomi-welcome-subtitle: #a1a1aa; /* cool-400 */
+
+    /* ---- Landing roles (match aomi.dev) --------------------------------- */
+    /* Cool, flat, editorial — the marketing surface, distinct from app chrome.
+       Primary action here is near-black "ink", not pink. */
+    --aomi-ink: var(--aomi-cool-950);
+    --aomi-ink-hover: var(--aomi-cool-800);
+    --aomi-ink-text: var(--aomi-cool-0);
+    --aomi-landing-bg: var(--aomi-cool-0);
+    --aomi-landing-text: var(--aomi-cool-950);
+    --aomi-landing-muted: var(--aomi-cool-500);
+    --aomi-landing-border: var(--aomi-cool-200);
+    --aomi-card-tinted: var(--aomi-lilac-200);
+
+    /* The hero composer: cool frosted panel, no shadow (flat) */
+    --aomi-composer-bg: rgba(255, 255, 255, 0.2);
+    --aomi-composer-border: rgba(255, 255, 255, 0.4);
   }
 
   /* ---- Dark theme ------------------------------------------------------- */
   .dark,
   [data-theme="dark"] {
-    --aomi-bg: var(--aomi-neutral-950);
-    --aomi-bg-subtle: var(--aomi-neutral-900);
-    --aomi-surface: var(--aomi-neutral-900);
-    --aomi-surface-raised: var(--aomi-neutral-800);
+    --aomi-bg: var(--aomi-cool-950);
+    --aomi-bg-subtle: var(--aomi-cool-900);
+    --aomi-surface: var(--aomi-cool-900);
+    --aomi-surface-raised: var(--aomi-cool-800);
     --aomi-overlay: rgba(0, 0, 0, 0.6);
 
-    --aomi-text: var(--aomi-neutral-50);
-    --aomi-text-muted: var(--aomi-neutral-400);
-    --aomi-text-subtle: var(--aomi-neutral-500);
-    --aomi-text-on-brand: var(--aomi-neutral-0);
+    --aomi-text: var(--aomi-cool-50);
+    --aomi-text-muted: var(--aomi-cool-400);
+    --aomi-text-subtle: var(--aomi-cool-500);
+    --aomi-text-on-brand: var(--aomi-cool-950);
 
-    --aomi-border: var(--aomi-neutral-800);
-    --aomi-border-strong: var(--aomi-neutral-700);
+    --aomi-border: var(--aomi-cool-800);
+    --aomi-border-strong: var(--aomi-cool-700);
 
-    --aomi-primary: var(--aomi-pink-500);
-    --aomi-primary-hover: var(--aomi-pink-400);
-    --aomi-primary-active: var(--aomi-pink-300);
-    --aomi-primary-subtle: var(--aomi-pink-950);
+    /* Inverted ink: primary becomes near-white on dark. */
+    --aomi-primary: var(--aomi-cool-0);
+    --aomi-primary-hover: var(--aomi-cool-100);
+    --aomi-primary-active: var(--aomi-cool-200);
+    --aomi-primary-subtle: var(--aomi-cool-800);
 
-    --aomi-accent: var(--aomi-purple-400);
-    --aomi-accent-hover: var(--aomi-purple-300);
-    --aomi-accent-active: var(--aomi-purple-200);
-    --aomi-accent-subtle: var(--aomi-purple-950);
+    --aomi-accent: var(--aomi-lilac-400);
+    --aomi-accent-hover: var(--aomi-lilac-300);
+    --aomi-accent-active: var(--aomi-lilac-200);
+    --aomi-accent-subtle: var(--aomi-cool-800);
 
-    --aomi-ring: var(--aomi-pink-500);
+    --aomi-ring: var(--aomi-cool-500);
 
-    --aomi-glass-bg: rgba(26, 22, 20, 0.55);
+    --aomi-ink: var(--aomi-cool-0);
+    --aomi-ink-hover: var(--aomi-cool-100);
+    --aomi-ink-text: var(--aomi-cool-950);
+    --aomi-landing-bg: var(--aomi-cool-950);
+    --aomi-landing-text: var(--aomi-cool-50);
+    --aomi-landing-muted: var(--aomi-cool-400);
+    --aomi-landing-border: var(--aomi-cool-800);
+
+    --aomi-glass-bg: rgba(13, 13, 15, 0.55);
     --aomi-glass-border: rgba(255, 255, 255, 0.12);
-    --aomi-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 6px 24px rgba(0, 0, 0, 0.4);
+    --aomi-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
-    --aomi-chat-bg: var(--aomi-neutral-950);
-    --aomi-chat-bubble-user: var(--aomi-neutral-0);
-    --aomi-chat-bubble-user-text: var(--aomi-neutral-950);
-    --aomi-chat-bubble-agent: var(--aomi-neutral-800);
-    --aomi-chat-bubble-agent-text: var(--aomi-neutral-50);
+    --aomi-chat-bg: var(--aomi-cool-950);
+    --aomi-chat-bubble-user: var(--aomi-cool-800);
+    --aomi-chat-bubble-user-text: var(--aomi-cool-50);
+    --aomi-chat-bubble-agent: transparent;
+    --aomi-chat-bubble-agent-text: var(--aomi-cool-50);
+    --aomi-chat-composer-bg: var(--aomi-cool-800);
+    --aomi-welcome-title: #d4d4d8; /* cool-300 */
+    --aomi-welcome-subtitle: #a1a1aa; /* cool-400 */
   }
 }

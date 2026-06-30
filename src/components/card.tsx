@@ -7,11 +7,13 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        solid:
-          "bg-[var(--aomi-surface)] border border-[var(--aomi-border)] shadow-sm",
+        solid: "bg-[var(--aomi-surface)] border border-[var(--aomi-border)]",
         glass:
           "bg-[var(--aomi-glass-bg)] border border-[var(--aomi-glass-border)] backdrop-blur-glass shadow-glass",
         outline: "bg-transparent border border-[var(--aomi-border-strong)]",
+        // Landing surfaces — flat (no shadow), cool/lilac fills.
+        flat: "bg-cool-0 border border-landing-border",
+        tinted: "bg-card-tinted",
       },
       padding: {
         none: "p-0",
@@ -22,6 +24,7 @@ const cardVariants = cva(
       radius: {
         lg: "rounded-lg",
         xl: "rounded-xl",
+        "2xl": "rounded-2xl",
       },
     },
     defaultVariants: { variant: "solid", padding: "md", radius: "xl" },
@@ -58,7 +61,7 @@ export const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "font-display text-xl font-bold leading-snug tracking-tight",
+      "font-display text-xl font-normal leading-snug tracking-tight",
       className,
     )}
     {...props}

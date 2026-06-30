@@ -23,18 +23,23 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // Near-black "ink" CTA — flat, the site's primary action.
         primary:
-          "bg-[var(--aomi-primary)] text-[var(--aomi-text-on-brand)] shadow-md hover:bg-[var(--aomi-primary-hover)] hover:shadow-lg active:bg-[var(--aomi-primary-active)]",
+          "bg-[var(--aomi-primary)] text-[var(--aomi-text-on-brand)] hover:bg-[var(--aomi-primary-hover)] active:bg-[var(--aomi-primary-active)]",
+        // Soft lilac chip with ink text.
         accent:
-          "bg-[var(--aomi-accent)] text-[var(--aomi-text-on-brand)] shadow-md hover:bg-[var(--aomi-accent-hover)] hover:shadow-lg active:bg-[var(--aomi-accent-active)]",
+          "bg-[var(--aomi-accent)] text-[var(--aomi-text)] hover:bg-[var(--aomi-accent-hover)] active:bg-[var(--aomi-accent-active)]",
         glass:
           "border border-[var(--aomi-glass-border)] bg-[var(--aomi-glass-bg)] text-[var(--aomi-text)] backdrop-blur-glass shadow-glass hover:-translate-y-px",
         outline:
           "border border-[var(--aomi-border-strong)] bg-transparent text-[var(--aomi-text)] hover:bg-[var(--aomi-bg-subtle)]",
         ghost:
           "bg-transparent text-[var(--aomi-text)] hover:bg-[var(--aomi-bg-subtle)]",
+        // Dashed wallet-connect affordance.
+        connect:
+          "border border-dashed border-[var(--aomi-border-strong)] bg-[var(--aomi-bg-subtle)] text-[var(--aomi-text-muted)] hover:text-[var(--aomi-text)] hover:border-[var(--aomi-text-muted)]",
         danger:
-          "bg-[var(--aomi-danger-500)] text-white shadow-md hover:brightness-110 active:brightness-95",
+          "bg-[var(--aomi-danger-500)] text-white hover:brightness-110 active:brightness-95",
       },
       size: {
         sm: "h-8 px-3 text-sm",

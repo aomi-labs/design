@@ -4,13 +4,13 @@ Three foundational components ship today. Each is a typed React component built 
 
 ## Button
 
-The signature Aomi control — a fully-rounded liquid-glass pill by default.
+The signature Aomi control — a fully-rounded pill, near-black "ink" primary by default.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `primary \| accent \| glass \| outline \| ghost \| danger` | `primary` | Visual style / action hierarchy |
+| `variant` | `primary \| accent \| glass \| outline \| ghost \| connect \| danger` | `primary` | Visual style / action hierarchy |
 | `size` | `sm \| md \| lg \| icon` | `md` | Control height and padding |
 | `shape` | `pill \| rounded` | `pill` | Fully-round vs. soft-corner |
 | `loading` | `boolean` | `false` | Shows a spinner, sets `aria-busy`, disables interaction |
@@ -21,11 +21,12 @@ The signature Aomi control — a fully-rounded liquid-glass pill by default.
 
 | Variant | Use when |
 |---------|----------|
-| `primary` | The main action on a surface (pink fill) |
-| `accent` | A secondary but still prominent action (purple fill) |
-| `glass` | Hero / landing surfaces — the translucent liquid-glass treatment |
+| `primary` | The main action on a surface (near-black ink fill, flat) |
+| `accent` | A secondary but still prominent action (soft lilac fill, ink text) |
+| `glass` | Hero / landing surfaces — the translucent frosted treatment |
 | `outline` | Lower-emphasis actions that still need an edge |
 | `ghost` | Tertiary actions, toolbar buttons |
+| `connect` | Wallet-connect affordance — dashed-border pill |
 | `danger` | Destructive actions |
 
 ### States
@@ -66,15 +67,15 @@ Sets `aria-invalid` when `invalid`. Pair with a `<label htmlFor>` and, for error
 
 ## Card
 
-A container with a solid, glass, or outline surface plus composable sub-parts.
+A container surface plus composable sub-parts. Flat by default — depth comes from fill and radius, not shadow.
 
 ### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `solid \| glass \| outline` | `solid` | Surface treatment |
+| `variant` | `solid \| glass \| outline \| flat \| tinted` | `solid` | Surface treatment (`flat` = cool/white hairline, `tinted` = lilac fill — both for landing cards) |
 | `padding` | `none \| sm \| md \| lg` | `md` | Inner padding |
-| `radius` | `lg \| xl` | `xl` | Corner radius |
+| `radius` | `lg \| xl \| 2xl` | `xl` | Corner radius (`2xl` = 32px landing cards) |
 
 ### Sub-components
 

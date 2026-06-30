@@ -9,3 +9,7 @@ tsup.config.bundled_*.mjs
 .env
 .env.*
 !.env.example
+
+# Brand assets: keep full-res masters in Drive, commit only optimized + manifest
+assets/brand/
+assets/*.zip

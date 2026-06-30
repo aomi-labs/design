@@ -9,17 +9,17 @@
 
 export const colors = {
   pink: {
-    50: "#fdf3f5",
-    100: "#fce7eb",
-    200: "#f9d0d7",
-    300: "#f5b3bf",
-    400: "#f18fa1",
-    500: "#ec6c83",
-    600: "#d26175",
-    700: "#b35465",
-    800: "#904653",
-    900: "#6d3741",
-    950: "#4e2a31",
+    50: "#fdf2f7",
+    100: "#fbe4ef",
+    200: "#f6cbdd",
+    300: "#efa6c5",
+    400: "#e77ba6",
+    500: "#df5d90",
+    600: "#c8527f",
+    700: "#a64668",
+    800: "#843a54",
+    900: "#642e41",
+    950: "#45202e",
   },
   purple: {
     50: "#f0f3f8",
@@ -33,6 +33,47 @@ export const colors = {
     800: "#2d466b",
     900: "#253752",
     950: "#1e2a3c",
+  },
+  lilac: {
+    50: "#f6f3f7",
+    100: "#efe9f1",
+    200: "#e3d8e6",
+    300: "#d3c2d8",
+    400: "#b9a3c1",
+    500: "#9c83a8",
+  },
+  /** Coral — variant hero gradient start. */
+  coral: {
+    50: "#fdf4f1",
+    100: "#fbe7e0",
+    200: "#f6cebf",
+    300: "#efaf99",
+    400: "#e6886b",
+    500: "#d96a4b",
+  },
+  /** Sky — variant light-blue gradient end + tinted card fill. */
+  sky: {
+    50: "#f1f7fc",
+    100: "#e2eef8",
+    200: "#cfe1f3",
+    300: "#aecbe8",
+    400: "#7facd6",
+    500: "#5288c2",
+  },
+  /** Tailwind "zinc" — the exact ramp the portal chat (shadcn) is built on. */
+  cool: {
+    0: "#ffffff",
+    50: "#fafafa",
+    100: "#f4f4f5",
+    200: "#e4e4e7",
+    300: "#d4d4d8",
+    400: "#a1a1aa",
+    500: "#71717a",
+    600: "#52525b",
+    700: "#3f3f46",
+    800: "#27272a",
+    900: "#18181b",
+    950: "#09090b",
   },
   neutral: {
     0: "#ffffff",
@@ -99,6 +140,8 @@ export const radii = {
   md: "0.75rem",
   lg: "1rem",
   xl: "1.5rem",
+  "2xl": "2rem",
+  composer: "1.875rem",
   pill: "9999px",
 } as const;
 

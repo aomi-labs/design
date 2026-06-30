@@ -4,16 +4,26 @@ All tokens live in `src/tokens/tokens.css` as CSS custom properties under the `a
 
 ## Color
 
-### Brand ramps
+### Brand foundation
 
-Two brand ramps, each `50 → 950`. `500` is the exact brand hex.
+The brand reads **cool, flat, and editorial** (matched against the live aomi.dev landing + portal chat):
 
-- **Pink** — `--aomi-pink-{50…950}`, anchored at `#EC6C83`. Primary actions and brand moments.
-- **Purple** — `--aomi-purple-{50…950}`, anchored at `#416CAC`. Accent, links, informational states.
+- **Ink** is the primary action — near-black `--aomi-cool-950` (`#09090B`), flat. Wired via `--aomi-primary`.
+- **Lilac** is the accent / soft brand pop — `--aomi-lilac-{50…500}`, anchored at `#D3C2D8`. Wired via `--aomi-accent`.
 
-### Neutral ramp
+### Accent ramps
 
-`--aomi-neutral-{0…950}` — a warm, paper-tinted gray scale. `50` is the brand paper `#FCF7F6`; `0` is pure white; `900`/`950` are near-black for text and dark surfaces.
+Decorative ramps for charts, tints, and accents (not wired to a semantic role by default):
+
+- **Pink (rosy)** — `--aomi-pink-{50…950}`, anchored at `#DF5D90` (hue ~336°, a soft rose, not salmon-red).
+- **Sky** — `--aomi-sky-{50…500}`, anchored at `#5288C2` (light blue).
+- **Lilac** — `--aomi-lilac-{50…500}`, `#D3C2D8`.
+- **Purple** — `--aomi-purple-{50…950}`, `#416CAC` (legacy; retained for back-compat and `info`).
+
+### Neutral ramps
+
+- **Cool** — `--aomi-cool-{0…950}` — the primary neutral scale (Tailwind "zinc"): pure-white `0`, near-black `950`. The semantic roles below are built on this. Matches the cool/pure-white live surface.
+- **Neutral (warm)** — `--aomi-neutral-{0…950}` — legacy warm, paper-tinted scale (`50` = `#FCF7F6`). Retained for back-compat; new surfaces use the cool ramp.
 
 ### Status
 
