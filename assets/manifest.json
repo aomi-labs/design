@@ -1,0 +1,112 @@
+{
+  "$schema": "./manifest.schema.json",
+  "source": {
+    "type": "google-drive",
+    "folder": "Brand Kit / Brand Images",
+    "folderId": "1ZU1CBOLOG2iKQMdclGK8-RpdoT_TFzg4",
+    "pulledAt": "2026-06-30",
+    "note": "Full-resolution originals live in assets/brand/ (git-ignored). Web-optimized WebP (<=1920px, q80) live in assets/optimized/ and are committed. Reference the optimized versions in product/marketing code."
+  },
+  "images": [
+    {
+      "id": "hero-background",
+      "original": "brand/Hero_Section_Background_Image.png",
+      "optimized": "optimized/hero-background.webp",
+      "width": 1456,
+      "height": 816,
+      "originalBytes": 2414299,
+      "description": "Dreamy hero plate — a hand on a white keyboard wrapped in glowing coral cloth, soft pink/blue haze.",
+      "usage": "Landing hero background (the aomi.dev top section)."
+    },
+    {
+      "id": "brand-01",
+      "original": "brand/aomi_image1.png",
+      "optimized": "optimized/brand-01.webp",
+      "width": 3600,
+      "height": 1934,
+      "originalBytes": 12042536,
+      "description": "Surreal dawn valley — river through golden-green hills, mountains, a faint rainbow arc and planet in the sky.",
+      "usage": "Section background, feature splash, OG image."
+    },
+    {
+      "id": "brand-02",
+      "original": "brand/aomi_image2.png",
+      "optimized": "optimized/brand-02.webp",
+      "width": 3602,
+      "height": 1940,
+      "originalBytes": 14178048,
+      "description": "Retro-futurist — a glowing CRT computer on a snow-capped mountain under a pink sky.",
+      "usage": "Section background, blog/editorial header."
+    },
+    {
+      "id": "brand-03",
+      "original": "brand/aomi_image3.png",
+      "optimized": "optimized/brand-03.webp",
+      "width": 5864,
+      "height": 3286,
+      "originalBytes": 28802578,
+      "description": "Dusk dunes with a glowing light-stream cutting across rolling hills and a snow patch. Blue/coral.",
+      "usage": "Large hero/section background (highest-res asset)."
+    },
+    {
+      "id": "brand-04",
+      "original": "brand/aomi_image4.png",
+      "optimized": "optimized/brand-04.webp",
+      "width": 3840,
+      "height": 2160,
+      "originalBytes": 14366758,
+      "description": "A hand reaching up through a glowing translucent grid/portal into a pink cloud sky. Surreal.",
+      "usage": "Feature/concept illustration (intent, access)."
+    },
+    {
+      "id": "brand-05",
+      "original": "brand/aomi_image5.png",
+      "optimized": "optimized/brand-05.webp",
+      "width": 3840,
+      "height": 2160,
+      "originalBytes": 11194296,
+      "description": "Hands reaching toward floating translucent bubbles/spheres over a pink landscape.",
+      "usage": "Feature/concept illustration (simulation, choice)."
+    },
+    {
+      "id": "brand-06",
+      "original": "brand/aomi_image6.png",
+      "optimized": "optimized/brand-06.webp",
+      "width": 1676,
+      "height": 942,
+      "originalBytes": 3004557,
+      "description": "Lone white-clad figure on a vast reflective salt flat with pink clouds and a geometric pool.",
+      "usage": "Editorial / quieter section background."
+    },
+    {
+      "id": "brand-07",
+      "original": "brand/aomi_image7.png",
+      "optimized": "optimized/brand-07.webp",
+      "width": 6048,
+      "height": 3390,
+      "originalBytes": 20031907,
+      "description": "A tree on a floating island, mirror-reflected over water at dusk. Symmetry/balance motif.",
+      "usage": "Large hero/section background."
+    },
+    {
+      "id": "brand-09",
+      "original": "brand/aomi_image9.png",
+      "optimized": "optimized/brand-09.webp",
+      "width": 2852,
+      "height": 1598,
+      "originalBytes": 10334652,
+      "description": "Person in white with a glassy sphere/helmet emitting light rays. Ethereal portrait.",
+      "usage": "Feature/concept illustration (agent, identity)."
+    },
+    {
+      "id": "brand-10",
+      "original": "brand/aomi_image10.png",
+      "optimized": "optimized/brand-10.webp",
+      "width": 4934,
+      "height": 2802,
+      "originalBytes": 24080285,
+      "description": "A large glass orb resting in a pink rocky shoreline under a blue sky. Calm, focal.",
+      "usage": "Hero/section background, focal brand image."
+    }
+  ]
+}
