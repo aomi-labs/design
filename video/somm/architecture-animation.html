@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aomi — how it works · animated architecture v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#09090b; --ink2:#27272a; --ink3:#3f3f46;
+  --w:#ffffff; --c50:#fafafa; --c100:#f4f4f5; --c200:#e4e4e7; --c300:#d4d4d8; --c400:#a1a1aa; --c500:#71717a;
+  --hl:#416cac; --hl2:#6f8fc0; --tint:#e1e7f2; --tint2:#eef2f8;
+  --somm:#e36159; --sommtint:#fdeae8; --sommnavy:#24222e;
+  --ok:#2e9e6b; --okbg:#e4f3ec;
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--c50);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:34px 20px 60px}
+.head{width:min(1200px,96vw);display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+.head .l{display:flex;align-items:center;gap:10px}
+.head .mark{width:22px;height:22px}
+.head b{font-family:var(--wm);font-weight:600;font-size:21px;letter-spacing:-.01em}
+.head .t{font-size:14px;color:var(--c500)}
+.head .t i{font-style:normal;color:var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c500);
+  border:1px solid var(--c200);background:var(--w);padding:4px 10px;border-radius:999px}
+
+/* ---------- stage ---------- */
+#stagewrap{width:min(1200px,96vw)}
+#stage{position:relative;width:100%;aspect-ratio:16/9;background:var(--w);border:1px solid var(--c200);
+  border-radius:24px;overflow:hidden;box-shadow:0 12px 40px rgba(13,13,15,.08)}
+#scaler{position:absolute;left:0;top:0;width:1200px;height:675px;transform-origin:0 0}
+#world{position:absolute;left:0;top:0;width:1200px;height:675px;transform-origin:0 0;
+  transition:transform 1.4s var(--ease)}
+[data-beat="1"]  #world{transform:translate(73px,-81px) scale(1.55)}
+[data-beat="2"]  #world{transform:translate(73px,-81px) scale(1.55)}
+[data-beat="2b"] #world{transform:translate(-40px,-70px) scale(1.18)}
+[data-beat="3"]  #world{transform:translate(-408px,-272px) scale(1.8)}
+[data-beat="4"]  #world{transform:translate(48px,27px) scale(.92)}
+[data-beat="5"]  #world{transform:translate(-2000px,-45px) scale(2.35)}
+[data-beat="6"]  #world{transform:translate(48px,27px) scale(.92)}
+
+/* ---------- somm hub (beat 1) ---------- */
+#hub{position:absolute;left:238px;top:218px;width:64px;height:64px;opacity:0;transform:scale(.5) rotate(-14deg);
+  transition:all .9s var(--ease)}
+#hub.show{opacity:1;transform:scale(1) rotate(0)}
+#hub.gone{opacity:0;transform:scale(.4);transition:all .7s var(--ease)}
+.sommMark{position:relative;width:100%;height:100%;overflow:hidden}
+.sommMark i{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--somm)}
+#hubName{position:absolute;left:230px;top:292px;width:80px;text-align:center;font-weight:700;font-size:13px;
+  letter-spacing:-.01em;opacity:0;transition:all .7s var(--ease)}
+#hubName.show{opacity:1}
+#hubName.gone{opacity:0}
+
+/* orbit + rays svg */
+#vec{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.orb{fill:none;stroke:var(--somm);stroke-width:1;stroke-dasharray:3 6;opacity:0;transition:opacity .8s var(--ease);
+  transform-box:fill-box;transform-origin:center}
+.orb.show{opacity:.75}
+.orb.gone{opacity:0}
+.o1{animation:spin 9s linear infinite}
+.o2{animation:spinr 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+.ray{fill:none;stroke:var(--somm);stroke-width:1.3;opacity:.65;stroke-dasharray:320;stroke-dashoffset:320;
+  transition:stroke-dashoffset .9s var(--ease),opacity .5s var(--ease)}
+.ray.draw{stroke-dashoffset:0}
+.ray.gone{opacity:0}
+
+/* fan rays (beat 4) + flow dots (beat 6) */
+.fan{fill:none;stroke:var(--hl2);stroke-width:1.3;opacity:0;stroke-dasharray:4 5;transition:opacity .6s var(--ease)}
+.fan.draw{opacity:.8}
+.dotp{offset-rotate:0deg;position:absolute;width:7px;height:7px;border-radius:50%;opacity:0}
+.dotp.req{background:var(--somm)}
+.dotp.res{background:var(--hl)}
+.dotp.go{animation:flow 1.7s var(--ease) 1 forwards}
+@keyframes flow{0%{opacity:0;offset-distance:0%}12%{opacity:1}88%{opacity:1}100%{opacity:0;offset-distance:100%}}
+
+/* ---------- api nodes ---------- */
+.api{position:absolute;opacity:0;transform:translateY(6px);transition:all .55s var(--ease)}
+.api.show{opacity:1;transform:none}
+.api .ep,.api .pill{white-space:nowrap;display:block}
+.api .ep{font-family:var(--mono);font-size:9.5px;color:var(--ink3);transition:all .4s var(--ease)}
+.api .ep b{color:var(--somm);font-weight:500}
+.api .pill{position:absolute;left:0;top:-3px;font-family:var(--mono);font-size:9px;color:var(--ink);
+  border:1px solid var(--somm);border-radius:999px;padding:3px 9px;background:var(--w);opacity:0;
+  transform:translateY(5px) scale(.92);transition:all .5s var(--ease)}
+.api .pill i{font-style:normal;color:var(--somm)}
+.api.wrapped .ep{opacity:0;transform:translateY(-7px)}
+.api.wrapped .pill{opacity:1;transform:none;box-shadow:0 0 0 3px var(--sommtint)}
+.api.fuse{opacity:0;transform:translate(var(--fx),var(--fy)) scale(.1)!important;transition:all .85s var(--ease)}
+
+/* prompt box */
+#promptBox{position:absolute;left:150px;top:462px;width:330px;background:var(--w);border:1px solid var(--c200);
+  border-radius:14px;padding:10px 13px;opacity:0;transform:translateY(26px);transition:all .7s var(--ease);
+  box-shadow:0 4px 16px rgba(13,13,15,.06)}
+#promptBox.show{opacity:1;transform:none}
+#promptBox.fuse{opacity:0;transform:translate(180px,-197px) scale(.1);transition:all .85s var(--ease)}
+#promptBox .h{font-family:var(--mono);font-size:7.5px;letter-spacing:.13em;color:var(--c400);text-transform:uppercase;margin-bottom:6px}
+#promptBox p{font-family:var(--mono);font-size:8.5px;line-height:1.65;color:var(--ink3)}
+#promptBox p em{font-style:normal;color:var(--somm)}
+
+/* ---------- the app cube ---------- */
+#cube{position:absolute;left:212px;top:212px;width:96px;height:106px;opacity:0;transform:scale(.4);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);z-index:6}
+#cube.show{opacity:1;transform:scale(1)}
+#cube.dock{transform:translate(421px,21px) scale(.58);transition:transform 1.5s var(--ease),opacity .9s var(--ease)}
+#cube.gone{opacity:0}
+#cube svg{overflow:visible}
+#cubeLabel{position:absolute;left:110px;top:330px;width:300px;text-align:center;opacity:0;transform:translateY(8px);
+  transition:all .8s var(--ease)}
+#cubeLabel.show{opacity:1;transform:none}
+#cubeLabel.gone{opacity:0;transition:opacity .3s var(--ease)}
+#cubeLabel .ey{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--hl);text-transform:uppercase}
+#cubeLabel .nm{font-family:var(--serif);font-weight:700;font-size:16px;margin-top:3px}
+
+/* ---------- runtime box ---------- */
+#rt{position:absolute;inset:0;opacity:0;transition:opacity .9s var(--ease),filter .9s var(--ease)}
+#rt.blur.show,#rt.blur{opacity:0!important;filter:blur(10px)}
+#rt.show{opacity:1}
+#rbox{position:absolute;left:430px;top:200px;width:440px;height:270px;background:var(--tint);
+  border:1px solid #d3ddeb;border-radius:20px}
+#rtMini{position:absolute;left:90px;top:270px;width:280px;height:140px;background:var(--tint);border:1px solid #d3ddeb;
+  border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  opacity:0;transform:translateX(46px) scale(.92);transition:all 1.1s var(--ease)}
+#rtMini.show{opacity:1;transform:none}
+#rtMini .row{display:flex;align-items:center;gap:8px}
+#rtMini .mk{width:20px;height:20px}
+#rtMini b{font-family:var(--wm);font-weight:600;font-size:23px}
+#rtMini span{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#5d76a3}
+#rtMini.pulse{animation:minipulse 1s var(--ease) 2}
+@keyframes minipulse{50%{box-shadow:0 0 0 12px rgba(65,108,172,.16)}}
+#rbox .zl{position:absolute;top:9px;left:14px;font-family:var(--mono);font-size:8px;letter-spacing:.16em;
+  text-transform:uppercase;color:#5d76a3}
+#rbox .zt{position:absolute;top:22px;left:14px;font-weight:600;font-size:12px;display:flex;align-items:center;gap:5px}
+#rbox .zt .mk{width:12px;height:12px}
+#rbox .zt .wmk{font-family:var(--wm);font-weight:600;font-size:13px}
+#rkeys{position:absolute;right:11px;top:11px;font-family:var(--mono);font-size:7px;letter-spacing:.1em;
+  color:#5d76a3;border:1px solid #c8d4e6;border-radius:999px;padding:3px 8px;background:rgba(255,255,255,.5)}
+.rescube{position:absolute;width:58px;height:64px}
+#rc1{left:472px;top:254px}
+#rc2{left:562px;top:254px}
+#slotCube{left:652px;top:254px;position:absolute;width:58px;height:64px;opacity:.9;transition:opacity .4s var(--ease)}
+#slotCube.hide{opacity:0}
+.ctag{position:absolute;font-family:var(--mono);font-size:6.5px;letter-spacing:.08em;color:var(--c500);
+  text-transform:uppercase;text-align:center;width:58px}
+#ct1{left:472px;top:324px}#ct2{left:562px;top:324px}
+#ct3{left:652px;top:324px;color:var(--somm);opacity:0;transition:opacity .5s var(--ease)}
+#ct3.show{opacity:1}
+
+/* core stratum */
+#coreLab{position:absolute;left:452px;top:355px;font-family:var(--mono);font-size:7px;letter-spacing:.14em;
+  color:#5d76a3;text-transform:uppercase}
+#coreLab b{color:var(--hl);font-weight:500}
+#pipe{position:absolute;inset:0;pointer-events:none;overflow:visible}
+#pipe .rail{stroke:#8fa3c4;stroke-width:1.4;fill:none}
+#pipe .node{fill:#fff;stroke:var(--hl);stroke-width:1.7}
+#pipe .ghost{fill:none;stroke:#8fa3c4;stroke-width:1.2;stroke-dasharray:3 3}
+#pipe .blk{fill:#fff;stroke:var(--ink2);stroke-width:1.7}
+.plab{position:absolute;font-family:var(--mono);font-size:6px;letter-spacing:.08em;color:#5d76a3;text-transform:uppercase;width:64px;text-align:center}
+.plab.dark{color:var(--ink3)}
+#pulse{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--hl);opacity:0;
+  offset-path:path('M486,405 L772,405');offset-rotate:0deg}
+#pulse.go{animation:flow 1.7s var(--ease) 2 forwards}
+
+/* ---------- integrations (beat 4) ---------- */
+.ichip{position:absolute;font-family:var(--mono);font-size:13px;color:var(--ink);border:1px solid var(--c300);
+  background:var(--w);border-radius:999px;padding:8px 16px;opacity:0;transform:translateX(-10px);
+  transition:all .55s var(--ease);white-space:nowrap}
+.ichip .d{color:var(--hl)}
+.ichip.show{opacity:1;transform:none}
+.ichip.hide{opacity:0}
+.ichip.reshow{opacity:1!important;transform:none!important}
+#ife{left:636px;top:83px;border-color:var(--somm)}
+#ife .d{color:var(--somm)}
+#iwu{left:636px;top:179px}
+#itg{left:636px;top:275px}
+#idc{left:636px;top:371px}
+#isl{left:636px;top:467px}
+#imore{left:636px;top:563px;color:var(--c400);border-style:dashed}
+#iLab{position:absolute;left:636px;top:40px;font-family:var(--mono);font-size:16px;letter-spacing:.26em;
+  color:var(--ink);font-weight:500;text-transform:uppercase;opacity:0;transition:opacity .6s var(--ease)}
+#iLab.show{opacity:1}
+#iLab.hide{opacity:0}
+
+/* ---------- widget (beat 5) ---------- */
+#widget{position:absolute;left:868px;top:34px;width:302px;height:238px;opacity:0;transform:scale(.94);
+  transition:all .7s var(--ease);z-index:7}
+#widget.show{opacity:1;transform:scale(1)}
+#browser{position:absolute;inset:0;background:var(--w);border:1px solid var(--c200);border-radius:10px;overflow:hidden;
+  box-shadow:0 8px 30px rgba(13,13,15,.12)}
+#bbar{height:20px;background:var(--sommnavy);display:flex;align-items:center;gap:5px;padding:0 8px}
+#bbar .wd{width:4px;height:4px;border-radius:50%;background:#5b5764}
+#bbar .sm{position:relative;width:9px;height:9px;overflow:hidden;margin-left:4px}
+#bbar .sm i{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--somm)}
+#bbar .u{font-family:var(--mono);font-size:6px;color:#b7b3c2;margin-left:2px}
+.skel{position:absolute;background:var(--c100);border-radius:3px}
+/* chat panel */
+#chat{position:absolute;right:8px;top:28px;width:196px;bottom:8px;background:var(--w);border:1px solid var(--c200);
+  border-radius:9px;padding:7px 8px;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 10px rgba(13,13,15,.07)}
+#chat .ch{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:5.6px;letter-spacing:.06em;
+  color:var(--c500);text-transform:uppercase;padding-bottom:4px;border-bottom:1px solid var(--c100)}
+#chat .ch .mk{width:7px;height:7px}
+#chat .ch b{color:var(--ink);font-weight:500}
+.msg{opacity:0;transform:translateY(5px);transition:all .5s var(--ease)}
+.msg.show{opacity:1;transform:none}
+#uMsg{align-self:flex-end;max-width:88%;background:var(--c100);border-radius:7px 7px 2px 7px;padding:4px 6px;
+  font-size:6.4px;line-height:1.45;color:var(--ink)}
+.tool{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:5.8px;color:var(--c500);
+  border:1px solid var(--c200);border-radius:5px;padding:3px 5px;background:var(--c50)}
+.tool .spin{width:5px;height:5px;border:1px solid var(--c300);border-top-color:var(--hl);border-radius:50%;
+  animation:spin 1s linear infinite;flex:none}
+.tool .chk{display:none;color:var(--ok);flex:none}
+.tool .res{color:var(--c400);margin-left:auto;white-space:nowrap}
+.tool.done .spin{display:none}
+.tool.done .chk{display:inline}
+.tool.done{color:var(--ink3)}
+/* highlighted aomi build step */
+#build{border:1px solid var(--hl);background:var(--tint2);border-radius:6px;padding:4px 6px}
+#build .bt{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:5.9px;color:var(--hl);font-weight:700}
+#build .bt .spin{width:5px;height:5px;border:1px solid #c8d4e6;border-top-color:var(--hl);border-radius:50%;
+  animation:spin 1s linear infinite;flex:none}
+#build.done .bt .spin{display:none}
+#build .br{font-family:var(--mono);font-size:5.6px;color:var(--ink3);margin:2.5px 0 0 9px;opacity:0;
+  transform:translateX(-4px);transition:all .4s var(--ease)}
+#build .br.show{opacity:1;transform:none}
+#build .br .a{color:var(--hl)}
+#build .bf{font-family:var(--mono);font-size:5.6px;color:var(--ok);margin:3px 0 0 9px;opacity:0;transition:opacity .4s}
+#build .bf.show{opacity:1}
+/* final sign row */
+#fin{font-size:6.2px;line-height:1.5;color:var(--ink)}
+#fin b{color:var(--hl);font-weight:600}
+#signBtn{display:inline-flex;align-items:center;gap:3px;margin-top:3px;font-family:var(--mono);font-size:5.8px;
+  background:var(--ink);color:var(--w);border-radius:999px;padding:3px 8px;transition:all .3s var(--ease)}
+#signBtn.press{transform:scale(.93)}
+#signBtn.signed{background:var(--okbg);color:var(--ok)}
+#aomiTag{margin-top:auto;font-family:var(--mono);font-size:5px;color:var(--c400);text-align:center;letter-spacing:.08em}
+#aomiTag i{font-style:normal;color:var(--hl)}
+
+/* ---------- lockup + captions ---------- */
+#lockup{position:absolute;left:0;right:0;bottom:16px;display:flex;align-items:center;justify-content:center;gap:9px;
+  opacity:0;transform:translateY(6px);transition:all .9s var(--ease)}
+#lockup.show{opacity:1;transform:none}
+#lockup .mk{width:17px;height:17px}
+#lockup b{font-family:var(--wm);font-weight:600;font-size:17px}
+#lockup span{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--c500)}
+#lockup span i{font-style:normal;color:var(--hl)}
+#caps{position:absolute;left:0;right:0;bottom:18px;height:52px;pointer-events:none;z-index:9}
+.cap{position:absolute;left:0;right:0;text-align:center;opacity:0;transform:translateY(6px);transition:all .7s var(--ease)}
+.cap.show{opacity:1;transform:none}.cap.show.hide{opacity:0;transform:translateY(-6px)}
+.cap .big{font-family:var(--serif);font-weight:700;font-size:19px;letter-spacing:-.01em;color:var(--ink)}
+.cap .big i{font-style:normal;color:var(--hl)}
+.cap .big em{font-style:normal;color:var(--somm)}
+.cap .sub{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--c500);margin-top:4px;text-transform:lowercase}
+#cap1{position:absolute;left:56px;top:50%;width:300px;text-align:left;opacity:0;z-index:9;pointer-events:none;
+  transform:translateY(-50%) translateX(-10px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+#cap1.show{opacity:1;transform:translateY(-50%)}
+#cap1.hide{opacity:0;transform:translateY(-50%)}
+#cap1 .big{font-family:var(--serif);font-weight:700;font-size:31px;line-height:1.08;letter-spacing:-.01em;color:var(--ink)}
+#cap1 .big em{font-style:normal;color:var(--somm)}
+#cap1 .sub{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--c500);margin-top:12px;line-height:1.6}
+#cap2{position:absolute;left:56px;top:50%;width:326px;text-align:left;opacity:0;z-index:9;pointer-events:none;
+  transform:translateY(-50%);transition:opacity .6s var(--ease)}
+#cap2.show{opacity:1}
+#cap2.hide{opacity:0}
+#cap2 .big{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.14;letter-spacing:-.01em;color:var(--ink)}
+#cap2 .big i{font-style:normal;color:var(--hl)}
+#cap2 .sub{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--c500);margin-top:12px;line-height:1.6}
+#cap3{position:absolute;left:44px;top:50%;width:292px;text-align:left;opacity:0;z-index:9;pointer-events:none;
+  transform:translateY(calc(-50% + 30px));transition:opacity .6s var(--ease),transform .7s var(--ease)}
+#cap3.show{opacity:1;transform:translateY(-50%)}
+#cap3.hide{opacity:0;transform:translateY(calc(-50% + 30px))}
+#cap3 .big{font-family:var(--serif);font-weight:700;font-size:31px;line-height:1.08;letter-spacing:-.01em;color:var(--ink)}
+#cap3 .big i{font-style:normal;color:var(--hl)}
+#cap3 .sub{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--c500);margin-top:12px;line-height:1.6}
+#cap5{position:absolute;right:50px;top:50%;width:346px;text-align:left;opacity:0;z-index:9;pointer-events:none;
+  transform:translateY(-50%) translateX(10px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+#cap5.show{opacity:1;transform:translateY(-50%)}
+#cap5.hide{opacity:0;transform:translateY(-50%) translateX(-10px)}
+#cap5 .big{font-family:var(--serif);font-weight:700;font-size:34px;line-height:1.1;letter-spacing:-.01em;color:var(--ink)}
+#cap5 .big i{font-style:normal;color:var(--hl)}
+#cap5 .mini{list-style:none;margin-top:19px}
+#cap5 .mini li{font-family:var(--mono);font-size:14px;color:var(--ink3);padding:4px 0 4px 19px;position:relative}
+#cap5 .mini li::before{content:"→";position:absolute;left:0;color:var(--hl)}
+#cap6{position:absolute;left:120px;top:426px;width:430px;text-align:left;opacity:0;z-index:9;pointer-events:none;
+  transform:translateY(34px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
+#cap6.show{opacity:1;transform:none}
+#cap6.hide{opacity:0}
+#cap6 .big{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.12;letter-spacing:-.01em;color:var(--ink)}
+#cap6 .big i{font-style:normal;color:var(--hl)}
+#cap6 .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--c500);margin-top:10px;line-height:1.7}
+#cap4{position:absolute;left:120px;top:426px;width:430px;text-align:left;opacity:0;z-index:9;pointer-events:none;
+  transform:translateY(14px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
+#cap4.show{opacity:1;transform:none}
+#cap4.hide{opacity:0}
+#cap4 .big{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.12;letter-spacing:-.01em;color:var(--ink)}
+#cap4 .big i{font-style:normal;color:var(--hl)}
+#cap4 .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--c500);margin-top:10px;line-height:1.7}
+
+/* ---------- controls ---------- */
+#bar{width:min(1200px,96vw);margin-top:14px;display:flex;align-items:center;gap:10px}
+button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;border:1px solid var(--c200);background:var(--w);
+  color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;transition:all .2s var(--ease)}
+button:hover{border-color:var(--c400)}
+button.primary{background:var(--ink);color:var(--w);border-color:var(--ink)}
+.beats{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.beats button.active{background:var(--tint);border-color:var(--hl2);color:var(--hl)}
+#prog{width:min(1200px,96vw);margin-top:10px;height:4px;background:var(--c200);border-radius:999px;cursor:pointer;position:relative}
+#prog .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--hl);border-radius:999px}
+#prog .tick{position:absolute;top:-3px;width:1.5px;height:10px;background:var(--c300)}
+.legend{width:min(1200px,96vw);margin-top:18px;font-size:13px;color:var(--c500);line-height:1.6}
+.legend b{color:var(--ink);font-weight:500}
+.noanim *,.noanim *::before,.noanim *::after{transition:none!important;animation-duration:0s!important}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="l">
+    <svg class="mark" viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b>
+    <span class="t">· how it works — <i>animated architecture</i> · prototype v2</span>
+  </div>
+  <span class="eyebrow">beats 1–6 · ~45s · loops</span>
+</div>
+
+<div id="stagewrap">
+<div id="stage" data-beat="1">
+ <div id="scaler">
+  <div id="world">
+
+    <svg id="vec" width="1200" height="675" viewBox="0 0 1200 675">
+      <!-- orbits around somm hub (270,250) -->
+      <circle class="orb o1" cx="270" cy="250" r="58"/>
+      <circle class="orb o2" cx="270" cy="250" r="74"/>
+      <!-- rays hub -> api tips -->
+      <path class="ray y1" d="M300,226 L462,118"/>
+      <path class="ray y2" d="M302,242 L514,196"/>
+      <path class="ray y3" d="M302,257 L520,270"/>
+      <path class="ray y4" d="M302,272 L514,344"/>
+      <path class="ray y5" d="M300,288 L462,420"/>
+      <!-- fan rays runtime -> integrations -->
+      <path class="fan g1" d="M370,340 H560 V100 H636"/>
+      <path class="fan g2" d="M370,340 H560 V196 H636"/>
+      <path class="fan g3" d="M370,340 H560 V292 H636"/>
+      <path class="fan g4" d="M370,340 H560 V388 H636"/>
+      <path class="fan g5" d="M370,340 H560 V484 H636"/>
+      <path class="fan g6" d="M370,340 H560 V580 H636"/>
+    </svg>
+
+    <!-- flow dots (beat 6) — request widget->box, response box->widget -->
+    <span class="dotp req" id="d1" style="offset-path:path('M868,113 H560 V340 H380')"></span>
+    <span class="dotp req" id="d2" style="offset-path:path('M868,113 H560 V340 H380')"></span>
+    <span class="dotp req" id="d3" style="offset-path:path('M868,113 H560 V340 H380')"></span>
+    <span class="dotp res" id="d4" style="offset-path:path('M380,340 H560 V113 H868')"></span>
+    <span class="dotp res" id="d5" style="offset-path:path('M380,340 H560 V113 H868')"></span>
+
+    <!-- SOMM HUB -->
+    <div id="hub"><div class="sommMark">
+      <i style="left:-13px;top:-13px"></i><i style="left:19px;top:-13px"></i><i style="left:51px;top:-13px"></i>
+      <i style="left:-13px;top:19px"></i><i style="left:19px;top:19px"></i><i style="left:51px;top:19px"></i>
+      <i style="left:-13px;top:51px"></i><i style="left:19px;top:51px"></i><i style="left:51px;top:51px"></i>
+    </div></div>
+    <div id="hubName">Somm</div>
+
+    <!-- API nodes at ray tips -->
+    <div class="api a1" style="left:466px;top:108px;--fx:-206px;--fy:158px"><span class="ep"><b>GET</b> /idle-assets</span><span class="pill">get_idle_assets<i>()</i></span></div>
+    <div class="api a2" style="left:518px;top:186px;--fx:-258px;--fy:78px"><span class="ep"><b>GET</b> /risk-snapshot</span><span class="pill">get_risk_snapshot<i>()</i></span></div>
+    <div class="api a3" style="left:524px;top:260px;--fx:-264px;--fy:4px"><span class="ep"><b>POST</b> /assess-position</span><span class="pill">assess_position<i>()</i></span></div>
+    <div class="api a4" style="left:518px;top:334px;--fx:-258px;--fy:-72px"><span class="ep"><b>GET</b> /credit-balance</span><span class="pill">get_credit_balance<i>()</i></span></div>
+    <div class="api a5" style="left:466px;top:410px;--fx:-206px;--fy:-148px"><span class="ep"><b>POST</b> /propose-intent</span><span class="pill">propose_intent<i>()</i></span></div>
+
+    <div id="promptBox">
+      <div class="h">prompt · configured for your need</div>
+      <p>You manage idle treasury assets for Somm.<br>Seek best net yield. <em>Never exceed risk band B.</em><br>Always propose before execution.</p>
+    </div>
+
+    <!-- THE APP CUBE -->
+    <div id="cube"><svg viewBox="0 0 100 110">
+      <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#fff" stroke="#09090b" stroke-width="2.4" stroke-linejoin="round"/>
+      <polygon points="50,2 95,27 50,52 5,27" fill="#eef2f8" stroke="#09090b" stroke-width="2.4" stroke-linejoin="round"/>
+      <polygon points="50,52 95,27 95,79 50,104" fill="#f4f4f5" stroke="#09090b" stroke-width="2.4" stroke-linejoin="round"/>
+      <g transform="translate(17,56)"><clipPath id="smclip"><rect width="20" height="20"/></clipPath>
+        <g clip-path="url(#smclip)">
+          <circle cx="0" cy="0" r="4.2" fill="#e36159"/><circle cx="10" cy="0" r="4.2" fill="#e36159"/><circle cx="20" cy="0" r="4.2" fill="#e36159"/>
+          <circle cx="0" cy="10" r="4.2" fill="#e36159"/><circle cx="10" cy="10" r="4.2" fill="#e36159"/><circle cx="20" cy="10" r="4.2" fill="#e36159"/>
+          <circle cx="0" cy="20" r="4.2" fill="#e36159"/><circle cx="10" cy="20" r="4.2" fill="#e36159"/><circle cx="20" cy="20" r="4.2" fill="#e36159"/>
+        </g></g>
+    </svg></div>
+    <div id="cubeLabel"><div class="ey">aomi app</div><div class="nm">Somm Liquidity Manager</div></div>
+
+    <!-- RUNTIME BOX -->
+    <div id="rt">
+    <div id="rbox">
+      <span class="zl">Aomi</span>
+      <div class="zt"><svg class="mk" viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg><span class="wmk">aomi</span>&nbsp;· Hosted Runtime</div>
+      <span id="rkeys">KEYS HELD: 0</span>
+    </div>
+
+    <!-- resident cubes + slot -->
+    <div class="rescube" id="rc1"><svg viewBox="0 0 100 110">
+      <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#fff" stroke="#3f3f46" stroke-width="2.2" stroke-linejoin="round"/>
+      <polygon points="50,2 95,27 50,52 5,27" fill="#eef2f8" stroke="#3f3f46" stroke-width="2.2" stroke-linejoin="round"/>
+      <polygon points="50,52 95,27 95,79 50,104" fill="#f4f4f5" stroke="#3f3f46" stroke-width="2.2" stroke-linejoin="round"/></svg></div>
+    <div class="rescube" id="rc2"><svg viewBox="0 0 100 110">
+      <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#fff" stroke="#3f3f46" stroke-width="2.2" stroke-linejoin="round"/>
+      <polygon points="50,2 95,27 50,52 5,27" fill="#eef2f8" stroke="#3f3f46" stroke-width="2.2" stroke-linejoin="round"/>
+      <polygon points="50,52 95,27 95,79 50,104" fill="#f4f4f5" stroke="#3f3f46" stroke-width="2.2" stroke-linejoin="round"/></svg></div>
+    <div id="slotCube"><svg viewBox="0 0 100 110">
+      <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="none" stroke="#8fa3c4" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"/>
+      <polyline points="5,27 50,52 95,27" fill="none" stroke="#8fa3c4" stroke-width="2" stroke-dasharray="6 5"/>
+      <line x1="50" y1="52" x2="50" y2="104" stroke="#8fa3c4" stroke-width="2" stroke-dasharray="6 5"/></svg></div>
+    <span class="ctag" id="ct1">kuroko</span><span class="ctag" id="ct2">orca</span>
+    <span class="ctag" id="ct3">somm liq. mgr</span>
+
+    <!-- core stratum: pipeline rail plugging into the blockchain client -->
+    <span id="coreLab"><b>aomi core</b> · execution pipeline · native to the chain</span>
+    <svg id="pipe" width="1200" height="675" viewBox="0 0 1200 675">
+      <line class="rail" x1="486" y1="405" x2="766" y2="405"/>
+      <circle class="node" cx="486" cy="405" r="7"/>
+      <circle class="node" cx="556" cy="405" r="7"/>
+      <circle class="node" cx="626" cy="405" r="7"/>
+      <circle class="node" cx="696" cy="405" r="7"/>
+      <rect class="blk" x="766" y="374" width="22" height="18" rx="3"/>
+      <rect class="blk" x="766" y="396" width="22" height="18" rx="3"/>
+      <rect class="blk" x="766" y="418" width="22" height="18" rx="3"/>
+    </svg>
+    <span class="plab" style="left:454px;top:416px">build</span>
+    <span class="plab" style="left:524px;top:416px">simulate</span>
+    <span class="plab" style="left:594px;top:416px">commit</span>
+    <span class="plab" style="left:664px;top:416px">batch</span>
+    <span class="plab dark" style="left:729px;top:444px;width:96px">blockchain client</span>
+    <span id="pulse"></span>
+    </div><!-- /rt -->
+    <div id="rtMini">
+      <div class="row"><svg class="mk" viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg><b>aomi</b></div>
+      <span>hosted runtime</span>
+    </div>
+
+    <!-- INTEGRATIONS -->
+    <span id="iLab">integrations …</span>
+    <span class="ichip" id="ife"><span class="d">●</span> Somm Frontend</span>
+    <span class="ichip" id="iwu"><span class="d">●</span> Web UI</span>
+    <span class="ichip" id="itg"><span class="d">●</span> Telegram Bot</span>
+    <span class="ichip" id="idc"><span class="d">●</span> Discord</span>
+    <span class="ichip" id="isl"><span class="d">●</span> Slack</span>
+    <span class="ichip" id="imore">…&nbsp; iOS · web · next</span>
+
+    <!-- WIDGET (beat 5) -->
+    <div id="widget">
+      <div id="browser">
+        <div id="bbar"><span class="wd"></span><span class="wd"></span><span class="wd"></span>
+          <span class="sm"><i style="left:-2px;top:-2px"></i><i style="left:2.5px;top:-2px"></i><i style="left:7px;top:-2px"></i><i style="left:-2px;top:2.5px"></i><i style="left:2.5px;top:2.5px"></i><i style="left:7px;top:2.5px"></i><i style="left:-2px;top:7px"></i><i style="left:2.5px;top:7px"></i><i style="left:7px;top:7px"></i></span>
+          <span class="u">somm.finance</span></div>
+        <span class="skel" style="left:10px;top:32px;width:70px;height:7px"></span>
+        <span class="skel" style="left:10px;top:46px;width:88px;height:5px"></span>
+        <span class="skel" style="left:10px;top:57px;width:80px;height:5px"></span>
+        <span class="skel" style="left:10px;top:74px;width:88px;height:34px;border-radius:6px"></span>
+        <span class="skel" style="left:10px;top:116px;width:88px;height:34px;border-radius:6px"></span>
+        <span class="skel" style="left:10px;top:158px;width:88px;height:34px;border-radius:6px"></span>
+        <div id="chat">
+          <div class="ch"><svg class="mk" viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+            <b>Somm Assistant</b>&nbsp;· powered by aomi</div>
+          <div class="msg" id="uMsg">Rebalance my liquidity from EtherFi to Morpho</div>
+          <div class="msg tool" id="t1"><span class="spin"></span><span class="chk">✓</span>querying your positions<span class="res">2,400 weETH · etherfi</span></div>
+          <div class="msg tool" id="t2"><span class="spin"></span><span class="chk">✓</span>risk check<span class="res">morpho band A · +1.9%</span></div>
+          <div class="msg" id="build">
+            <div class="bt"><span class="spin"></span>building transaction · aomi core pipeline</div>
+            <div class="br r1"><span class="a">→</span> withdraw · etherfi · 2,400 weETH</div>
+            <div class="br r2"><span class="a">→</span> approve · weETH → morpho blue</div>
+            <div class="br r3"><span class="a">→</span> supply · morpho @ 91.2% util</div>
+            <div class="bf">batched → 1 signature · SIMULATED ✓</div>
+          </div>
+          <div class="msg" id="fin">Ready. <b>Keys stay with you.</b><br>
+            <span id="signBtn">Approve &amp; Sign</span></div>
+          <div id="aomiTag">⌘ runs on <i>aomi</i></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="lockup">
+      <svg class="mk" viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+      <b>aomi</b>
+      <span>the hosted runtime on blockchain client · <i>aomi.dev</i></span>
+    </div>
+
+  </div><!-- /world -->
+
+  <div id="caps">
+    <div class="cap c1"><div class="big"><em>Somm’s</em> API, exposed.</div><div class="sub">the logo reaches out · five endpoints</div></div>
+    <div class="cap c2"><div class="big">Tools + prompt = <i>an Aomi App.</i></div><div class="sub">somm liquidity manager · compiled</div></div>
+    <div class="cap c3"><div class="big">Your app joins the runtime.</div><div class="sub">kuroko · orca · somm — one pipeline into the blockchain client</div></div>
+    <div class="cap c4"><div class="big">One runtime. <i>Any surface.</i></div><div class="sub">integrations… telegram · discord · slack · your own frontend</div></div>
+    <div class="cap c5"><div class="big">Plain language in. <i>Verified execution out.</i></div><div class="sub">aomi core builds · simulates · you sign — keys stay with you</div></div>
+    <div class="cap c6"><div class="big">Request rides our <i>simulated rails.</i></div><div class="sub">high-performance · secured · any contracts<br>no infrastructure overhead</div></div>
+  </div>
+  <div id="cap1"><div class="big"><em>Somm’s</em> API, exposed.</div>
+    <div class="sub">the logo reaches out · five endpoints</div></div>
+  <div id="cap2"><div class="big">Compose APIs<br>into Tools and Prompts<br><i>Your Aomi App</i></div>
+    <div class="sub">somm liquidity manager · compiled</div></div>
+  <div id="cap3"><div class="big">Deploy your app.</div>
+    <div class="sub">kuroko · orca · somm — one pipeline into the blockchain client</div></div>
+  <div id="cap5"><div class="big">Language in.<br><i>Transactions out.</i></div>
+    <ul class="mini"><li>aomi builds</li><li>simulate</li><li>you sign off</li></ul></div>
+  <div id="cap6"><div class="big">Request rides our <i>simulated rails.</i></div>
+    <div class="sub">high-performance · secured · any contracts<br>no infrastructure overhead</div></div>
+  <div id="cap4"><div class="big">One runtime. <i>Any surface.</i></div>
+    <div class="sub">integrations… telegram · discord · slack · your own frontend</div></div>
+ </div><!-- /scaler -->
+</div><!-- /stage -->
+</div>
+
+<div id="bar">
+  <button id="playBtn" class="primary">⏸ pause</button>
+  <button id="restartBtn">↻ restart</button>
+  <div class="beats">
+    <button data-b="0" class="active">1 · logo → APIs</button>
+    <button data-b="1">2 · app cube</button>
+    <button data-b="2">3 · join runtime</button>
+    <button data-b="3">4 · any surface</button>
+    <button data-b="4">5 · live demo</button>
+    <button data-b="5">6 · round trip</button>
+  </div>
+</div>
+<div id="prog"><div class="fill"></div></div>
+
+<div class="legend">
+  <b>Beat 1</b> Somm’s mark spins up; vectors extend to its five APIs · <b>Beat 2</b> APIs wrap into tools, a prompt rises,
+  everything converges into a cube — <b>Aomi App · Somm Liquidity Manager</b> · <b>Beat 3</b> the cube docks in the hosted
+  runtime beside kuroko &amp; orca, riding the core pipeline (build · simulate · batch · broadcast) ·
+  <b>Beat 4</b> rays derive into integrations… telegram, discord, slack, more · <b>Beat 5</b> inside Somm’s own site, the
+  chat widget runs a real trace — the aomi build step elevated, signed by the user, keys never move ·
+  <b>Beat 6</b> zoom out: dots flow the request back through the graph. The circuit is the architecture.
+</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+  const stage = $('#stage');
+  const DUR = 45, BEATS = [0, 6.5, 12.5, 19.0, 24.5, 37.0];
+
+  const applied = [];
+  const add = (sel, cls) => { $$(sel).forEach(el => { el.classList.add(cls); applied.push([el, cls]); }); };
+  const cam = n => stage.dataset.beat = n;
+
+  const EV = [
+    // ---- beat 1 : logo -> APIs
+    [0.0, () => { cam('1'); add('#cap1','show'); add('#hub','show'); }],
+    [0.7, () => { add('.orb','show'); add('#hubName','show'); }],
+    [1.3, () => { add('.y1','draw'); }], [1.55,() => add('.a1','show')],
+    [1.9, () => { add('.y2','draw'); }], [2.15,() => add('.a2','show')],
+    [2.5, () => { add('.y3','draw'); }], [2.75,() => add('.a3','show')],
+    [3.1, () => { add('.y4','draw'); }], [3.35,() => add('.a4','show')],
+    [3.7, () => { add('.y5','draw'); }], [3.95,() => add('.a5','show')],
+    // ---- beat 2 : wrap -> prompt -> cube
+    [6.5, () => { add('#cap1','hide'); add('#cap2','show'); }],
+    [6.7, () => add('.a1','wrapped')], [7.0,() => add('.a2','wrapped')],
+    [7.3, () => add('.a3','wrapped')], [7.6,() => add('.a4','wrapped')],
+    [7.9, () => add('.a5','wrapped')],
+    [8.4, () => { cam('2b'); add('#cap2','hide'); }],
+    [9.0, () => add('#promptBox','show')],
+    [10.2,() => { add('.api','fuse'); add('#promptBox','fuse'); add('.ray','gone'); add('.orb','gone');
+                  add('#hub','gone'); add('#hubName','gone'); }],
+    [10.7,() => add('#cube','show')],
+    [11.2,() => add('#rt','show')],
+    [11.6,() => add('#cubeLabel','show')],
+    // ---- beat 3 : dock into runtime
+    [12.5,() => cam('3')],
+    [13.2,() => add('#cubeLabel','gone')],
+    [13.6,() => { add('#cube','dock'); add('#cap3','show'); }],
+    [15.0,() => { add('#slotCube','hide'); add('#ct3','show'); }],
+    [15.9,() => add('#pulse','go')],
+    // ---- beat 4 : integrations
+    [19.0,() => { cam('4'); add('#cap3','hide'); add('#cap4','show'); add('#iLab','show'); add('#rt','blur'); add('#rtMini','show'); add('#cube','gone'); }],
+    [19.8,() => { add('.g1','draw'); add('#ife','show'); }],
+    [20.1,() => { add('.g2','draw'); add('#iwu','show'); }],
+    [20.4,() => { add('.g3','draw'); add('#itg','show'); }],
+    [20.7,() => { add('.g4','draw'); add('#idc','show'); }],
+    [21.0,() => { add('.g5','draw'); add('#isl','show'); }],
+    [21.3,() => { add('.g6','draw'); add('#imore','show'); }],
+    // ---- beat 5 : live demo in widget
+    [24.5,() => { cam('5'); add('#cap4','hide'); add('#cap5','show'); add('#ife','hide'); add('#iLab','hide'); add('#iwu','hide'); add('#itg','hide'); add('#widget','show'); }],
+    [25.7,() => add('#uMsg','show')],
+    [26.7,() => add('#t1','show')],  [27.7,() => add('#t1','done')],
+    [28.0,() => add('#t2','show')],  [29.0,() => add('#t2','done')],
+    [29.5,() => add('#build','show')],
+    [30.1,() => add('#build .r1','show')],
+    [30.6,() => add('#build .r2','show')],
+    [31.1,() => add('#build .r3','show')],
+    [32.0,() => { add('#build','done'); add('#build .bf','show'); }],
+    [33.2,() => add('#fin','show')],
+    [34.4,() => add('#signBtn','press')],
+    [34.9,() => { add('#signBtn','signed'); $('#signBtn') && ($('#signBtn').textContent='✓ Signed · broadcasting'); }],
+    // ---- beat 6 : round trip
+    [37.0,() => { cam('6'); add('#cap5','hide'); add('#cap6','show'); add('#ife','reshow'); add('#iwu','reshow'); add('#itg','reshow'); }],
+    [37.9,() => add('#d1','go')], [38.3,() => add('#d2','go')], [38.7,() => add('#d3','go')],
+    [39.5,() => add('#rtMini','pulse')],
+    [40.7,() => add('#d4','go')], [41.1,() => add('#d5','go')],
+    [41.6,() => { add('#cap6','hide'); add('#lockup','show'); }],
+  ];
+
+  let T = 0, playing = true, last = performance.now(), evIdx = 0;
+
+  function resetAll() {
+    while (applied.length) { const [el, cls] = applied.pop(); el.classList.remove(cls); }
+    const sb = $('#signBtn'); if (sb) sb.textContent = 'Approve & Sign';
+    cam('1'); evIdx = 0;
+  }
+  function seek(t) {
+    stage.classList.add('noanim');
+    resetAll();
+    T = Math.max(0, Math.min(DUR, t));
+    while (evIdx < EV.length && EV[evIdx][0] <= T) { EV[evIdx][1](); evIdx++; }
+    void stage.offsetWidth;
+    requestAnimationFrame(() => requestAnimationFrame(() => stage.classList.remove('noanim')));
+  }
+  function tick(now) {
+    const dt = (now - last) / 1000; last = now;
+    if (playing) {
+      T += dt;
+      if (T >= DUR + 2.5) seek(0);
+      while (evIdx < EV.length && EV[evIdx][0] <= T) { EV[evIdx][1](); evIdx++; }
+      $('#prog .fill').style.width = (Math.min(T, DUR) / DUR * 100) + '%';
+      let b = 0; BEATS.forEach((s, i) => { if (T >= s) b = i; });
+      $$('.beats button').forEach((btn, i) => btn.classList.toggle('active', i === b));
+    }
+    requestAnimationFrame(tick);
+  }
+
+  $('#playBtn').onclick = () => { playing = !playing; $('#playBtn').textContent = playing ? '⏸ pause' : '▶ play'; };
+  $('#restartBtn').onclick = () => seek(0);
+  $$('.beats button').forEach(btn => btn.onclick = () => seek(BEATS[+btn.dataset.b]));
+  $('#prog').onclick = e => { const r = e.currentTarget.getBoundingClientRect(); seek((e.clientX - r.left) / r.width * DUR); };
+  BEATS.slice(1).forEach(s => { const d = document.createElement('div'); d.className='tick'; d.style.left=(s/DUR*100)+'%'; $('#prog').appendChild(d); });
+
+  function fit(){ $('#scaler').style.transform = `scale(${$('#stage').clientWidth/1200})`; }
+  new ResizeObserver(fit).observe($('#stage')); fit();
+
+  window.__seek = t => { seek(t); playing = false; $('#playBtn').textContent = '▶ play'; };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { seek(43); playing = false; }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
