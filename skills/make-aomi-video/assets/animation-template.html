@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aomi Video Animation</title>
+  <style>
+    :root {
+      --ink: #09090b;
+      --muted: #71717a;
+      --line: #e4e4e7;
+      --paper: #fafafa;
+      --white: #ffffff;
+      --lilac: #d3c2d8;
+      --pink: #df5d90;
+      --sky: #5288c2;
+      --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+      --serif: "PT Serif", ui-serif, Georgia, serif;
+      --mono: "Geist Mono", ui-monospace, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; place-content: center; gap: 14px; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+    #stage { position: relative; width: min(1200px, 96vw); aspect-ratio: 16 / 9; overflow: hidden; background: var(--white); border: 1px solid var(--line); }
+    #scaler { position: absolute; inset: 0 auto auto 0; width: 1200px; height: 675px; transform-origin: top left; }
+    .shape { position: absolute; border-radius: 50%; transform: translate3d(var(--x), var(--y), 0) scale(var(--scale)); opacity: var(--opacity); }
+    #shapeA { width: 300px; height: 300px; left: 140px; top: 170px; background: var(--lilac); }
+    #shapeB { width: 170px; height: 170px; left: 800px; top: 235px; background: var(--sky); }
+    #copy { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; padding: 80px; opacity: var(--copy-opacity); transform: translateY(var(--copy-y)); }
+    #copy small { font-family: var(--mono); color: var(--muted); text-transform: uppercase; }
+    #copy h1 { max-width: 840px; margin: 18px 0 0; font-family: var(--serif); font-size: 64px; line-height: 1.02; }
+    .controls { width: min(1200px, 96vw); display: flex; align-items: center; gap: 10px; }
+    button { border: 1px solid var(--line); background: var(--white); color: var(--ink); padding: 9px 14px; font: inherit; cursor: pointer; }
+    input { flex: 1; accent-color: var(--ink); }
+    output { min-width: 70px; color: var(--muted); font-family: var(--mono); font-size: 12px; text-align: right; }
+    html[data-capture="true"] body { min-height: 0; display: block; background: var(--white); }
+    html[data-capture="true"] #stage { width: 1200px; border: 0; }
+    html[data-capture="true"] .controls { display: none; }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div id="scaler">
+      <div id="shapeA" class="shape"></div>
+      <div id="shapeB" class="shape"></div>
+      <div id="copy">
+        <small>Aomi announcement</small>
+        <h1>Replace this with the campaign's actual idea.</h1>
+      </div>
+    </div>
+  </div>
+  <div class="controls preview-only">
+    <button id="play" type="button">Play</button>
+    <input id="progress" type="range" min="0" max="8" step="0.001" value="0">
+    <output id="time">0.00s</output>
+  </div>
+  <script>
+    const duration = 8;
+    const stage = document.querySelector("#stage");
+    const scaler = document.querySelector("#scaler");
+    const progress = document.querySelector("#progress");
+    const output = document.querySelector("#time");
+    const playButton = document.querySelector("#play");
+    let time = 0;
+    let playing = false;
+    let previous = performance.now();
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const mix = (from, to, amount) => from + (to - from) * amount;
+
+    function render(seconds) {
+      time = clamp(seconds, 0, duration);
+      const phase = time / duration;
+      const reveal = clamp(phase / 0.35, 0, 1);
+      const settle = clamp((phase - 0.35) / 0.65, 0, 1);
+      stage.style.setProperty("--x", `${mix(-90, 70, phase)}px`);
+      stage.style.setProperty("--y", `${mix(70, -35, phase)}px`);
+      stage.style.setProperty("--scale", String(mix(0.6, 1.15, settle)));
+      stage.style.setProperty("--opacity", String(reveal));
+      stage.style.setProperty("--copy-opacity", String(clamp((phase - 0.2) / 0.25, 0, 1)));
+      stage.style.setProperty("--copy-y", `${mix(24, 0, reveal)}px`);
+      progress.value = String(time);
+      output.value = `${time.toFixed(2)}s`;
+    }
+
+    function fit() {
+      scaler.style.transform = `scale(${stage.clientWidth / 1200})`;
+    }
+
+    function tick(now) {
+      if (playing) {
+        time += (now - previous) / 1000;
+        if (time >= duration) {
+          time = duration;
+          playing = false;
+          playButton.textContent = "Play";
+        }
+        render(time);
+      }
+      previous = now;
+      requestAnimationFrame(tick);
+    }
+
+    progress.addEventListener("input", () => {
+      playing = false;
+      playButton.textContent = "Play";
+      render(Number(progress.value));
+    });
+    playButton.addEventListener("click", () => {
+      if (time >= duration) render(0);
+      playing = !playing;
+      playButton.textContent = playing ? "Pause" : "Play";
+    });
+    window.addEventListener("resize", fit);
+
+    window.__AOMI_VIDEO__ = {
+      duration,
+      seek: render,
+      play() { playing = true; playButton.textContent = "Pause"; },
+      pause() { playing = false; playButton.textContent = "Play"; }
+    };
+    fit();
+    render(0);
+    requestAnimationFrame(tick);
+    window.__AOMI_VIDEO_READY__ = true;
+  </script>
+</body>
+</html>

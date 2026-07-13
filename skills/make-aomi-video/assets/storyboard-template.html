@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aomi Video Storybook</title>
+  <style>
+    :root {
+      --ink: #09090b;
+      --muted: #71717a;
+      --line: #e4e4e7;
+      --paper: #fafafa;
+      --white: #ffffff;
+      --lilac: #d3c2d8;
+      --pink: #df5d90;
+      --sky: #5288c2;
+      --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+      --serif: "PT Serif", ui-serif, Georgia, serif;
+      --mono: "Geist Mono", ui-monospace, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 80px; }
+    header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 36px; }
+    h1 { margin: 0; font-family: var(--serif); font-size: 40px; font-weight: 700; }
+    header p { margin: 0; color: var(--muted); }
+    .shots { display: grid; gap: 44px; }
+    article { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 22px; align-items: start; }
+    .frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--line); background: var(--white); }
+    .frame::before, .frame::after { content: ""; position: absolute; border-radius: 50%; animation: drift 6s ease-in-out infinite alternate; }
+    .frame::before { width: 36%; aspect-ratio: 1; left: 14%; top: 23%; background: var(--lilac); }
+    .frame::after { width: 19%; aspect-ratio: 1; right: 18%; top: 34%; background: var(--sky); animation-delay: -2s; }
+    .frame-content { position: absolute; inset: 0; z-index: 1; display: grid; place-content: center; text-align: center; padding: 8%; }
+    .eyebrow { font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; }
+    .claim { max-width: 720px; margin: 14px 0 0; font-family: var(--serif); font-size: clamp(30px, 4vw, 58px); line-height: 1.05; }
+    aside { border-top: 1px solid var(--line); padding-top: 14px; }
+    aside strong { display: block; font-size: 14px; }
+    aside p { margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    aside code { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+    @keyframes drift { to { transform: translate(28px, -16px) scale(1.08); } }
+    @media (max-width: 780px) {
+      article { grid-template-columns: 1fr; }
+      header { display: block; }
+      header p { margin-top: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Campaign title</h1>
+      <p>Moving storybook · draft 01</p>
+    </header>
+    <section class="shots">
+      <article>
+        <div class="frame">
+          <div class="frame-content">
+            <div class="eyebrow">Opening · 0:00-0:04</div>
+            <div class="claim">State the announcement.</div>
+          </div>
+        </div>
+        <aside>
+          <strong>Beat 1</strong>
+          <p>Describe what enters, changes, or moves. Note unresolved assets or facts here.</p>
+          <p><code>~4 seconds</code></p>
+        </aside>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

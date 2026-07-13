@@ -1,0 +1,4 @@
+interface:
+  display_name: "Make Aomi Video"
+  short_description: "Storyboard, animate, and render Aomi announcement videos"
+  default_prompt: "Create an Aomi announcement video from a concept, reference, or campaign brief."
