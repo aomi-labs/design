@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Somm × aomi — co-branded outro (replace end scene)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Geist:wght@500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#22212e; --navy2:#2b2a38; --coral:#e5544a; --w:#f4f3f6; --muted:#8f8d9c; --line:rgba(255,255,255,.16);
+  --geist:"Geist",system-ui,sans-serif; --mono:"Geist Mono",monospace;
+  --poppins:"Poppins",var(--geist); --serif:"Source Serif 4",Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#131219;color:var(--w);font-family:var(--geist);-webkit-font-smoothing:antialiased;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px 60px}
+.head{width:min(1100px,96vw);display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+.head b{font-family:var(--serif);font-weight:600;font-size:20px;color:#e7e6ec}
+.head .t{font-size:13px;color:#7a7887}
+.head .t i{font-style:normal;color:#cfcdd8}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7a7887;
+  border:1px solid #35343f;background:#1c1b24;padding:4px 10px;border-radius:999px}
+
+#wrap{width:min(1100px,96vw)}
+#stage{position:relative;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;
+  background:radial-gradient(58% 78% at 50% 43%, var(--navy2), var(--navy) 68%);
+  box-shadow:0 14px 44px rgba(0,0,0,.4)}
+
+/* ---- Somm lockup ---- */
+#somm{position:absolute;left:50%;top:43%;transform:translate(-50%,-50%) scale(.94);opacity:0;
+  display:flex;align-items:center;gap:.28em;font-size:clamp(30px,6.6vw,74px);
+  transition:left 1s var(--ease),opacity .7s var(--ease),transform .7s var(--ease)}
+#somm.in{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.split #somm{left:26%}
+.smk{position:relative;width:.96em;height:.96em;overflow:hidden;border-radius:13%;flex:none}
+.smk i{position:absolute;width:50%;height:50%;border-radius:50%;background:var(--coral);transform:translate(-50%,-50%)}
+#somm .wm{font-family:var(--poppins);font-weight:600;letter-spacing:-.01em;color:var(--w);line-height:1}
+
+/* ---- divider ---- */
+#divider{position:absolute;left:50%;top:32%;height:28%;width:1.5px;background:var(--line);
+  transform:translateX(-50%) scaleY(0);transform-origin:center;opacity:0;transition:transform .7s var(--ease),opacity .5s var(--ease)}
+.split #divider{transform:translateX(-50%) scaleY(1);opacity:1}
+
+/* ---- aomi lockup ---- */
+#aomi{position:absolute;left:74%;top:43%;opacity:0;transform:translate(calc(-50% + 66px),-50%);
+  display:flex;align-items:center;gap:.26em;font-size:clamp(28px,6vw,66px);
+  transition:opacity .8s var(--ease),transform .85s var(--ease)}
+.split #aomi{opacity:1;transform:translate(-50%,-50%)}
+#aomi .mk{width:.82em;height:.82em;color:var(--w);flex:none}
+#aomi .wm{font-family:var(--serif);font-weight:600;color:var(--w);line-height:1}
+
+/* ---- welcome ---- */
+#welcome{position:absolute;left:50%;top:62%;transform:translate(-50%,22px);opacity:0;text-align:center;
+  font-family:var(--geist);font-weight:600;font-size:clamp(18px,3.4vw,38px);line-height:1.18;letter-spacing:-.01em;color:var(--w);
+  transition:opacity .7s var(--ease),transform .7s var(--ease)}
+#welcome.in{opacity:1;transform:translate(-50%,0)}
+.split #welcome{opacity:0;transform:translate(-50%,-12px)}
+
+/* ---- powered by ---- */
+#poweredby{position:absolute;left:50%;bottom:15%;transform:translate(-50%,12px);opacity:0;
+  font-family:var(--mono);font-size:clamp(8px,1.3vw,13px);letter-spacing:.26em;text-transform:uppercase;color:var(--muted);
+  transition:opacity .6s var(--ease),transform .6s var(--ease)}
+#poweredby.in{opacity:1;transform:translate(-50%,0)}
+#poweredby b{color:#cfcdd8;font-weight:500}
+
+.rst *{transition:none!important}
+
+/* controls */
+#bar{width:min(1100px,96vw);margin-top:14px;display:flex;align-items:center;gap:10px}
+button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;border:1px solid #35343f;background:#1c1b24;
+  color:#e7e6ec;border-radius:999px;padding:8px 14px;cursor:pointer;transition:border-color .2s}
+button:hover{border-color:#55535f}
+button.primary{background:#e7e6ec;color:#131219;border-color:#e7e6ec}
+.seg{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:#6f6d7b;flex:1}
+#prog{width:min(1100px,96vw);margin-top:10px;height:4px;background:#26252f;border-radius:999px;position:relative;overflow:hidden}
+#prog .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--coral);border-radius:999px}
+
+/* ===== FULL-BLEED for screen recording (edge-to-edge, square corners, no chrome) ===== */
+html,body{margin:0!important;padding:0!important;background:#000!important;overflow:hidden!important;height:100%!important}
+body{display:flex!important;align-items:center!important;justify-content:center!important;min-height:100vh!important}
+.head,#bar,#prog,.legend,.head-mid{display:none!important}
+#stagewrap,#wrap{width:auto!important;max-width:none!important;margin:0!important;display:flex!important}
+#stage{width:min(100vw,177.78vh)!important;height:min(56.25vw,100vh)!important;aspect-ratio:auto!important;
+  border-radius:0!important;border:0!important;box-shadow:none!important;margin:0!important}
+</style>
+</head>
+<body>
+<div class="head">
+  <b>Somm × aomi</b>
+  <span class="head-mid"></span>
+  <span class="eyebrow">outro · ~6s · replaces end scene · loops</span>
+</div>
+
+<div id="wrap">
+<div id="stage">
+  <div id="divider"></div>
+
+  <div id="somm">
+    <div class="smk">
+      <i style="left:0;top:0"></i><i style="left:50%;top:0"></i><i style="left:100%;top:0"></i>
+      <i style="left:0;top:50%"></i><i style="left:50%;top:50%"></i><i style="left:100%;top:50%"></i>
+      <i style="left:0;top:100%"></i><i style="left:50%;top:100%"></i><i style="left:100%;top:100%"></i>
+    </div>
+    <span class="wm">Somm</span>
+  </div>
+
+  <div id="aomi">
+    <svg class="mk" viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <span class="wm">aomi</span>
+  </div>
+
+  <div id="welcome">Welcome to the<br>agentic era for Somm.</div>
+  <div id="poweredby">Somm Finance · <b>powered by aomi.dev</b></div>
+</div>
+</div>
+
+<div id="bar">
+  <button id="playBtn" class="primary">⏸ pause</button>
+  <button id="restartBtn">↻ restart</button>
+  <span class="seg">Somm logo · “Welcome…” flies up · split to Somm | aomi · powered-by emerges</span>
+</div>
+<div id="prog"><div class="fill"></div></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const stage = $('#stage');
+  const EV = [
+    [0.30, () => $('#somm').classList.add('in')],
+    [1.50, () => $('#welcome').classList.add('in')],
+    [3.20, () => stage.classList.add('split')],
+    [4.60, () => $('#poweredby').classList.add('in')],
+  ];
+  const TOTAL = 6.6;
+  let MT = 0, playing = true, last = performance.now(), evIdx = 0;
+  function reset(){
+    stage.classList.add('rst');
+    stage.classList.remove('split');
+    ['#somm','#welcome','#poweredby'].forEach(s=>$(s).classList.remove('in'));
+    evIdx = 0;
+    void stage.offsetWidth;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>stage.classList.remove('rst')));
+  }
+  function frame(now){
+    const dt=(now-last)/1000; last=now;
+    if(playing){
+      MT += dt;
+      if(MT >= TOTAL){ MT = 0; reset(); }
+      while(evIdx < EV.length && EV[evIdx][0] <= MT){ EV[evIdx][1](); evIdx++; }
+      $('#prog .fill').style.width = (MT/TOTAL*100)+'%';
+    }
+    requestAnimationFrame(frame);
+  }
+  $('#playBtn').onclick=()=>{playing=!playing; $('#playBtn').textContent=playing?'⏸ pause':'▶ play';};
+  $('#restartBtn').onclick=()=>{ MT=0; reset(); };
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

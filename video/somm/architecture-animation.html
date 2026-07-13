@@ -318,6 +318,22 @@ button.primary{background:var(--ink);color:var(--w);border-color:var(--ink)}
 .legend{width:min(1200px,96vw);margin-top:18px;font-size:13px;color:var(--c500);line-height:1.6}
 .legend b{color:var(--ink);font-weight:500}
 .noanim *,.noanim *::before,.noanim *::after{transition:none!important;animation-duration:0s!important}
+
+/* ---------- export button + REC status ---------- */
+#exportBtn{display:inline-flex;align-items:center;gap:6px}
+#exportBtn.rec{background:var(--somm);border-color:var(--somm);color:#fff}
+#exStatus{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--c500);min-width:74px}
+#exStatus.on{color:var(--somm)}
+
+/* ---------- export CAPTURE MODE: temporarily full-bleed while recording ----------
+   The rounded frame is kept for editing; clicking Export flips to edge-to-edge,
+   square-corner, no-chrome full-bleed for the duration of the recording, then reverts. */
+html.exporting,html.exporting body{margin:0!important;padding:0!important;background:#000!important;overflow:hidden!important;height:100%!important}
+html.exporting body{display:flex!important;align-items:center!important;justify-content:center!important;min-height:100vh!important}
+html.exporting .head,html.exporting #bar,html.exporting #prog,html.exporting .legend,html.exporting .head-mid{display:none!important}
+html.exporting #stagewrap{width:auto!important;max-width:none!important;margin:0!important;display:flex!important}
+html.exporting #stage{width:min(100vw,177.78vh)!important;height:min(56.25vw,100vh)!important;aspect-ratio:auto!important;
+  border-radius:0!important;border:0!important;box-shadow:none!important;margin:0!important}
 </style>
 </head>
 <body>
@@ -520,6 +536,8 @@ button.primary{background:var(--ink);color:var(--w);border-color:var(--ink)}
 <div id="bar">
   <button id="playBtn" class="primary">⏸ pause</button>
   <button id="restartBtn">↻ restart</button>
+  <button id="exportBtn" title="Record one clean full-bleed pass and download it. Chrome saves .webm, Safari saves .mp4 — pick “This Tab” when prompted.">⬇ export video</button>
+  <span id="exStatus"></span>
   <div class="beats">
     <button data-b="0" class="active">1 · logo → APIs</button>
     <button data-b="1">2 · app cube</button>
@@ -647,6 +665,73 @@ button.primary{background:var(--ink);color:var(--w);border-color:var(--ink)}
   window.__seek = t => { seek(t); playing = false; $('#playBtn').textContent = '▶ play'; };
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { seek(43); playing = false; }
   requestAnimationFrame(tick);
+
+  /* ---------- in-browser video export (reusable) ----------
+     Records exactly one full-bleed pass of the animation via getDisplayMedia +
+     MediaRecorder and downloads it. Prefers MP4 (H.264) where the browser
+     supports it (Safari), otherwise WebM (Chrome/Firefox). */
+  const exportBtn = $('#exportBtn'), exStatus = $('#exStatus');
+  const setStat = (t, on) => { exStatus.textContent = t || ''; exStatus.classList.toggle('on', !!on); };
+  async function runExport() {
+    const md = navigator.mediaDevices;
+    if (!md || !md.getDisplayMedia || typeof MediaRecorder === 'undefined') {
+      setStat('capture unsupported', true); return;
+    }
+    let stream;
+    try {
+      stream = await md.getDisplayMedia({
+        video: { frameRate: 30, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false, preferCurrentTab: true
+      });
+    } catch (e) { setStat('cancelled'); return; }
+
+    const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+    const mime = types.find(t => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || 'video/webm';
+    const ext = mime.indexOf('mp4') >= 0 ? 'mp4' : 'webm';
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12000000 });
+    const chunks = [];
+    rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+
+    const wasPlaying = playing;
+    const cleanup = () => {
+      stream.getTracks().forEach(t => t.stop());
+      document.documentElement.classList.remove('exporting');
+      fit(); exportBtn.classList.remove('rec'); exportBtn.disabled = false;
+      exportBtn.textContent = '⬇ export video';
+      playing = wasPlaying; last = performance.now();
+    };
+    rec.onstop = () => {
+      const blob = new Blob(chunks, { type: mime });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'aomi-architecture-animation.' + ext;
+      document.body.appendChild(a); a.click(); a.remove();
+      setStat('saved .' + ext, true);
+      setTimeout(() => URL.revokeObjectURL(a.href), 6000);
+      cleanup();
+    };
+    // if the user ends sharing from the browser UI, finalize gracefully
+    stream.getVideoTracks()[0].addEventListener('ended', () => { if (rec.state !== 'inactive') rec.stop(); });
+
+    // flip to clean full-bleed, reset to a still first frame
+    exportBtn.disabled = true; exportBtn.classList.add('rec'); exportBtn.textContent = '● recording';
+    document.documentElement.classList.add('exporting');
+    fit(); seek(0); playing = false;
+
+    setTimeout(() => {
+      rec.start();
+      playing = true; last = performance.now();
+      let remain = DUR + 0.6;
+      const clk = () => {
+        if (rec.state === 'inactive') return;
+        remain -= 0.25; setStat('● REC ' + Math.max(0, remain).toFixed(0) + 's', true);
+        if (remain > 0) setTimeout(clk, 250);
+      };
+      clk();
+      setTimeout(() => { if (rec.state !== 'inactive') rec.stop(); }, (DUR + 0.6) * 1000);
+    }, 400);
+  }
+  exportBtn.onclick = runExport;
 })();
 </script>
 </body>
