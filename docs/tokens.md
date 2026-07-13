@@ -18,7 +18,6 @@ Decorative ramps for charts, tints, and accents (not wired to a semantic role by
 - **Pink (rosy)** — `--aomi-pink-{50…950}`, anchored at `#DF5D90` (hue ~336°, a soft rose, not salmon-red).
 - **Sky** — `--aomi-sky-{50…500}`, anchored at `#5288C2` (light blue).
 - **Lilac** — `--aomi-lilac-{50…500}`, `#D3C2D8`.
-- **Purple** — `--aomi-purple-{50…950}`, `#416CAC` (legacy; retained for back-compat and `info`).
 
 ### Neutral ramps
 
@@ -56,10 +55,11 @@ The conversational UI is intentionally black-and-white. Dedicated roles keep it 
 - **Display** — `--aomi-font-display` → PT Serif. Headings and hero copy.
 - **Sans** — `--aomi-font-sans` → Geist. UI and body.
 - **Mono** — `--aomi-font-mono` → Geist Mono. Code, addresses, tx hashes.
+- **Wordmark** — `--aomi-font-wordmark` → Source Serif 4, SemiBold `600`. The "aomi" logo lockup only (`<Logo>`); not for body/headings.
 
 Sizes `--aomi-text-xs … --aomi-text-5xl` (0.75rem → 3.25rem). Weights: regular `400`, medium `500`, bold `700`. Line heights and tracking exposed as `--aomi-leading-*` and `--aomi-tracking-*`.
 
-> Fonts are referenced by name; load PT Serif, Geist, and Geist Mono in the consuming app (e.g. `next/font`, Fontsource, or a `<link>`). The tokens fall back to system serif/sans/mono if a face is missing.
+> Fonts are referenced by name; load PT Serif, Geist, and Geist Mono in the consuming app (e.g. `next/font`, Fontsource, or a `<link>`). Load Source Serif 4 (weight 600) too if you use `<Logo>`. The tokens fall back to system serif/sans/mono if a face is missing.
 
 ## Spacing
 

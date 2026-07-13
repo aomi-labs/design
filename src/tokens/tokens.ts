@@ -21,19 +21,6 @@ export const colors = {
     900: "#642e41",
     950: "#45202e",
   },
-  purple: {
-    50: "#f0f3f8",
-    100: "#e1e7f2",
-    200: "#c2d0e4",
-    300: "#9cb3d4",
-    400: "#6f8fc0",
-    500: "#416cac",
-    600: "#3b6199",
-    700: "#355484",
-    800: "#2d466b",
-    900: "#253752",
-    950: "#1e2a3c",
-  },
   lilac: {
     50: "#f6f3f7",
     100: "#efe9f1",
@@ -41,15 +28,6 @@ export const colors = {
     300: "#d3c2d8",
     400: "#b9a3c1",
     500: "#9c83a8",
-  },
-  /** Coral — variant hero gradient start. */
-  coral: {
-    50: "#fdf4f1",
-    100: "#fbe7e0",
-    200: "#f6cebf",
-    300: "#efaf99",
-    400: "#e6886b",
-    500: "#d96a4b",
   },
   /** Sky — variant light-blue gradient end + tinted card fill. */
   sky: {
@@ -101,6 +79,8 @@ export const fonts = {
   display: '"PT Serif", ui-serif, Georgia, Cambria, serif',
   sans: '"Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   mono: '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+  /** Logo wordmark only — the "aomi" lockup, SemiBold 600. */
+  wordmark: '"Source Serif 4", ui-serif, Georgia, Cambria, serif',
 } as const;
 
 export const fontSizes = {

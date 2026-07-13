@@ -15,7 +15,10 @@ import type { Config } from "tailwindcss";
  *   import "@aomi-labs/design/tokens.css";
  */
 const preset = {
-  darkMode: ["class", '[data-theme="dark"]'],
+  // Activate `dark:` utilities under either a `.dark` class or a
+  // `[data-theme="dark"]` attribute — mirroring how tokens.css scopes the
+  // dark CSS variables, so variant utilities and token overrides stay in sync.
+  darkMode: ["variant", [".dark &", '[data-theme="dark"] &']],
   theme: {
     extend: {
       colors: {
@@ -32,19 +35,6 @@ const preset = {
           900: "var(--aomi-pink-900)",
           950: "var(--aomi-pink-950)",
         },
-        purple: {
-          50: "var(--aomi-purple-50)",
-          100: "var(--aomi-purple-100)",
-          200: "var(--aomi-purple-200)",
-          300: "var(--aomi-purple-300)",
-          400: "var(--aomi-purple-400)",
-          500: "var(--aomi-purple-500)",
-          600: "var(--aomi-purple-600)",
-          700: "var(--aomi-purple-700)",
-          800: "var(--aomi-purple-800)",
-          900: "var(--aomi-purple-900)",
-          950: "var(--aomi-purple-950)",
-        },
         lilac: {
           50: "var(--aomi-lilac-50)",
           100: "var(--aomi-lilac-100)",
@@ -52,14 +42,6 @@ const preset = {
           300: "var(--aomi-lilac-300)",
           400: "var(--aomi-lilac-400)",
           500: "var(--aomi-lilac-500)",
-        },
-        coral: {
-          50: "var(--aomi-coral-50)",
-          100: "var(--aomi-coral-100)",
-          200: "var(--aomi-coral-200)",
-          300: "var(--aomi-coral-300)",
-          400: "var(--aomi-coral-400)",
-          500: "var(--aomi-coral-500)",
         },
         sky: {
           50: "var(--aomi-sky-50)",
@@ -121,6 +103,7 @@ const preset = {
         display: "var(--aomi-font-display)",
         sans: "var(--aomi-font-sans)",
         mono: "var(--aomi-font-mono)",
+        wordmark: "var(--aomi-font-wordmark)",
       },
       fontSize: {
         xs: "var(--aomi-text-xs)",

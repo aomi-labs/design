@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 import {
   Badge,
+  Brandmark,
+  Logo,
   Button,
   Card,
   CardContent,
@@ -79,11 +82,43 @@ const NET_ICON = ["M12 2 6 12l6 4 6-4Z", "M12 16v6"];
 const AUTO_ICON = ["M12 3v18", "M3 12h18", "m6 6 12 12", "m18 6-12 12"];
 const APP_ICON = ["M3 3h7v7H3z", "M14 3h7v7h-7z", "M14 14h7v7h-7z", "M3 14h7v7H3z"];
 const CHEVRON = ["m6 9 6 6 6-6"];
+// Theme toggle glyphs (lucide): moon (→ go dark), sun (→ go light).
+const MOON_ICON = ["M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"];
+const SUN_ICON = [
+  "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z",
+  "M12 2v2",
+  "M12 20v2",
+  "M4.9 4.9l1.4 1.4",
+  "M17.7 17.7l1.4 1.4",
+  "M2 12h2",
+  "M20 12h2",
+  "M4.9 19.1l1.4-1.4",
+  "M17.7 6.3l1.4-1.4",
+];
+
+/** Fixed top-right dark-mode switch — toggles `.dark` on <html>. */
+function ThemeToggle() {
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+  }, [dark]);
+  return (
+    <button
+      type="button"
+      onClick={() => setDark((v) => !v)}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-pressed={dark}
+      className="fixed right-4 top-4 z-50 inline-flex size-10 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-sm transition-colors hover:bg-bg-subtle"
+    >
+      <Ic d={dark ? SUN_ICON : MOON_ICON} className="size-4" />
+    </button>
+  );
+}
 
 /** A borderless ghost control pill (network / model / app), as in the portal. */
 function CtrlPill({ icon, label }: { icon: string[]; label: string }) {
   return (
-    <span className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs text-cool-500">
+    <span className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs text-ink-muted">
       <Ic d={icon} className="size-3 opacity-60" />
       <span className="truncate">{label}</span>
       <Ic d={CHEVRON} className="size-3 opacity-50" />
@@ -116,10 +151,6 @@ const APPS = [
   },
 ];
 
-// Pink → blue hero gradient — the signature landing backdrop.
-const HERO_GRADIENT =
-  "linear-gradient(135deg, var(--aomi-pink-100) 0%, var(--aomi-cool-100) 45%, var(--aomi-sky-500) 100%)";
-
 /**
  * Static, non-interactive recreation of the aomi.dev hero — the chat composer
  * and the agentic-app cards. The visual target the design system calibrates to.
@@ -136,11 +167,11 @@ function LandingReference() {
         </span>
       </div>
 
-      {/* Always-light mirror, fixed cool-* colors. */}
-      <div className="flex flex-col gap-6 rounded-2xl bg-cool-0 p-6">
-        {/* Hero panel: frosted composer over the pink → blue backdrop. */}
-        <div className="rounded-2xl p-8" style={{ background: HERO_GRADIENT }}>
-          <div className="mx-auto max-w-2xl rounded-2xl bg-cool-0 p-4 shadow-lg">
+      {/* Themed mirror — flips with the page via semantic tokens. */}
+      <div className="flex flex-col gap-6 rounded-2xl border border-border bg-surface p-6">
+        {/* Hero panel: frosted composer over the pink → blue backdrop (dimmed in dark). */}
+        <div className="rounded-2xl bg-[linear-gradient(135deg,var(--aomi-pink-100)_0%,var(--aomi-cool-100)_45%,var(--aomi-sky-500)_100%)] p-8 dark:bg-[linear-gradient(135deg,var(--aomi-pink-900)_0%,var(--aomi-cool-900)_45%,var(--aomi-sky-500)_100%)]">
+          <div className="mx-auto max-w-2xl rounded-2xl bg-surface p-4 shadow-lg">
             {/* The composer */}
             <div className="flex flex-col gap-3 rounded-composer border border-[var(--aomi-composer-border)] bg-[var(--aomi-composer-bg)] p-3 backdrop-blur-glass">
               {/* 2×2 suggestion grid */}
@@ -148,34 +179,34 @@ function LandingReference() {
                 {SUGGESTIONS.map((s) => (
                   <div
                     key={s.title}
-                    className="rounded-xl border border-cool-200 bg-cool-50 px-4 py-3"
+                    className="rounded-xl border border-border bg-bg-subtle px-4 py-3"
                   >
-                    <div className="text-[13px] font-medium text-cool-950">
+                    <div className="text-[13px] font-medium text-ink">
                       {s.title}
                     </div>
-                    <div className="text-[12px] text-cool-500">{s.sub}</div>
+                    <div className="text-[12px] text-ink-muted">{s.sub}</div>
                   </div>
                 ))}
               </div>
 
               {/* Input line (static placeholder) */}
-              <div className="px-2 pt-1 text-[15px] text-cool-500">
+              <div className="px-2 pt-1 text-[15px] text-ink-muted">
                 Send a message…
               </div>
 
-              {/* Toolbar: selects + circular dark send */}
+              {/* Toolbar: selects + circular send */}
               <div className="flex items-center gap-2 px-1">
                 {["ETH · Solana Mainnet", "Auto", "All Apps"].map((label) => (
                   <span
                     key={label}
-                    className="inline-flex items-center gap-1 rounded-pill border border-cool-200 px-3 py-1 text-[13px] text-cool-950"
+                    className="inline-flex items-center gap-1 rounded-pill border border-border px-3 py-1 text-[13px] text-ink"
                   >
                     {label}
-                    <span className="text-cool-500">⌄</span>
+                    <span className="text-ink-muted">⌄</span>
                   </span>
                 ))}
                 <span
-                  className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-pill bg-cool-950 text-cool-0"
+                  className="ml-auto inline-flex h-9 w-9 items-center justify-center rounded-pill bg-primary text-[var(--aomi-text-on-brand)]"
                   aria-hidden="true"
                 >
                   <SendArrow />
@@ -185,10 +216,10 @@ function LandingReference() {
 
             {/* Dashed connect affordances */}
             <div className="mt-4 flex gap-2">
-              <span className="rounded-pill border border-dashed border-cool-200 bg-cool-50 px-5 py-2 text-[13px] font-medium text-cool-500">
+              <span className="rounded-pill border border-dashed border-border bg-bg-subtle px-5 py-2 text-[13px] font-medium text-ink-muted">
                 EVM Connect
               </span>
-              <span className="rounded-pill border border-dashed border-cool-200 bg-cool-50 px-5 py-2 text-[13px] font-medium text-cool-500">
+              <span className="rounded-pill border border-dashed border-border bg-bg-subtle px-5 py-2 text-[13px] font-medium text-ink-muted">
                 SOL Connect
               </span>
             </div>
@@ -200,15 +231,15 @@ function LandingReference() {
           <Badge
             variant="eyebrow"
             size="md"
-            className="border-cool-200 text-cool-500"
+            className="border-border text-ink-muted"
           >
             Apps
           </Badge>
-          <h2 className="mt-3 font-display text-4xl font-normal tracking-tight text-cool-950">
+          <h2 className="mt-3 font-display text-4xl font-normal tracking-tight text-ink">
             Explore an ecosystem of{" "}
             <span className="italic">Agentic Applications</span>
           </h2>
-          <p className="mt-1 text-cool-500">
+          <p className="mt-1 text-ink-muted">
             Transact on the Aomi Apps built by our team and community
           </p>
         </div>
@@ -219,7 +250,9 @@ function LandingReference() {
             <Card
               key={app.name}
               variant={i % 2 === 1 ? "tinted" : "flat"}
-              className={i % 2 === 1 ? "bg-pink-200" : undefined}
+              className={
+                i % 2 === 1 ? "bg-pink-200 dark:bg-pink-900" : "dark:bg-surface"
+              }
               radius="2xl"
               padding="lg"
             >
@@ -227,10 +260,10 @@ function LandingReference() {
                 <Badge variant="solid">{app.tag}</Badge>
                 <Badge variant="success">Open access</Badge>
               </div>
-              <h3 className="mt-4 font-display text-2xl font-normal tracking-tight text-cool-950">
+              <h3 className="mt-4 font-display text-2xl font-normal tracking-tight text-ink">
                 {app.name}
               </h3>
-              <p className="mt-2 text-sm text-cool-500">{app.desc}</p>
+              <p className="mt-2 text-sm text-ink-muted">{app.desc}</p>
             </Card>
           ))}
         </div>
@@ -241,16 +274,53 @@ function LandingReference() {
 
 export function App() {
   return (
-    <main className="min-h-screen bg-bg px-6 py-12">
+    <main className="min-h-screen bg-bg px-6 py-12 text-[var(--aomi-text)]">
+      <ThemeToggle />
       <div className="mx-auto flex max-w-3xl flex-col gap-8">
-        <header>
-          <h1 className="font-display text-4xl font-normal tracking-tight">
-            Aomi design system
-          </h1>
-          <p className="mt-1 text-ink-muted">
-            One prompt away from action — token + component playground.
-          </p>
+        <header className="flex flex-col gap-3">
+          <Logo size={40} />
+          <div>
+            <h1 className="font-display text-4xl font-normal tracking-tight">
+              Aomi design system
+            </h1>
+            <p className="mt-1 text-ink-muted">
+              One prompt away from action — token + component playground.
+            </p>
+          </div>
         </header>
+
+        <Section title="Brand">
+          <div className="flex flex-col gap-6">
+            {/* Logo lockup — Source Serif 4 SemiBold. Swatches stay fixed
+                light/ink in both themes; each pins its own logo color. */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex items-center justify-center rounded-2xl border border-cool-200 bg-cool-0 px-8 py-10 text-cool-950">
+                <Logo size={44} />
+              </div>
+              <div className="flex items-center justify-center rounded-2xl border border-cool-800 bg-cool-950 px-8 py-10 text-cool-0">
+                <Logo size={44} />
+              </div>
+            </div>
+            {/* Company signature — "aomi labs" lockup, light + ink */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex items-center justify-center rounded-2xl border border-cool-200 bg-cool-0 px-8 py-10 text-cool-950">
+                <Logo size={44} text="aomi labs" />
+              </div>
+              <div className="flex items-center justify-center rounded-2xl border border-cool-800 bg-cool-950 px-8 py-10 text-cool-0">
+                <Logo size={44} text="aomi labs" />
+              </div>
+            </div>
+            {/* Mark-only, size ramp — inherits the themed text color */}
+            <div className="flex flex-wrap items-end gap-8">
+              {[24, 32, 48, 72].map((s) => (
+                <div key={s} className="flex flex-col items-center gap-2">
+                  <Brandmark size={s} title="Aomi" />
+                  <span className="text-xs text-ink-muted">{s}px</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
 
         <LandingReference />
 
@@ -339,13 +409,13 @@ export function App() {
         <Section title="Chat surface">
           {/* Portal chat — empty/welcome state: centered greeting, icon
               suggestions, clean composer. Monochrome, mirrors apps/portal. */}
-          <div className="mx-auto flex h-[540px] w-full flex-col overflow-hidden rounded-2xl border border-cool-200 bg-cool-0">
+          <div className="mx-auto flex h-[540px] w-full flex-col overflow-hidden rounded-2xl border border-border bg-surface">
             <div className="flex flex-1 flex-col items-center justify-center px-4">
               <div className="w-full max-w-xl px-4">
-                <div className="text-2xl font-medium text-cool-600">
+                <div className="text-2xl font-medium text-[var(--aomi-welcome-title)]">
                   Hello there!
                 </div>
-                <div className="text-2xl text-cool-400">
+                <div className="text-2xl text-[var(--aomi-welcome-subtitle)]">
                   How can I help you today?
                 </div>
               </div>
@@ -353,16 +423,16 @@ export function App() {
                 {SUGGESTIONS.map((s, i) => (
                   <div
                     key={s.title}
-                    className="group flex w-full flex-col items-start gap-0.5 rounded-2xl border border-cool-200 px-4 py-3 text-left transition-colors hover:bg-cool-100"
+                    className="group flex w-full flex-col items-start gap-0.5 rounded-2xl border border-border px-4 py-3 text-left transition-colors hover:bg-bg-subtle"
                   >
-                    <span className="flex items-start gap-2 text-sm leading-tight text-cool-950">
+                    <span className="flex items-start gap-2 text-sm leading-tight text-ink">
                       <Ic
                         d={SUGGESTION_ICONS[i]}
-                        className="mt-0.5 size-3.5 shrink-0 text-cool-400 transition-colors group-hover:text-cool-950"
+                        className="mt-0.5 size-3.5 shrink-0 text-ink-subtle transition-colors group-hover:text-ink"
                       />
                       <span>{s.title}</span>
                     </span>
-                    <span className="ml-[22px] text-xs leading-tight text-cool-500">
+                    <span className="ml-[22px] text-xs leading-tight text-ink-muted">
                       {s.sub}
                     </span>
                   </div>
@@ -371,8 +441,8 @@ export function App() {
             </div>
 
             <div className="mx-auto w-full max-w-xl px-3 pb-4">
-              <div className="flex flex-col rounded-composer border border-cool-200 bg-cool-50 px-1 pt-2">
-                <div className="ml-3 mt-1 px-3.5 pb-2 pt-1.5 text-sm text-cool-400">
+              <div className="flex flex-col rounded-composer border border-border bg-[var(--aomi-chat-composer-bg)] px-1 pt-2">
+                <div className="ml-3 mt-1 px-3.5 pb-2 pt-1.5 text-sm text-ink-subtle">
                   Send a message…
                 </div>
                 <div className="mx-1 mb-3 mt-2 flex min-h-[38px] items-center gap-1">
@@ -382,7 +452,7 @@ export function App() {
                     <CtrlPill icon={APP_ICON} label="All Apps" />
                   </div>
                   <span
-                    className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-cool-950 text-cool-0"
+                    className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-primary text-[var(--aomi-text-on-brand)]"
                     aria-hidden="true"
                   >
                     <SendArrow />
@@ -403,7 +473,7 @@ export function App() {
               ] as const
             ).map(([ramp, steps]) => (
               <div key={ramp} className="flex items-center gap-3">
-                <span className="w-12 shrink-0 text-xs text-cool-500">
+                <span className="w-12 shrink-0 text-xs text-ink-muted">
                   {ramp}
                 </span>
                 <div className="flex flex-1 gap-1">

@@ -6,7 +6,7 @@
  *
  * Brand: ink #09090B (primary) · lilac #D3C2D8 (accent) · cool/pure-white
  *   surface. Pink (rosy #DF5D90) and sky #5288C2 are decorative accent ramps;
- *   the warm paper + pink/purple ramps below are legacy (charts / back-compat).
+ *   the warm paper ramp below is legacy (charts / back-compat).
  * Fonts: PT Serif (display) · Geist (body) · Geist Mono (code)
  */
 
@@ -26,18 +26,6 @@
     --aomi-pink-900: #642e41;
     --aomi-pink-950: #45202e;
 
-    --aomi-purple-50: #f0f3f8;
-    --aomi-purple-100: #e1e7f2;
-    --aomi-purple-200: #c2d0e4;
-    --aomi-purple-300: #9cb3d4;
-    --aomi-purple-400: #6f8fc0;
-    --aomi-purple-500: #416cac;
-    --aomi-purple-600: #3b6199;
-    --aomi-purple-700: #355484;
-    --aomi-purple-800: #2d466b;
-    --aomi-purple-900: #253752;
-    --aomi-purple-950: #1e2a3c;
-
     /* ---- Lilac ramp (landing accent — soft mauve cards/badges) ---------- */
     --aomi-lilac-50: #f6f3f7;
     --aomi-lilac-100: #efe9f1;
@@ -47,13 +35,6 @@
     --aomi-lilac-500: #9c83a8;
 
     /* ---- Variant accent ramps (brand explorations) --------------------- */
-    /* Coral — warm hero gradient start. */
-    --aomi-coral-50: #fdf4f1;
-    --aomi-coral-100: #fbe7e0;
-    --aomi-coral-200: #f6cebf;
-    --aomi-coral-300: #efaf99;
-    --aomi-coral-400: #e6886b;
-    --aomi-coral-500: #d96a4b;
     /* Sky — light-blue gradient end + tinted card fill. */
     --aomi-sky-50: #f1f7fc;
     --aomi-sky-100: #e2eef8;
@@ -106,6 +87,9 @@
       "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --aomi-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo,
       Consolas, monospace;
+    /* Logo wordmark only — the "aomi" lockup, set in SemiBold 600.
+       Load "Source Serif 4" (weight 600) at the app root when using <Logo>. */
+    --aomi-font-wordmark: "Source Serif 4", ui-serif, Georgia, Cambria, serif;
 
     --aomi-text-xs: 0.75rem;
     --aomi-text-sm: 0.875rem;
@@ -200,7 +184,7 @@
 
     --aomi-ring: var(--aomi-cool-400);
 
-    /* Pink/purple remain available as brand ramps for charts & accents. */
+    /* Pink remains available as a brand ramp for charts & accents. */
 
     /* Chat surface — mirrors the portal (assistant-ui / shadcn zinc).
        User turn: light "muted" bubble with dark text. Assistant turn: no

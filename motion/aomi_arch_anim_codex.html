@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Somm on Aomi — architecture film</title>
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=PT+Serif:wght@400;700&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #09090b;
+      --ink-2: #27272a;
+      --muted: #71717a;
+      --subtle: #a1a1aa;
+      --line: #d4d4d8;
+      --soft: #f4f4f5;
+      --white: #fff;
+      --blue: #416cac;
+      --blue-2: #6f8fc0;
+      --tint: #e1e7f2;
+      --tint-2: #eef2f8;
+      --somm: #ff5f57;
+      --somm-dark: #252432;
+      --green: #2e9e6b;
+      --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+      --mono: "Geist Mono", ui-monospace, monospace;
+      --serif: "PT Serif", Georgia, serif;
+      --wordmark: "Source Serif 4", Georgia, serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      background: #f7f7f8;
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .film {
+      width: 100vw;
+      height: 100vh;
+      min-height: 540px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(9, 9, 11, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(9, 9, 11, .025) 1px, transparent 1px),
+        #fff;
+      background-size: 40px 40px;
+    }
+
+    .film::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 120px rgba(65, 108, 172, .07);
+      z-index: 50;
+    }
+
+    .brandbar {
+      position: absolute;
+      z-index: 60;
+      top: 28px;
+      left: 38px;
+      right: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .aomi-lockup { display: inline-flex; align-items: center; gap: 10px; }
+    .aomi-lockup svg { width: 28px; height: 28px; }
+    .aomi-word { font-family: var(--wordmark); font-size: 27px; font-weight: 600; }
+    .film-label {
+      margin-left: 10px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .chapter-label {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.84);
+      backdrop-filter: blur(12px);
+      padding: 8px 14px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      will-change: opacity, transform;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+
+    .scene-title {
+      position: absolute;
+      left: 50%;
+      top: 81.5%;
+      transform: translateX(-50%);
+      width: 80%;
+      text-align: center;
+    }
+    .scene-title h2 {
+      margin: 6px 0 2px;
+      font-family: var(--serif);
+      font-size: clamp(24px, 3vw, 48px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+    .scene-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .05em;
+    }
+
+    /* Somm mark */
+    .somm-lockup { display: inline-flex; align-items: center; gap: 26px; }
+    .somm-word { font-size: 72px; line-height: 1; font-weight: 600; color: var(--ink); }
+    .somm-mark {
+      width: 124px;
+      height: 124px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 7px;
+    }
+    .somm-mark i { display: block; background: var(--somm); }
+    .somm-mark i:nth-child(1) { border-radius: 0 0 100% 0; }
+    .somm-mark i:nth-child(2) { border-radius: 0 0 999px 999px; }
+    .somm-mark i:nth-child(3) { border-radius: 0 0 0 100%; }
+    .somm-mark i:nth-child(4) { border-radius: 0 999px 999px 0; }
+    .somm-mark i:nth-child(5) { border-radius: 999px; }
+    .somm-mark i:nth-child(6) { border-radius: 999px 0 0 999px; }
+    .somm-mark i:nth-child(7) { border-radius: 0 100% 0 0; }
+    .somm-mark i:nth-child(8) { border-radius: 999px 999px 0 0; }
+    .somm-mark i:nth-child(9) { border-radius: 100% 0 0 0; }
+    .somm-mark.small { width: 36px; height: 36px; gap: 2px; }
+
+    /* Beat 1 */
+    #scene-apis .somm-origin {
+      position: absolute;
+      left: 50%;
+      top: 46%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      z-index: 4;
+    }
+    #scene-apis .somm-origin .somm-word { font-size: 28px; }
+    #scene-apis .somm-origin .somm-mark { width: 104px; height: 104px; gap: 6px; }
+    .network-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .orbit, .branch {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 2.2;
+      vector-effect: non-scaling-stroke;
+    }
+    .orbit { stroke: var(--blue); stroke-width: 2.8; }
+    .branch { stroke: #b8b8c0; }
+    .api-chip, .tool-chip {
+      position: absolute;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 8px 24px rgba(9,9,11,.06);
+      padding: 11px 15px;
+      font-family: var(--mono);
+      font-size: 12px;
+      white-space: nowrap;
+      transform: translate(-50%, -50%);
+      will-change: opacity, transform;
+    }
+    .api-chip::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--somm);
+      vertical-align: 1px;
+    }
+    .api-chip .route { margin-left: 7px; color: var(--subtle); font-size: 9px; }
+
+    /* Beat 2 */
+    #scene-package .float-field { position: absolute; inset: 0; }
+    #scene-package .tool-chip {
+      border-color: #9cb3d4;
+      background: #fff;
+      box-shadow: 0 0 0 5px rgba(65,108,172,.08), 0 12px 34px rgba(9,9,11,.08);
+      color: var(--ink);
+    }
+    #scene-package .tool-chip::before {
+      content: "tool";
+      margin-right: 8px;
+      color: var(--blue);
+      font-size: 9px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .prompt-card {
+      position: absolute;
+      left: 50%;
+      top: 66%;
+      width: min(620px, 62vw);
+      transform: translate(-50%, -50%);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 18px 60px rgba(9,9,11,.12);
+      padding: 20px 22px;
+    }
+    .prompt-card .prompt-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 13px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .prompt-copy { font-family: var(--serif); font-size: 23px; line-height: 1.25; }
+    .prompt-caret { color: var(--blue); }
+    .prompt-foot {
+      margin-top: 14px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+    .package-wrap {
+      position: absolute;
+      left: 50%;
+      top: 47%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      perspective: 760px;
+    }
+    .cube {
+      width: 164px;
+      height: 164px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-18deg) rotateY(34deg);
+    }
+    .cube-face { position: absolute; inset: 0; border: 1.5px solid var(--blue); background: rgba(225,231,242,.94); box-shadow: inset 0 0 32px rgba(65,108,172,.06); }
+    .cube-face.front { transform: translateZ(82px); display: grid; place-items: center; }
+    .cube-face.back { transform: rotateY(180deg) translateZ(82px); }
+    .cube-face.right { transform: rotateY(90deg) translateZ(82px); background: #c7d3e7; }
+    .cube-face.left { transform: rotateY(-90deg) translateZ(82px); }
+    .cube-face.top { transform: rotateX(90deg) translateZ(82px); background: #f7f9fc; }
+    .cube-face.bottom { transform: rotateX(-90deg) translateZ(82px); }
+    .cube-logo { display: flex; flex-direction: column; align-items: center; gap: 10px; transform: translateZ(2px); }
+    .cube-logo .somm-mark { width: 58px; height: 58px; gap: 3px; }
+    .cube-logo span { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+    .package-name { text-align: center; }
+    .package-name .kind { color: var(--blue); font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; }
+    .package-name h2 { margin: 5px 0 0; font-family: var(--serif); font-size: 34px; letter-spacing: 0; }
+
+    /* Runtime shared */
+    .runtime-shell {
+      position: absolute;
+      border: 1.5px solid #bbbcc3;
+      border-radius: 44px;
+      background: rgba(250,250,251,.93);
+      box-shadow: 0 26px 80px rgba(9,9,11,.10), inset 0 1px #fff;
+      overflow: hidden;
+    }
+    .runtime-head {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      top: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .runtime-brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 24px; font-weight: 700; }
+    .runtime-brand svg { width: 25px; height: 25px; }
+    .runtime-meta { color: var(--blue); font-family: var(--mono); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; }
+    .app-shelf {
+      position: absolute;
+      left: 5%;
+      right: 5%;
+      top: 16%;
+      height: 29%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4.5%;
+      border-bottom: 1px solid var(--line);
+    }
+    .binary {
+      width: 13%;
+      aspect-ratio: 1;
+      border: 1px solid var(--line);
+      background: #fff;
+      transform: rotate(45deg);
+      box-shadow: 8px 8px 0 var(--soft), 0 12px 28px rgba(9,9,11,.07);
+      position: relative;
+    }
+    .binary::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 150%;
+      transform: translate(-50%,-50%) rotate(-45deg);
+      color: var(--subtle);
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .binary.somm-bin {
+      border-color: var(--somm);
+      background: #fff1ef;
+      box-shadow: 8px 8px 0 #ffd7d3, 0 16px 32px rgba(255,95,87,.12);
+    }
+    .binary.somm-bin::after { color: var(--ink); font-weight: 600; }
+    .core-deck {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 8%;
+      height: 38%;
+      border-radius: 24px;
+      border: 1px solid #9cb3d4;
+      background: linear-gradient(180deg, rgba(238,242,248,.95), rgba(225,231,242,.85));
+      overflow: hidden;
+    }
+    .core-title { position: absolute; left: 24px; top: 18px; }
+    .core-title strong { display: block; font-family: var(--serif); font-size: 22px; }
+    .core-title span { color: var(--blue); font-family: var(--mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+    .pipeline {
+      position: absolute;
+      left: 7%;
+      right: 7%;
+      bottom: 18%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6%;
+      align-items: center;
+    }
+    .pipeline::before {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 50%;
+      height: 1px;
+      background: #9cb3d4;
+    }
+    .pipe-node { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 11px; }
+    .shape { width: 42px; height: 42px; border: 1.5px solid var(--blue); background: #fff; box-shadow: 0 0 0 7px rgba(65,108,172,.08); }
+    .shape.circle { border-radius: 50%; }
+    .shape.diamond { transform: rotate(45deg); }
+    .shape.hex { clip-path: polygon(25% 7%,75% 7%,100% 50%,75% 93%,25% 93%,0 50%); background: var(--blue); }
+    .shape.ring { border-radius: 50%; border-width: 9px; background: transparent; }
+    .pipe-node label { color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
+    .core-link { position: absolute; width: 2px; background: var(--blue); left: 50%; top: 41%; height: 17%; transform-origin: top; }
+
+    /* Beat 3 */
+    #scene-runtime .runtime-shell { left: 11%; top: 12%; width: 78%; height: 64%; }
+    #scene-runtime .incoming-cube { position: absolute; left: 50%; top: 51%; transform: translate(-50%,-50%); }
+    #scene-runtime .incoming-cube { perspective: 640px; }
+    #scene-runtime .incoming-cube .cube { width: 110px; height: 110px; }
+    #scene-runtime .incoming-cube .cube-face.front { transform: translateZ(55px); }
+    #scene-runtime .incoming-cube .cube-face.back { transform: rotateY(180deg) translateZ(55px); }
+    #scene-runtime .incoming-cube .cube-face.right { transform: rotateY(90deg) translateZ(55px); }
+    #scene-runtime .incoming-cube .cube-face.left { transform: rotateY(-90deg) translateZ(55px); }
+    #scene-runtime .incoming-cube .cube-face.top { transform: rotateX(90deg) translateZ(55px); }
+    #scene-runtime .incoming-cube .cube-face.bottom { transform: rotateX(-90deg) translateZ(55px); }
+    #scene-runtime .incoming-cube .somm-mark { width: 42px; height: 42px; }
+
+    /* Beat 4 */
+    #scene-integrations .runtime-shell { left: 6%; top: 23%; width: 42%; height: 52%; border-radius: 34px; }
+    #scene-integrations .runtime-head { left: 24px; right: 24px; top: 20px; }
+    #scene-integrations .runtime-brand { font-size: 20px; }
+    #scene-integrations .runtime-brand svg { width: 21px; height: 21px; }
+    #scene-integrations .mini-apps { position: absolute; top: 24%; left: 10%; right: 10%; display: flex; gap: 7%; justify-content: center; }
+    #scene-integrations .mini-apps i { width: 52px; height: 52px; display: block; transform: rotate(45deg); border: 1px solid var(--line); background: #fff; }
+    #scene-integrations .mini-apps i.hot { border-color: var(--somm); background: #fff1ef; box-shadow: 5px 5px 0 #ffd7d3; }
+    #scene-integrations .mini-core { position: absolute; left: 10%; right: 10%; bottom: 10%; height: 34%; border: 1px solid #9cb3d4; background: var(--tint-2); border-radius: 18px; display: grid; place-items: center; }
+    #scene-integrations .mini-core span { color: var(--blue); font-family: var(--mono); font-size: 9px; letter-spacing: .11em; text-transform: uppercase; }
+    .integration-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .integration-path { fill: none; stroke: #b5b6bd; stroke-width: 2; }
+    .integration-path.hot { stroke: var(--blue); stroke-width: 2.5; }
+    .surface-card {
+      position: absolute;
+      left: 74%;
+      width: 210px;
+      transform: translate(-50%,-50%);
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(9,9,11,.06);
+      padding: 13px 15px;
+    }
+    .surface-card .surface-icon { width: 30px; height: 30px; border-radius: 9px; background: var(--soft); display: grid; place-items: center; color: var(--blue); font-size: 13px; font-weight: 700; }
+    .surface-card strong { display: block; font-size: 13px; }
+    .surface-card span { color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .05em; }
+    .surface-card.frontend { top: 24%; border-color: #9cb3d4; }
+    .surface-card.telegram { top: 39%; }
+    .surface-card.discord { top: 54%; }
+    .surface-card.slack { top: 69%; }
+    .surface-card.more { top: 82%; border-style: dashed; }
+
+    /* Beat 5 */
+    #scene-chat { background: #fff; }
+    .browser-shell {
+      position: absolute;
+      left: 8%;
+      top: 12%;
+      width: 84%;
+      height: 64%;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: #f8f8fa;
+      box-shadow: 0 28px 90px rgba(9,9,11,.13);
+    }
+    .browser-top { height: 54px; border-bottom: 1px solid var(--line); background: #fff; display: flex; align-items: center; padding: 0 20px; gap: 12px; }
+    .browser-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+    .browser-address { margin-left: 12px; color: var(--muted); font-family: var(--mono); font-size: 9px; }
+    .somm-site {
+      position: absolute;
+      left: 0;
+      top: 54px;
+      bottom: 0;
+      width: 44%;
+      padding: 40px;
+      color: #fff;
+      background: var(--somm-dark);
+    }
+    .somm-site .somm-lockup { gap: 12px; }
+    .somm-site .somm-word { color: #fff; font-size: 26px; }
+    .somm-site h2 { margin: 70px 0 16px; max-width: 430px; font-size: 46px; line-height: 1.02; letter-spacing: 0; }
+    .somm-site p { max-width: 390px; color: #b9b8c5; font-size: 15px; line-height: 1.55; }
+    .position-visual { position: absolute; left: 42px; right: 42px; bottom: 48px; height: 84px; display: flex; align-items: flex-end; gap: 8px; }
+    .position-visual i { flex: 1; min-height: 8px; background: var(--somm); border-radius: 5px 5px 0 0; opacity: .82; }
+    .chat-panel { position: absolute; right: 0; top: 54px; bottom: 0; width: 56%; background: #fff; display: flex; flex-direction: column; }
+    .chat-head { height: 68px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+    .agent-id { display: flex; align-items: center; gap: 12px; }
+    .agent-avatar { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: #fff1ef; }
+    .agent-avatar .somm-mark { width: 22px; height: 22px; gap: 1px; }
+    .agent-id strong { display: block; font-size: 13px; }
+    .agent-id span { color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .06em; text-transform: uppercase; }
+    .runtime-badge { border: 1px solid #9cb3d4; border-radius: 999px; padding: 6px 9px; color: var(--blue); font-family: var(--mono); font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
+    .chat-body { flex: 1; min-height: 0; padding: 22px 24px; overflow: hidden; }
+    .user-message { margin-left: auto; max-width: 78%; border-radius: 18px 18px 4px 18px; background: var(--soft); padding: 13px 15px; font-size: 14px; line-height: 1.4; }
+    .assistant-copy { margin-top: 18px; max-width: 86%; font-size: 13px; line-height: 1.5; color: var(--ink-2); }
+    .trace {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .trace-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #fafafa; border-bottom: 1px solid var(--line); }
+    .trace-head strong { font-size: 11px; }
+    .trace-head span { color: var(--muted); font-family: var(--mono); font-size: 8px; text-transform: uppercase; }
+    .trace-list { padding: 5px 12px 7px; }
+    .trace-row { min-height: 30px; display: grid; grid-template-columns: 17px 1fr auto; gap: 8px; align-items: center; color: var(--subtle); font-size: 11px; }
+    .trace-row .state { width: 13px; height: 13px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; font-size: 8px; }
+    .trace-row small { font-family: var(--mono); font-size: 7px; color: var(--subtle); }
+    .trace-row.done { color: var(--ink-2); }
+    .trace-row.done .state { border-color: var(--green); background: var(--green); color: #fff; }
+    .trace-row.active { color: var(--ink); font-weight: 600; }
+    .trace-row.active .state { border: 2px solid var(--blue); border-top-color: transparent; animation: spin .7s linear infinite; }
+    .trace-row.active small { color: var(--blue); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .core-peek { position: absolute; left: 44%; right: 0; bottom: 0; height: 54px; transform: translateY(100%); background: var(--tint); border-top: 1px solid #9cb3d4; display: flex; align-items: center; padding: 0 24px; gap: 18px; }
+    .core-peek strong { font-family: var(--serif); font-size: 15px; }
+    .core-peek .micro-pipe { display: flex; align-items: center; gap: 8px; color: var(--blue); font-family: var(--mono); font-size: 8px; }
+    .micro-node { width: 15px; height: 15px; border: 1px solid var(--blue); background: #fff; transform: rotate(45deg); }
+    .result-card { margin-top: 16px; border: 1px solid #9cb3d4; border-radius: 16px; background: var(--tint-2); padding: 14px; }
+    .result-top { display: flex; justify-content: space-between; align-items: start; }
+    .result-top .route-name { font-family: var(--serif); font-weight: 700; font-size: 17px; }
+    .passed { border-radius: 999px; background: #e4f3ec; color: #217a52; padding: 4px 7px; font-family: var(--mono); font-size: 7px; letter-spacing: .06em; text-transform: uppercase; }
+    .result-grid { margin-top: 11px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .result-grid div { border-top: 1px solid #c6d3e5; padding-top: 7px; }
+    .result-grid span { display: block; color: var(--muted); font-family: var(--mono); font-size: 7px; text-transform: uppercase; }
+    .result-grid strong { display: block; margin-top: 3px; font-size: 11px; }
+
+    /* Beat 6 */
+    #scene-return .runtime-shell { left: 8%; top: 17%; width: 48%; height: 59%; border-radius: 36px; }
+    #scene-return .request-card { position: absolute; right: 7%; top: 38%; width: 270px; border: 1px solid var(--line); border-radius: 18px; background: #fff; padding: 16px; box-shadow: 0 14px 40px rgba(9,9,11,.08); }
+    .request-card .request-label { color: var(--blue); font-family: var(--mono); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; }
+    .request-card strong { display: block; margin-top: 7px; font-family: var(--serif); font-size: 19px; }
+    .request-card span { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; }
+    .return-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #return-path { fill: none; stroke: #9cb3d4; stroke-width: 2.4; }
+    .flow-dot { fill: var(--blue); filter: drop-shadow(0 0 5px rgba(65,108,172,.5)); }
+    .flow-dot.alt { fill: var(--somm); }
+
+    /* Beat 7 */
+    #scene-approval .runtime-shell { left: 6%; top: 18%; width: 42%; height: 58%; border-radius: 34px; }
+    .approval-panel { position: absolute; right: 6%; top: 17%; width: 42%; height: 59%; border: 1px solid var(--line); border-radius: 28px; background: #fff; box-shadow: 0 22px 70px rgba(9,9,11,.1); overflow: hidden; }
+    .approval-head { height: 64px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 22px; }
+    .approval-head strong { font-family: var(--serif); font-size: 20px; }
+    .key-pill { display: flex; align-items: center; gap: 7px; border: 1px solid #9cb3d4; border-radius: 999px; padding: 6px 9px; color: var(--blue); font-family: var(--mono); font-size: 8px; text-transform: uppercase; }
+    .key-icon { width: 13px; height: 13px; border: 2px solid currentColor; border-radius: 50%; position: relative; }
+    .key-icon::after { content: ""; position: absolute; width: 9px; height: 2px; background: currentColor; left: 9px; top: 4px; box-shadow: 5px 3px 0 -0.2px currentColor; }
+    .approval-body { padding: 22px; }
+    .approval-route { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 17px; }
+    .approval-route span { font-family: var(--serif); font-size: 22px; font-weight: 700; }
+    .approval-route b { color: var(--blue); font-size: 22px; }
+    .approval-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px; margin-top: 17px; }
+    .approval-details div { border-radius: 12px; background: var(--soft); padding: 10px; }
+    .approval-details small { display: block; color: var(--muted); font-family: var(--mono); font-size: 7px; text-transform: uppercase; }
+    .approval-details strong { display: block; margin-top: 4px; font-size: 11px; }
+    .approve-button { width: 100%; margin-top: 19px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; padding: 13px; font-weight: 600; font-size: 12px; box-shadow: 0 10px 22px rgba(9,9,11,.18); }
+    .approval-note { margin-top: 11px; text-align: center; color: var(--muted); font-family: var(--mono); font-size: 7px; }
+    .final-lockup { position: absolute; left: 50%; top: 47%; transform: translate(-50%,-50%); text-align: center; }
+    .final-lockup h1 { margin: 15px 0 5px; font-family: var(--serif); font-size: 48px; letter-spacing: 0; }
+    .final-lockup p { margin: 0; color: var(--muted); font-family: var(--mono); font-size: 11px; letter-spacing: .06em; }
+
+    /* Controls */
+    .controls {
+      position: absolute;
+      z-index: 70;
+      left: 38px;
+      right: 38px;
+      bottom: 24px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 18px;
+      transition: opacity .25s ease;
+    }
+    .control-actions { display: flex; gap: 7px; }
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(10px);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+    .icon-button:hover { border-color: var(--blue); color: var(--blue); }
+    .timeline-wrap { display: flex; flex-direction: column; gap: 7px; }
+    .scrubber { width: 100%; height: 3px; appearance: none; background: linear-gradient(90deg,var(--blue) var(--progress,0%),#dddde2 var(--progress,0%)); border-radius: 9px; cursor: pointer; }
+    .scrubber::-webkit-slider-thumb { appearance: none; width: 11px; height: 11px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px rgba(65,108,172,.13); }
+    .beat-row { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
+    .beat-button { border: 0; background: transparent; color: var(--subtle); padding: 0; font-family: var(--mono); font-size: 8px; cursor: pointer; white-space: nowrap; }
+    .beat-button.active { color: var(--blue); font-weight: 600; }
+    .timecode { min-width: 76px; color: var(--muted); text-align: right; font-family: var(--mono); font-size: 10px; }
+    .capture .controls, .capture .brandbar { opacity: 0; pointer-events: none; }
+
+    @media (max-width: 800px) {
+      .film { min-height: 480px; }
+      .brandbar { top: 18px; left: 20px; right: 20px; }
+      .film-label { display: none; }
+      .controls { left: 20px; right: 20px; bottom: 15px; grid-template-columns: auto 1fr; }
+      .timecode { display: none; }
+      .beat-row { display: none; }
+      .scene-title { top: 80%; }
+      .scene-title { width: 92%; }
+      .scene-title h2 { font-size: 24px; }
+      .scene-title p { font-size: 9px; }
+      .api-chip { max-width: 142px; overflow: hidden; text-overflow: ellipsis; padding: 9px 10px; font-size: 9px; }
+      .api-chip .route { display: none; }
+      .api-chip[data-api="1"], .api-chip[data-api="2"], .api-chip[data-api="3"] { left: 24% !important; }
+      .api-chip[data-api="4"], .api-chip[data-api="5"] { left: 76% !important; }
+      #scene-runtime .runtime-shell { left: 4%; width: 92%; }
+      #scene-integrations .surface-card { width: 165px; left: 76%; padding: 10px; }
+      .browser-shell { left: 3%; width: 94%; }
+      .somm-site { display: none; }
+      .chat-panel { left: 0; width: 100%; }
+      .core-peek { left: 0; }
+      #scene-return .request-card { width: 210px; right: 3%; }
+      #scene-approval .runtime-shell { left: 3%; width: 43%; }
+      .approval-panel { right: 3%; width: 48%; }
+      .approval-head, .approval-body { padding-left: 12px; padding-right: 12px; }
+      .approval-head strong { font-size: 15px; }
+      .key-pill { font-size: 6px; }
+      .approval-route span, .approval-route b { font-size: 16px; }
+      .approval-details { gap: 7px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="film" id="film" aria-label="How Somm runs on Aomi animated architecture">
+    <header class="brandbar">
+      <div class="aomi-lockup">
+        <svg viewBox="0 0 362 362" fill="currentColor" aria-hidden="true"><path d="M321.778 94.235c0-29.831-24.183-54.013-54.013-54.013s-54.013 24.182-54.013 54.013 24.183 54.013 54.013 54.013 54.013-24.182 54.013-54.013ZM362 94.235c0 52.044-42.19 94.235-94.235 94.235s-94.235-42.191-94.235-94.235S215.721 0 267.765 0 362 42.19 362 94.235Z"/><path d="M181 0c3.792 0 7.556.116 11.289.346-2.783 2.399-5.456 4.923-8.009 7.564-13.283 12.849-23.611 28.735-29.86 46.541C95.768 66.708 51.714 118.709 51.714 181c0 71.403 57.883 129.286 129.286 129.286 62.292 0 114.291-44.055 126.547-102.706 17.817-6.253 33.712-16.59 46.566-29.885 2.632-2.546 5.148-5.209 7.54-7.985.23 3.734.347 7.498.347 11.29 0 99.964-81.036 181-181 181S0 280.964 0 181 81.036 0 181 0Z"/></svg>
+        <span class="aomi-word">aomi</span>
+        <span class="film-label">Somm Liquidity Manager · architecture film</span>
+      </div>
+      <div class="chapter-label" id="chapter-label">01 · APIs become tools</div>
+    </header>
+
+    <section class="scene" id="scene-apis">
+      <svg class="network-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
+        <circle class="orbit" id="api-orbit" cx="960" cy="500" r="138" />
+        <path class="branch" id="branch-1" d="M 850 416 C 710 300, 530 276, 350 242" />
+        <path class="branch" id="branch-2" d="M 824 498 C 670 488, 515 470, 332 456" />
+        <path class="branch" id="branch-3" d="M 860 590 C 720 688, 560 720, 372 744" />
+        <path class="branch" id="branch-4" d="M 1070 416 C 1225 304, 1410 288, 1580 252" />
+        <path class="branch" id="branch-5" d="M 1096 516 C 1250 540, 1430 586, 1600 650" />
+      </svg>
+      <div class="somm-origin">
+        <div class="somm-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="somm-word">Somm</span>
+      </div>
+      <div class="api-chip" data-api="1" style="left:18.2%;top:22.4%">get_idle_assets <span class="route">GET /portfolio</span></div>
+      <div class="api-chip" data-api="2" style="left:17.3%;top:42.2%">get_risk_snapshot <span class="route">GET /risk</span></div>
+      <div class="api-chip" data-api="3" style="left:19.4%;top:68.8%">assess_position <span class="route">POST /assess</span></div>
+      <div class="api-chip" data-api="4" style="left:82.3%;top:23.3%">get_credit_balance <span class="route">GET /account</span></div>
+      <div class="api-chip" data-api="5" style="left:83.3%;top:60.2%">propose_intent <span class="route">UI / recommendation</span></div>
+      <div class="scene-title"><span class="eyebrow">Somm APIs</span><h2>Product capabilities become callable.</h2><p>five endpoints · grounded in Somm data</p></div>
+    </section>
+
+    <section class="scene" id="scene-package">
+      <div class="float-field">
+        <div class="tool-chip" data-tool="1" style="left:21%;top:28%">get_idle_assets()</div>
+        <div class="tool-chip" data-tool="2" style="left:43%;top:21%">get_risk_snapshot()</div>
+        <div class="tool-chip" data-tool="3" style="left:72%;top:30%">assess_position()</div>
+        <div class="tool-chip" data-tool="4" style="left:24%;top:51%">get_credit_balance()</div>
+        <div class="tool-chip" data-tool="5" style="left:76%;top:54%">propose_intent()</div>
+      </div>
+      <div class="prompt-card" id="prompt-card">
+        <div class="prompt-head"><span>Agent instructions</span><span>system prompt</span></div>
+        <div class="prompt-copy">Find productive routes for idle liquidity. Compare risk, explain the recommendation, and prepare a review.<span class="prompt-caret">|</span></div>
+        <div class="prompt-foot">Somm behavior · guardrails · tool policy</div>
+      </div>
+      <div class="package-wrap" id="package-wrap">
+        <div class="cube">
+          <div class="cube-face front"><div class="cube-logo"><div class="somm-mark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>Somm</span></div></div>
+          <div class="cube-face back"></div><div class="cube-face right"></div><div class="cube-face left"></div><div class="cube-face top"></div><div class="cube-face bottom"></div>
+        </div>
+        <div class="package-name"><div class="kind">Aomi App</div><h2>Somm Liquidity Manager</h2></div>
+      </div>
+      <div class="scene-title"><span class="eyebrow">Tools + prompt + policy</span><h2>Packaged as one Aomi app.</h2><p>portable behavior · isolated binary</p></div>
+    </section>
+
+    <section class="scene" id="scene-runtime">
+      <div class="runtime-shell">
+        <div class="runtime-head"><div class="runtime-brand"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.235c0-29.831-24.183-54.013-54.013-54.013s-54.013 24.182-54.013 54.013 24.183 54.013 54.013 54.013 54.013-24.182 54.013-54.013ZM362 94.235c0 52.044-42.19 94.235-94.235 94.235s-94.235-42.191-94.235-94.235S215.721 0 267.765 0 362 42.19 362 94.235Z"/><path d="M181 0c3.792 0 7.556.116 11.289.346-2.783 2.399-5.456 4.923-8.009 7.564-13.283 12.849-23.611 28.735-29.86 46.541C95.768 66.708 51.714 118.709 51.714 181c0 71.403 57.883 129.286 129.286 129.286 62.292 0 114.291-44.055 126.547-102.706 17.817-6.253 33.712-16.59 46.566-29.885 2.632-2.546 5.148-5.209 7.54-7.985.23 3.734.347 7.498.347 11.29 0 99.964-81.036 181-181 181S0 280.964 0 181 81.036 0 181 0Z"/></svg>aomi runtime</div><div class="runtime-meta">hosted · isolated · online</div></div>
+        <div class="app-shelf"><div class="binary" data-label="market app"></div><div class="binary" data-label="wallet app"></div><div class="binary somm-bin" data-label="Somm liquidity manager"></div><div class="binary" data-label="research app"></div></div>
+        <div class="core-link"></div>
+        <div class="core-deck"><div class="core-title"><strong>Aomi Core</strong><span>universal execution pipeline</span></div><div class="pipeline"><div class="pipe-node"><i class="shape circle"></i><label>plan</label></div><div class="pipe-node"><i class="shape diamond"></i><label>build</label></div><div class="pipe-node"><i class="shape hex"></i><label>simulate</label></div><div class="pipe-node"><i class="shape ring"></i><label>execute</label></div></div></div>
+      </div>
+      <div class="incoming-cube" id="incoming-cube"><div class="cube"><div class="cube-face front"><div class="cube-logo"><div class="somm-mark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div><div class="cube-face back"></div><div class="cube-face right"></div><div class="cube-face left"></div><div class="cube-face top"></div><div class="cube-face bottom"></div></div></div>
+      <div class="scene-title"><span class="eyebrow">Hosted on Aomi</span><h2>One app. A shared execution core.</h2><p>app binaries above · execution infrastructure below</p></div>
+    </section>
+
+    <section class="scene" id="scene-integrations">
+      <div class="runtime-shell"><div class="runtime-head"><div class="runtime-brand"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.235c0-29.831-24.183-54.013-54.013-54.013s-54.013 24.182-54.013 54.013 24.183 54.013 54.013 54.013 54.013-24.182 54.013-54.013ZM362 94.235c0 52.044-42.19 94.235-94.235 94.235s-94.235-42.191-94.235-94.235S215.721 0 267.765 0 362 42.19 362 94.235Z"/><path d="M181 0c3.792 0 7.556.116 11.289.346-2.783 2.399-5.456 4.923-8.009 7.564-13.283 12.849-23.611 28.735-29.86 46.541C95.768 66.708 51.714 118.709 51.714 181c0 71.403 57.883 129.286 129.286 129.286 62.292 0 114.291-44.055 126.547-102.706 17.817-6.253 33.712-16.59 46.566-29.885 2.632-2.546 5.148-5.209 7.54-7.985.23 3.734.347 7.498.347 11.29 0 99.964-81.036 181-181 181S0 280.964 0 181 81.036 0 181 0Z"/></svg>aomi runtime</div><div class="runtime-meta">one app · any surface</div></div><div class="mini-apps"><i></i><i class="hot"></i><i></i></div><div class="mini-core"><span>Aomi Core · universal execution</span></div></div>
+      <svg class="integration-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><path class="integration-path hot" id="integration-trunk" d="M 920 535 C 1080 535, 1120 535, 1215 535"/><path class="integration-path hot" data-integration="1" d="M 1215 535 C 1315 430, 1355 300, 1420 260"/><path class="integration-path" data-integration="2" d="M 1215 535 C 1320 480, 1360 420, 1420 420"/><path class="integration-path" data-integration="3" d="M 1215 535 C 1320 560, 1360 580, 1420 580"/><path class="integration-path" data-integration="4" d="M 1215 535 C 1320 640, 1360 730, 1420 740"/><path class="integration-path" data-integration="5" d="M 1215 535 C 1320 720, 1370 870, 1420 885"/></svg>
+      <div class="surface-card frontend"><div class="surface-icon">W</div><div><strong>Somm frontend</strong><span>web experience</span></div></div>
+      <div class="surface-card telegram"><div class="surface-icon">T</div><div><strong>Telegram</strong><span>bot integration</span></div></div>
+      <div class="surface-card discord"><div class="surface-icon">D</div><div><strong>Discord</strong><span>community agent</span></div></div>
+      <div class="surface-card slack"><div class="surface-icon">S</div><div><strong>Slack</strong><span>workspace integration</span></div></div>
+      <div class="surface-card more"><div class="surface-icon">···</div><div><strong>Any integration</strong><span>iOS · API · more</span></div></div>
+      <div class="scene-title"><span class="eyebrow">Integration layer</span><h2>Build once. Meet users anywhere.</h2><p>web · messaging · mobile · whatever comes next</p></div>
+    </section>
+
+    <section class="scene" id="scene-chat">
+      <div class="browser-shell" id="browser-shell"><div class="browser-top"><i class="browser-dot"></i><i class="browser-dot"></i><i class="browser-dot"></i><span class="browser-address">app.somm.finance / liquidity</span></div><div class="somm-site"><div class="somm-lockup"><div class="somm-mark small"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="somm-word">Somm</span></div><h2>Liquidity that thinks before it moves.</h2><p>Explore positions, compare opportunity, and prepare every move with your agent.</p><div class="position-visual"><i style="height:34%"></i><i style="height:54%"></i><i style="height:43%"></i><i style="height:76%"></i><i style="height:61%"></i><i style="height:89%"></i><i style="height:72%"></i></div></div><div class="chat-panel"><div class="chat-head"><div class="agent-id"><div class="agent-avatar"><div class="somm-mark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div><strong>Somm Liquidity Manager</strong><span>online · powered by aomi</span></div></div><div class="runtime-badge">Aomi App</div></div><div class="chat-body"><div class="user-message" id="user-message">Rebalance my liquidity from EtherFi to Morpho.</div><div class="assistant-copy" id="assistant-copy">I’ll inspect your current position, compare the route, and prepare a transaction for review.</div><div class="trace" id="trace"><div class="trace-head"><strong>Working</strong><span id="trace-status">4 steps</span></div><div class="trace-list"><div class="trace-row" data-trace="0"><i class="state"></i><span>Querying your positions</span><small>portfolio</small></div><div class="trace-row" data-trace="1"><i class="state"></i><span>Comparing risk and yield</span><small>analysis</small></div><div class="trace-row" data-trace="2"><i class="state"></i><span>Building transaction</span><small>Aomi Core</small></div><div class="trace-row" data-trace="3"><i class="state"></i><span>Simulating outcome</span><small>preflight</small></div></div></div><div class="result-card" id="result-card"><div class="result-top"><div><div class="route-name">EtherFi → Morpho</div><small>2,400 weETH · proposed route</small></div><span class="passed">Simulation passed</span></div><div class="result-grid"><div><span>Projected APY</span><strong>+0.9%</strong></div><div><span>Estimated gas</span><strong>$4.82</strong></div><div><span>Risk band</span><strong>A</strong></div></div></div></div><div class="core-peek" id="core-peek"><strong>Aomi Core</strong><div class="micro-pipe"><i class="micro-node"></i><span>PLAN</span>→<i class="micro-node"></i><span>BUILD</span>→<i class="micro-node"></i><span>SIMULATE</span></div></div></div></div>
+      <div class="scene-title"><span class="eyebrow">Inside the Somm experience</span><h2>Simple on the surface. Powerful underneath.</h2><p>clear progress · useful detail · no terminal noise</p></div>
+    </section>
+
+    <section class="scene" id="scene-return">
+      <div class="runtime-shell"><div class="runtime-head"><div class="runtime-brand"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.235c0-29.831-24.183-54.013-54.013-54.013s-54.013 24.182-54.013 54.013 24.183 54.013 54.013 54.013 54.013-24.182 54.013-54.013ZM362 94.235c0 52.044-42.19 94.235-94.235 94.235s-94.235-42.191-94.235-94.235S215.721 0 267.765 0 362 42.19 362 94.235Z"/><path d="M181 0c3.792 0 7.556.116 11.289.346-2.783 2.399-5.456 4.923-8.009 7.564-13.283 12.849-23.611 28.735-29.86 46.541C95.768 66.708 51.714 118.709 51.714 181c0 71.403 57.883 129.286 129.286 129.286 62.292 0 114.291-44.055 126.547-102.706 17.817-6.253 33.712-16.59 46.566-29.885 2.632-2.546 5.148-5.209 7.54-7.985.23 3.734.347 7.498.347 11.29 0 99.964-81.036 181-181 181S0 280.964 0 181 81.036 0 181 0Z"/></svg>aomi runtime</div><div class="runtime-meta">request received</div></div><div class="app-shelf"><div class="binary" data-label="market app"></div><div class="binary somm-bin" data-label="Somm liquidity manager"></div><div class="binary" data-label="research app"></div></div><div class="core-link"></div><div class="core-deck"><div class="core-title"><strong>Aomi Core</strong><span>building + simulating</span></div><div class="pipeline"><div class="pipe-node"><i class="shape circle"></i><label>plan</label></div><div class="pipe-node"><i class="shape diamond"></i><label>build</label></div><div class="pipe-node"><i class="shape hex"></i><label>simulate</label></div><div class="pipe-node"><i class="shape ring"></i><label>review</label></div></div></div></div>
+      <svg class="return-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none"><path id="return-path" d="M 1660 460 C 1460 430, 1290 475, 1080 520 C 930 552, 830 515, 735 425"/><circle class="flow-dot" r="7"></circle><circle class="flow-dot alt" r="6"></circle><circle class="flow-dot" r="5"></circle><circle class="flow-dot alt" r="4"></circle><circle class="flow-dot" r="6"></circle></svg>
+      <div class="request-card"><div class="request-label">Somm frontend · request</div><strong>Build this transaction</strong><span>EtherFi → Morpho · simulate before approval</span></div>
+      <div class="scene-title"><span class="eyebrow">Execution request</span><h2>The interface asks. Aomi Core does the work.</h2><p>request flows back through the same integration graph</p></div>
+    </section>
+
+    <section class="scene" id="scene-approval">
+      <div class="runtime-shell"><div class="runtime-head"><div class="runtime-brand"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.235c0-29.831-24.183-54.013-54.013-54.013s-54.013 24.182-54.013 54.013 24.183 54.013 54.013 54.013 54.013-24.182 54.013-54.013ZM362 94.235c0 52.044-42.19 94.235-94.235 94.235s-94.235-42.191-94.235-94.235S215.721 0 267.765 0 362 42.19 362 94.235Z"/><path d="M181 0c3.792 0 7.556.116 11.289.346-2.783 2.399-5.456 4.923-8.009 7.564-13.283 12.849-23.611 28.735-29.86 46.541C95.768 66.708 51.714 118.709 51.714 181c0 71.403 57.883 129.286 129.286 129.286 62.292 0 114.291-44.055 126.547-102.706 17.817-6.253 33.712-16.59 46.566-29.885 2.632-2.546 5.148-5.209 7.54-7.985.23 3.734.347 7.498.347 11.29 0 99.964-81.036 181-181 181S0 280.964 0 181 81.036 0 181 0Z"/></svg>aomi runtime</div><div class="runtime-meta">simulation passed</div></div><div class="mini-core" style="position:absolute;left:10%;right:10%;top:23%;height:62%;border:1px solid #9cb3d4;border-radius:18px;background:var(--tint-2);display:grid;place-items:center"><div style="text-align:center"><div style="width:64px;height:64px;margin:auto;border:8px solid var(--blue);border-radius:50%;box-shadow:0 0 0 12px rgba(65,108,172,.08)"></div><strong style="display:block;margin-top:22px;font-family:var(--serif);font-size:22px">Outcome verified</strong><span style="display:block;margin-top:7px;color:var(--blue);font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase">ready for user approval</span></div></div></div>
+      <div class="approval-panel"><div class="approval-head"><strong>Review transaction</strong><span class="key-pill"><i class="key-icon"></i>keys stay with you</span></div><div class="approval-body"><div class="approval-route"><span>EtherFi</span><b>→</b><span>Morpho</span></div><div class="approval-details"><div><small>Asset</small><strong>2,400 weETH</strong></div><div><small>Expected APY</small><strong>+0.9%</strong></div><div><small>Simulation</small><strong style="color:var(--green)">Passed</strong></div><div><small>Approvals</small><strong>1 required</strong></div></div><button class="approve-button" type="button">Approve in wallet</button><div class="approval-note">Aomi never holds or moves your keys</div></div></div>
+      <div class="final-lockup" id="final-lockup"><div class="aomi-lockup" style="justify-content:center"><svg viewBox="0 0 362 362" fill="currentColor" style="width:46px;height:46px"><path d="M321.778 94.235c0-29.831-24.183-54.013-54.013-54.013s-54.013 24.182-54.013 54.013 24.183 54.013 54.013 54.013 54.013-24.182 54.013-54.013ZM362 94.235c0 52.044-42.19 94.235-94.235 94.235s-94.235-42.191-94.235-94.235S215.721 0 267.765 0 362 42.19 362 94.235Z"/><path d="M181 0c3.792 0 7.556.116 11.289.346-2.783 2.399-5.456 4.923-8.009 7.564-13.283 12.849-23.611 28.735-29.86 46.541C95.768 66.708 51.714 118.709 51.714 181c0 71.403 57.883 129.286 129.286 129.286 62.292 0 114.291-44.055 126.547-102.706 17.817-6.253 33.712-16.59 46.566-29.885 2.632-2.546 5.148-5.209 7.54-7.985.23 3.734.347 7.498.347 11.29 0 99.964-81.036 181-181 181S0 280.964 0 181 81.036 0 181 0Z"/></svg><span class="aomi-word" style="font-size:44px">aomi</span></div><h1>Somm runs on Aomi.</h1><p>one app · any integration · keys stay with you</p></div>
+    </section>
+
+    <div class="controls" aria-label="Animation controls">
+      <div class="control-actions"><button class="icon-button" id="play-button" type="button" title="Play or pause" aria-label="Play or pause">Ⅱ</button><button class="icon-button" id="restart-button" type="button" title="Restart" aria-label="Restart">↻</button></div>
+      <div class="timeline-wrap"><input class="scrubber" id="scrubber" type="range" min="0" max="66" step="0.01" value="0" aria-label="Animation timeline" /><div class="beat-row" id="beat-row"></div></div>
+      <div class="timecode" id="timecode">00:00 / 01:06</div>
+    </div>
+  </main>
+
+  <script>
+    const duration = 66;
+    const beats = [
+      { start: 0, end: 9, label: "01 · APIs" },
+      { start: 9, end: 19, label: "02 · Package" },
+      { start: 19, end: 29, label: "03 · Runtime" },
+      { start: 29, end: 38, label: "04 · Integrate" },
+      { start: 38, end: 51, label: "05 · Demo" },
+      { start: 51, end: 59, label: "06 · Request" },
+      { start: 59, end: 66, label: "07 · Approve" }
+    ];
+    const chapterNames = [
+      "01 · APIs become tools", "02 · package the app", "03 · hosted runtime",
+      "04 · any integration", "05 · Somm experience", "06 · execution request",
+      "07 · simulate + approve"
+    ];
+    const scenes = ["apis", "package", "runtime", "integrations", "chat", "return", "approval"].map(id => document.getElementById(`scene-${id}`));
+    const film = document.getElementById("film");
+    const scrubber = document.getElementById("scrubber");
+    const playButton = document.getElementById("play-button");
+    const restartButton = document.getElementById("restart-button");
+    const timecode = document.getElementById("timecode");
+    const chapterLabel = document.getElementById("chapter-label");
+    const beatRow = document.getElementById("beat-row");
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const query = new URLSearchParams(location.search);
+    let current = Math.max(0, Math.min(duration, Number(query.get("t")) || 0));
+    let playing = !reduceMotion && query.get("paused") !== "1";
+    let lastFrame = performance.now();
+
+    if (query.get("capture") === "1") film.classList.add("capture");
+
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const mix = (a, b, p) => a + (b - a) * p;
+    const ease = p => { p = clamp(p); return p * p * (3 - 2 * p); };
+    const phase = (t, a, b) => clamp((t - a) / (b - a));
+    const fadeWindow = (t, a, b, fade = .65) => Math.min(phase(t, a, a + fade), 1 - phase(t, b - fade, b));
+    const set = (el, styles) => Object.assign(el.style, styles);
+    const fmt = s => `${String(Math.floor(s / 60)).padStart(2,"0")}:${String(Math.floor(s % 60)).padStart(2,"0")}`;
+
+    beats.forEach((beat, index) => {
+      const button = document.createElement("button");
+      button.className = "beat-button";
+      button.type = "button";
+      button.textContent = beat.label;
+      button.addEventListener("click", () => { current = beat.start + .02; playing = true; render(current); });
+      beatRow.append(button);
+    });
+
+    const orbit = document.getElementById("api-orbit");
+    const branches = [...document.querySelectorAll("#scene-apis .branch")];
+    const apiChips = [...document.querySelectorAll(".api-chip")];
+    const tools = [...document.querySelectorAll("#scene-package .tool-chip")];
+    const promptCard = document.getElementById("prompt-card");
+    const packageWrap = document.getElementById("package-wrap");
+    const incomingCube = document.getElementById("incoming-cube");
+    const integrationPaths = [...document.querySelectorAll(".integration-path")];
+    const surfaceCards = [...document.querySelectorAll(".surface-card")];
+    const browserShell = document.getElementById("browser-shell");
+    const userMessage = document.getElementById("user-message");
+    const assistantCopy = document.getElementById("assistant-copy");
+    const trace = document.getElementById("trace");
+    const traceRows = [...document.querySelectorAll(".trace-row")];
+    const resultCard = document.getElementById("result-card");
+    const corePeek = document.getElementById("core-peek");
+    const returnPath = document.getElementById("return-path");
+    const flowDots = [...document.querySelectorAll(".flow-dot")];
+    const approvalPanel = document.querySelector(".approval-panel");
+    const approvalRuntime = document.querySelector("#scene-approval .runtime-shell");
+    const finalLockup = document.getElementById("final-lockup");
+
+    function prepPath(path) {
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = len;
+      return len;
+    }
+    const orbitLength = prepPath(orbit);
+    const branchLengths = branches.map(prepPath);
+    const integrationLengths = integrationPaths.map(prepPath);
+    const returnLength = returnPath.getTotalLength();
+
+    function render(t) {
+      const active = beats.findIndex((b, i) => t >= b.start && (t < b.end || i === beats.length - 1));
+      scenes.forEach((scene, i) => set(scene, { opacity: String(Math.max(0, fadeWindow(t, beats[i].start, beats[i].end, .7))) }));
+      chapterLabel.textContent = chapterNames[Math.max(0, active)];
+      [...beatRow.children].forEach((el, i) => el.classList.toggle("active", i === active));
+
+      /* Beat 1 */
+      const p1 = phase(t, 0, 9);
+      const orbitP = ease(phase(p1, .03, .31));
+      orbit.style.strokeDashoffset = orbitLength * (1 - orbitP);
+      orbit.style.transformOrigin = "960px 500px";
+      orbit.style.transform = `rotate(${p1 * 215}deg)`;
+      branches.forEach((path, i) => {
+        const p = ease(phase(p1, .2 + i * .035, .56 + i * .035));
+        path.style.strokeDashoffset = branchLengths[i] * (1 - p);
+      });
+      apiChips.forEach((chip, i) => {
+        const p = ease(phase(p1, .34 + i * .035, .66 + i * .035));
+        set(chip, { opacity: p, transform: `translate(-50%, -50%) translateY(${(1-p)*14}px) scale(${.9 + .1*p})` });
+      });
+      const originScale = .9 + .1 * ease(phase(p1, 0, .18));
+      set(document.querySelector(".somm-origin"), { transform: `translate(-50%,-50%) scale(${originScale})` });
+
+      /* Beat 2 */
+      const p2 = phase(t, 9, 19);
+      const pack = ease(phase(p2, .57, .83));
+      tools.forEach((tool, i) => {
+        const show = ease(phase(p2, .03 + i*.035, .24 + i*.035));
+        const x = parseFloat(tool.style.left);
+        const y = parseFloat(tool.style.top);
+        const tx = (50 - x) * pack;
+        const ty = (45 - y) * pack;
+        const drift = Math.sin(p2 * 10 + i) * (1-pack) * 5;
+        set(tool, { opacity: String(show * (1-pack)), transform: `translate(-50%,-50%) translate(${tx}vw, ${ty}vh) translateY(${drift}px) scale(${1 - pack*.6})` });
+      });
+      const promptShow = ease(phase(p2, .12, .37));
+      set(promptCard, { opacity: String(promptShow * (1-pack)), transform: `translate(-50%,-50%) translateY(${(1-promptShow)*90 - pack*120}px) scale(${1-pack*.65})` });
+      const cubeShow = ease(phase(p2, .65, .88));
+      set(packageWrap, { opacity: String(cubeShow), transform: `translate(-50%,-50%) scale(${.72 + .28*cubeShow})` });
+      const packageCube = packageWrap.querySelector(".cube");
+      packageCube.style.transform = `rotateX(${-18 + Math.sin(p2*5)*3}deg) rotateY(${34 + Math.sin(p2*Math.PI)*20}deg)`;
+
+      /* Beat 3 */
+      const p3 = phase(t, 19, 29);
+      const fly = ease(phase(p3, .03, .4));
+      const shrink = mix(1.2, .22, fly);
+      set(incomingCube, { opacity: String(1 - ease(phase(p3,.35,.46))), transform: `translate(-50%,-50%) translate(${mix(0, 0, fly)}px, ${mix(150,-245,fly)}px) scale(${shrink})` });
+      const runtimeShell = document.querySelector("#scene-runtime .runtime-shell");
+      set(runtimeShell, { transform: `scale(${.94 + .06*ease(phase(p3,.12,.38))})`, opacity: String(ease(phase(p3,.05,.25))) });
+      const binaries = [...document.querySelectorAll("#scene-runtime .binary")];
+      binaries.forEach((bin,i) => set(bin,{ opacity: String(ease(phase(p3,.28+i*.05,.48+i*.05))), transform: `rotate(45deg) scale(${.75 + .25*ease(phase(p3,.28+i*.05,.48+i*.05))})` }));
+      const coreDeck = document.querySelector("#scene-runtime .core-deck");
+      set(coreDeck,{ opacity: String(ease(phase(p3,.48,.72))), transform:`translateY(${(1-ease(phase(p3,.48,.72)))*22}px)` });
+      document.querySelectorAll("#scene-runtime .shape").forEach((shape,i)=> set(shape,{ transform: `${shape.classList.contains("diamond")?"rotate(45deg) ":""}scale(${.9 + .12*Math.sin(p3*16+i)})` }));
+
+      /* Beat 4 */
+      const p4 = phase(t, 29, 38);
+      integrationPaths.forEach((path,i)=> { const p=ease(phase(p4,.12+i*.045,.55+i*.045)); path.style.strokeDashoffset=integrationLengths[i]*(1-p); });
+      surfaceCards.forEach((card,i)=> { const p=ease(phase(p4,.35+i*.055,.62+i*.055)); set(card,{opacity:String(p),transform:`translate(-50%,-50%) translateX(${(1-p)*30}px)`}); });
+      set(document.querySelector("#scene-integrations .runtime-shell"),{transform:`scale(${.92+.08*ease(phase(p4,0,.22))})`});
+
+      /* Beat 5 */
+      const p5 = phase(t,38,51);
+      const browserIn=ease(phase(p5,0,.16));
+      set(browserShell,{opacity:String(browserIn),transform:`scale(${.92+.08*browserIn}) translateX(${(1-browserIn)*24}px)`});
+      set(userMessage,{opacity:String(ease(phase(p5,.08,.22))),transform:`translateY(${(1-ease(phase(p5,.08,.22)))*12}px)`});
+      set(assistantCopy,{opacity:String(ease(phase(p5,.18,.3))),transform:`translateY(${(1-ease(phase(p5,.18,.3)))*10}px)`});
+      set(trace,{opacity:String(ease(phase(p5,.26,.38))),transform:`translateY(${(1-ease(phase(p5,.26,.38)))*12}px)`});
+      const tracePhase = Math.floor(clamp(phase(p5,.32,.82))*4);
+      traceRows.forEach((row,i)=>{
+        row.classList.toggle("done", i<tracePhase);
+        row.classList.toggle("active", i===tracePhase && tracePhase<4);
+        row.querySelector(".state").textContent=i<tracePhase?"✓":"";
+      });
+      const building = phase(p5,.54,.7);
+      set(corePeek,{transform:`translateY(${100 - ease(phase(building,0,.4))*100}%)`,opacity:String(1-phase(building,.72,1))});
+      const resultIn=ease(phase(p5,.81,.96));
+      set(trace,{height:`${mix(158,42,resultIn)}px`});
+      document.getElementById("trace-status").textContent=resultIn>.45?"complete":"4 steps";
+      trace.querySelector(".trace-head strong").textContent=resultIn>.45?"Completed":"Working";
+      set(resultCard,{opacity:String(resultIn),transform:`translateY(${(1-resultIn)*12}px)`});
+
+      /* Beat 6 */
+      const p6=phase(t,51,59);
+      const requestFade=1-ease(phase(p6,.62,.9));
+      set(document.querySelector("#scene-return .request-card"),{opacity:String(requestFade),transform:`translateX(${-ease(phase(p6,.1,.65))*70}px) scale(${1-ease(phase(p6,.1,.65))*.12})`});
+      flowDots.forEach((dot,i)=>{
+        const pp=(phase(p6,.08,.82)*1.45 - i*.16 + 1)%1;
+        const point=returnPath.getPointAtLength(returnLength*(1-pp));
+        dot.setAttribute("cx",point.x); dot.setAttribute("cy",point.y);
+        dot.style.opacity=String(Math.sin(pp*Math.PI));
+      });
+      document.querySelectorAll("#scene-return .shape").forEach((shape,i)=>{const on=ease(phase(p6,.4+i*.09,.58+i*.09));set(shape,{background:on>.5?(shape.classList.contains("hex")?"var(--blue)":"#fff"):"#fff",boxShadow:`0 0 0 ${7+on*9}px rgba(65,108,172,${.08+on*.08})`,transform:`${shape.classList.contains("diamond")?"rotate(45deg) ":""}scale(${.9+on*.2})`});});
+
+      /* Beat 7 */
+      const p7=phase(t,59,66);
+      const resolve=ease(phase(p7,.05,.28));
+      set(approvalRuntime,{opacity:String(1-ease(phase(p7,.62,.8))),transform:`translateX(${(1-resolve)*-25}px)`});
+      set(approvalPanel,{opacity:String(1-ease(phase(p7,.62,.8))),transform:`translateX(${(1-resolve)*35}px)`});
+      const approvePulse=phase(p7,.35,.62);
+      const approveButton=document.querySelector(".approve-button");
+      set(approveButton,{boxShadow:`0 0 0 ${Math.sin(approvePulse*Math.PI)*10}px rgba(65,108,172,.14), 0 10px 22px rgba(9,9,11,.18)`});
+      const finalIn=ease(phase(p7,.72,.94));
+      set(finalLockup,{opacity:String(finalIn),transform:`translate(-50%,-50%) scale(${.9+.1*finalIn})`});
+
+      scrubber.value=t;
+      scrubber.style.setProperty("--progress",`${t/duration*100}%`);
+      timecode.textContent=`${fmt(t)} / ${fmt(duration)}`;
+      playButton.textContent=playing?"Ⅱ":"▶";
+    }
+
+    function frame(now) {
+      const dt=Math.min(.08,(now-lastFrame)/1000); lastFrame=now;
+      if(playing){current+=dt;if(current>=duration){current=0;}}
+      render(current); requestAnimationFrame(frame);
+    }
+    playButton.addEventListener("click",()=>{playing=!playing;render(current);});
+    restartButton.addEventListener("click",()=>{current=0;playing=true;render(current);});
+    scrubber.addEventListener("input",e=>{current=Number(e.target.value);playing=false;render(current);});
+    addEventListener("keydown",e=>{
+      if(e.code==="Space"){e.preventDefault();playing=!playing;}
+      if(e.key==="ArrowRight"){current=Math.min(duration,current+1);playing=false;}
+      if(e.key==="ArrowLeft"){current=Math.max(0,current-1);playing=false;}
+      if(e.key.toLowerCase()==="r"){current=0;playing=true;}
+      render(current);
+    });
+    render(current); requestAnimationFrame(frame);
+  </script>
+</body>
+</html>

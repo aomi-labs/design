@@ -4,9 +4,16 @@ Photographic / generated brand imagery for Aomi, pulled from the shared Drive (`
 
 ## Layout
 
+- `logo/` — the Aomi brand mark as vector SVG. **Committed.** For in-app use prefer the themeable `<Brandmark />` component (`@aomi-labs/design`), which fills with `currentColor`; use the raw SVG for static/marketing contexts.
 - `brand/` — full-resolution PNG originals (up to 6048×3390, ~135 MB total). **Git-ignored** — keep the masters in Drive; this folder is a local working copy.
 - `optimized/` — web-ready WebP, resized to ≤1920px, quality 80 (~1.9 MB total). **Committed.** Reference these in product and marketing code.
 - `manifest.json` — machine-readable index (id, paths, dimensions, description, suggested usage).
+
+## Logo
+
+| file | what it is |
+|------|-----------|
+| `logo/aomi-mark.svg` | Brand mark — open crescent with a nested "eye" ring, 362×362 viewBox, fill `#050505`. Source: Figma `Aomi-Team-Library` (node `3335-513`). |
 
 ## Images
 
