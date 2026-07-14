@@ -78,13 +78,21 @@ button.primary{background:#e7e6ec;color:#131219;border-color:#e7e6ec}
 #prog{width:min(1100px,96vw);margin-top:10px;height:4px;background:#26252f;border-radius:999px;position:relative;overflow:hidden}
 #prog .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--coral);border-radius:999px}
 
-/* ===== FULL-BLEED for screen recording (edge-to-edge, square corners, no chrome) ===== */
+/* ===== PLAYER: full-bleed frame on top, progress bar + start/pause underneath ===== */
+:root{--ctrlH:92px}
 html,body{margin:0!important;padding:0!important;background:#000!important;overflow:hidden!important;height:100%!important}
-body{display:flex!important;align-items:center!important;justify-content:center!important;min-height:100vh!important}
-.head,#bar,#prog,.legend,.head-mid{display:none!important}
-#stagewrap,#wrap{width:auto!important;max-width:none!important;margin:0!important;display:flex!important}
-#stage{width:min(100vw,177.78vh)!important;height:min(56.25vw,100vh)!important;aspect-ratio:auto!important;
-  border-radius:0!important;border:0!important;box-shadow:none!important;margin:0!important}
+body{display:flex!important;flex-direction:column!important;min-height:100vh!important;align-items:stretch!important}
+.head,.legend,.head-mid{display:none!important}
+#stagewrap,#wrap{order:1!important;flex:1 1 auto!important;width:100%!important;max-width:none!important;min-height:0!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#000!important}
+#stage{width:min(100vw,calc((100vh - var(--ctrlH))*1.77778))!important;height:min(56.25vw,calc(100vh - var(--ctrlH)))!important;aspect-ratio:auto!important;border-radius:0!important;border:0!important;box-shadow:none!important;margin:0!important}
+#prog{order:2!important;display:block!important;width:auto!important;flex:0 0 auto!important;height:6px!important;margin:14px 22px 0!important;background:#26262c!important;border-radius:999px!important;position:relative!important;cursor:pointer!important;touch-action:none!important}
+#prog .fill{background:#416cac!important}
+#prog .tick{background:#3a3a42!important}
+#bar{order:3!important;display:flex!important;align-items:center!important;gap:12px!important;width:100%!important;box-sizing:border-box!important;margin:0!important;padding:14px 20px 18px!important;background:#0b0b0d!important}
+#bar .beats{display:none!important}
+#playBtn,#restartBtn{font-family:var(--mono)!important;font-size:12px!important;letter-spacing:.04em!important;background:#17171b!important;color:#fff!important;border:1px solid #2a2a30!important;border-radius:999px!important;padding:9px 16px!important;cursor:pointer!important;white-space:nowrap!important}
+#playBtn:hover,#restartBtn:hover{border-color:#416cac!important}
+#ptime{margin-left:auto!important;font-family:var(--mono)!important;font-size:11px!important;letter-spacing:.04em!important;color:#8a8a93!important}
 </style>
 </head>
 <body>
@@ -128,6 +136,8 @@ body{display:flex!important;align-items:center!important;justify-content:center!
 (() => {
   const $ = s => document.querySelector(s);
   const stage = $('#stage');
+  const fmt = s => Math.floor(s/60) + ':' + String(Math.floor(s%60)).padStart(2,'0');
+  const pt = document.createElement('span'); pt.id = 'ptime'; { const b = $('#bar'); if (b) b.appendChild(pt); }
   const EV = [
     [0.30, () => $('#somm').classList.add('in')],
     [1.50, () => $('#welcome').classList.add('in')],
@@ -150,12 +160,30 @@ body{display:flex!important;align-items:center!important;justify-content:center!
       MT += dt;
       if(MT >= TOTAL){ MT = 0; reset(); }
       while(evIdx < EV.length && EV[evIdx][0] <= MT){ EV[evIdx][1](); evIdx++; }
-      $('#prog .fill').style.width = (MT/TOTAL*100)+'%';
     }
+    $('#prog .fill').style.width = (MT/TOTAL*100)+'%';
+    if (pt) pt.textContent = fmt(MT) + ' / ' + fmt(TOTAL);
     requestAnimationFrame(frame);
   }
   $('#playBtn').onclick=()=>{playing=!playing; $('#playBtn').textContent=playing?'⏸ pause':'▶ play';};
-  $('#restartBtn').onclick=()=>{ MT=0; reset(); };
+  $('#restartBtn').onclick=()=>{ MT=0; reset(); $('#playBtn').textContent = playing ? '⏸ pause' : '▶ play'; };
+  function seekTo(T){
+    T = Math.max(0, Math.min(TOTAL, T));
+    stage.classList.add('rst');
+    stage.classList.remove('split');
+    ['#somm','#welcome','#poweredby'].forEach(s=>$(s).classList.remove('in'));
+    evIdx = 0; MT = T;
+    while(evIdx < EV.length && EV[evIdx][0] <= MT){ EV[evIdx][1](); evIdx++; }
+    void stage.offsetWidth;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>stage.classList.remove('rst')));
+  }
+  { const prog = $('#prog'); const seekAt = e => { const r = prog.getBoundingClientRect(); seekTo((e.clientX - r.left) / r.width * TOTAL); };
+    let scrub = false;
+    prog.addEventListener('pointerdown', e => { scrub = true; try{prog.setPointerCapture(e.pointerId);}catch(_){} seekAt(e); });
+    prog.addEventListener('pointermove', e => { if (scrub) seekAt(e); });
+    prog.addEventListener('pointerup', () => { scrub = false; });
+    prog.addEventListener('pointercancel', () => { scrub = false; }); }
+  playing = false; seekTo(0); $('#playBtn').textContent = '▶ play';
   requestAnimationFrame(frame);
 })();
 </script>
