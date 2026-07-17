@@ -21,6 +21,7 @@ export const colors = {
     900: "#642e41",
     950: "#45202e",
   },
+  /** @deprecated Retired — use `sky` for accents; kept for back-compat only. */
   lilac: {
     50: "#f6f3f7",
     100: "#efe9f1",
@@ -29,7 +30,7 @@ export const colors = {
     400: "#b9a3c1",
     500: "#9c83a8",
   },
-  /** Sky — variant light-blue gradient end + tinted card fill. */
+  /** Sky — the brand accent: interactive states, selected fills, tints. */
   sky: {
     50: "#f1f7fc",
     100: "#e2eef8",

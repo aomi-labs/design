@@ -11,9 +11,11 @@ const cardVariants = cva(
         glass:
           "bg-[var(--aomi-glass-bg)] border border-[var(--aomi-glass-border)] backdrop-blur-glass shadow-glass",
         outline: "bg-transparent border border-[var(--aomi-border-strong)]",
-        // Landing surfaces — flat (no shadow), cool/lilac fills.
+        // Landing surfaces — flat (no shadow), cool/sky-tinted fills.
         flat: "bg-cool-0 border border-landing-border",
         tinted: "bg-card-tinted",
+        // Decorative pink pop — marketing tiles only, never stateful surfaces.
+        "tinted-pink": "bg-pink-100",
       },
       padding: {
         none: "p-0",

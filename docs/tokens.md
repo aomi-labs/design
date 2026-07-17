@@ -9,15 +9,14 @@ All tokens live in `src/tokens/tokens.css` as CSS custom properties under the `a
 The brand reads **cool, flat, and editorial** (matched against the live aomi.dev landing + portal chat):
 
 - **Ink** is the primary action — near-black `--aomi-cool-950` (`#09090B`), flat. Wired via `--aomi-primary`.
-- **Lilac** is the accent / soft brand pop — `--aomi-lilac-{50…500}`, anchored at `#D3C2D8`. Wired via `--aomi-accent`.
+- **Sky** is the accent — `--aomi-sky-{50…500}`, anchored at `#5288C2`. Wired via `--aomi-accent` (soft tints) and `--aomi-accent-interactive` (`sky-500` — focus rings, links, selected states, accent CTAs).
+- **Pink (rosy)** is the decorative brand pop — `--aomi-pink-{50…950}`, anchored at `#DF5D90` (hue ~336°, a soft rose, not salmon-red). Charts, badges, marketing tiles; never state or action colors.
 
 ### Accent ramps
 
-Decorative ramps for charts, tints, and accents (not wired to a semantic role by default):
-
-- **Pink (rosy)** — `--aomi-pink-{50…950}`, anchored at `#DF5D90` (hue ~336°, a soft rose, not salmon-red).
-- **Sky** — `--aomi-sky-{50…500}`, anchored at `#5288C2` (light blue).
-- **Lilac** — `--aomi-lilac-{50…500}`, `#D3C2D8`.
+- **Sky** — `--aomi-sky-{50…500}`, `#5288C2` — the accent family (see above).
+- **Pink (rosy)** — `--aomi-pink-{50…950}`, `#DF5D90` — decorative only.
+- **Lilac** — `--aomi-lilac-{50…500}`, `#D3C2D8` — **retired**; kept for back-compat, do not use in new work.
 
 ### Neutral ramps
 
@@ -44,6 +43,10 @@ Use these in components rather than raw ramp steps — they flip between light a
 | Strong border | `--aomi-border-strong` | `border-border-strong` |
 | Primary | `--aomi-primary` (+ `-hover`, `-active`, `-subtle`) | `bg-primary` |
 | Accent | `--aomi-accent` (+ `-hover`, `-active`, `-subtle`) | `bg-accent` |
+| Selected bar | `--aomi-accent-selected` / `--aomi-accent-selected-text` | `bg-accent-selected` / `text-accent-selected-text` |
+| Interactive accent | `--aomi-accent-interactive` | `bg-accent-interactive` |
+| Hover on subtle surfaces | `--aomi-state-hover` | `bg-state-hover` |
+| Secondary text | `--aomi-text-secondary` | `text-ink-secondary` |
 | Focus ring | `--aomi-ring` | `ring` |
 
 ### Chat surface (monochrome)

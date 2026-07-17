@@ -13,15 +13,14 @@ The Aomi design system — design tokens and core React components for the agent
 | Token | Value | Use |
 |-------|-------|-----|
 | Primary (ink) | `#09090B` | Primary actions — near-black, flat |
-| Accent (lilac) | `#D3C2D8` | Secondary actions, soft brand pop |
+| Accent (sky) | `#5288C2` | Interactive accent — selected states, focus, links, accent CTAs |
 | Surface | `#FFFFFF` | Cool, pure-white light-mode background |
-| Pink (rosy) | `#DF5D90` | Decorative accent ramp, charts |
-| Sky | `#5288C2` | Light-blue accent ramp |
+| Pink (rosy) | `#DF5D90` | Decorative brand pop — charts, badges, marketing tiles |
 | Display font | PT Serif | Headings, hero copy |
 | Body font | Geist | UI text, body |
 | Mono font | Geist Mono | Code, addresses, hashes |
 
-The look is **cool, flat, and editorial**: fully-rounded pill controls, a near-black "ink" primary, soft lilac/sky accents, large radii, and a cool/pure-white surface (the [aomi.dev](https://aomi.dev) landing look — matched against the live portal chat). The conversational surface is deliberately **monochrome** (a clean black-and-white chat), so brand color stays reserved for actions and accents.
+The look is **cool, flat, and editorial**: fully-rounded pill controls, a near-black "ink" primary, a sky-blue interactive accent with rosy-pink decorative pops, large radii, and a cool/pure-white surface (the [aomi.dev](https://aomi.dev) landing look — matched against the live portal chat). The conversational surface is deliberately **monochrome** (a clean black-and-white chat), so brand color stays reserved for actions and accents. The lilac ramp is retired — sky replaced it as the accent family.
 
 ## Install
 

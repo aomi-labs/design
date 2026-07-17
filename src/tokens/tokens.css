@@ -4,9 +4,10 @@
  * and by raw CSS. Every value is exposed as a CSS custom property so it can
  * be themed at runtime (light / dark) and overridden per surface.
  *
- * Brand: ink #09090B (primary) · lilac #D3C2D8 (accent) · cool/pure-white
- *   surface. Pink (rosy #DF5D90) and sky #5288C2 are decorative accent ramps;
- *   the warm paper ramp below is legacy (charts / back-compat).
+ * Brand: ink #09090B (primary) · sky #5288C2 (accent) · cool/pure-white
+ *   surface. Pink (rosy #DF5D90) is the decorative brand pop (charts, badges,
+ *   marketing tiles); the lilac ramp is retired and the warm paper ramp below
+ *   is legacy (charts / back-compat).
  * Fonts: PT Serif (display) · Geist (body) · Geist Mono (code)
  */
 
@@ -26,7 +27,7 @@
     --aomi-pink-900: #642e41;
     --aomi-pink-950: #45202e;
 
-    /* ---- Lilac ramp (landing accent — soft mauve cards/badges) ---------- */
+    /* ---- Lilac ramp (RETIRED — kept for back-compat only; use sky) ------ */
     --aomi-lilac-50: #f6f3f7;
     --aomi-lilac-100: #efe9f1;
     --aomi-lilac-200: #e3d8e6; /* signature card fill on aomi.dev */
@@ -34,8 +35,8 @@
     --aomi-lilac-400: #b9a3c1;
     --aomi-lilac-500: #9c83a8;
 
-    /* ---- Variant accent ramps (brand explorations) --------------------- */
-    /* Sky — light-blue gradient end + tinted card fill. */
+    /* ---- Accent ramp ---------------------------------------------------- */
+    /* Sky — the brand accent: interactive states, selected fills, tints. */
     --aomi-sky-50: #f1f7fc;
     --aomi-sky-100: #e2eef8;
     --aomi-sky-200: #cfe1f3;
@@ -163,6 +164,8 @@
     --aomi-overlay: rgba(13, 13, 15, 0.45);
 
     --aomi-text: var(--aomi-cool-950);
+    /* Secondary text — nav items, list labels: readable, clearly not primary. */
+    --aomi-text-secondary: var(--aomi-cool-700);
     --aomi-text-muted: var(--aomi-cool-500);
     --aomi-text-subtle: var(--aomi-cool-400);
     --aomi-text-on-brand: var(--aomi-cool-0);
@@ -176,15 +179,21 @@
     --aomi-primary-active: var(--aomi-cool-700);
     --aomi-primary-subtle: var(--aomi-cool-100);
 
-    /* Accent is the soft lilac brand pop. */
-    --aomi-accent: var(--aomi-lilac-300);
-    --aomi-accent-hover: var(--aomi-lilac-400);
-    --aomi-accent-active: var(--aomi-lilac-500);
-    --aomi-accent-subtle: var(--aomi-lilac-100);
+    /* Blue-forward: sky carries the everyday accent; lilac is retired.
+       Pink remains the decorative brand pop (charts, badges, marketing). */
+    --aomi-accent: var(--aomi-sky-300);
+    --aomi-accent-hover: var(--aomi-sky-400);
+    --aomi-accent-active: var(--aomi-sky-500);
+    --aomi-accent-subtle: var(--aomi-sky-100);
+    /* Selected bars are solid accent with on-brand text. */
+    --aomi-accent-selected: var(--aomi-sky-500);
+    --aomi-accent-selected-text: var(--aomi-cool-0);
+    /* Interactive accent — focus rings, links, accent CTAs. */
+    --aomi-accent-interactive: var(--aomi-sky-500);
+    /* Hover fill for items resting on cool-100 surfaces. */
+    --aomi-state-hover: var(--aomi-cool-200);
 
     --aomi-ring: var(--aomi-cool-400);
-
-    /* Pink remains available as a brand ramp for charts & accents. */
 
     /* Chat surface — mirrors the portal (assistant-ui / shadcn zinc).
        User turn: light "muted" bubble with dark text. Assistant turn: no
@@ -208,7 +217,7 @@
     --aomi-landing-text: var(--aomi-cool-950);
     --aomi-landing-muted: var(--aomi-cool-500);
     --aomi-landing-border: var(--aomi-cool-200);
-    --aomi-card-tinted: var(--aomi-lilac-200);
+    --aomi-card-tinted: var(--aomi-sky-200);
 
     /* The hero composer: cool frosted panel, no shadow (flat) */
     --aomi-composer-bg: rgba(255, 255, 255, 0.2);
@@ -225,6 +234,7 @@
     --aomi-overlay: rgba(0, 0, 0, 0.6);
 
     --aomi-text: var(--aomi-cool-50);
+    --aomi-text-secondary: var(--aomi-cool-300);
     --aomi-text-muted: var(--aomi-cool-400);
     --aomi-text-subtle: var(--aomi-cool-500);
     --aomi-text-on-brand: var(--aomi-cool-950);
@@ -238,10 +248,14 @@
     --aomi-primary-active: var(--aomi-cool-200);
     --aomi-primary-subtle: var(--aomi-cool-800);
 
-    --aomi-accent: var(--aomi-lilac-400);
-    --aomi-accent-hover: var(--aomi-lilac-300);
-    --aomi-accent-active: var(--aomi-lilac-200);
+    --aomi-accent: var(--aomi-sky-400);
+    --aomi-accent-hover: var(--aomi-sky-300);
+    --aomi-accent-active: var(--aomi-sky-200);
     --aomi-accent-subtle: var(--aomi-cool-800);
+    --aomi-accent-selected: var(--aomi-sky-500);
+    --aomi-accent-selected-text: var(--aomi-cool-0);
+    --aomi-accent-interactive: var(--aomi-sky-400);
+    --aomi-state-hover: var(--aomi-cool-800);
 
     --aomi-ring: var(--aomi-cool-500);
 

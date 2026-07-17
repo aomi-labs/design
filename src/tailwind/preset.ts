@@ -35,6 +35,7 @@ const preset = {
           900: "var(--aomi-pink-900)",
           950: "var(--aomi-pink-950)",
         },
+        // Retired — kept for back-compat only; use `sky` for accents.
         lilac: {
           50: "var(--aomi-lilac-50)",
           100: "var(--aomi-lilac-100)",
@@ -86,7 +87,12 @@ const preset = {
           hover: "var(--aomi-accent-hover)",
           active: "var(--aomi-accent-active)",
           subtle: "var(--aomi-accent-subtle)",
+          selected: "var(--aomi-accent-selected)",
+          "selected-text": "var(--aomi-accent-selected-text)",
+          interactive: "var(--aomi-accent-interactive)",
         },
+        "state-hover": "var(--aomi-state-hover)",
+        "ink-secondary": "var(--aomi-text-secondary)",
         success: "var(--aomi-success-500)",
         warning: "var(--aomi-warning-500)",
         danger: "var(--aomi-danger-500)",

@@ -22,7 +22,7 @@ The signature Aomi control — a fully-rounded pill, near-black "ink" primary by
 | Variant | Use when |
 |---------|----------|
 | `primary` | The main action on a surface (near-black ink fill, flat) |
-| `accent` | A secondary but still prominent action (soft lilac fill, ink text) |
+| `accent` | A secondary but still prominent action (sky accent fill, on-brand text) |
 | `glass` | Hero / landing surfaces — the translucent frosted treatment |
 | `outline` | Lower-emphasis actions that still need an edge |
 | `ghost` | Tertiary actions, toolbar buttons |
@@ -73,7 +73,7 @@ A container surface plus composable sub-parts. Flat by default — depth comes f
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `solid \| glass \| outline \| flat \| tinted` | `solid` | Surface treatment (`flat` = cool/white hairline, `tinted` = lilac fill — both for landing cards) |
+| `variant` | `solid \| glass \| outline \| flat \| tinted \| tinted-pink` | `solid` | Surface treatment (`flat` = cool/white hairline, `tinted` = sky fill, `tinted-pink` = decorative pink-100 fill for marketing tiles) |
 | `padding` | `none \| sm \| md \| lg` | `md` | Inner padding |
 | `radius` | `lg \| xl \| 2xl` | `xl` | Corner radius (`2xl` = 32px landing cards) |
 

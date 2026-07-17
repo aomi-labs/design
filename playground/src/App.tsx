@@ -249,10 +249,8 @@ function LandingReference() {
           {APPS.map((app, i) => (
             <Card
               key={app.name}
-              variant={i % 2 === 1 ? "tinted" : "flat"}
-              className={
-                i % 2 === 1 ? "bg-pink-200 dark:bg-pink-900" : "dark:bg-surface"
-              }
+              variant={i % 2 === 1 ? "tinted-pink" : "flat"}
+              className={i % 2 === 1 ? "dark:bg-pink-900" : "dark:bg-surface"}
               radius="2xl"
               padding="lg"
             >
@@ -327,58 +325,68 @@ export function App() {
         <Section title="Buttons">
           <div className="flex flex-wrap items-center gap-3">
             <Button variant="primary">Primary</Button>
-            <Button
-              variant="accent"
-              className="bg-sky-500 text-cool-0 hover:bg-sky-300"
-            >
-              Accent
-            </Button>
-            <Button variant="glass">I'm a human</Button>
+            <Button variant="accent">Accent</Button>
             <Button variant="outline">Outline</Button>
             <Button variant="ghost">Ghost</Button>
             <Button variant="connect">EVM Connect</Button>
-            <Button variant="danger" className="bg-pink-600 text-cool-0">
-              Danger
-            </Button>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Button size="sm">Small</Button>
-            <Button size="md">Medium</Button>
-            <Button size="lg">Large</Button>
-            <Button loading>Signing…</Button>
-            <Button disabled>Disabled</Button>
-            <Button
-              shape="rounded"
-              variant="accent"
-              className="bg-sky-500 text-cool-0 hover:bg-sky-300"
-            >
-              Rounded
-            </Button>
+            <Button variant="danger">Danger</Button>
           </div>
         </Section>
 
-        <Section title="Inputs">
-          <div className="flex max-w-md flex-col gap-3">
-            <Input placeholder="Ask Aomi anything…" />
-            <Input shape="rounded" placeholder="Rounded variant" />
-            <Input
-              invalid
-              defaultValue="0x-invalid"
-              className="border-sky-500 focus-visible:border-sky-500 focus-visible:ring-[var(--aomi-sky-500)]/30"
-            />
+        <Section title="Selected states">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <p className="mb-2.5 text-xs text-ink-muted">Selected nav bar</p>
+              <div className="flex flex-col gap-0.5 rounded-xl border border-border bg-surface p-1.5">
+                <div className="relative isolate overflow-hidden rounded-lg bg-sky-200 px-3 py-2 text-[13px] font-medium text-[var(--aomi-accent-selected-text)]">
+                  <span
+                    className="absolute inset-y-0 left-0 right-[5px] -z-10 rounded-lg bg-accent-selected"
+                    aria-hidden="true"
+                  />
+                  Build
+                </div>
+                <div className="rounded-lg px-3 py-2 text-[13px] text-ink-secondary">
+                  Deployments
+                </div>
+                <div className="rounded-lg bg-state-hover px-3 py-2 text-[13px] text-ink">
+                  Settings <span className="text-xs text-ink-muted">(hover)</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-5">
+              <div>
+                <p className="mb-2.5 text-xs text-ink-muted">Action pills (ink)</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="primary" size="sm">
+                    Arb bot
+                  </Button>
+                  <Button variant="primary" size="sm">
+                    OpenAPI agent
+                  </Button>
+                  <Button variant="primary" size="sm">
+                    Plan from idea
+                    <span className="text-cool-0/70">⇧Tab</span>
+                  </Button>
+                </div>
+              </div>
+              <div>
+                <p className="mb-2.5 text-xs text-ink-muted">Focused input</p>
+                <Input
+                  placeholder="Ask Aomi anything…"
+                  className="border-[var(--aomi-accent-interactive)]"
+                />
+              </div>
+            </div>
           </div>
         </Section>
 
         <Section title="Cards">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <Card>
               <CardHeader>
                 <CardTitle>Solid surface</CardTitle>
-                <CardDescription>Default card on a raised surface.</CardDescription>
+                <CardDescription>Default card, cool hairline border.</CardDescription>
               </CardHeader>
-              <CardContent className="text-sm text-ink-muted">
-                Built entirely from semantic tokens, so it re-themes in dark mode.
-              </CardContent>
               <CardFooter>
                 <Button variant="primary" size="sm">
                   Authorize
@@ -389,20 +397,50 @@ export function App() {
               </CardFooter>
             </Card>
 
-            <Card variant="glass">
-              <CardHeader>
-                <CardTitle>Liquid glass</CardTitle>
-                <CardDescription>The hero surface treatment.</CardDescription>
+            <Card variant="tinted">
+              <div className="flex gap-2">
+                <Badge variant="solid">DEX</Badge>
+                <Badge variant="success">Open access</Badge>
+              </div>
+              <CardHeader className="mt-3">
+                <CardTitle>Tinted card (sky)</CardTitle>
+                <CardDescription>
+                  The card-tinted role — the old lilac fill, now sky-200.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="text-sm text-ink-muted">
-                Translucent fill, inner highlight, soft lift — the Aomi signature.
-              </CardContent>
-              <CardFooter>
-                <Button variant="glass" size="sm">
-                  Open portal
-                </Button>
-              </CardFooter>
             </Card>
+
+            <Card variant="tinted-pink">
+              <div className="flex gap-2">
+                <Badge variant="pop">Beta</Badge>
+              </div>
+              <CardHeader className="mt-3">
+                <CardTitle>Pink pop card</CardTitle>
+                <CardDescription>
+                  Decorative pink-100 fill — marketing tiles, never states.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </Section>
+
+        <Section title="Badges">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="success" size="md">
+              Ready
+            </Badge>
+            <Badge variant="pop" size="md">
+              Beta
+            </Badge>
+            <Badge variant="eyebrow" size="md">
+              Soon
+            </Badge>
+            <Badge variant="accent" size="md">
+              Live
+            </Badge>
+            <Badge variant="solid" size="md">
+              DEX
+            </Badge>
           </div>
         </Section>
 
@@ -467,9 +505,8 @@ export function App() {
           <div className="flex flex-col gap-2">
             {(
               [
-                ["pink", [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]],
                 ["sky", [50, 100, 200, 300, 400, 500]],
-                ["lilac", [50, 100, 200, 300, 400, 500]],
+                ["pink", [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]],
               ] as const
             ).map(([ramp, steps]) => (
               <div key={ramp} className="flex items-center gap-3">

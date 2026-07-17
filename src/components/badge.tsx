@@ -16,6 +16,10 @@ const badgeVariants = cva(
       variant: {
         solid: "bg-cool-950 text-cool-0",
         success: "bg-[var(--aomi-success-subtle)] text-success",
+        // Sky-subtle meta label (Live, New) — the accent as a quiet chip.
+        accent: "bg-[var(--aomi-accent-subtle)] text-info",
+        // Decorative pink pop (Beta, marketing) — never a status color.
+        pop: "bg-pink-100 text-pink-700",
         outline: "border border-landing-border bg-transparent text-landing-text",
         eyebrow:
           "border border-landing-border bg-transparent text-landing-muted uppercase tracking-wide",
