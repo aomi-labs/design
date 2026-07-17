@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — the execution harness for AI agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0b0d; --bg2:#101015; --panel:#141419; --panel2:#181820;
+  --line:#26262d; --line2:#33333c;
+  --ink:#f4f4f5; --ink2:#d4d4d8; --mut:#a1a1aa; --dim:#71717a; --faint:#52525b;
+  --hl:#6f8fc0; --hl2:#9db4d8; --hldeep:#416cac; --tint:#182238; --tintline:#2c3a58;
+  --somm:#eb7269; --sommtint:#2a1d1c; --sommline:#5a3733;
+  --ok:#3fbc80; --oktint:#12241b;
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+/* ---------- scaled stage ---------- */
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 12%,rgba(65,108,172,.16),transparent 55%),
+    radial-gradient(90% 80% at 12% 96%,rgba(235,114,105,.08),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid #1c1c22}
+#stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(130% 100% at 50% 50%,transparent 60%,rgba(0,0,0,.55));}
+
+/* persistent chrome */
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--dim)}
+#pageno i{color:var(--ink);font-style:normal}
+
+/* ---------- slides ---------- */
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+.pad{position:absolute;inset:0;padding:104px 92px 72px}
+
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl2)}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.06;color:var(--ink)}
+.lead{font-family:var(--serif);font-weight:700;font-size:41px;line-height:1.06;letter-spacing:-.02em}
+.i{color:var(--hl2);font-style:normal}
+.co{color:var(--somm);font-style:normal}
+.okc{color:var(--ok);font-style:normal}
+.deck-sub{font-family:var(--mono);font-size:13px;letter-spacing:.02em;color:var(--mut);line-height:1.7;margin-top:16px;max-width:58ch}
+
+/* reveal-on-active helpers */
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}
+.d4{animation-delay:.42s}.d5{animation-delay:.56s}.d6{animation-delay:.7s}.d7{animation-delay:.86s}
+
+/* feature bullets */
+.bul{list-style:none;margin-top:28px;max-width:74ch}
+.bul li{position:relative;padding:0 0 18px 30px;font-size:16px;line-height:1.45;color:var(--ink2)}
+.bul li b{color:var(--ink);font-weight:600}
+.bul li::before{content:"";position:absolute;left:2px;top:7px;width:9px;height:9px;border-radius:2px;
+  background:var(--hl);box-shadow:0 0 10px rgba(111,143,192,.5)}
+.bul li:nth-child(2)::before{background:var(--somm);box-shadow:0 0 10px rgba(235,114,105,.5)}
+.bul li:nth-child(3)::before{background:var(--ok);box-shadow:0 0 10px rgba(63,188,128,.5)}
+.bul li:nth-child(4)::before{background:var(--hl2);box-shadow:0 0 10px rgba(157,180,216,.5)}
+
+/* stat row */
+.stats{display:flex;gap:64px;margin-top:26px}
+.stat .n{font-family:var(--serif);font-weight:700;font-size:44px;letter-spacing:-.02em;color:var(--hl2)}
+.stat .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+
+/* code panel (slide 3) */
+.codebox{background:linear-gradient(180deg,rgba(65,108,172,.10),rgba(65,108,172,.03));
+  border:1px solid var(--tintline);border-radius:22px;padding:26px 30px;
+  font-family:var(--mono);font-size:13.5px;line-height:1.8;color:var(--ink2)}
+.codebox .cm{color:var(--dim);font-style:italic}
+.codebox .kw{color:var(--hl2)}
+.codebox .vl{color:var(--somm)}
+.cols{display:grid;grid-template-columns:1.02fr 1fr;gap:52px;align-items:center;margin-top:8px}
+
+/* ---------- demo terminals ---------- */
+.demo-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.demo-head h1{font-size:30px;max-width:34ch}
+.controls{display:flex;gap:8px}
+.btn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  background:none;border:1px solid var(--line2);border-radius:999px;
+  color:var(--mut);padding:8px 16px;cursor:pointer;transition:all .2s var(--ease)}
+.btn:hover{color:var(--hl2);border-color:var(--tintline);background:rgba(65,108,172,.08)}
+.btn.stop:hover{color:var(--somm);border-color:var(--sommline);background:rgba(235,114,105,.06)}
+.term{background:var(--bg2);border:1px solid var(--line);border-radius:16px;
+  height:452px;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.term-bar{display:flex;align-items:center;gap:8px;padding:11px 16px;
+  background:var(--panel);border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.tl{width:10px;height:10px;border-radius:50%}
+.term-title{flex:1;text-align:center}
+.term-body{flex:1;overflow-y:auto;padding:18px 24px;font-family:var(--mono);
+  font-size:12.5px;line-height:1.66;white-space:pre-wrap}
+.term-body::-webkit-scrollbar{width:0}
+.ln{min-height:1.66em}
+.u{color:var(--ok);font-weight:500}
+.a{color:var(--hl2);font-weight:500}
+.t{color:var(--hl)}
+.r{color:var(--dim)}
+.okl{color:var(--ok)}
+.wr{color:var(--somm)}
+.hot{color:var(--somm);font-weight:700}
+.sys{color:var(--faint);font-style:italic}
+.cursor{display:inline-block;width:.6em;height:1.05em;background:var(--ok);
+  vertical-align:text-bottom;animation:blink .9s step-start infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* nav */
+.navbtn{position:fixed;top:0;bottom:0;width:12vw;min-width:70px;background:none;border:0;cursor:pointer;z-index:50;opacity:0}
+#prev{left:0}#next{right:0}
+#nav{position:absolute;bottom:26px;left:0;right:0;display:flex;justify-content:center;z-index:45}
+#dots{display:flex;gap:9px}
+#dots .dot{width:7px;height:7px;border-radius:50%;background:var(--line2);cursor:pointer;transition:background .2s}
+#dots .dot.on{background:var(--hl2)}
+#hint{position:absolute;right:54px;bottom:24px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--faint);z-index:45}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <!-- persistent chrome -->
+  <div class="chrome" id="brand">
+    <svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b><span class="tag">MCP · agent execution</span>
+  </div>
+  <div class="chrome" id="pageno"><i class="cur">01</i> / <span id="total">05</span></div>
+
+  <!-- ============ SLIDE 1 — PROBLEM ============ -->
+  <section class="slide active">
+    <div class="pad">
+      <div class="eyebrow rise d1">The opportunity</div>
+      <h1 class="lead rise d2" style="margin-top:14px;max-width:22ch;font-size:44px">
+        Every AI agent will move money.<br><span class="co">None of them can.</span></h1>
+      <div class="deck-sub rise d3">the missing layer between AI agents and $100B+ of on-chain liquidity</div>
+      <ul class="bul" style="margin-top:34px">
+        <li class="rise d4">Autonomous agents — Claude, Codex, GPT — write code, browse, and plan trades. But handing one a private key is <b>handing it your bank account</b></li>
+        <li class="rise d5">Today's options: raw RPC (unsafe, unusable) or one-off bot integrations (dead-end past one protocol)</li>
+        <li class="rise d6">Agents don't need a wallet. They need an <b>execution harness</b> — discovery, guardrails, simulation, human-gated signing — spoken in the language agents already use: <b>MCP</b></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 2 — PRODUCT ============ -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow rise d1">The product</div>
+      <h1 class="lead rise d2" style="margin-top:14px;max-width:24ch">
+        aomi: the blockchain <span class="i">execution harness</span> for AI agents</h1>
+      <div class="stats rise d3">
+        <div class="stat"><div class="n">1</div><div class="l">MCP endpoint</div></div>
+        <div class="stat"><div class="n">31</div><div class="l">DeFi protocols</div></div>
+        <div class="stat"><div class="n">9+1</div><div class="l">EVM chains + Solana</div></div>
+        <div class="stat"><div class="n co">0</div><div class="l">keys exposed to the model</div></div>
+      </div>
+      <ul class="bul" style="margin-top:30px">
+        <li class="rise d4"><b>Plug in any agent</b> via standard MCP — a discovery funnel scales from "what can you do?" to exact schemas without drowning the model</li>
+        <li class="rise d5"><b>Protocol skills</b> — Aave, Uniswap, Morpho, Pendle, EigenLayer… expert instructions + server-side guards turn a generalist agent into a protocol specialist</li>
+        <li class="rise d6"><b>Safety as architecture</b> — every tx simulated before commit, calldata is server-authoritative, value-at-risk thresholds auto-escalate to a human signature</li>
+        <li class="rise d7">Agents propose &amp; dry-run whole strategies <b>before a wallet is ever connected</b> — trust is earned on screen, then signed</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 3 — DSL MOAT ============ -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow rise d1">The moat</div>
+      <h1 class="lead rise d2" style="margin-top:14px;max-width:30ch;font-size:36px">
+        <span class="i">aomi_run</span> — agents don't click buttons.<br>They write programs.</h1>
+      <div class="cols">
+        <ul class="bul" style="margin-top:22px;font-size:15px">
+          <li class="rise d3">One request = <b>a whole strategy</b>: loops, pipes, captured results, in a purpose-built DSL that can't escape the sandbox</li>
+          <li class="rise d4">Intermediates never re-enter the model's context → <b>10–100× cheaper</b>, immune to mid-flight prompt injection</li>
+          <li class="rise d5">Every step passes the same guards, simulation, and signing policy — <b>orchestration scales, safety is invariant</b></li>
+          <li class="rise d6">DCA, treasury rebalancing, cross-chain yield — <b>one auditable program per intent</b></li>
+        </ul>
+        <div class="codebox rise d4"><span class="cm"># sweep idle stables into ETH — one request</span>
+bal=$(<span class="kw">get_balances</span> owner=<span class="vl">$me</span>)
+<span class="kw">for</span> t <span class="kw">in</span> <span class="vl">$bal.tokens</span>; <span class="kw">do</span>
+  q=$(<span class="kw">lifi_get_quote</span> from_token=<span class="vl">$t.symbol</span>
+      to_token=<span class="vl">ETH</span> amount=<span class="vl">$t.idle</span>)
+  <span class="kw">lifi_prepare_swap_tx</span> quote_id=<span class="vl">$q.quote_id</span>
+<span class="kw">done</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 4 — ARB DEMO ============ -->
+  <section class="slide demo" data-player="arb">
+    <div class="pad" style="padding-top:92px">
+      <div class="demo-head">
+        <div>
+          <div class="eyebrow">Watch it work</div>
+          <h1 style="font-size:28px;margin-top:10px">Claude × aomi — <span class="okc">sign-in to arbitrage</span> in one session</h1>
+        </div>
+        <div class="controls" onclick="event.stopPropagation();">
+          <button class="btn" onclick="players.arb.play()">▶ replay</button>
+          <button class="btn stop" onclick="players.arb.stop()">■ stop</button>
+        </div>
+      </div>
+      <div class="term" onclick="event.stopPropagation();">
+        <div class="term-bar">
+          <div class="tl" style="background:#3a3a42"></div>
+          <div class="tl" style="background:#3a3a42"></div>
+          <div class="tl" style="background:#3fbc80"></div>
+          <div class="term-title">claude — connected to aomi mcp</div>
+          <div></div>
+        </div>
+        <div class="term-body" id="term-arb"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 5 — POLYMARKET DEMO ============ -->
+  <section class="slide demo" data-player="poly">
+    <div class="pad" style="padding-top:92px">
+      <div class="demo-head">
+        <div>
+          <div class="eyebrow">Prediction markets</div>
+          <h1 style="font-size:28px;margin-top:10px">Script mode on <span class="i">Polymarket</span> — dutch-book arbitrage</h1>
+        </div>
+        <div class="controls" onclick="event.stopPropagation();">
+          <button class="btn" onclick="players.poly.play()">▶ replay</button>
+          <button class="btn stop" onclick="players.poly.stop()">■ stop</button>
+        </div>
+      </div>
+      <div class="term" onclick="event.stopPropagation();">
+        <div class="term-bar">
+          <div class="tl" style="background:#3a3a42"></div>
+          <div class="tl" style="background:#3a3a42"></div>
+          <div class="tl" style="background:#3fbc80"></div>
+          <div class="term-title">claude — connected to aomi mcp</div>
+          <div></div>
+        </div>
+        <div class="term-body" id="term-poly"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- controls -->
+  <div id="nav"><div id="dots"></div></div>
+  <div id="hint">← → move · R replay · S stop</div>
+</div></div>
+
+<button class="navbtn" id="prev" aria-label="previous"></button>
+<button class="navbtn" id="next" aria-label="next"></button>
+
+<script>
+  /* ---------- scale stage to viewport ---------- */
+  function fit(){
+    var s=Math.min(innerWidth/1280,innerHeight/720);
+    document.getElementById('stage').style.transform='scale('+s+')';
+  }
+  addEventListener('resize',fit);fit();
+
+  /* ---------- demo scripts ---------- */
+  var ARB_SCRIPT=[
+    { t: "$ claude", cls: "", mode: "type", d: 300 },
+    { t: "", d: 200 },
+    { t: "claude ▸ MCP server detected: aomi — https://chat.aomi.dev/api/mcp", cls: "a", mode: "out", d: 500 },
+    { t: "  ⚠ authentication required — opening browser for OAuth…", cls: "wr", mode: "out", d: 900 },
+    { t: "  ✓ signed in as cecilia.eth", cls: "okl", mode: "out", d: 420 },
+    { t: "  ✓ wallet policy loaded: human-sync · auto-commit ≤ $5,000 value-at-risk", cls: "okl", mode: "out", d: 800 },
+    { t: "", d: 300 },
+    { t: "you ▸ watch ETH/USDC on uniswap vs binance. capture any spread ≥ 25 bps with up to 25k USDC.", cls: "u", mode: "type", d: 600 },
+    { t: "", d: 250 },
+    { t: "claude ▸ discovering the capability surface…", cls: "a", mode: "out", d: 350 },
+    { t: "  → aomi_search_tools q=\"pool price swap quote\"", cls: "t", mode: "out", d: 420 },
+    { t: "    ↳ skill:uniswap (145) · cex_ticker (120) · lifi_get_quote (95)", cls: "r", mode: "out", d: 380 },
+    { t: "  → aomi_describe_skill uniswap", cls: "t", mode: "out", d: 400 },
+    { t: "    ↳ instruction pack loaded: pools, routers, ABIs, guard hooks (3.2 kB)", cls: "r", mode: "out", d: 700 },
+    { t: "", d: 250 },
+    { t: "claude ▸ composing the strategy as ONE server-side program:", cls: "a", mode: "out", d: 400 },
+    { t: "", d: 150 },
+    { t: "    # pool vs binance arb — guarded, atomic", cls: "sys", mode: "out", d: 160 },
+    { t: "    px=$(cex_ticker venue=binance pair=ETH/USDC)", cls: "", mode: "type", d: 120 },
+    { t: "    q=$(uniswap_quote pool=ETH/USDC amount=25000)", cls: "", mode: "type", d: 120 },
+    { t: "    s=$(price_spread a=$q.price b=$px.mid)", cls: "", mode: "type", d: 120 },
+    { t: "    require min_bps=25 value=$s.bps", cls: "", mode: "type", d: 120 },
+    { t: "    swap=$(evm_stage_tx plan=$q.route slippage_bps=10)", cls: "", mode: "type", d: 120 },
+    { t: "    simulate_batch ids=$swap.id | commit", cls: "", mode: "type", d: 300 },
+    { t: "", d: 250 },
+    { t: "  → aomi_run  (6 steps · intermediates stay server-side)", cls: "t", mode: "out", d: 800 },
+    { t: "    ✓ binance mid 3,412.18 · uniswap pool 3,398.44 → spread +40.3 bps", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ guard require ≥ 25 bps — passed", cls: "okl", mode: "out", d: 420 },
+    { t: "    ✓ staged swap #4821 · simulation: 25,000 USDC → 7.352 ETH · gas $14.20", cls: "okl", mode: "out", d: 500 },
+    { t: "    ⚠ value-at-risk $25,000 > $5,000 → human signature requested…", cls: "wr", mode: "out", d: 1200 },
+    { t: "    ✓ signed by cecilia.eth · committed 0x7f3a…c9e2", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ realized +$1,012 net of gas & slippage", cls: "hot", mode: "out", d: 800 },
+    { t: "", d: 300 },
+    { t: "claude ▸ spread captured. the program re-arms each block — I'll ping you at the next ≥25 bps window.", cls: "a", mode: "type", d: 700 },
+    { t: "", d: 300 },
+    { t: "you ▸ nice. how's my LP position doing?", cls: "u", mode: "type", d: 400 },
+    { t: "", d: 250 },
+    { t: "  → aomi_run  pos=$(uniswap_position id=88231)  # one call, full status", cls: "t", mode: "out", d: 600 },
+    { t: "    ↳ ETH/USDC 0.30% · in-range ✓ · fees accrued $312.40 · IL −0.4%", cls: "r", mode: "out", d: 400 },
+    { t: "", d: 200 },
+    { t: "claude ▸ position healthy — in range, fees compounding. want me to auto-collect fees weekly? (it's one cron + one program)", cls: "a", mode: "type", d: 400 },
+  ];
+
+  var POLY_SCRIPT=[
+    { t: "you ▸ scan polymarket for mispriced binary markets. if YES + NO trade under $0.99, buy both sides. keep it under 5k.", cls: "u", mode: "type", d: 600 },
+    { t: "", d: 250 },
+    { t: "claude ▸ that's a dutch book — a risk-free payoff if both legs fill. discovering…", cls: "a", mode: "out", d: 450 },
+    { t: "  → aomi_search_tools q=\"polymarket prediction order book\"", cls: "t", mode: "out", d: 420 },
+    { t: "    ↳ skill:polymarket (150) · clob_book (110) · clob_stage_order (105)", cls: "r", mode: "out", d: 380 },
+    { t: "  → aomi_describe_skill polymarket", cls: "t", mode: "out", d: 400 },
+    { t: "    ↳ instruction pack: CLOB semantics, USDC collateral, resolution rules, guard hooks", cls: "r", mode: "out", d: 700 },
+    { t: "", d: 250 },
+    { t: "claude ▸ one program scans every market server-side — nothing floods my context:", cls: "a", mode: "out", d: 400 },
+    { t: "", d: 150 },
+    { t: "    # dutch-book sweep — buy YES+NO when they sum < $0.99", cls: "sys", mode: "out", d: 160 },
+    { t: "    mkts=$(polymarket_search status=open min_liquidity=50000)", cls: "", mode: "type", d: 120 },
+    { t: "    for m in $mkts.markets; do", cls: "", mode: "type", d: 120 },
+    { t: "      book=$(clob_book market=$m.id)", cls: "", mode: "type", d: 120 },
+    { t: "      edge=$(dutch_book yes=$book.yes_ask no=$book.no_ask)", cls: "", mode: "type", d: 120 },
+    { t: "      require min_bps=100 value=$edge.bps", cls: "", mode: "type", d: 120 },
+    { t: "      clob_stage_order market=$m.id side=YES size=$edge.size", cls: "", mode: "type", d: 120 },
+    { t: "      clob_stage_order market=$m.id side=NO  size=$edge.size", cls: "", mode: "type", d: 120 },
+    { t: "    done", cls: "", mode: "type", d: 300 },
+    { t: "", d: 250 },
+    { t: "  → aomi_run  (loops 214 markets · 431 tool steps · 0 tokens burned on intermediates)", cls: "t", mode: "out", d: 900 },
+    { t: "    ↳ 214 markets scanned · 212 fairly priced · 2 dutch books found", cls: "r", mode: "out", d: 550 },
+    { t: "    ✓ \"Fed cuts rates in September?\"   YES 0.57 + NO 0.41 = 0.98 → edge 204 bps", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ \"ETH ETF inflows > $1B in July?\"  YES 0.22 + NO 0.76 = 0.98 → edge 197 bps", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ 4 legs staged · simulation: $4,900 USDC in → $5,000 guaranteed at resolution", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ value-at-risk $4,900 ≤ $5,000 policy → auto-committed, no interruption", cls: "okl", mode: "out", d: 600 },
+    { t: "    ✓ fills: 0x91bd…44a0 · 0x37c2…e881 — locked +$100.40 risk-free", cls: "hot", mode: "out", d: 800 },
+    { t: "", d: 300 },
+    { t: "claude ▸ two dutch books captured under your auto-commit ceiling. I can re-run this every 10 minutes as a cron — same program, same guards, zero babysitting.", cls: "a", mode: "type", d: 500 },
+    { t: "", d: 250 },
+    { t: "you ▸ do it", cls: "u", mode: "type", d: 350 },
+    { t: "", d: 200 },
+    { t: "  → schedule_cron every=10m program=dutch-book-sweep", cls: "t", mode: "out", d: 450 },
+    { t: "    ✓ scheduled — next run 09:40 UTC · reports only on capture or guard trip", cls: "okl", mode: "out", d: 300 },
+  ];
+
+  /* ---------- player ---------- */
+  function makePlayer(termId, script) {
+    var term = document.getElementById(termId);
+    var timers = [];
+    function stop() {
+      timers.forEach(clearTimeout); timers = [];
+      var c = term.querySelector(".cursor"); if (c) c.remove();
+    }
+    function play() {
+      stop();
+      term.innerHTML = "";
+      var at = 400;
+      script.forEach(function (line) {
+        var t = line.t, cls = line.cls || "", mode = line.mode || "out", d = line.d || 300;
+        if (mode === "type" && t) {
+          timers.push(setTimeout(function () {
+            var el = document.createElement("div");
+            el.className = "ln " + cls;
+            term.appendChild(el);
+            var cur = document.createElement("span");
+            cur.className = "cursor";
+            el.appendChild(cur);
+            t.split("").forEach(function (ch, k) {
+              timers.push(setTimeout(function () {
+                cur.insertAdjacentText("beforebegin", ch);
+                term.scrollTop = term.scrollHeight;
+                if (k === t.length - 1) cur.remove();
+              }, k * 14));
+            });
+          }, at));
+          at += t.length * 14 + d;
+        } else {
+          timers.push(setTimeout(function () {
+            var el = document.createElement("div");
+            el.className = "ln " + cls;
+            el.textContent = t;
+            term.appendChild(el);
+            term.scrollTop = term.scrollHeight;
+          }, at));
+          at += d;
+        }
+      });
+    }
+    return { play: play, stop: stop };
+  }
+
+  var players = {
+    arb: makePlayer("term-arb", ARB_SCRIPT),
+    poly: makePlayer("term-poly", POLY_SCRIPT),
+  };
+
+  /* ---------- slide engine ---------- */
+  var slides = [].slice.call(document.querySelectorAll(".slide"));
+  var dotsWrap = document.getElementById("dots");
+  var pageEl = document.querySelector("#pageno .cur");
+  document.getElementById("total").textContent = pad(slides.length);
+  slides.forEach(function (s, k) {
+    var d = document.createElement("div");
+    d.className = "dot" + (k === 0 ? " on" : "");
+    d.addEventListener("click", function (e) { e.stopPropagation(); go(k); });
+    dotsWrap.appendChild(d);
+  });
+  var dots = [].slice.call(document.querySelectorAll("#dots .dot"));
+  var cur = 0;
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function activePlayer() { return players[slides[cur].dataset.player]; }
+  function go(n) {
+    if (n < 0) n = 0; if (n >= slides.length) n = slides.length - 1;
+    slides[cur].classList.remove("active");
+    dots[cur].classList.remove("on");
+    cur = n;
+    void slides[cur].offsetWidth; /* restart rise animations */
+    slides[cur].classList.add("active");
+    dots[cur].classList.add("on");
+    pageEl.textContent = pad(cur + 1);
+    Object.keys(players).forEach(function (k) { players[k].stop(); });
+    var p = activePlayer(); if (p) p.play();
+  }
+  addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight" || e.key === "PageDown") go(cur + 1);
+    if (e.key === "ArrowLeft" || e.key === "PageUp") go(cur - 1);
+    if (e.key === " ") { e.preventDefault(); go(cur + 1); }
+    if (e.key.toLowerCase() === "r") { var p = activePlayer(); if (p) p.play(); }
+    if (e.key.toLowerCase() === "s") { var p = activePlayer(); if (p) p.stop(); }
+  });
+  document.getElementById("prev").addEventListener("click", function () { go(cur - 1); });
+  document.getElementById("next").addEventListener("click", function () { go(cur + 1); });
+</script>
+</body>
+</html>

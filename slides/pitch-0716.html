@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — investor overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* aomi design tokens — light theme · ink text · sky-blue + rosy-pink accents · lilac tints */
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef; --sommline:#efa6c5; --sommline2:#f6cbdd;
+  --lilac:#e3d8e6; --lilacline:#d3c2d8; --lilacink:#453a4e;
+  --ok:#2e9e6b; --oktint:#e4f3ec; --okline:#a8d8c0;
+  --sh-sm:0 1px 2px rgba(13,13,15,.04); --sh-md:0 4px 16px rgba(13,13,15,.06); --sh-lg:0 12px 40px rgba(13,13,15,.10);
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+/* ---------- scaled stage ---------- */
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+/* persistent chrome */
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+/* ---------- slides ---------- */
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+.pad{position:absolute;inset:0;padding:104px 92px 92px}
+
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.04;color:var(--ink)}
+.i{color:var(--hl);font-style:normal}
+.co{color:var(--sommtext);font-style:normal}
+.ok{color:var(--ok);font-style:normal}
+
+/* reveal-on-active helpers */
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}
+.d4{animation-delay:.42s}.d5{animation-delay:.56s}.d6{animation-delay:.7s}.d7{animation-delay:.86s}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+@keyframes flow{0%{opacity:0;offset-distance:0%}10%{opacity:1}86%{opacity:1}100%{opacity:0;offset-distance:100%}}
+@keyframes pulseRing{0%{opacity:.5;transform:scale(1)}70%{opacity:0;transform:scale(1.9)}100%{opacity:0}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+/* ============ SLIDE 1 — HERO ============ */
+#s1 .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#s1 .orbit{position:relative;width:230px;height:230px;margin-bottom:6px}
+#s1 .orbit .ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(82,136,194,.45)}
+#s1 .orbit .ring.r2{inset:26px;border-color:rgba(223,93,144,.38)}
+#s1 .r1{animation:spin 26s linear infinite}
+#s1 .r2{animation:spinr 20s linear infinite}
+#s1 .orbit .sat{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--hl2);
+  top:-5px;left:calc(50% - 4.5px);box-shadow:0 1px 6px rgba(82,136,194,.5)}
+#s1 .orbit .sat.b{background:var(--somm);box-shadow:0 1px 6px rgba(223,93,144,.5)}
+#s1 .core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#s1 .core svg{width:96px;height:96px;color:var(--ink);filter:drop-shadow(0 4px 18px rgba(13,13,15,.14))}
+#s1 .wm{font-family:var(--wm);font-weight:700;font-size:104px;line-height:.9;letter-spacing:-.02em;margin-top:8px}
+#s1 h1{font-size:33px;margin-top:26px}
+#s1 .sub{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--mut);margin-top:22px;max-width:640px;line-height:1.7}
+#s1 .pw{font-family:var(--mono);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);margin-bottom:30px}
+
+/* ============ shared big two-column layouts ============ */
+.head-row{display:flex;align-items:baseline;gap:16px;margin-bottom:6px}
+.lead{font-family:var(--serif);font-weight:700;font-size:41px;line-height:1.06;letter-spacing:-.02em;max-width:15ch}
+.deck-sub{font-family:var(--mono);font-size:13px;letter-spacing:.02em;color:var(--mut);line-height:1.7;margin-top:18px;max-width:38ch}
+
+/* ============ SLIDE — RUNTIME (cube docks) ============ */
+#s2 .stageart{position:absolute;left:640px;right:70px;top:150px;bottom:150px}
+.rt-box{position:absolute;right:24px;top:44px;width:430px;height:300px;
+  background:linear-gradient(180deg,rgba(82,136,194,.09),rgba(82,136,194,.02));
+  border:1px solid var(--tintline2);border-radius:22px}
+.rt-box .zl{position:absolute;top:14px;left:20px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--hl)}
+.rt-box .zt{position:absolute;top:28px;left:20px;display:flex;align-items:center;gap:7px;font-weight:600;font-size:15px}
+.rt-box .zt svg{width:15px;height:15px;color:var(--ink)}
+.rt-box .zt .wmk{font-family:var(--wm);font-weight:600}
+.rt-box .keys{position:absolute;right:16px;top:16px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;
+  color:var(--hl);border:1px solid var(--tintline2);border-radius:999px;padding:4px 10px;background:rgba(255,255,255,.7)}
+.rt-box .keys b{color:var(--ok);font-weight:700}
+.slot-row{position:absolute;left:26px;right:26px;bottom:70px;display:flex;gap:16px;justify-content:center}
+.rt-box .foot{position:absolute;left:0;right:0;bottom:24px;text-align:center;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.rt-box .foot b{color:var(--hl);font-weight:500}
+.cube{width:78px;height:86px;position:relative}
+.cube svg{width:100%;height:100%;overflow:visible}
+.cube .ctag{position:absolute;left:-8px;right:-8px;top:90px;text-align:center;font-family:var(--mono);
+  font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.cube.new .ctag{color:var(--sommtext)}
+/* incoming app cube */
+#appcube{position:absolute;left:44px;top:150px;width:104px;height:114px;z-index:5}
+#appcube .lbl{position:absolute;left:-40px;right:-40px;top:-50px;text-align:center}
+#appcube .lbl .e{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--sommtext)}
+#appcube .lbl .n{font-family:var(--serif);font-weight:700;font-size:15px;margin-top:2px;color:var(--ink)}
+.slide.active #appcube{animation:dock 6.6s var(--ease) infinite}
+@keyframes dock{
+  0%{transform:translate(0,0) scale(1);opacity:0}
+  8%{opacity:1}
+  22%{transform:translate(0,0) scale(1);opacity:1}
+  40%{transform:translate(327px,23px) scale(.75);opacity:1}
+  56%{transform:translate(327px,23px) scale(.75);opacity:1}
+  60%{transform:translate(327px,23px) scale(.75);opacity:0}
+  92%{transform:translate(0,0) scale(1);opacity:0}
+  100%{transform:translate(0,0) scale(1);opacity:0}}
+.slide.active #appcube .lbl{animation:lblfade 6.6s var(--ease) infinite}
+@keyframes lblfade{0%{opacity:0}10%{opacity:1}24%{opacity:1}36%{opacity:0}100%{opacity:0}}
+#slotfill{opacity:0}
+.slide.active #slotfill{animation:slotfill 6.6s var(--ease) infinite}
+@keyframes slotfill{0%,40%{opacity:0}47%,88%{opacity:1}93%,100%{opacity:0}}
+#slotdash{opacity:1}
+.slide.active #slotdash{animation:slotdash 6.6s var(--ease) infinite}
+@keyframes slotdash{0%,40%{opacity:1}47%,88%{opacity:0}93%,100%{opacity:1}}
+
+/* feature bullets (left) */
+.bul{list-style:none;margin-top:30px}
+.bul li{position:relative;padding:0 0 20px 30px;font-size:16px;line-height:1.4;color:var(--ink2)}
+.bul li b{color:var(--ink);font-weight:600}
+.bul li::before{content:"";position:absolute;left:2px;top:7px;width:9px;height:9px;border-radius:2px;background:var(--hl2)}
+.bul li:nth-child(2)::before{background:var(--somm)}
+.bul li:nth-child(3)::before{background:var(--ok)}
+.bul li:nth-child(4)::before{background:var(--hl)}
+
+/* ============ SLIDE — PIPELINE (moat) ============ */
+/* steps sit lower so badges never touch the headline */
+#s3 .rail{position:absolute;left:92px;right:92px;top:332px;height:2px;
+  background:linear-gradient(90deg,var(--line2),var(--tintline) 55%,var(--line2))}
+.stepwrap{position:absolute;left:92px;right:92px;top:300px;display:flex;justify-content:space-between}
+.step{position:relative;width:150px;text-align:center}
+.step .dot{width:66px;height:66px;margin:0 auto;border-radius:16px;background:var(--panel);
+  border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;position:relative;z-index:3;
+  box-shadow:var(--sh-sm)}
+.step .dot svg{width:28px;height:28px;color:var(--hl2)}
+.step.hot .dot{border-color:var(--hl);background:var(--tint);box-shadow:0 0 0 6px rgba(82,136,194,.12)}
+.step.hot .dot svg{color:var(--hl)}
+.step .n{font-family:var(--serif);font-weight:700;font-size:19px;margin-top:64px;color:var(--ink)}
+.step .k{font-family:var(--mono);font-size:10px;letter-spacing:.03em;color:var(--dim);margin-top:6px;line-height:1.5}
+.step .badge{position:absolute;top:-30px;left:50%;transform:translateX(-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--sommtext);
+  border:1px solid var(--sommline2);background:var(--sommtint);border-radius:999px;padding:3px 9px}
+.step.sign .badge{color:var(--ok);border-color:var(--okline);background:var(--oktint)}
+/* traveling pulse */
+#p3{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--hl2);
+  box-shadow:0 0 10px 2px rgba(82,136,194,.45);top:328px;left:92px;
+  offset-path:path('M0 4 H1096');offset-rotate:0deg;opacity:0}
+.slide.active #p3{animation:flow 3.4s var(--ease) infinite}
+
+/* ============ SLIDE — LANGUAGE IN / TX OUT ============ */
+#s4 .flow{position:absolute;left:92px;right:92px;top:210px;bottom:120px;display:grid;
+  grid-template-columns:300px 1fr 250px;gap:0;align-items:center}
+.prompt{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 18px 20px;
+  box-shadow:var(--sh-lg)}
+.prompt .h{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.prompt .u{background:var(--panel2);border:1px solid var(--line);border-radius:11px 11px 3px 11px;
+  padding:11px 13px;font-size:14.5px;line-height:1.5;color:var(--ink)}
+.prompt .u em{font-style:normal;color:var(--sommtext);font-weight:600}
+.prompt .sys{font-family:var(--mono);font-size:10px;line-height:1.7;color:var(--dim);margin-top:14px}
+.prompt .sys b{color:var(--hl);font-weight:500}
+/* middle tools column */
+.tools{position:relative;height:300px}
+.toolpill{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:12px;color:var(--ink2);background:var(--panel);
+  border:1px solid var(--tintline);border-radius:999px;padding:7px 14px;opacity:0;box-shadow:var(--sh-sm)}
+.toolpill i{font-style:normal;color:var(--hl)}
+.toolpill .c{color:var(--ok);margin-left:8px}
+.t0{top:14px}.t1{top:64px}.t2{top:114px}.t3{top:164px}.t4{top:214px}
+.slide.active .toolpill{animation:pop 5.2s var(--ease) infinite}
+.slide.active .t0{animation-delay:.2s}.slide.active .t1{animation-delay:.5s}
+.slide.active .t2{animation-delay:.8s}.slide.active .t3{animation-delay:1.1s}
+.slide.active .t4{animation-delay:1.4s}
+@keyframes pop{0%{opacity:0;transform:translateX(-50%) translateY(10px) scale(.9)}
+  10%{opacity:1;transform:translateX(-50%) scale(1)}80%{opacity:1}90%,100%{opacity:0}}
+.tools .arrowlbl{position:absolute;left:50%;top:-40px;transform:translateX(-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+/* right — signed tx card */
+.txcard{background:var(--panel);border:1px solid var(--tintline2);border-radius:16px;padding:16px;
+  box-shadow:var(--sh-lg)}
+.txcard .bh{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--hl);
+  display:flex;align-items:center;gap:6px;font-weight:700}
+.txcard .row{font-family:var(--mono);font-size:11px;color:var(--ink2);margin-top:10px;line-height:1.6}
+.txcard .row b{color:var(--ink)}
+.txcard .sim{font-family:var(--mono);font-size:10px;color:var(--ok);margin-top:10px;
+  border-top:1px solid var(--line);padding-top:10px}
+.txcard .sign{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;
+  font-family:var(--mono);font-size:11px;background:var(--ink);color:#fff;border-radius:999px;
+  padding:9px;font-weight:600}
+.conn{position:absolute;top:50%;height:1px;background:linear-gradient(90deg,transparent,var(--tintline2),transparent);pointer-events:none}
+
+/* ============ SLIDE · ARCHITECTURE ============ */
+#sarch .ahd{position:absolute;left:92px;top:96px;z-index:6}
+#sarch .a-scale{position:absolute;inset:0;transform:scale(.85);transform-origin:462px 148px}
+#sarch .ahd .e{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--hl)}
+#sarch .ahd h2{font-family:var(--serif);font-weight:700;font-size:19px;margin-top:5px;letter-spacing:-.01em;color:var(--ink)}
+#sarch .a-svg{position:absolute;left:0;top:0;width:1280px;height:720px;z-index:4;pointer-events:none;overflow:visible}
+.a-box{position:absolute;border:1.4px solid var(--line2);border-radius:14px;background:var(--panel);z-index:2;box-shadow:var(--sh-sm)}
+.a-box .t{position:absolute;left:0;right:0;font-family:var(--serif);font-weight:700;color:var(--ink);text-align:center}
+.a-box .c{position:absolute;left:0;right:0;font-family:var(--mono);color:var(--mut);text-align:center}
+.a-emoji{position:absolute;z-index:5}
+.a-txt{position:absolute;font-family:var(--mono);color:var(--dim);z-index:5}
+.a-hatch{position:absolute;border:1.4px solid var(--lilacline);border-radius:12px;z-index:2;
+  background:repeating-linear-gradient(45deg,rgba(227,216,230,.85) 0 7px,rgba(246,243,247,.55) 7px 15px);
+  display:flex;align-items:center;justify-content:center}
+.a-hatch b{font-family:var(--serif);font-weight:700;color:var(--ink);font-size:16px}
+.a-band{position:absolute;background:var(--lilac);
+  border:1px solid var(--lilacline);border-radius:8px;display:flex;align-items:center;justify-content:center;z-index:3}
+.a-band span{font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--lilacink)}
+.a-tube{position:absolute;border:1.4px solid var(--line2);border-radius:11px;background:var(--bg2);z-index:1}
+.a-diamond{position:absolute;border:1.4px solid var(--line2);background:var(--panel);transform:rotate(45deg);
+  border-radius:9px;z-index:2;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm)}
+.a-diamond span{transform:rotate(-45deg);font-family:var(--mono);font-size:10px;color:var(--ink2);text-align:center;line-height:1.3}
+.a-diamond.hot{border-color:var(--sommline);background:var(--sommtint)}
+.a-diamond.hot span{color:var(--sommtext)}
+.a-model{position:absolute;border:1.4px solid var(--line2);border-radius:50%;background:var(--panel);z-index:2;
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);color:var(--ink2);box-shadow:var(--sh-sm)}
+.a-fork{position:absolute;border-radius:50%;background:radial-gradient(circle at 38% 32%,#eaf3fb,#aecbe8);
+  border:1px solid var(--hlsoft);color:#253a56;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:500;font-size:12px;z-index:3}
+.slide.active .a-fork{animation:forkpulse 2.8s var(--ease) infinite}
+@keyframes forkpulse{0%,100%{box-shadow:0 0 0 0 rgba(82,136,194,0)}45%{box-shadow:0 0 0 5px rgba(82,136,194,.20)}}
+.a-forkbox{position:absolute;border:1.4px solid var(--tintline2);border-radius:20px;background:rgba(82,136,194,.04);z-index:2}
+.a-vlabel{position:absolute;font-family:var(--serif);font-weight:700;color:var(--mut);writing-mode:vertical-rl;letter-spacing:.01em;z-index:5}
+.a-cyl{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:linear-gradient(180deg,#aecbe8,#7facd6);border:1px solid var(--hl2);border-radius:50%/20px;
+  color:#1e3450;font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.05}
+.a-cyl::before{content:"";position:absolute;left:-1px;right:-1px;top:0;height:22px;border:1px solid var(--hl2);border-radius:50%;
+  background:#cfe1f3;z-index:-1}
+
+/* ============ SLIDE · PROBLEM ============ */
+#sprob .colhd{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
+#sprob .stackwrap{position:absolute;left:92px;top:250px;width:474px}
+#sprob .stack{transform-origin:50% 100%}
+.slide.active #sprob-stack{animation:teeter 5.5s ease-in-out infinite}
+@keyframes teeter{0%,100%{transform:rotate(.45deg)}50%{transform:rotate(-.55deg)}}
+.pblk{position:relative;background:var(--panel);border:1.4px solid var(--line2);border-radius:10px;
+  padding:9px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  box-shadow:var(--sh-md)}
+.pblk:nth-child(odd){rotate:-.7deg;margin-left:12px;margin-right:2px}
+.pblk:nth-child(even){rotate:.6deg;margin-left:0;margin-right:14px}
+.pblk .nm{font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+.pblk .sb{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:2px;white-space:nowrap}
+.pblk .mo{font-family:var(--mono);font-size:11px;color:var(--sommtext);white-space:nowrap}
+.pblk.hot{border-color:var(--sommline);background:#fdf2f7}
+#sprob .toll{margin-top:15px;font-family:var(--mono);font-size:10.5px;line-height:1.75;color:var(--mut);
+  border-top:1px dashed var(--line2);padding-top:12px}
+#sprob .toll b{color:var(--sommtext);font-weight:600}
+#sprob .vs{position:absolute;left:612px;top:400px;font-family:var(--serif);font-weight:700;font-style:italic;
+  font-size:20px;color:var(--faint)}
+#sprob .withA{position:absolute;left:696px;top:250px;width:396px}
+#sprob .flowrow{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+#sprob .minicube{width:54px;height:60px;flex:none;animation:floaty 4s ease-in-out infinite}
+#sprob .minicube svg{width:100%;height:100%;overflow:visible}
+#sprob .flowrow .arr{font-family:var(--mono);color:var(--dim);font-size:16px}
+#sprob .rtchip{display:flex;align-items:center;gap:9px;background:var(--tint);border:1px solid var(--tintline);
+  border-radius:12px;padding:11px 16px}
+#sprob .rtchip svg{width:16px;height:16px;color:var(--ink)}
+#sprob .rtchip b{font-family:var(--wm);font-weight:600;font-size:16px}
+#sprob .rtchip span{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--hl)}
+.bigstat{margin-bottom:26px}
+.bigstat .from{font-family:var(--mono);font-size:13px;color:var(--dim);text-decoration:line-through;
+  text-decoration-color:var(--somm);text-decoration-thickness:1.5px}
+.bigstat .to{font-family:var(--serif);font-weight:700;font-size:46px;line-height:1.02;letter-spacing:-.02em;color:var(--ink);margin-top:5px}
+.bigstat .to i{font-style:normal;color:var(--ok)}
+#sprob .pfoot{font-family:var(--mono);font-size:10.5px;color:var(--mut);line-height:1.7;margin-top:2px}
+#sprob .pfoot b{color:var(--hl);font-weight:500}
+
+/* ============ SLIDE · PAYMENTS ============ */
+#spay .paysvg{position:absolute;left:0;top:0;width:1280px;height:720px;z-index:1;pointer-events:none;overflow:visible}
+#spay .payline{fill:none;stroke:var(--tintline);stroke-width:1.3;stroke-dasharray:4 5}
+#spay .paycoin{position:absolute;width:9px;height:9px;border-radius:50%;background:#d9a72e;
+  box-shadow:0 0 0 2px rgba(217,167,46,.22);opacity:0;offset-rotate:0deg;z-index:6}
+#spay .paycoin.fee{width:7px;height:7px;background:var(--somm);box-shadow:0 0 0 2px rgba(223,93,144,.20)}
+#spay.active .paycoin{animation:flow 3s var(--ease) infinite}
+#spay .toolp{position:absolute;left:150px;top:248px;font-family:var(--mono);font-size:13.5px;color:var(--ink2);
+  background:var(--panel);border:1px solid var(--tintline);border-radius:999px;padding:9px 17px;box-shadow:var(--sh-md);z-index:5}
+#spay .toolp i{font-style:normal;color:var(--hl)}
+#spay .toolp b{color:var(--sommtext);font-weight:700;margin-left:8px}
+#spay .sdknote{position:absolute;left:152px;top:292px;font-family:var(--mono);font-size:9.5px;color:var(--dim);z-index:5}
+#spay .paygate{position:absolute;left:112px;top:360px;width:430px;height:32px;border:1.4px solid #b48a2c;border-radius:999px;
+  background:repeating-linear-gradient(45deg,rgba(240,214,110,.22) 0 7px,rgba(240,214,110,.05) 7px 15px);
+  display:flex;align-items:center;justify-content:center;z-index:5}
+#spay .paygate span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#8a6a1e;text-transform:uppercase}
+#spay .paychip{position:absolute;background:var(--panel);border:1px solid var(--tintline2);border-radius:13px;
+  padding:11px 15px;box-shadow:var(--sh-md);z-index:5}
+#spay .paychip .nm{display:flex;align-items:center;gap:7px;font-weight:600;font-size:13.5px;color:var(--ink)}
+#spay .paychip .nm .dt{width:8px;height:8px;border-radius:50%;background:var(--hl2);flex:none}
+#spay .paychip .sb{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px}
+#spay .paychip.fee{border-color:var(--lilacline)}
+#spay .paychip.fee .nm{gap:6px;font-size:12px}
+#spay .paychip.fee svg{width:12px;height:12px;color:var(--ink)}
+#spay .paycap{position:absolute;left:112px;top:560px;width:452px;font-family:var(--mono);font-size:10.5px;
+  line-height:1.75;color:var(--mut);z-index:5}
+#spay .paycap b{color:var(--hl);font-weight:500}
+/* right — credit gate chart */
+#spay .gcard{position:absolute;left:660px;top:236px;width:528px;height:352px;background:var(--panel);
+  border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh-lg);z-index:5;padding:16px 18px}
+#spay .gcard .bdg{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  border-radius:999px;padding:4px 11px;margin-right:7px}
+#spay .gcard .bdg.b1{color:var(--hl);border:1px solid var(--tintline);background:var(--tint)}
+#spay .gcard .bdg.b2{color:var(--sommtext);border:1px solid var(--sommline2);background:var(--sommtint)}
+#spay .gsvg{width:100%;height:236px;margin-top:10px;overflow:visible}
+#spay .gsvg text{font-family:var(--mono)}
+#spay .balline{stroke-dasharray:100;stroke-dashoffset:100}
+#spay.active .balline{animation:baldraw 1.8s var(--ease) .5s forwards}
+@keyframes baldraw{to{stroke-dashoffset:0}}
+#spay .gdot402{transform-box:fill-box;transform-origin:center}
+#spay.active .gdot402{animation:blip402 2.2s var(--ease) 2.4s infinite}
+@keyframes blip402{0%,100%{transform:scale(1)}18%{transform:scale(1.45)}36%{transform:scale(1)}}
+#spay .topup{opacity:0}
+#spay.active .topup{animation:topupin .7s var(--ease) 2.5s forwards}
+@keyframes topupin{to{opacity:1}}
+#spay .gstat{font-family:var(--mono);font-size:10.5px;color:var(--mut);margin-top:8px;line-height:1.6}
+#spay .gstat b{color:var(--ink);font-weight:600}
+#spay .gstat i{font-style:normal;color:var(--ok)}
+
+/* ============ SLIDE · PRODUCT SURFACES ============ */
+#ssurf .surfart{position:absolute;left:584px;top:142px;width:604px;z-index:3}
+.mockbrowser{position:relative;width:604px;height:378px;background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;box-shadow:var(--sh-lg)}
+.mb-bar{height:34px;background:#18181b;display:flex;align-items:center;gap:6px;padding:0 12px}
+.mb-bar .wd{width:7px;height:7px;border-radius:50%;background:#3f3f46}
+.mb-bar .sm{display:grid;grid-template-columns:repeat(3,4px);gap:2px;margin-left:8px}
+.mb-bar .sm i{width:4px;height:4px;border-radius:50%;background:var(--somm)}
+.mb-bar .u{font-family:var(--mono);font-size:10.5px;color:#b7b3c2;margin-left:6px}
+.mockbrowser .skel{position:absolute;background:var(--panel2);border-radius:5px}
+.mockchat{position:absolute;right:14px;top:48px;bottom:14px;width:330px;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh-md);padding:12px 14px;
+  display:flex;flex-direction:column;gap:8px}
+.mockchat .ch{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding-bottom:8px;border-bottom:1px solid var(--panel2)}
+.mockchat .ch svg{width:11px;height:11px;color:var(--ink);flex:none}
+.mockchat .ch b{color:var(--ink);font-weight:700}
+.mockchat .um{align-self:flex-end;max-width:92%;background:var(--panel2);border-radius:9px 9px 3px 9px;
+  padding:7px 10px;font-size:10.5px;line-height:1.45;color:var(--ink)}
+.mockchat .tr{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:9px;
+  color:var(--ink2);border:1px solid var(--line);border-radius:7px;padding:5px 8px;background:var(--bg2)}
+.mockchat .tr i{font-style:normal;color:var(--ok)}
+.mockchat .tr .rs{color:var(--dim)}
+.mocktx{border:1px solid var(--tintline);background:#eef5fb;border-radius:9px;padding:8px 10px;
+  font-family:var(--mono);font-size:9px;line-height:1.75;color:var(--ink2)}
+.mocktx .bt{color:var(--hl);font-weight:700}
+.mocktx .sim{color:var(--ok)}
+.mockchat .rdy{font-size:10px;color:var(--ink);font-weight:600}
+.mockchat .rdy i{font-style:normal;color:var(--hl)}
+.mockchat .signpill{align-self:flex-start;font-family:var(--mono);font-size:9.5px;background:var(--ink);
+  color:#fff;border-radius:999px;padding:6px 14px;font-weight:600}
+.mockchat .rf{margin-top:auto;text-align:center;font-family:var(--mono);font-size:8px;color:var(--faint)}
+.mockchat .rf i{font-style:normal;color:var(--hl)}
+.surfrow{position:absolute;left:584px;top:544px;width:486px;display:flex;gap:8px;z-index:6}
+.surfchip{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mono);
+  font-size:10px;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:999px;
+  padding:8px 4px;box-shadow:var(--sh-sm);white-space:nowrap;cursor:pointer;transition:all .2s var(--ease)}
+.surfchip:hover{border-color:var(--tintline)}
+.surfchip .d{width:6px;height:6px;border-radius:50%;flex:none}
+.surfchip.on{border:1.4px solid var(--hl);background:var(--tint);color:var(--hl);font-weight:700}
+.surfcap{position:absolute;left:584px;top:592px;width:604px;text-align:center;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.08em;color:var(--dim)}
+
+/* surface view switcher */
+.surfview{display:none}
+.surfview.show{display:block;animation:surfin .35s var(--ease)}
+@keyframes surfin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.appwin{position:relative;width:604px;height:378px;border-radius:14px;overflow:hidden;
+  box-shadow:var(--sh-lg);border:1px solid var(--line);display:flex;background:var(--panel);text-align:left}
+
+/* --- telegram mock (desktop · light) --- */
+.tgmock .side{width:168px;background:#fff;border-right:1px solid #e7ebee;display:flex;flex-direction:column;flex:none}
+.tgmock .srch{margin:8px;height:24px;border-radius:999px;background:#f1f4f7;display:flex;align-items:center;
+  padding:0 10px;font-size:9.5px;color:#9aa7b1}
+.tgmock .it{display:flex;align-items:center;gap:8px;padding:7px 10px}
+.tgmock .it .av{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:12px;font-weight:700}
+.tgmock .it .nm{font-size:10px;font-weight:600;color:#1a2026}
+.tgmock .it .pv{font-size:8.5px;color:#95a3ad;margin-top:1px;white-space:nowrap;overflow:hidden;max-width:104px;text-overflow:ellipsis}
+.tgmock .it.on{background:#3390ec}
+.tgmock .it.on .nm,.tgmock .it.on .pv{color:#fff}
+.tgmock .it.on .pv{color:rgba(255,255,255,.75)}
+.tgmock .main{flex:1;display:flex;flex-direction:column;background:#dfeaf2}
+.tgmock .head{height:34px;background:#fff;border-bottom:1px solid #e7ebee;display:flex;align-items:center;gap:7px;padding:0 12px}
+.tgmock .head .av{width:22px;height:22px;border-radius:50%;background:var(--somm);color:#fff;display:flex;
+  align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.tgmock .head b{font-size:10.5px;color:#1a2026}
+.tgmock .head .bot{font-size:8.5px;color:#3390ec}
+.tgmock .head .dots{margin-left:auto;color:#9aa7b1;font-size:12px;letter-spacing:2px}
+.tgmock .chat{flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.tgmock .bub{max-width:82%;border-radius:12px;padding:6px 9px;font-size:10px;line-height:1.45;color:#1a2026;position:relative}
+.tgmock .bub .tm{display:block;text-align:right;font-size:7.5px;color:#93a3b0;margin-top:2px}
+.tgmock .bub.out{align-self:flex-end;background:#e3fee0;border-bottom-right-radius:3px}
+.tgmock .bub.out .tm{color:#4fae4e}
+.tgmock .bub.in{align-self:flex-start;background:#fff;border-bottom-left-radius:3px}
+.tgmock .trow{font-family:var(--mono);font-size:8.5px;color:#3f3f46;margin:1px 0}
+.tgmock .trow i{font-style:normal;color:#2e9e6b}
+.tgmock .plan{background:#f2f7fb;border-left:2px solid #3390ec;border-radius:4px;padding:5px 7px;margin:5px 0 3px;
+  font-family:var(--mono);font-size:8.5px;line-height:1.6;color:#3f3f46}
+.tgmock .plan .bt{color:#3390ec;font-weight:700}
+.tgmock .sim{font-family:var(--mono);font-size:8.5px;color:#2e9e6b}
+.tgmock .ikb{align-self:flex-start;width:82%;background:rgba(255,255,255,.92);border-radius:8px;text-align:center;
+  padding:6px;font-size:9.5px;font-weight:600;color:#3390ec;box-shadow:0 1px 2px rgba(16,35,47,.08)}
+.tgmock .inp{height:34px;background:#fff;border-top:1px solid #e7ebee;display:flex;align-items:center;gap:8px;
+  padding:0 12px;font-size:10px;color:#9aa7b1}
+.tgmock .inp .ic{margin-left:auto;letter-spacing:4px;font-size:11px}
+
+/* --- discord mock (dark) --- */
+.dcmock{background:#313338;border-color:#1e1f22}
+.dcmock .rail{width:44px;background:#1e1f22;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding-top:10px;flex:none}
+.dcmock .srv{width:28px;height:28px;border-radius:50%;background:#313338;display:flex;align-items:center;
+  justify-content:center;font-size:10px;color:#dbdee1;position:relative}
+.dcmock .srv.on{border-radius:9px;background:var(--somm);color:#fff;font-weight:700}
+.dcmock .srv.on::before{content:"";position:absolute;left:-8px;top:6px;width:3px;height:16px;border-radius:2px;background:#fff}
+.dcmock .chans{width:136px;background:#2b2d31;flex:none;display:flex;flex-direction:column}
+.dcmock .sname{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;
+  font-size:10.5px;font-weight:700;color:#f2f3f5;border-bottom:1px solid #1f2124}
+.dcmock .sec{font-size:7.5px;letter-spacing:.06em;color:#949ba4;padding:10px 10px 3px;text-transform:uppercase}
+.dcmock .chn{display:flex;align-items:center;gap:5px;margin:1px 6px;padding:3px 6px;border-radius:4px;
+  font-size:10px;color:#949ba4}
+.dcmock .chn i{font-style:normal;color:#80848e}
+.dcmock .chn.on{background:#404249;color:#fff}
+.dcmock .dmain{flex:1;display:flex;flex-direction:column;min-width:0}
+.dcmock .dhead{height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;border-bottom:1px solid #26282c;
+  font-size:10.5px;color:#f2f3f5;font-weight:700}
+.dcmock .dhead i{font-style:normal;color:#80848e;font-weight:400}
+.dcmock .dhead .topic{font-size:8.5px;color:#949ba4;font-weight:400;border-left:1px solid #3f4147;padding-left:8px;margin-left:2px}
+.dcmock .dchat{flex:1;padding:8px 12px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.dcmock .grp{display:flex;gap:8px}
+.dcmock .grp .av{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#fff;font-weight:700}
+.dcmock .grp .nm{font-size:10px;font-weight:600}
+.dcmock .grp .ts{font-size:7.5px;color:#949ba4;margin-left:5px;font-weight:400}
+.dcmock .grp .tx{font-size:10px;color:#dbdee1;margin-top:1px;line-height:1.45}
+.dcmock .app{display:inline-flex;align-items:center;background:#5865f2;color:#fff;font-size:6.5px;font-weight:700;
+  border-radius:3px;padding:1px 4px;margin-left:4px;letter-spacing:.04em;vertical-align:1px}
+.dcmock .emb{max-width:330px;background:#2b2d31;border-left:3px solid var(--somm);border-radius:4px;
+  padding:7px 9px;margin-top:5px}
+.dcmock .emb .et{font-size:9px;font-weight:700;color:#9db4d8;margin-bottom:3px}
+.dcmock .emb .el{font-family:var(--mono);font-size:8.5px;line-height:1.6;color:#b5bac1}
+.dcmock .emb .es{font-family:var(--mono);font-size:8.5px;color:#3fbc80;margin-top:2px}
+.dcmock .btns{display:flex;gap:6px;margin-top:7px}
+.dcmock .dbtn{font-size:8.5px;font-weight:600;color:#fff;background:#5865f2;border-radius:3px;padding:4px 10px}
+.dcmock .dbtn.sec{background:#4e5058}
+.dcmock .dinp{margin:0 12px 10px;height:32px;background:#383a40;border-radius:8px;display:flex;align-items:center;
+  gap:8px;padding:0 10px;font-size:9.5px;color:#6d7178}
+.dcmock .dinp .plus{width:16px;height:16px;border-radius:50%;background:#b5bac1;color:#383a40;display:flex;
+  align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}
+
+/* --- slack mock (light · aubergine) --- */
+.slmock .sside{width:150px;background:#4a154b;flex:none;display:flex;flex-direction:column;color:#cfc3cf}
+.slmock .wsp{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;
+  border-bottom:1px solid #5d2c5d;color:#fff;font-weight:800;font-size:11.5px}
+.slmock .wsp .pen{width:18px;height:18px;border-radius:50%;background:#fff;color:#4a154b;display:flex;
+  align-items:center;justify-content:center;font-size:9px}
+.slmock .ssec{font-size:8.5px;color:#a889a8;padding:10px 10px 3px}
+.slmock .sch{display:flex;align-items:center;gap:5px;padding:3px 10px;font-size:10px}
+.slmock .sch i{font-style:normal;opacity:.7}
+.slmock .sch.on{background:#1164a3;color:#fff}
+.slmock .sch .pr{width:7px;height:7px;border-radius:2px;background:#2eb67d;flex:none;margin-right:1px}
+.slmock .smain{flex:1;display:flex;flex-direction:column;background:#fff;min-width:0}
+.slmock .shead{height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #e2e2e2}
+.slmock .shead b{font-size:11px;color:#1d1c1d}
+.slmock .shead span{font-size:9px;color:#616061}
+.slmock .schat{flex:1;padding:8px 12px;display:flex;flex-direction:column;gap:9px;overflow:hidden}
+.slmock .smsg{display:flex;gap:8px}
+.slmock .smsg .av{width:26px;height:26px;border-radius:6px;flex:none;display:flex;align-items:center;
+  justify-content:center;font-size:10px;color:#fff;font-weight:700}
+.slmock .smsg .nm{font-size:10px;font-weight:800;color:#1d1c1d}
+.slmock .smsg .ts{font-size:7.5px;color:#616061;margin-left:5px}
+.slmock .smsg .tx{font-size:10px;color:#1d1c1d;margin-top:1px;line-height:1.45}
+.slmock .sapp{display:inline-block;background:#e8e8e8;color:#616061;font-size:6.5px;font-weight:700;
+  border-radius:2px;padding:1px 3px;margin-left:4px;vertical-align:1px}
+.slmock .att{max-width:330px;border-left:3px solid #416cac;padding:4px 0 4px 9px;margin-top:5px}
+.slmock .att .et{font-size:9px;font-weight:700;color:#416cac;margin-bottom:2px}
+.slmock .att .el{font-family:var(--mono);font-size:8.5px;line-height:1.6;color:#3f3f46}
+.slmock .att .es{font-family:var(--mono);font-size:8.5px;color:#007a5a;margin-top:2px}
+.slmock .sbtns{display:flex;gap:6px;margin-top:7px}
+.slmock .sbtn{font-size:8.5px;font-weight:700;color:#fff;background:#007a5a;border-radius:4px;padding:4px 10px}
+.slmock .sbtn.sec{background:#fff;color:#1d1c1d;border:1px solid #bbb}
+.slmock .sinp{margin:0 12px 10px;height:32px;border:1px solid #c9c9c9;border-radius:8px;display:flex;
+  align-items:center;gap:8px;padding:0 10px;font-size:10px;color:#616061}
+.slmock .sinp .ic{margin-left:auto;font-size:9px;letter-spacing:3px;color:#616061}
+
+/* --- mcp mini terminal view --- */
+.appwin.term{height:378px;border-radius:14px;border-color:#26262d}
+.mcpmock{flex-direction:column}
+.mcpmock .term-body{font-size:10.5px;padding:14px 18px;line-height:1.75}
+.mcpmock .cue{padding:9px 18px;border-top:1px solid #26262d;font-family:var(--mono);font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;color:#71717a}
+.mcpmock .cue i{font-style:normal;color:#9db4d8}
+
+/* ============ SLIDES · MCP DEMOS (agent-facing surface) ============ */
+.demo-head{display:flex;align-items:flex-end;gap:30px;margin-bottom:16px}
+.demo-head h1{font-size:28px;max-width:44ch}
+.controls{display:flex;gap:8px;padding-bottom:4px}
+.btn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  background:var(--panel);border:1px solid var(--line2);border-radius:999px;
+  color:var(--mut);padding:8px 16px;cursor:pointer;transition:all .2s var(--ease)}
+.btn:hover{color:var(--hl);border-color:var(--tintline)}
+.btn.stop:hover{color:var(--sommtext);border-color:var(--sommline)}
+.term{background:#101015;border:1px solid #26262d;border-radius:16px;height:452px;
+  display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--sh-lg)}
+.term-bar{display:flex;align-items:center;gap:8px;padding:11px 16px;background:#141419;
+  border-bottom:1px solid #26262d;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:#71717a}
+.tl{width:10px;height:10px;border-radius:50%}
+.term-title{flex:1;text-align:center}
+.term-body{flex:1;overflow-y:auto;padding:18px 24px;font-family:var(--mono);
+  font-size:12.5px;line-height:1.66;white-space:pre-wrap;color:#d4d4d8}
+.term-body::-webkit-scrollbar{width:0}
+.term .ln{min-height:1.66em}
+.term .u{color:#3fbc80;font-weight:500}
+.term .a{color:#9db4d8;font-weight:500}
+.term .t{color:#6f8fc0}
+.term .r{color:#71717a}
+.term .okl{color:#3fbc80}
+.term .wr{color:#e77ba6}
+.term .hot{color:#e77ba6;font-weight:700}
+.term .sys{color:#52525b;font-style:italic}
+.term .cursor{display:inline-block;width:.6em;height:1.05em;background:#3fbc80;
+  vertical-align:text-bottom;animation:blink .9s step-start infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- presenter controls ---------- */
+#nav{position:fixed;z-index:60;left:0;right:0;bottom:6px;display:flex;align-items:center;justify-content:center;gap:16px}
+#dots{display:flex;gap:9px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line2);cursor:pointer;transition:all .25s var(--ease)}
+.dot.on{background:var(--hl2);width:22px;border-radius:999px}
+.navbtn{position:fixed;top:0;bottom:0;width:16%;z-index:55;cursor:pointer;background:transparent;border:0}
+/* on the video slide, drop the click-zones + dots so the player's own controls are clickable */
+/* video slide: keep the player's control bar clickable, but keep side
+   click-zones above it so prev/next still work */
+body.videoActive #nav{display:none}
+body.videoActive .navbtn{bottom:150px}
+
+/* right-side numbered jump rail (always on top, incl. video slide) */
+#rail{position:fixed;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;
+  gap:6px;z-index:70}
+.rdot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.88);border:1px solid var(--line2);
+  color:var(--dim);font-family:var(--mono);font-size:9px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s var(--ease);box-shadow:var(--sh-sm)}
+.rdot:hover{border-color:var(--hl);color:var(--hl)}
+.rdot.on{background:var(--hl);border-color:var(--hl);color:#fff;font-weight:700}
+#prev{left:0}#next{right:0}
+#hint{position:fixed;right:20px;bottom:22px;z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  color:var(--faint);text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <!-- chrome -->
+  <div class="chrome" id="brand">
+    <svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b><span class="tag">investor overview</span>
+  </div>
+  <div class="chrome" id="pageno"><i class="cur">01</i> / <span id="ptotal">11</span></div>
+
+  <!-- ============ SLIDE 1 ============ -->
+  <section class="slide active" id="s1" data-title="Hero">
+    <div class="wrap">
+      <div class="pw rise d1">powered by</div>
+      <div class="orbit rise d1">
+        <div class="ring r1" id="s1o1"><span class="sat"></span></div>
+        <div class="ring r2"><span class="sat b" style="top:auto;bottom:-4px"></span></div>
+        <div class="core"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg></div>
+      </div>
+      <div class="wm rise d2">aomi</div>
+      <h1 class="rise d3">The blockchain harness<br>for <span class="i">agentic AI</span></h1>
+      <div class="sub rise d4">Bring your API. Ship it as an agent.<br>Get safe, non-custodial onchain execution — for free.</div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE · THE PROBLEM ============ -->
+  <section class="slide" id="sprob" data-title="Problem">
+    <div class="pad">
+      <div class="eyebrow rise d1">The problem</div>
+      <h1 class="lead rise d2" style="margin-top:14px;max-width:34ch;font-size:36px">To ship one onchain agent, a team builds <span class="co">all of this</span>.</h1>
+    </div>
+
+    <div class="stackwrap">
+      <div class="colhd rise d1" style="color:var(--sommtext)">without aomi · you build</div>
+      <div class="stack" id="sprob-stack">
+        <div class="pblk rise d6"><div><div class="nm">Surfaces</div><div class="sb">web widget · telegram · discord</div></div><span class="mo">+2 mo</span></div>
+        <div class="pblk rise d5"><div><div class="nm">Solana path</div><div class="sb">separate stack · jito bundles</div></div><span class="mo">+1.5 mo</span></div>
+        <div class="pblk rise d4"><div><div class="nm">AA bundler + paymaster</div><div class="sb">erc-4337 userOps · sponsorship</div></div><span class="mo">+1.5 mo</span></div>
+        <div class="pblk hot rise d3"><div><div class="nm">Simulation infra</div><div class="sb">full nodes × 6 chains · fresh forks</div></div><span class="mo">+3 mo</span></div>
+        <div class="pblk rise d2"><div><div class="nm">TX pipeline</div><div class="sb">nonce · gas · retries · batching</div></div><span class="mo">+2 mo</span></div>
+        <div class="pblk rise d1"><div><div class="nm">Agent orchestration</div><div class="sb">llm loop · streaming · sessions · failover</div></div><span class="mo">+3 mo</span></div>
+      </div>
+      <div class="toll rise d7">≈ <b>4 crypto engineers · 9 months · ~$1M</b> before the first user signs<br>then <b>$100k+/yr infra</b> + 1 FTE chasing hardforks &amp; RPC churn — forever</div>
+    </div>
+
+    <div class="vs rise d4">vs</div>
+
+    <div class="withA">
+      <div class="colhd rise d3" style="color:var(--hl)">with aomi</div>
+      <div class="flowrow rise d4">
+        <div class="minicube"><svg viewBox="0 0 100 110">
+          <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/>
+          <polygon points="50,2 95,27 50,52 5,27" fill="#fbe4ef" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/>
+          <polygon points="50,52 95,27 95,79 50,104" fill="#fdf2f7" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/></svg></div>
+        <span class="arr">→</span>
+        <div class="rtchip"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg><b>aomi</b><span>hosted runtime</span></div>
+      </div>
+      <div class="bigstat rise d5"><div class="from">9 months</div><div class="to"><i>3 days</i></div></div>
+      <div class="bigstat rise d6"><div class="from">$100k+/yr infra</div><div class="to"><i>$0</i></div></div>
+      <div class="pfoot rise d7">wrap your API as tools — <b>runtime · forks · AA bundler · Jito</b> already built</div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE — TX PIPELINE (core / moat) ============ -->
+  <section class="slide" id="s3" data-title="Pipeline">
+    <div class="pad">
+      <div class="eyebrow rise d1">Our core · the moat</div>
+      <h1 class="lead rise d2" style="margin-top:14px;max-width:25ch">Every transaction simulated against <span class="i">live forked state</span>.</h1>
+
+      <div class="rail rise d3"></div>
+      <div class="stepwrap">
+        <div class="step rise d3">
+          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg></div>
+          <div class="n">Build</div><div class="k">tool composes<br>the exact tx</div>
+        </div>
+        <div class="step hot rise d4">
+          <span class="badge">forked state · ~200ms</span>
+          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <div class="n">Simulate</div><div class="k">prove the real<br>outcome is safe</div>
+        </div>
+        <div class="step sign rise d5">
+          <span class="badge">AA bundler · your wallet</span>
+          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16.5" cy="14" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+          <div class="n">Sign</div><div class="k">you approve<br>exact changes</div>
+        </div>
+        <div class="step rise d6">
+          <span class="badge">AA + Solana Jito</span>
+          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h11"/><path d="M11 7l6 5-6 5"/><rect x="17" y="4" width="3.5" height="16" rx="1"/></svg></div>
+          <div class="n">Broadcast</div><div class="k">confirmed<br>onchain</div>
+        </div>
+      </div>
+      <div id="p3"></div>
+
+      <p class="deck-sub rise d7" style="max-width:72ch;margin-top:318px">
+        The harness runs <b style="color:var(--ink)">directly on a full node</b>, forking every chain every <b style="color:var(--ink)">~200ms</b> — so each transaction is simulated against live state before it is ever signed.
+        <span class="ok">AA bundler and Solana Jito broadcast are built in.</span> Non-custodial: signing happens in your own wallet.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE · ARCHITECTURE ============ -->
+  <section class="slide" id="sarch" data-title="Architecture">
+    <div class="ahd">
+      <div class="e">System architecture</div>
+      <h2>One harness. Many apps. Every chain, forked.</h2>
+    </div>
+
+    <div class="a-scale">
+    <!-- users (centered over dispatch, x-center 462) -->
+    <span class="a-emoji" style="left:292px;top:148px;font-size:30px">🧑</span>
+    <span class="a-emoji" style="left:372px;top:148px;font-size:30px">🧑</span>
+    <span class="a-emoji" style="left:452px;top:148px;font-size:30px">🧑</span>
+    <span class="a-txt" style="left:522px;top:156px;font-size:22px;letter-spacing:.14em;color:var(--faint)">····</span>
+    <span class="a-emoji" style="left:596px;top:148px;font-size:30px">🧑</span>
+    <span class="a-txt" style="left:680px;top:150px;width:160px;font-size:11px;line-height:1.5">User-specific<br>context</span>
+    <span class="a-txt" style="left:302px;top:192px;font-size:15px;color:var(--faint)">↕</span>
+    <span class="a-txt" style="left:382px;top:192px;font-size:15px;color:var(--faint)">↕</span>
+    <span class="a-txt" style="left:462px;top:192px;font-size:15px;color:var(--faint)">↕</span>
+    <span class="a-txt" style="left:606px;top:192px;font-size:15px;color:var(--faint)">↕</span>
+
+    <!-- stateless dispatch -->
+    <div class="a-hatch" style="left:92px;top:222px;width:740px;height:40px"><b>Stateless Dispatch</b></div>
+
+    <!-- vertical channels (behind boxes) -->
+    <div class="a-tube" style="left:150px;top:340px;width:26px;height:180px"></div>
+    <div class="a-tube" style="left:224px;top:340px;width:26px;height:180px"></div>
+    <div class="a-tube" style="left:770px;top:340px;width:26px;height:180px"></div>
+
+    <!-- application -->
+    <div class="a-box" style="left:92px;top:278px;width:740px;height:74px">
+      <div class="t" style="top:12px;font-size:19px">Application</div>
+      <div class="c" style="top:44px;font-size:14px"><span style="color:var(--ink2)">[app1, app2, ..]</span>.start()</div>
+    </div>
+
+    <!-- runtime -->
+    <div class="a-box" style="left:92px;top:366px;width:740px;height:128px">
+      <div class="t" style="top:12px;font-size:19px">Runtime</div>
+      <div class="c" style="top:44px;font-size:13px">Scheduler.run()</div>
+    </div>
+    <span class="a-emoji" style="left:151px;top:400px;font-size:25px">🤖</span>
+    <span class="a-emoji" style="left:225px;top:400px;font-size:25px">🤖</span>
+    <span class="a-emoji" style="left:771px;top:400px;font-size:25px">🤖</span>
+    <div class="a-band" style="left:112px;top:456px;width:700px;height:26px"><span>Memory &amp; IPC</span></div>
+
+    <!-- tool scheduler + llm interface -->
+    <div class="a-box" style="left:92px;top:512px;width:330px;height:48px"><div class="t" style="top:14px;font-size:16px">Tool Scheduler</div></div>
+    <div class="a-box" style="left:502px;top:512px;width:330px;height:48px"><div class="t" style="top:14px;font-size:16px">LLM Interface</div></div>
+
+    <!-- tools · neat row, centers 152/262/372 @ y624 -->
+    <div class="a-diamond hot" style="left:114px;top:586px;width:76px;height:76px"><span>evm-<br>gateway</span></div>
+    <div class="a-diamond" style="left:224px;top:586px;width:76px;height:76px"><span>db-driver</span></div>
+    <div class="a-diamond" style="left:334px;top:586px;width:76px;height:76px"><span>web-search</span></div>
+
+    <!-- models · shared center line y620 -->
+    <div class="a-model" style="left:530px;top:572px;width:96px;height:96px;font-size:14px">gpt5</div>
+    <div class="a-model" style="left:646px;top:584px;width:72px;height:72px;font-size:11px">Opus4.5</div>
+    <div class="a-model" style="left:738px;top:590px;width:60px;height:60px;font-size:10px">kimi-k2</div>
+
+    <!-- forks infrastructure · uniform circles on x-center 1000 -->
+    <div class="a-forkbox" style="left:900px;top:222px;width:200px;height:338px"></div>
+    <div class="a-fork" style="left:969px;top:229px;width:62px;height:62px">Arb</div>
+    <div class="a-fork" style="left:969px;top:295px;width:62px;height:62px;animation-delay:.5s">Base</div>
+    <div class="a-fork" style="left:969px;top:361px;width:62px;height:62px;animation-delay:1s">OP</div>
+    <div class="a-fork" style="left:969px;top:427px;width:62px;height:62px;animation-delay:1.5s">Mainnet</div>
+    <div class="a-fork" style="left:969px;top:493px;width:62px;height:62px;animation-delay:2s">Monad</div>
+    <div class="a-vlabel" style="left:1118px;top:250px;font-size:18px">Forks Infrastructure</div>
+
+    <!-- full node -->
+    <div class="a-cyl" style="left:912px;top:592px;width:176px;height:100px">Full<br>Node</div>
+
+    <!-- connectors -->
+    <svg class="a-svg" viewBox="0 0 1280 720">
+      <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#5288c2"/></marker></defs>
+      <path d="M78,315 V624 H92" fill="none" stroke="#5288c2" stroke-width="1.4" stroke-dasharray="5 5" marker-end="url(#ah)"/>
+      <path d="M832,430 H900" fill="none" stroke="#7facd6" stroke-width="1.3" stroke-dasharray="4 5"/>
+      <path d="M1000,560 V592" fill="none" stroke="#7facd6" stroke-width="1.3" stroke-dasharray="4 5"/>
+    </svg>
+    <span class="a-txt" style="left:44px;top:400px;font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg);color:var(--dim)">application-define</span>
+    <span class="a-txt" style="left:838px;top:412px;font-size:9.5px;color:var(--hl)">forks ~200ms</span>
+    </div>
+
+    <!-- moat footnote -->
+    <div class="a-txt" style="left:92px;top:688px;font-size:11px;color:var(--mut);letter-spacing:.03em">
+      built directly on a <b style="color:var(--hl)">full node</b> · runtime forks every chain <b style="color:var(--hl)">~200ms</b> · <b style="color:var(--ok)">AA bundler + Solana Jito</b> broadcast built in
+    </div>
+  </section>
+
+  <!-- ============ SLIDE — THE RUNTIME ============ -->
+  <section class="slide" id="s2" data-title="Runtime">
+    <div class="pad">
+      <div class="eyebrow rise d1">The product</div>
+      <h1 class="lead rise d2" style="margin-top:14px">A hosted runtime<br>you <span class="i">build on</span>.</h1>
+      <p class="deck-sub rise d3">You wrap your API as a few tools — a small Rust plugin. Aomi hot-loads it as a live agent. You write tools, not transaction plumbing.</p>
+      <ul class="bul">
+        <li class="rise d4"><b>Zero setup</b> — simulation, signing &amp; broadcast built in</li>
+        <li class="rise d5"><b>Fast &amp; cheap</b> — execution runs inside the runtime, close to the chain</li>
+        <li class="rise d6"><b>Non-custodial</b> — keys never touch the runtime</li>
+      </ul>
+
+      <div class="stageart">
+        <!-- incoming app cube -->
+        <div id="appcube">
+          <div class="lbl"><div class="e">your app</div><div class="n">API → tools</div></div>
+          <div class="cube" style="width:104px;height:114px"><svg viewBox="0 0 100 110">
+            <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/>
+            <polygon points="50,2 95,27 50,52 5,27" fill="#fbe4ef" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/>
+            <polygon points="50,52 95,27 95,79 50,104" fill="#fdf2f7" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/>
+            <g transform="translate(31,44)">
+              <circle cx="0" cy="0" r="3.6" fill="#df5d90"/><circle cx="9" cy="0" r="3.6" fill="#df5d90"/><circle cx="18" cy="0" r="3.6" fill="#df5d90"/>
+              <circle cx="0" cy="9" r="3.6" fill="#df5d90"/><circle cx="9" cy="9" r="3.6" fill="#df5d90"/><circle cx="18" cy="9" r="3.6" fill="#df5d90"/>
+              <circle cx="0" cy="18" r="3.6" fill="#df5d90"/><circle cx="9" cy="18" r="3.6" fill="#df5d90"/><circle cx="18" cy="18" r="3.6" fill="#df5d90"/>
+            </g>
+          </svg></div>
+        </div>
+
+        <!-- runtime box with resident cubes + slot -->
+        <div class="rt-box">
+          <span class="zl">Aomi</span>
+          <div class="zt"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg><span class="wmk">aomi</span> · Hosted Runtime</div>
+          <span class="keys">KEYS HELD: <b>0</b></span>
+          <div class="slot-row">
+            <div class="cube"><svg viewBox="0 0 100 110">
+              <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/>
+              <polygon points="50,2 95,27 50,52 5,27" fill="#e2eef8" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/>
+              <polygon points="50,52 95,27 95,79 50,104" fill="#f1f7fc" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/></svg>
+              <span class="ctag">kuroko</span></div>
+            <div class="cube"><svg viewBox="0 0 100 110">
+              <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/>
+              <polygon points="50,2 95,27 50,52 5,27" fill="#e2eef8" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/>
+              <polygon points="50,52 95,27 95,79 50,104" fill="#f1f7fc" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/></svg>
+              <span class="ctag">orca</span></div>
+            <div class="cube new">
+              <svg viewBox="0 0 100 110" id="slotdash">
+                <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="none" stroke="#efa6c5" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"/>
+                <polyline points="5,27 50,52 95,27" fill="none" stroke="#efa6c5" stroke-width="2" stroke-dasharray="6 5"/>
+                <line x1="50" y1="52" x2="50" y2="104" stroke="#efa6c5" stroke-width="2" stroke-dasharray="6 5"/></svg>
+              <svg viewBox="0 0 100 110" id="slotfill" style="position:absolute;inset:0">
+                <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#df5d90" stroke-width="2.2" stroke-linejoin="round"/>
+                <polygon points="50,2 95,27 50,52 5,27" fill="#fbe4ef" stroke="#df5d90" stroke-width="2.2" stroke-linejoin="round"/>
+                <polygon points="50,52 95,27 95,79 50,104" fill="#fdf2f7" stroke="#df5d90" stroke-width="2.2" stroke-linejoin="round"/></svg>
+              <span class="ctag">your app</span></div>
+          </div>
+          <div class="foot"><b>one runtime</b> · your offchain routes + onchain execution, together</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE — SEE IT (video) ============ -->
+  <section class="slide" id="svideo" data-title="See it">
+    <iframe id="vidframe" title="aomi — in motion"
+      data-src="../video/somm/deliverable/insert.html"
+      allow="autoplay"
+      style="position:absolute;inset:0;width:1280px;height:720px;border:0;background:#000;display:block"></iframe>
+  </section>
+
+  <!-- ============ SLIDE — LANGUAGE IN, TX OUT ============ -->
+  <section class="slide" id="s4" data-title="Agentic loop">
+    <div class="pad">
+      <div class="head-row">
+        <div class="eyebrow rise d1">What it does</div>
+      </div>
+      <h1 class="lead rise d2" style="margin-top:6px;max-width:26ch;font-size:38px">
+        Plain language in. <span class="ok">Verified execution</span> out.</h1>
+
+      <div class="flow">
+        <!-- prompt -->
+        <div class="prompt rise d3">
+          <div class="h">user · plain english</div>
+          <div class="u">Rebalance my liquidity from <em>EtherFi</em> to <em>Morpho</em></div>
+          <div class="sys">system · <b>seek best net yield</b><br>never exceed risk band B<br>always propose before execution</div>
+        </div>
+
+        <!-- tools -->
+        <div class="tools">
+          <div class="arrowlbl">agent calls your tools →</div>
+          <div class="toolpill t0">get_idle_assets<i>()</i><span class="c">✓</span></div>
+          <div class="toolpill t1">get_risk_snapshot<i>()</i><span class="c">✓</span></div>
+          <div class="toolpill t2">assess_position<i>()</i><span class="c">✓</span></div>
+          <div class="toolpill t3">get_credit_balance<i>()</i><span class="c">✓</span></div>
+          <div class="toolpill t4">propose_intent<i>()</i><span class="c">✓</span></div>
+        </div>
+
+        <!-- signed tx -->
+        <div class="txcard rise d5">
+          <div class="bh"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 7l8-4 8 4-8 4-8-4z"/></svg>aomi core · built</div>
+          <div class="row">withdraw · etherfi<br><b>2,400 weETH</b></div>
+          <div class="row">supply · morpho blue<br><b>band A · +1.9%</b></div>
+          <div class="sim">batched → 1 signature · SIMULATED ✓</div>
+          <div class="sign">⌘ Approve &amp; Sign</div>
+        </div>
+
+        <div class="conn" style="left:300px;width:calc((100% - 300px - 250px))"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE · PAYMENTS ============ -->
+  <section class="slide" id="spay" data-title="Payments">
+    <div class="pad">
+      <div class="eyebrow rise d1">Payments · native to the runtime</div>
+      <h1 class="lead rise d2" style="margin-top:14px;max-width:24ch;font-size:38px">Every tool call can <span class="co">charge</span>.</h1>
+    </div>
+
+    <!-- left · the rails -->
+    <span class="kicker rise d2" style="position:absolute;left:114px;top:214px;z-index:5">your app monetizes</span>
+    <div class="toolp rise d3">get_risk_snapshot<i>()</i><b>$0.50</b></div>
+    <div class="sdknote rise d3">declared in the app SDK · pricing + beneficiary</div>
+    <div class="paygate rise d4"><span>pay gate — clears if balance ≥ 0</span></div>
+    <div class="paychip rise d5" style="left:130px;top:462px;width:250px">
+      <div class="nm"><span class="dt"></span>Somm wallet</div>
+      <div class="sb">settles on Base · Tempo</div>
+    </div>
+    <div class="paychip fee rise d5" style="left:430px;top:468px;width:150px">
+      <div class="nm"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>aomi · fee</div>
+      <div class="sb">bps of flow</div>
+    </div>
+    <div class="paycap rise d6">apps declare <b>price + beneficiary</b> — the gateway meters every call into the running balance and settles onchain. <b>zero payment code</b> in the app.</div>
+
+    <svg class="paysvg" viewBox="0 0 1280 720">
+      <path class="payline" d="M315,292 L315,376 C315,430 255,425 255,458"/>
+      <path class="payline" d="M315,292 L315,376 C315,436 505,430 505,464"/>
+    </svg>
+    <span class="paycoin" style="offset-path:path('M315,292 L315,376 C315,430 255,425 255,458')"></span>
+    <span class="paycoin" style="offset-path:path('M315,292 L315,376 C315,430 255,425 255,458');animation-delay:1.5s"></span>
+    <span class="paycoin fee" style="offset-path:path('M315,292 L315,376 C315,436 505,430 505,464');animation-delay:.6s"></span>
+
+    <!-- right · deferred credit gate -->
+    <div class="gcard rise d4">
+      <span class="bdg b1">x402-compatible</span><span class="bdg b2">deferred credit gate</span>
+      <svg class="gsvg" viewBox="0 0 492 236">
+        <!-- credit zone -->
+        <rect x="24" y="48" width="444" height="152" fill="var(--sommtint)" opacity=".55"/>
+        <text x="30" y="192" font-size="8.5" fill="var(--sommtext)">▽ credit zone — turns served on IOU while below the gate</text>
+        <!-- gate rail -->
+        <line x1="24" y1="48" x2="468" y2="48" stroke="#b48a2c" stroke-width="2.4"/>
+        <rect x="176" y="40" width="150" height="16" rx="8" fill="#fdf6e0" stroke="#b48a2c" stroke-width="1"/>
+        <text x="251" y="51" font-size="7.5" fill="#8a6a1e" text-anchor="middle" letter-spacing=".06em">PAY GATE · balance ≥ 0</text>
+        <line x1="432" y1="48" x2="468" y2="48" stroke="var(--somm)" stroke-width="3" stroke-dasharray="5 4"/>
+        <text x="450" y="36" font-size="8" fill="var(--sommtext)" text-anchor="end" font-weight="700">GATE SHUT · 402</text>
+        <!-- balance trajectory -->
+        <polyline class="balline" points="40,38 150,86 265,132 370,176 452,176" fill="none"
+          stroke="var(--hl2)" stroke-width="2.2" stroke-linejoin="round" pathLength="100"/>
+        <!-- points -->
+        <circle cx="40" cy="38" r="4" fill="var(--dim)"/><text x="40" y="24" font-size="8.5" fill="var(--ink2)" text-anchor="middle">+1</text>
+        <circle cx="150" cy="86" r="5" fill="var(--ok)"/><circle cx="150" cy="86" r="9" fill="none" stroke="var(--ok)" stroke-dasharray="2.5 2.5"/>
+        <text x="150" y="104" font-size="8.5" fill="var(--ink2)" text-anchor="middle">-4</text>
+        <text x="150" y="115" font-size="7.5" fill="var(--ok)" text-anchor="middle">served ✓ (was ≥ 0 at the gate)</text>
+        <circle cx="265" cy="132" r="4" fill="var(--dim)"/><text x="265" y="150" font-size="8.5" fill="var(--ink2)" text-anchor="middle">-9</text>
+        <text x="326" y="118" font-size="7.5" fill="var(--dim)" text-anchor="middle">no check · serve on credit</text>
+        <circle cx="370" cy="176" r="4" fill="var(--dim)"/><text x="370" y="194" font-size="8.5" fill="var(--ink2)" text-anchor="middle">-14</text>
+        <circle class="gdot402" cx="452" cy="176" r="5.5" fill="var(--somm)"/>
+        <circle cx="452" cy="176" r="10" fill="none" stroke="var(--somm)" stroke-dasharray="2.5 2.5" opacity=".7"/>
+        <text x="452" y="196" font-size="7.5" fill="var(--sommtext)" text-anchor="middle">blocked ✕ → 402</text>
+        <!-- top-up -->
+        <g class="topup">
+          <line x1="452" y1="168" x2="452" y2="26" stroke="var(--hl)" stroke-width="1.4" stroke-dasharray="4 4"/>
+          <path d="M452,18 L447,28 L457,28 Z" fill="var(--hl)"/>
+          <text x="444" y="22" font-size="7.5" fill="var(--hl)" text-anchor="end">top-up lifts back through the gate</text>
+        </g>
+        <!-- x axis -->
+        <text x="40" y="216" font-size="8" fill="var(--dim)" text-anchor="middle">start</text>
+        <text x="150" y="216" font-size="8" fill="var(--ink2)" text-anchor="middle">turn 1 ◆</text>
+        <text x="265" y="216" font-size="8" fill="var(--dim)" text-anchor="middle">turn 2</text>
+        <text x="370" y="216" font-size="8" fill="var(--dim)" text-anchor="middle">turn 3</text>
+        <text x="452" y="216" font-size="8" fill="var(--ink2)" text-anchor="middle">turn 4 ◆</text>
+      </svg>
+      <div class="gstat">gate checked once per <b>TURN_CAP</b>, not every request → <b>3× fewer checks &amp; settlements</b> · <i>CAP=1 recovers strict x402</i></div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE · PRODUCT SURFACES ============ -->
+  <section class="slide" id="ssurf" data-title="Surfaces">
+    <div class="pad">
+      <div class="eyebrow rise d1">Product surfaces</div>
+      <h1 class="lead rise d2" style="margin-top:14px">One app.<br><span class="i">Every surface.</span></h1>
+      <p class="deck-sub rise d3" style="max-width:32ch">Same agent, same tools, same guards, same signer — everywhere your users already are.</p>
+      <ul class="bul rise d4" style="margin-top:24px;max-width:440px;font-size:14.5px">
+        <li class="rise d4"><b>Web</b> — embeddable widget + headless React</li>
+        <li class="rise d5"><b>Telegram · Discord · Slack</b> — chat-native bots</li>
+        <li class="rise d6"><b>Your own frontend</b> — BYO UI on the same runtime</li>
+        <li class="rise d7"><b>MCP — the agent-facing surface.</b> Claude, Cursor &amp; Codex connect to the bot you built.</li>
+      </ul>
+      <div class="rise d7" style="font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:6px">next → watch an agent drive it</div>
+    </div>
+
+    <div class="surfart rise d3">
+      <div class="surfview show" data-view="web">
+      <div class="mockbrowser">
+        <div class="mb-bar">
+          <span class="wd"></span><span class="wd"></span><span class="wd"></span>
+          <span class="sm"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          <span class="u">somm.finance</span>
+        </div>
+        <span class="skel" style="left:20px;top:54px;width:120px;height:10px"></span>
+        <span class="skel" style="left:20px;top:74px;width:160px;height:7px"></span>
+        <span class="skel" style="left:20px;top:90px;width:140px;height:7px"></span>
+        <span class="skel" style="left:20px;top:118px;width:200px;height:62px;border-radius:8px"></span>
+        <span class="skel" style="left:20px;top:192px;width:200px;height:62px;border-radius:8px"></span>
+        <span class="skel" style="left:20px;top:266px;width:200px;height:62px;border-radius:8px"></span>
+        <div class="mockchat">
+          <div class="ch"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg><b>Somm assistant</b><span>· powered by aomi</span></div>
+          <div class="um">Rebalance my liquidity from EtherFi to Morpho</div>
+          <div class="tr"><span><i>✓</i> querying your positions</span><span class="rs">2,400 weETH · etherfi</span></div>
+          <div class="tr"><span><i>✓</i> risk check</span><span class="rs">morpho band A · +1.9%</span></div>
+          <div class="mocktx">
+            <div class="bt">building transaction · aomi core pipeline</div>
+            <div>→ withdraw · etherfi · 2,400 weETH</div>
+            <div>→ approve · weETH → morpho blue</div>
+            <div>→ supply · morpho @ 91.2% util</div>
+            <div class="sim">batched → 1 signature · SIMULATED ✓</div>
+          </div>
+          <div class="rdy">Ready. <i>Keys stay with you.</i></div>
+          <div class="signpill">⌘ Approve &amp; Sign</div>
+          <div class="rf">⌘ runs on <i>aomi</i></div>
+        </div>
+      </div>
+      </div><!-- /web -->
+
+      <!-- telegram -->
+      <div class="surfview" data-view="tg">
+        <div class="appwin tgmock">
+          <div class="side">
+            <div class="srch">🔍&nbsp; Search</div>
+            <div class="it on"><span class="av" style="background:#df5d90">S</span><div><div class="nm">Somm Assistant</div><div class="pv">batched → 1 signature · SIM…</div></div></div>
+            <div class="it"><span class="av" style="background:#6faae2">M</span><div><div class="nm">Morpho Updates</div><div class="pv">rates digest — band A 4.1%</div></div></div>
+            <div class="it"><span class="av" style="background:#7bc862">D</span><div><div class="nm">DeFi News</div><div class="pv">weekly wrap: L2 fees at ath…</div></div></div>
+            <div class="it"><span class="av" style="background:#a695e7">A</span><div><div class="nm">Alice</div><div class="pv">did you see the somm bot??</div></div></div>
+          </div>
+          <div class="main">
+            <div class="head"><span class="av">S</span><b>Somm Assistant</b><span class="bot">bot</span><span class="dots">⋮</span></div>
+            <div class="chat">
+              <div class="bub out">Rebalance my liquidity from EtherFi to Morpho<span class="tm">09:41 ✓✓</span></div>
+              <div class="bub in">
+                <div class="trow"><i>✓</i> querying your positions — 2,400 weETH · etherfi</div>
+                <div class="trow"><i>✓</i> risk check — morpho band A · +1.9%</div>
+                <div class="plan"><span class="bt">building transaction · aomi core pipeline</span><br>→ withdraw · etherfi · 2,400 weETH<br>→ approve · weETH → morpho blue<br>→ supply · morpho @ 91.2% util</div>
+                <div class="sim">batched → 1 signature · SIMULATED ✓</div>
+                <span class="tm">09:41</span>
+              </div>
+              <div class="ikb">⌘ Approve &amp; Sign</div>
+            </div>
+            <div class="inp">Message<span class="ic">📎 🎤</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- discord -->
+      <div class="surfview" data-view="dc">
+        <div class="appwin dcmock">
+          <div class="rail">
+            <div class="srv on">S</div>
+            <div class="srv">⌂</div>
+            <div class="srv">+</div>
+          </div>
+          <div class="chans">
+            <div class="sname">Somm <span style="font-weight:400;color:#949ba4">⌄</span></div>
+            <div class="sec">Text channels</div>
+            <div class="chn"><i>#</i> general</div>
+            <div class="chn on"><i>#</i> somm-assistant</div>
+            <div class="chn"><i>#</i> governance</div>
+            <div class="chn"><i>#</i> support</div>
+          </div>
+          <div class="dmain">
+            <div class="dhead"><i>#</i> somm-assistant <span class="topic">aomi-powered treasury agent</span></div>
+            <div class="dchat">
+              <div class="grp">
+                <span class="av" style="background:#5865f2">C</span>
+                <div><span class="nm" style="color:#e77ba6">cecilia</span><span class="ts">Today at 9:41 AM</span>
+                  <div class="tx">Rebalance my liquidity from EtherFi to Morpho</div></div>
+              </div>
+              <div class="grp">
+                <span class="av" style="background:#df5d90">S</span>
+                <div><span class="nm" style="color:#9db4d8">Somm Assistant</span><span class="app">✓ APP</span><span class="ts">Today at 9:41 AM</span>
+                  <div class="tx">✓ positions — 2,400 weETH · etherfi&nbsp;&nbsp;✓ risk — morpho band A · +1.9%</div>
+                  <div class="emb">
+                    <div class="et">building transaction · aomi core pipeline</div>
+                    <div class="el">→ withdraw · etherfi · 2,400 weETH<br>→ approve · weETH → morpho blue<br>→ supply · morpho @ 91.2% util</div>
+                    <div class="es">batched → 1 signature · SIMULATED ✓</div>
+                    <div class="btns"><span class="dbtn">Approve &amp; Sign</span><span class="dbtn sec">Details</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="dinp"><span class="plus">+</span>Message #somm-assistant</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- slack -->
+      <div class="surfview" data-view="sl">
+        <div class="appwin slmock">
+          <div class="sside">
+            <div class="wsp">Somm ⌄ <span class="pen">✎</span></div>
+            <div class="ssec">Channels</div>
+            <div class="sch"><i>#</i> treasury</div>
+            <div class="sch on"><i>#</i> somm-assistant</div>
+            <div class="sch"><i>#</i> general</div>
+            <div class="ssec">Apps</div>
+            <div class="sch"><span class="pr"></span> Somm Assistant</div>
+          </div>
+          <div class="smain">
+            <div class="shead"><b># somm-assistant</b><span>☆</span><span>24 members</span></div>
+            <div class="schat">
+              <div class="smsg">
+                <span class="av" style="background:#416cac">C</span>
+                <div><span class="nm">cecilia</span><span class="ts">9:41 AM</span>
+                  <div class="tx">Rebalance my liquidity from EtherFi to Morpho</div></div>
+              </div>
+              <div class="smsg">
+                <span class="av" style="background:#df5d90">S</span>
+                <div><span class="nm">Somm Assistant</span><span class="sapp">APP</span><span class="ts">9:41 AM</span>
+                  <div class="tx">✓ positions — 2,400 weETH · etherfi&nbsp;&nbsp;✓ risk — morpho band A · +1.9%</div>
+                  <div class="att">
+                    <div class="et">building transaction · aomi core pipeline</div>
+                    <div class="el">→ withdraw · etherfi · 2,400 weETH<br>→ approve · weETH → morpho blue<br>→ supply · morpho @ 91.2% util</div>
+                    <div class="es">batched → 1 signature · SIMULATED ✓</div>
+                    <div class="sbtns"><span class="sbtn">Approve &amp; Sign</span><span class="sbtn sec">Cancel</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sinp">Message #somm-assistant<span class="ic">Aa&nbsp; @&nbsp; ☺</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- mcp -->
+      <div class="surfview" data-view="mcp">
+        <div class="appwin term mcpmock">
+          <div class="term-bar">
+            <div class="tl" style="background:#3a3a42"></div>
+            <div class="tl" style="background:#3a3a42"></div>
+            <div class="tl" style="background:#3fbc80"></div>
+            <div class="term-title">claude — connected to somm over aomi mcp</div>
+            <div></div>
+          </div>
+          <div class="term-body"><div class="ln">$ claude</div><div class="ln a">claude ▸ MCP server detected: aomi — chat.aomi.dev/api/mcp</div><div class="ln okl">  ✓ signed in as cecilia.eth · wallet policy: human-sync</div><div class="ln u">you ▸ rebalance my liquidity from etherfi to morpho</div><div class="ln t">  → aomi_run  (build → simulate → commit · server-side)</div><div class="ln okl">  ✓ batched → 1 signature · SIMULATED ✓ — awaiting your sign-off</div></div>
+          <div class="cue">the same bot, driven by an agent — <i>full session → next two pages</i></div>
+        </div>
+      </div>
+    </div>
+    <div class="surfrow rise d5">
+      <span class="surfchip on" data-surf="web"><span class="d" style="background:var(--hl2)"></span>Web</span>
+      <span class="surfchip" data-surf="tg"><span class="d" style="background:#3390ec"></span>Telegram</span>
+      <span class="surfchip" data-surf="dc"><span class="d" style="background:#5865f2"></span>Discord</span>
+      <span class="surfchip" data-surf="sl"><span class="d" style="background:#2eb67d"></span>Slack</span>
+      <span class="surfchip" data-surf="mcp">&gt;_ MCP</span>
+    </div>
+    <div class="surfcap rise d6">click a surface ↑ · one deployment · same guards &amp; signer</div>
+  </section>
+
+  <!-- ============ SLIDE · MCP DEMO — SIGN-IN TO ARB ============ -->
+  <section class="slide demo" data-player="arb">
+    <div class="pad" style="padding-top:92px">
+      <div class="demo-head">
+        <div>
+          <div class="eyebrow rise d1">Product surface · MCP</div>
+          <h1 class="rise d2" style="margin-top:10px">Agents are users too — <span class="ok">Claude signs in</span> and trades in one session</h1>
+        </div>
+        <div class="controls rise d2">
+          <button class="btn" onclick="players.arb.play()">▶ replay</button>
+          <button class="btn stop" onclick="players.arb.stop()">■ stop</button>
+        </div>
+      </div>
+      <div class="term rise d3">
+        <div class="term-bar">
+          <div class="tl" style="background:#3a3a42"></div>
+          <div class="tl" style="background:#3a3a42"></div>
+          <div class="tl" style="background:#3fbc80"></div>
+          <div class="term-title">claude — connected to your app over aomi mcp</div>
+          <div></div>
+        </div>
+        <div class="term-body" id="term-arb"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE · MCP DEMO — SCRIPT MODE ============ -->
+  <section class="slide demo" data-player="poly">
+    <div class="pad" style="padding-top:92px">
+      <div class="demo-head">
+        <div>
+          <div class="eyebrow rise d1">Product surface · MCP</div>
+          <h1 class="rise d2" style="margin-top:10px">Script mode — one request runs a <span class="i">whole strategy</span> through your app</h1>
+        </div>
+        <div class="controls rise d2">
+          <button class="btn" onclick="players.poly.play()">▶ replay</button>
+          <button class="btn stop" onclick="players.poly.stop()">■ stop</button>
+        </div>
+      </div>
+      <div class="term rise d3">
+        <div class="term-bar">
+          <div class="tl" style="background:#3a3a42"></div>
+          <div class="tl" style="background:#3a3a42"></div>
+          <div class="tl" style="background:#3fbc80"></div>
+          <div class="term-title">claude — connected to your app over aomi mcp</div>
+          <div></div>
+        </div>
+        <div class="term-body" id="term-poly"></div>
+      </div>
+    </div>
+  </section>
+
+</div></div>
+
+<!-- controls -->
+<button class="navbtn" id="prev" aria-label="previous"></button>
+<button class="navbtn" id="next" aria-label="next"></button>
+<div id="nav"><div id="dots"></div></div>
+<div id="rail"></div>
+<div id="hint">← → to move</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var cur=0;
+  var dotsWrap=document.getElementById('dots');
+  var pageEl=document.querySelector('#pageno .cur');
+  slides.forEach(function(s,i){
+    var d=document.createElement('div');d.className='dot'+(i===0?' on':'');
+    d.addEventListener('click',function(){go(i)});
+    dotsWrap.appendChild(d);
+  });
+  var dots=[].slice.call(document.querySelectorAll('#dots .dot'));
+  // right-side numbered jump rail
+  var railWrap=document.getElementById('rail');
+  slides.forEach(function(s,i){
+    var r=document.createElement('div');
+    r.className='rdot'+(i===0?' on':'');
+    r.textContent=i+1;
+    r.title=s.dataset.title||('slide '+(i+1));
+    r.addEventListener('click',function(){go(i)});
+    railWrap.appendChild(r);
+  });
+  var rdots=[].slice.call(document.querySelectorAll('#rail .rdot'));
+  function pad(n){return (n<10?'0':'')+n}
+  function go(i){
+    if(i<0)i=0; if(i>=slides.length)i=slides.length-1;
+    slides[cur].classList.remove('active');
+    dots[cur].classList.remove('on');
+    rdots[cur].classList.remove('on');
+    cur=i;
+    // force reflow so replayed CSS animations restart from 0
+    void slides[cur].offsetWidth;
+    slides[cur].classList.add('active');
+    dots[cur].classList.add('on');
+    rdots[cur].classList.add('on');
+    pageEl.textContent=pad(cur+1);
+    document.body.classList.toggle('videoActive', slides[cur].id==='svideo');
+    syncVideo();
+    syncDemos();
+  }
+  // lazy-load the finale video iframe; auto-play on enter, pause on leave
+  function syncVideo(){
+    slides.forEach(function(sl){
+      var f=sl.querySelector('iframe[data-src]');
+      if(!f) return;
+      var active=sl.classList.contains('active');
+      if(active){
+        if(!f.getAttribute('src')){
+          f.addEventListener('load',function(){
+            setTimeout(function(){clickPlay(f,/play|start|▶/i);},250);
+            // forward arrow keys from inside the iframe so ← → still navigate
+            try{
+              f.contentWindow.document.addEventListener('keydown',function(e){
+                if(e.key==='ArrowRight'||e.key==='PageDown'){nextS();}
+                else if(e.key==='ArrowLeft'||e.key==='PageUp'){prevS();}
+              });
+            }catch(err){}
+          });
+          f.setAttribute('src',f.getAttribute('data-src'));
+        } else {
+          clickPlay(f,/play|start|▶/i);
+        }
+      } else {
+        clickPlay(f,/pause|❚/i);
+      }
+    });
+  }
+  function clickPlay(f,wantLabel){
+    try{
+      var b=f.contentWindow.document.getElementById('playBtn');
+      if(b && wantLabel.test(b.textContent)) b.click();
+    }catch(e){}
+  }
+
+  /* ---------- MCP demo terminals (agent-facing surface) ---------- */
+  var ARB_SCRIPT=[
+    { t: "$ claude", cls: "", mode: "type", d: 300 },
+    { t: "", d: 200 },
+    { t: "claude ▸ MCP server detected: aomi — https://chat.aomi.dev/api/mcp", cls: "a", mode: "out", d: 500 },
+    { t: "  ⚠ authentication required — opening browser for OAuth…", cls: "wr", mode: "out", d: 900 },
+    { t: "  ✓ signed in as cecilia.eth", cls: "okl", mode: "out", d: 420 },
+    { t: "  ✓ wallet policy loaded: human-sync · auto-commit ≤ $5,000 value-at-risk", cls: "okl", mode: "out", d: 800 },
+    { t: "", d: 300 },
+    { t: "you ▸ watch ETH/USDC on uniswap vs binance. capture any spread ≥ 25 bps with up to 25k USDC.", cls: "u", mode: "type", d: 600 },
+    { t: "", d: 250 },
+    { t: "claude ▸ discovering the capability surface…", cls: "a", mode: "out", d: 350 },
+    { t: "  → aomi_search_tools q=\"pool price swap quote\"", cls: "t", mode: "out", d: 420 },
+    { t: "    ↳ skill:uniswap (145) · cex_ticker (120) · lifi_get_quote (95)", cls: "r", mode: "out", d: 380 },
+    { t: "  → aomi_describe_skill uniswap", cls: "t", mode: "out", d: 400 },
+    { t: "    ↳ instruction pack loaded: pools, routers, ABIs, guard hooks (3.2 kB)", cls: "r", mode: "out", d: 700 },
+    { t: "", d: 250 },
+    { t: "claude ▸ composing the strategy as ONE server-side program:", cls: "a", mode: "out", d: 400 },
+    { t: "", d: 150 },
+    { t: "    # pool vs binance arb — guarded, atomic", cls: "sys", mode: "out", d: 160 },
+    { t: "    px=$(cex_ticker venue=binance pair=ETH/USDC)", cls: "", mode: "type", d: 120 },
+    { t: "    q=$(uniswap_quote pool=ETH/USDC amount=25000)", cls: "", mode: "type", d: 120 },
+    { t: "    s=$(price_spread a=$q.price b=$px.mid)", cls: "", mode: "type", d: 120 },
+    { t: "    require min_bps=25 value=$s.bps", cls: "", mode: "type", d: 120 },
+    { t: "    swap=$(evm_stage_tx plan=$q.route slippage_bps=10)", cls: "", mode: "type", d: 120 },
+    { t: "    simulate_batch ids=$swap.id | commit", cls: "", mode: "type", d: 300 },
+    { t: "", d: 250 },
+    { t: "  → aomi_run  (6 steps · intermediates stay server-side)", cls: "t", mode: "out", d: 800 },
+    { t: "    ✓ binance mid 3,412.18 · uniswap pool 3,398.44 → spread +40.3 bps", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ guard require ≥ 25 bps — passed", cls: "okl", mode: "out", d: 420 },
+    { t: "    ✓ staged swap #4821 · simulation: 25,000 USDC → 7.352 ETH · gas $14.20", cls: "okl", mode: "out", d: 500 },
+    { t: "    ⚠ value-at-risk $25,000 > $5,000 → human signature requested…", cls: "wr", mode: "out", d: 1200 },
+    { t: "    ✓ signed by cecilia.eth · committed 0x7f3a…c9e2", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ realized +$1,012 net of gas & slippage", cls: "hot", mode: "out", d: 800 },
+    { t: "", d: 300 },
+    { t: "claude ▸ spread captured. the program re-arms each block — I'll ping you at the next ≥25 bps window.", cls: "a", mode: "type", d: 700 },
+    { t: "", d: 300 },
+    { t: "you ▸ nice. how's my LP position doing?", cls: "u", mode: "type", d: 400 },
+    { t: "", d: 250 },
+    { t: "  → aomi_run  pos=$(uniswap_position id=88231)  # one call, full status", cls: "t", mode: "out", d: 600 },
+    { t: "    ↳ ETH/USDC 0.30% · in-range ✓ · fees accrued $312.40 · IL −0.4%", cls: "r", mode: "out", d: 400 },
+    { t: "", d: 200 },
+    { t: "claude ▸ position healthy — in range, fees compounding. want me to auto-collect fees weekly? (it's one cron + one program)", cls: "a", mode: "type", d: 400 },
+  ];
+
+  var POLY_SCRIPT=[
+    { t: "you ▸ scan polymarket for mispriced binary markets. if YES + NO trade under $0.99, buy both sides. keep it under 5k.", cls: "u", mode: "type", d: 600 },
+    { t: "", d: 250 },
+    { t: "claude ▸ that's a dutch book — a risk-free payoff if both legs fill. discovering…", cls: "a", mode: "out", d: 450 },
+    { t: "  → aomi_search_tools q=\"polymarket prediction order book\"", cls: "t", mode: "out", d: 420 },
+    { t: "    ↳ skill:polymarket (150) · clob_book (110) · clob_stage_order (105)", cls: "r", mode: "out", d: 380 },
+    { t: "  → aomi_describe_skill polymarket", cls: "t", mode: "out", d: 400 },
+    { t: "    ↳ instruction pack: CLOB semantics, USDC collateral, resolution rules, guard hooks", cls: "r", mode: "out", d: 700 },
+    { t: "", d: 250 },
+    { t: "claude ▸ one program scans every market server-side — nothing floods my context:", cls: "a", mode: "out", d: 400 },
+    { t: "", d: 150 },
+    { t: "    # dutch-book sweep — buy YES+NO when they sum < $0.99", cls: "sys", mode: "out", d: 160 },
+    { t: "    mkts=$(polymarket_search status=open min_liquidity=50000)", cls: "", mode: "type", d: 120 },
+    { t: "    for m in $mkts.markets; do", cls: "", mode: "type", d: 120 },
+    { t: "      book=$(clob_book market=$m.id)", cls: "", mode: "type", d: 120 },
+    { t: "      edge=$(dutch_book yes=$book.yes_ask no=$book.no_ask)", cls: "", mode: "type", d: 120 },
+    { t: "      require min_bps=100 value=$edge.bps", cls: "", mode: "type", d: 120 },
+    { t: "      clob_stage_order market=$m.id side=YES size=$edge.size", cls: "", mode: "type", d: 120 },
+    { t: "      clob_stage_order market=$m.id side=NO  size=$edge.size", cls: "", mode: "type", d: 120 },
+    { t: "    done", cls: "", mode: "type", d: 300 },
+    { t: "", d: 250 },
+    { t: "  → aomi_run  (loops 214 markets · 431 tool steps · 0 tokens burned on intermediates)", cls: "t", mode: "out", d: 900 },
+    { t: "    ↳ 214 markets scanned · 212 fairly priced · 2 dutch books found", cls: "r", mode: "out", d: 550 },
+    { t: "    ✓ \"Fed cuts rates in September?\"   YES 0.57 + NO 0.41 = 0.98 → edge 204 bps", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ \"ETH ETF inflows > $1B in July?\"  YES 0.22 + NO 0.76 = 0.98 → edge 197 bps", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ 4 legs staged · simulation: $4,900 USDC in → $5,000 guaranteed at resolution", cls: "okl", mode: "out", d: 500 },
+    { t: "    ✓ value-at-risk $4,900 ≤ $5,000 policy → auto-committed, no interruption", cls: "okl", mode: "out", d: 600 },
+    { t: "    ✓ fills: 0x91bd…44a0 · 0x37c2…e881 — locked +$100.40 risk-free", cls: "hot", mode: "out", d: 800 },
+    { t: "", d: 300 },
+    { t: "claude ▸ two dutch books captured under your auto-commit ceiling. I can re-run this every 10 minutes as a cron — same program, same guards, zero babysitting.", cls: "a", mode: "type", d: 500 },
+    { t: "", d: 250 },
+    { t: "you ▸ do it", cls: "u", mode: "type", d: 350 },
+    { t: "", d: 200 },
+    { t: "  → schedule_cron every=10m program=dutch-book-sweep", cls: "t", mode: "out", d: 450 },
+    { t: "    ✓ scheduled — next run 09:40 UTC · reports only on capture or guard trip", cls: "okl", mode: "out", d: 300 },
+  ];
+
+  function makePlayer(termId, script) {
+    var term = document.getElementById(termId);
+    var timers = [];
+    function stop() {
+      timers.forEach(clearTimeout); timers = [];
+      var c = term.querySelector(".cursor"); if (c) c.remove();
+    }
+    function play() {
+      stop();
+      term.innerHTML = "";
+      var at = 400;
+      script.forEach(function (line) {
+        var t = line.t, cls = line.cls || "", mode = line.mode || "out", d = line.d || 300;
+        if (mode === "type" && t) {
+          timers.push(setTimeout(function () {
+            var el = document.createElement("div");
+            el.className = "ln " + cls;
+            term.appendChild(el);
+            var cur = document.createElement("span");
+            cur.className = "cursor";
+            el.appendChild(cur);
+            t.split("").forEach(function (ch, k) {
+              timers.push(setTimeout(function () {
+                cur.insertAdjacentText("beforebegin", ch);
+                term.scrollTop = term.scrollHeight;
+                if (k === t.length - 1) cur.remove();
+              }, k * 14));
+            });
+          }, at));
+          at += t.length * 14 + d;
+        } else {
+          timers.push(setTimeout(function () {
+            var el = document.createElement("div");
+            el.className = "ln " + cls;
+            el.textContent = t;
+            term.appendChild(el);
+            term.scrollTop = term.scrollHeight;
+          }, at));
+          at += d;
+        }
+      });
+    }
+    return { play: play, stop: stop };
+  }
+
+  var players = {
+    arb: makePlayer("term-arb", ARB_SCRIPT),
+    poly: makePlayer("term-poly", POLY_SCRIPT),
+  };
+  window.players = players; // for the replay/stop buttons
+
+  function syncDemos(){
+    Object.keys(players).forEach(function(k){ players[k].stop(); });
+    var p = players[slides[cur].dataset.player];
+    if(p) p.play();
+  }
+
+  /* ---------- product-surface tab switcher (slide 9) ---------- */
+  var surfViews=[].slice.call(document.querySelectorAll('#ssurf .surfview'));
+  var surfChips=[].slice.call(document.querySelectorAll('#ssurf .surfchip[data-surf]'));
+  surfChips.forEach(function(c){
+    c.addEventListener('click',function(){
+      surfChips.forEach(function(x){x.classList.remove('on')});
+      c.classList.add('on');
+      surfViews.forEach(function(v){v.classList.toggle('show',v.dataset.view===c.dataset.surf)});
+    });
+  });
+  function nextS(){go(cur+1)} function prevS(){go(cur-1)}
+  document.getElementById('next').addEventListener('click',nextS);
+  document.getElementById('prev').addEventListener('click',prevS);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();nextS();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prevS();}
+    else if(e.key==='Home'){go(0);} else if(e.key==='End'){go(slides.length-1);}
+    else if(e.key.toLowerCase()==='r'){var p=players[slides[cur].dataset.player]; if(p)p.play();}
+    else if(e.key.toLowerCase()==='s'){var p=players[slides[cur].dataset.player]; if(p)p.stop();}
+  });
+  document.getElementById('ptotal').textContent=pad(slides.length);
+
+  // scale 1280x720 stage to fit viewport
+  var stage=document.getElementById('stage');
+  function fit(){
+    var s=Math.min(window.innerWidth/1280, window.innerHeight/720);
+    stage.style.transform='scale('+s+')';
+  }
+  window.addEventListener('resize',fit); fit();
+
+  // deep-link: #N jumps to slide N (1-based)
+  function fromHash(){
+    var n=parseInt(location.hash.slice(1),10);
+    if(n>=1 && n<=slides.length) go(n-1);
+  }
+  window.addEventListener('hashchange',fromHash); fromHash();
+})();
+</script>
+</body>
+</html>
