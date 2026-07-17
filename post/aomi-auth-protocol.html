@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aomi — Auth Across Two Worlds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* cool neutral ramp (zinc) */
+    --cool-0:#ffffff; --cool-50:#fafafa; --cool-100:#f4f4f5; --cool-200:#e4e4e7;
+    --cool-300:#d4d4d8; --cool-400:#a1a1aa; --cool-500:#71717a; --cool-600:#52525b;
+    --cool-700:#3f3f46; --cool-800:#27272a; --cool-900:#18181b; --cool-950:#09090b;
+    /* lilac accent */
+    --lilac-50:#f6f3f7; --lilac-100:#efe9f1; --lilac-200:#e3d8e6; --lilac-300:#d3c2d8;
+    --lilac-400:#b9a3c1; --lilac-500:#9c83a8;
+    /* decorative + status */
+    --pink:#df5d90; --sky:#5288c2; --sky-100:#e2eef8; --sky-200:#cfe1f3;
+    --success:#2e9e6b; --success-subtle:#e4f3ec;
+    --warning:#d9982b; --warning-subtle:#fbf1de;
+    --danger:#d2495b; --danger-subtle:#fbe9ec;
+    --info:#416cac;
+    /* roles */
+    --ink:var(--cool-950); --muted:var(--cool-500); --subtle:var(--cool-400);
+    --bg:var(--cool-0); --bg-subtle:var(--cool-50); --panel:var(--cool-100);
+    --border:var(--cool-200); --border-strong:var(--cool-300);
+    /* type */
+    --display:"PT Serif",ui-serif,Georgia,Cambria,serif;
+    --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --word:"Source Serif 4",ui-serif,Georgia,Cambria,serif;
+    /* shadows (soft, flat brand) */
+    --sh-sm:0 1px 2px rgba(13,13,15,.04);
+    --sh-md:0 4px 16px rgba(13,13,15,.06);
+    --sh-lg:0 12px 40px rgba(13,13,15,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.55;
+    font-feature-settings:"cv01","ss01";
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 48px}
+  .wrap-wide{max-width:1320px;margin:0 auto;padding:0 32px}
+  .seq{overflow-x:auto}
+  section{padding:82px 0;border-bottom:1px solid var(--border)}
+  section:last-of-type{border-bottom:none}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);display:flex;align-items:center;gap:11px;margin:0 0 20px
+  }
+  .eyebrow::before{content:"";width:24px;height:1px;background:var(--border-strong)}
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:700;letter-spacing:-.02em}
+  h1{font-size:56px;line-height:1.06}
+  h2{font-size:38px;line-height:1.12}
+  h3{font-size:19px;letter-spacing:-.01em}
+  p{margin:0}
+  .lead{color:var(--cool-600);font-size:18.5px;max-width:66ch;font-family:var(--sans);line-height:1.6}
+  .kicker{color:var(--muted);font-size:15px;margin-top:14px;max-width:64ch}
+  .mono{font-family:var(--mono)}
+  .addr{font-family:var(--mono);font-size:13px}
+  .hl{color:var(--ink);font-weight:600}
+  .hl-lilac{color:var(--lilac-500);font-weight:600}
+  .hl-sky{color:var(--info);font-weight:600}
+  .hl-good{color:var(--success);font-weight:600}
+  .hl-warn{color:var(--warning);font-weight:600}
+  .hl-crit{color:var(--danger);font-weight:600}
+  .no{color:var(--danger);font-style:italic}
+
+  /* logo lockup */
+  .lock{display:inline-flex;align-items:center;gap:11px}
+  .lock .mark{width:26px;height:26px;color:var(--ink)}
+  .lock .word{font-family:var(--word);font-weight:600;font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--ink)}
+  .lock .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-left:4px;padding-top:3px}
+
+  .card{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:26px 28px}
+  .svgcard{background:var(--bg-subtle);border:1px solid var(--border);border-radius:24px;padding:14px}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:64px 0 88px;position:relative;overflow:hidden}
+  .hero::before{
+    content:"";position:absolute;right:-6%;top:-20%;width:560px;height:560px;border-radius:50%;
+    background:radial-gradient(circle at 50% 50%,var(--lilac-100),transparent 66%);pointer-events:none;
+  }
+  .hero .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:56px;position:relative}
+  .pill{display:inline-flex;gap:8px;align-items:center;background:var(--lilac-100);border:1px solid var(--lilac-300);color:var(--cool-700);border-radius:999px;padding:7px 15px;font-family:var(--mono);font-size:12px;letter-spacing:.03em;margin-bottom:26px}
+  .pill .g{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 3px var(--success-subtle)}
+  .hero h1{position:relative;max-width:17ch}
+  .hero h1 .accent{color:var(--lilac-500)}
+  .hero .lead{margin-top:24px;font-size:20px}
+
+  .axioms{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
+  .axiom{background:var(--bg);border:1px solid var(--border);border-radius:18px;padding:22px 22px 24px;box-shadow:var(--sh-sm)}
+  .axiom:first-child{background:var(--lilac-50);border-color:var(--lilac-200)}
+  .axiom .n{font-family:var(--mono);font-size:12px;color:var(--subtle)}
+  .axiom p{margin-top:14px;font-size:19px;line-height:1.35;font-family:var(--display);font-weight:700;letter-spacing:-.01em}
+
+  /* ---------- two-col ---------- */
+  .two{display:grid;grid-template-columns:1.02fr 1fr;gap:48px;align-items:center}
+  @media(max-width:900px){.two{grid-template-columns:1fr}}
+
+  /* ---------- EVOLUTION ---------- */
+  .evo{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+  @media(max-width:900px){.evo{grid-template-columns:1fr}}
+  .evo .card{display:flex;flex-direction:column;gap:14px;padding:24px;box-shadow:var(--sh-sm)}
+  .ver{display:flex;align-items:baseline;gap:11px}
+  .ver b{font-family:var(--mono);font-size:13px;letter-spacing:.02em;color:var(--sky)}
+  .ver.v2 b{color:var(--warning)}
+  .ver.v3 b{color:var(--success)}
+  .ver h3{font-size:18px}
+  .evo .body{color:var(--cool-600);font-size:14.5px;line-height:1.55}
+  .tagrow{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--border);color:var(--cool-600);background:var(--bg-subtle)}
+  .verdict{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);font-size:13px;display:flex;flex-wrap:wrap;gap:7px}
+  .k{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;white-space:nowrap}
+  .k.win{background:var(--success-subtle);color:#217a51;border:1px solid rgba(46,158,107,.28)}
+  .k.gap{background:var(--danger-subtle);color:#b03a4b;border:1px solid rgba(210,73,91,.26)}
+
+  /* ---------- FOUR PROOFS ---------- */
+  .planes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px}
+  @media(max-width:900px){.planes{grid-template-columns:1fr}}
+  .plane{border:1px solid var(--border);border-radius:20px;padding:24px;background:var(--bg)}
+  .plane.idn{background:var(--sky-100);border-color:var(--sky-200)}
+  .plane.exec{background:var(--warning-subtle);border-color:rgba(217,152,43,.3)}
+  .plane .phd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .plane .phd .q{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .plane h3{font-size:17px}
+  .plane.idn h3{color:var(--info)}
+  .plane.exec h3{color:#a9761f}
+  .proof{display:flex;gap:14px;padding:15px 0;border-top:1px solid rgba(9,9,11,.08)}
+  .proof:first-of-type{border-top:none}
+  .proof .ix{flex:0 0 34px;height:34px;border-radius:9px;display:grid;place-items:center;font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--bg);border:1px solid var(--border-strong)}
+  .proof .t b{display:block;font-size:15px;font-weight:600}
+  .proof .t span{color:var(--cool-600);font-size:13.5px}
+  .note{margin-top:18px;padding:15px 17px;border:1px dashed var(--border-strong);border-radius:13px;color:var(--cool-600);font-size:13.5px;background:rgba(255,255,255,.5)}
+
+  /* ---------- svg ---------- */
+  svg{display:block;width:100%;height:auto}
+  text{font-family:var(--sans)}
+  .t-mono{font-family:var(--mono)}
+
+  /* ---------- INVARIANT ---------- */
+  .invariant{margin-top:22px;display:flex;gap:14px;align-items:flex-start;background:var(--success-subtle);border:1px solid rgba(46,158,107,.3);border-radius:16px;padding:17px 19px}
+  .invariant .ic{flex:0 0 auto;color:var(--success);margin-top:1px}
+  .invariant p{font-size:14.5px;color:var(--cool-700)}
+  .invariant b{color:var(--ink)}
+
+  /* ---------- POLICY + OUTCOMES ---------- */
+  .policybar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:32px 0 24px}
+  @media(max-width:900px){.policybar{grid-template-columns:1fr}}
+  .pol{border:1px solid var(--border);border-radius:14px;padding:14px 16px;background:var(--bg);display:flex;gap:12px;align-items:flex-start}
+  .pol .ic{flex:0 0 24px;height:24px;border-radius:7px;display:grid;place-items:center;margin-top:1px}
+  .pol.good .ic{background:var(--success-subtle);color:var(--success)}
+  .pol.warn .ic{background:var(--warning-subtle);color:#a9761f}
+  .pol.crit .ic{background:var(--danger-subtle);color:var(--danger)}
+  .pol b{font-size:14px;font-weight:600}
+  .pol .d{color:var(--muted);font-size:12.5px;display:block;margin-top:2px}
+
+  .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:900px){.cards3{grid-template-columns:1fr}}
+  .who{border:1px solid var(--border);border-radius:20px;overflow:hidden;background:var(--bg);box-shadow:var(--sh-sm)}
+  .who .top{padding:18px 20px 16px;border-bottom:1px solid var(--border);border-left:3px solid transparent}
+  .who.good .top{border-left-color:var(--success);background:linear-gradient(90deg,var(--success-subtle),transparent 60%)}
+  .who.warn .top,.who.warn2 .top{border-left-color:var(--warning);background:linear-gradient(90deg,var(--warning-subtle),transparent 60%)}
+  .who .name{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .who .name .addr{font-size:14.5px;color:var(--ink);font-weight:500}
+  .badge{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;white-space:nowrap}
+  .badge.async{color:#217a51;border:1px solid rgba(46,158,107,.4);background:var(--success-subtle)}
+  .badge.sync{color:#a9761f;border:1px solid rgba(217,152,43,.4);background:var(--warning-subtle)}
+  .who .custody{color:var(--muted);font-size:12px;margin-top:8px;font-family:var(--mono)}
+  .who .rows{padding:8px 20px 18px}
+  .who .row{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--border);font-size:13.5px}
+  .who .row:first-child{border-top:none}
+  .who .row .lab{flex:0 0 44px;color:var(--muted);font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;padding-top:2px}
+  .who .row .val{color:var(--cool-700)}
+  .who .row .val b{color:var(--ink);font-weight:600}
+  .flow-final{padding:13px 20px;border-top:1px solid var(--border);font-size:13px;display:flex;align-items:center;gap:9px;background:var(--bg-subtle)}
+  .flow-final .arrow{color:var(--subtle);font-family:var(--mono)}
+  .who.good .flow-final b{color:var(--success)}
+  .who.warn .flow-final b,.who.warn2 .flow-final b{color:#a9761f}
+
+  /* ---------- CUSTODY ---------- */
+  .kill{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;margin-top:32px}
+  @media(max-width:900px){.kill{grid-template-columns:1fr}}
+  .keybox{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:8px 26px;box-shadow:var(--sh-sm)}
+  .keyrow{display:flex;align-items:center;gap:15px;padding:18px 0;border-top:1px solid var(--border)}
+  .keyrow:first-child{border-top:none}
+  .keyrow .kc{flex:0 0 42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--lilac-50);border:1px solid var(--lilac-200);color:var(--cool-700)}
+  .keyrow .kt b{display:block;font-size:15px;font-weight:600}
+  .keyrow .kt span{color:var(--muted);font-size:13.5px}
+  .revoke{margin-top:10px;background:var(--danger-subtle);border:1px solid rgba(210,73,91,.28);border-radius:16px;padding:18px 20px}
+  .revoke b{color:var(--danger)}
+
+  /* ---------- FOOTER ---------- */
+  .foot{padding:76px 0 96px;text-align:center;position:relative;overflow:hidden}
+  .foot::before{content:"";position:absolute;left:50%;top:-30%;width:620px;height:520px;transform:translateX(-50%);background:radial-gradient(circle at 50% 40%,var(--lilac-100),transparent 68%);pointer-events:none}
+  .foot .lock{justify-content:center;margin-bottom:30px;position:relative}
+  .foot h2{max-width:22ch;margin:0 auto 26px;font-size:32px;position:relative}
+  .cta{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--cool-0);font-family:var(--sans);font-weight:600;font-size:15px;border-radius:999px;padding:14px 24px;text-decoration:none;position:relative;box-shadow:var(--sh-md)}
+  .cta .a{font-family:var(--mono)}
+  .foot .u{margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--muted);position:relative}
+</style>
+</head>
+<body>
+
+<!-- brandmark reusable symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="aomi-mark" viewBox="0 0 362 362"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></symbol></svg>
+
+<!-- ============ HERO ============ -->
+<div class="wrap hero">
+  <div class="top">
+    <span class="lock"><svg class="mark"><use href="#aomi-mark"/></svg><span class="word">aomi</span><span class="tag">Research</span></span>
+    <span class="mono" style="font-size:12px;color:var(--subtle)">Auth · v3.0</span>
+  </div>
+  <div class="pill"><span class="g"></span> NON-CUSTODIAL BY DESIGN</div>
+  <h1>One user, <span class="accent">many wallets.</span><br>Auth across the onchain–offchain boundary.</h1>
+  <p class="lead">Aomi is the harness layer for AI agents that execute onchain — universal transactions across EVM&nbsp;+&nbsp;SVM. We never hold your wallet. This is the identity and signing model that keeps it that way, even for agents that run while you sleep.</p>
+
+  <div class="axioms">
+    <div class="axiom"><div class="n">01</div><p>A wallet is <span class="no">not</span> a user.</p></div>
+    <div class="axiom"><div class="n">02</div><p>A provider is <span class="no">not</span> the identity root.</p></div>
+    <div class="axiom"><div class="n">03</div><p>A session is <span class="no">not</span> a signing grant.</p></div>
+  </div>
+</div>
+
+<!-- ============ PROBLEM ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">The problem</p>
+    <div class="two">
+      <div>
+        <h2>Onchain, an app only sees addresses.</h2>
+        <p class="lead" style="margin-top:18px">One person — <span class="mono" style="color:var(--ink)">alice@gmail.com</span> — controls a browser wallet, two embedded wallets across providers, a smart account, and a Solana address. Five public keys, one human. Treat any address as "the user" and you can't count users, rate-limit fairly, bill, or stop abuse. Continuity breaks the moment she switches wallet or device.</p>
+        <p class="kicker">The fix isn't picking one wallet. It's minting an identity <span class="hl">above</span> all of them.</p>
+      </div>
+      <div class="svgcard">
+        <svg viewBox="0 0 520 452" role="img" aria-label="One email fans out to five wallet addresses across providers">
+          <defs>
+            <marker id="d1" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#a1a1aa"/></marker>
+          </defs>
+          <!-- user node -->
+          <rect x="40" y="188" width="132" height="70" rx="16" fill="#e3d8e6" stroke="#9c83a8" stroke-width="1.4"/>
+          <text x="106" y="218" text-anchor="middle" fill="#09090b" font-size="14" font-weight="600">alice</text>
+          <text x="106" y="236" text-anchor="middle" fill="#52525b" font-size="11" class="t-mono">@gmail.com</text>
+          <text x="106" y="288" text-anchor="middle" fill="#a1a1aa" font-size="11" class="t-mono">one human</text>
+          <!-- straight edges from node right edge (172,223) to each wallet left edge (320,y) -->
+          <g stroke="#d4d4d8" stroke-width="1.5">
+            <line x1="172" y1="223" x2="318" y2="86" marker-end="url(#d1)"/>
+            <line x1="172" y1="223" x2="318" y2="162" marker-end="url(#d1)"/>
+            <line x1="172" y1="223" x2="318" y2="238" marker-end="url(#d1)"/>
+            <line x1="172" y1="223" x2="318" y2="314" marker-end="url(#d1)"/>
+            <line x1="172" y1="223" x2="318" y2="390" marker-end="url(#d1)"/>
+          </g>
+          <g font-size="12.5" class="t-mono">
+            <g><rect x="320" y="66" width="180" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><circle cx="340" cy="86" r="5" fill="#d9982b"/><text x="356" y="83" fill="#09090b">0x123…</text><text x="356" y="98" fill="#71717a" font-size="10">MetaMask · EVM</text></g>
+            <g><rect x="320" y="142" width="180" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><circle cx="340" cy="162" r="5" fill="#9c83a8"/><text x="356" y="159" fill="#09090b">0x456…</text><text x="356" y="174" fill="#71717a" font-size="10">Para embedded · EVM</text></g>
+            <g><rect x="320" y="218" width="180" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><circle cx="340" cy="238" r="5" fill="#5288c2"/><text x="356" y="235" fill="#09090b">0xSmart…</text><text x="356" y="250" fill="#71717a" font-size="10">Smart account · AA</text></g>
+            <g><rect x="320" y="294" width="180" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><circle cx="340" cy="314" r="5" fill="#2e9e6b"/><text x="356" y="311" fill="#09090b">N2e3df…</text><text x="356" y="326" fill="#71717a" font-size="10">Privy embedded · SVM</text></g>
+            <g><rect x="320" y="370" width="180" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><circle cx="340" cy="390" r="5" fill="#df5d90"/><text x="356" y="387" fill="#09090b">So1ana…</text><text x="356" y="402" fill="#71717a" font-size="10">Phantom · SVM</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EVOLUTION ============ -->
+<section>
+  <div class="wrap-wide">
+    <p class="eyebrow">How we got here</p>
+    <h2>Three architectures.</h2>
+    <p class="lead" style="margin-top:16px">Non-custody was easy when agents couldn't act alone. Each version kept the custody promise while adding the feature the last one structurally couldn't deliver.</p>
+<div style="margin-top:44px"><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><span class="mono" style="font-size:14px;font-weight:600;color:var(--sky)">v1.0</span><h3 style="font-size:21px">Raw keys — we were a compiler</h3></div><div class="svgcard"><svg viewBox="0 0 1120 340" role="img"><defs><marker id="e1g" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#52525b"/></marker><marker id="e1n" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a1a1aa"/></marker><marker id="e1v" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2e9e6b"/></marker></defs><rect x="50" y="60" width="205" height="74" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="152.5" y="84.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">browser wallet</text><text x="152.5" y="102.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">MetaMask popup</text><text x="152.5" y="120.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="#a64668" font-weight="600">sk on your device</text><rect x="50" y="206" width="205" height="74" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="152.5" y="230.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">CLI</text><text x="152.5" y="248.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">raw private key file</text><text x="152.5" y="266.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="#a64668" font-weight="600">sk on your device</text><rect x="360" y="132" width="230" height="86" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="475.0" y="162.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">aomi backend</text><text x="475.0" y="180.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">intent → unsigned tx</text><text x="475.0" y="198.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="#217a51" font-weight="600">stateless · keyless</text><line x1="255" y1="105" x2="356" y2="158" stroke="#52525b" stroke-width="1.5" marker-end="url(#e1g)"/><line x1="255" y1="235" x2="356" y2="192" stroke="#52525b" stroke-width="1.5" marker-end="url(#e1g)"/><circle cx="306" cy="120" r="10" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.3"/><text x="306" y="124" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b" font-weight="600">1</text><text x="306" y="98" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10.5" fill="#71717a">natural language</text><rect x="660" y="132" width="215" height="86" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="767.5" y="162.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">you review + sign</text><text x="767.5" y="180.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">popup · terminal</text><text x="767.5" y="198.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="#a64668" font-weight="600">the only key signs</text><line x1="590" y1="175" x2="656" y2="175" stroke="#52525b" stroke-width="1.5" marker-end="url(#e1g)"/><circle cx="623" cy="153" r="10" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.3"/><text x="623" y="157" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b" font-weight="600">2</text><text x="623" y="132" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10.5" fill="#71717a">unsigned tx</text><rect x="945" y="132" width="130" height="86" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="1010.0" y="171.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">chain</text><text x="1010.0" y="189.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">EVM · SVM</text><line x1="875" y1="175" x2="941" y2="175" stroke="#52525b" stroke-width="1.5" marker-end="url(#e1g)"/><circle cx="908" cy="153" r="10" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.3"/><text x="908" y="157" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b" font-weight="600">3</text><text x="908" y="132" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10.5" fill="#71717a">broadcast</text><text x="560" y="310" text-anchor="middle" font-family="Geist,sans-serif" font-size="11.5" fill="#a1a1aa">no accounts, no sessions, no stored keys — and no way to act unless a human is at the keyboard</text></svg></div><p style="margin-top:14px;font-size:15px;color:var(--cool-600);max-width:80ch;line-height:1.6">Two front doors, one amnesiac backend. You prompt in natural language <b>①</b>; Aomi parses intent and compiles an unsigned transaction <b>②</b>; it returns to your own popup or terminal, where the only key in the system — yours, on your device — signs and broadcasts <b>③</b>. Custody was trivial because there was nothing to hold: no accounts, no sessions, no stored keys.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="k win">non-custodial by construction</span><span class="k gap">a human at every step</span></div></div><div style="margin:36px 0 0;display:flex;align-items:flex-start;gap:14px"><div style="flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--bg-subtle);border:1px solid var(--border-strong);display:grid;place-items:center;color:var(--cool-600);font-size:15px">↓</div><p style="font-size:14.5px;color:var(--cool-700);max-width:78ch;padding-top:5px"><span class="mono" style="font-size:10.5px;letter-spacing:.08em;color:var(--muted)">WHAT BROKE IT&nbsp;&nbsp;</span>The feature request that killed it: <b>&quot;schedule the task tonight, auto-sign next morning.&quot;</b> Someone has to sign at 6am, and it can't be you. In v1 the signer is structurally a human — so unattended execution is impossible, not just missing.</p></div><div style="margin-top:44px"><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><span class="mono" style="font-size:14px;font-weight:600;color:var(--warning)">v2.0</span><h3 style="font-size:21px">Embedded providers + account abstraction</h3></div><div class="svgcard"><svg viewBox="0 0 1120 500" role="img"><defs><marker id="e2g" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#52525b"/></marker><marker id="e2n" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a1a1aa"/></marker><marker id="e2v" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2e9e6b"/></marker></defs><circle cx="80" cy="205" r="24" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.5"/><text x="80" y="210" text-anchor="middle" font-family="Geist,sans-serif" font-size="12" fill="#09090b" font-weight="600">alice</text><text x="80" y="250" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10.5" fill="#71717a">alice@gmail.com</text><rect x="180" y="60" width="180" height="64" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="270.0" y="88.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">Privy login</text><text x="270.0" y="106.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">oauth · email</text><rect x="180" y="290" width="180" height="64" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="270.0" y="318.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">Para login</text><text x="270.0" y="336.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">oauth · email</text><line x1="102" y1="192" x2="176" y2="105" stroke="#52525b" stroke-width="1.5" marker-end="url(#e2n)"/><circle cx="133" cy="130" r="10" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.3"/><text x="133" y="134" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b" font-weight="600">1</text><line x1="102" y1="218" x2="176" y2="308" stroke="#52525b" stroke-width="1.5" marker-end="url(#e2n)"/><text x="133" y="166" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10" fill="#71717a">log in with either</text><rect x="430" y="48" width="180" height="44" rx="11" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.3"/><text x="520.0" y="69.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12" fill="#09090b" font-weight="600">N2e3df…</text><text x="520.0" y="84.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#71717a">embedded · SVM</text><rect x="430" y="240" width="180" height="44" rx="11" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.3"/><text x="520.0" y="261.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12" fill="#09090b" font-weight="600">0x456…</text><text x="520.0" y="276.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#71717a">embedded · EVM</text><rect x="430" y="300" width="180" height="44" rx="11" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.3"/><text x="520.0" y="321.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12" fill="#09090b" font-weight="600">0xSmart…</text><text x="520.0" y="336.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#71717a">AA smart account · FE</text><line x1="360" y1="86" x2="426" y2="72" stroke="#52525b" stroke-width="1.5" marker-end="url(#e2n)"/><circle cx="393" cy="60" r="10" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.3"/><text x="393" y="64" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b" font-weight="600">2</text><text x="393" y="42" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10" fill="#71717a">mint</text><line x1="360" y1="314" x2="426" y2="265" stroke="#52525b" stroke-width="1.5" marker-end="url(#e2n)"/><line x1="360" y1="326" x2="426" y2="322" stroke="#52525b" stroke-width="1.5" marker-end="url(#e2n)"/><rect x="690" y="150" width="225" height="92" rx="14" fill="#e4f3ec" stroke="#bfe0cf" stroke-width="1.4"/><text x="802.5" y="183.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">delegated key</text><text x="802.5" y="201.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">A3rf4f… → aomi KMS</text><text x="802.5" y="219.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="#217a51" font-weight="600">scoped · revocable</text><line x1="610" y1="72" x2="686" y2="168" stroke="#52525b" stroke-width="1.5" marker-end="url(#e2n)"/><line x1="610" y1="262" x2="686" y2="216" stroke="#52525b" stroke-width="1.5" marker-end="url(#e2n)"/><circle cx="650" cy="140" r="10" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.3"/><text x="650" y="144" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b" font-weight="600">3</text><text x="650" y="118" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10" fill="#71717a">alice approves once</text><rect x="975" y="150" width="105" height="92" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="1027.5" y="192.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">chain</text><text x="1027.5" y="210.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">auto-sign ✓</text><line x1="915" y1="196" x2="971" y2="196" stroke="#2e9e6b" stroke-width="1.5" marker-end="url(#e2v)"/><circle cx="943" cy="174" r="10" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.3"/><text x="943" y="178" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b" font-weight="600">4</text><text x="943" y="152" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10" fill="#217a51">async · 6am</text><rect x="180" y="408" width="740" height="58" rx="12" fill="#fbe9ec" stroke="#f0bcc5" stroke-dasharray="6 5"/><text x="550" y="432" text-anchor="middle" font-family="Geist,sans-serif" font-size="12.5" fill="#d2495b" font-weight="600">the cost — privy:sub and para:sub are two unlinked records</text><text x="550" y="452" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#d2495b">same human? unknowable · can’t count users · can’t rate-limit · can’t bill</text><text x="1000" y="440" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12" fill="#d2495b">user count = ?</text></svg></div><p style="margin-top:14px;font-size:15px;color:var(--cool-600);max-width:80ch;line-height:1.6">Alice logs in with either provider <b>①</b>, which mints embedded wallets — and the frontend adds an AA smart account <b>②</b>. The unlock: providers support <b>delegation</b>. With one approval, a scoped key (A3rf4f…) is registered and lands in Aomi's KMS <b>③</b>, and a background thread can now sign at 6am with nobody awake <b>④</b>. The cost arrived with the feature: each provider minted its own subject, and nothing links privy-alice to para-alice. Identity fractured at exactly the moment async execution made identity matter.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="k win">async unlocked</span><span class="k win">delegation · revocable</span><span class="k gap">identity fractured</span></div></div><div style="margin:36px 0 0;display:flex;align-items:flex-start;gap:14px"><div style="flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--bg-subtle);border:1px solid var(--border-strong);display:grid;place-items:center;color:var(--cool-600);font-size:15px">↓</div><p style="font-size:14.5px;color:var(--cool-700);max-width:78ch;padding-top:5px"><span class="mono" style="font-size:10.5px;letter-spacing:.08em;color:var(--muted)">WHAT BROKE IT&nbsp;&nbsp;</span>Everything we needed next — rate limits, billing, continuity across devices, per-wallet policy — is keyed to a <b>person</b>. An address is not a person; a provider subject isn't either. v2 could sign for Alice but couldn't say who Alice was.</p></div><div style="margin-top:44px"><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><span class="mono" style="font-size:14px;font-weight:600;color:var(--success)">v3.0</span><h3 style="font-size:21px">Canonical identity + policy as data</h3></div><div class="svgcard"><svg viewBox="0 0 1120 430" role="img"><defs><marker id="e3g" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#52525b"/></marker><marker id="e3n" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a1a1aa"/></marker><marker id="e3v" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2e9e6b"/></marker></defs><rect x="50" y="48" width="185" height="52" rx="11" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.3"/><text x="142.5" y="73.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12" fill="#09090b" font-weight="600">privy:sub</text><text x="142.5" y="88.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#71717a">provider subject</text><line x1="235" y1="74" x2="336" y2="176.5" stroke="#52525b" stroke-width="1.5" marker-end="url(#e3n)"/><rect x="50" y="130" width="185" height="52" rx="11" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.3"/><text x="142.5" y="155.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12" fill="#09090b" font-weight="600">para:sub</text><text x="142.5" y="170.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#71717a">provider subject</text><line x1="235" y1="156" x2="336" y2="185.5" stroke="#52525b" stroke-width="1.5" marker-end="url(#e3n)"/><rect x="50" y="212" width="185" height="52" rx="11" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.3"/><text x="142.5" y="237.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12" fill="#09090b" font-weight="600">email · otp</text><text x="142.5" y="252.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#71717a">alice@gmail.com</text><line x1="235" y1="238" x2="336" y2="194.5" stroke="#52525b" stroke-width="1.5" marker-end="url(#e3n)"/><rect x="50" y="294" width="185" height="52" rx="11" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.3"/><text x="142.5" y="319.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12" fill="#09090b" font-weight="600">SIWE sig</text><text x="142.5" y="334.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#71717a">proves 0x123…</text><line x1="235" y1="320" x2="336" y2="203.5" stroke="#52525b" stroke-width="1.5" marker-end="url(#e3n)"/><rect x="340" y="150" width="205" height="86" rx="14" fill="#efe9f1" stroke="#d3c2d8" stroke-width="1.6"/><text x="442.5" y="180.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">aomi_uid</text><text x="442.5" y="198.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">usr_7f3a…c19</text><text x="442.5" y="216.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="#9c83a8" font-weight="600">stable · app-owned</text><line x1="545" y1="193" x2="616" y2="193" stroke="#52525b" stroke-width="1.5" marker-end="url(#e3g)"/><text x="580.5" y="184" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">owns</text><rect x="620" y="64" width="260" height="262" rx="16" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><text x="750.0" y="90" text-anchor="middle" font-family="Geist,sans-serif" font-size="13.5" fill="#09090b" font-weight="600">wallet registry</text><text x="750.0" y="107" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#71717a">durable records · explicit state</text><circle cx="650" cy="128" r="6" fill="#d9982b"/><text x="666" y="132" text-anchor="start" font-family="Geist Mono,monospace" font-size="12" fill="#09090b">0x123…</text><text x="864" y="132" text-anchor="end" font-family="Geist Mono,monospace" font-size="10.5" fill="#71717a">human-sign</text><line x1="636" y1="152" x2="864" y2="152" stroke="#e4e4e7"/><circle cx="650" cy="176" r="6" fill="#d9982b"/><text x="666" y="180" text-anchor="start" font-family="Geist Mono,monospace" font-size="12" fill="#09090b">0x456…</text><text x="864" y="180" text-anchor="end" font-family="Geist Mono,monospace" font-size="10.5" fill="#71717a">via Para MCP</text><line x1="636" y1="200" x2="864" y2="200" stroke="#e4e4e7"/><circle cx="650" cy="224" r="6" fill="#2e9e6b"/><text x="666" y="228" text-anchor="start" font-family="Geist Mono,monospace" font-size="12" fill="#09090b">N2e3df…</text><text x="864" y="228" text-anchor="end" font-family="Geist Mono,monospace" font-size="10.5" fill="#71717a">delegated</text><line x1="636" y1="248" x2="864" y2="248" stroke="#e4e4e7"/><circle cx="650" cy="272" r="6" fill="#d2495b"/><text x="666" y="276" text-anchor="start" font-family="Geist Mono,monospace" font-size="12" fill="#09090b">0x789…</text><text x="864" y="276" text-anchor="end" font-family="Geist Mono,monospace" font-size="10.5" fill="#71717a">read-only</text><rect x="940" y="150" width="140" height="86" rx="14" fill="#ffffff" stroke="#e4e4e7" stroke-width="1.4"/><text x="1010.0" y="180.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="14" fill="#09090b" font-weight="600">ACL</text><text x="1010.0" y="198.0" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">resolver</text><text x="1010.0" y="216.0" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="#71717a" font-weight="600">per tx · per wallet</text><line x1="880" y1="193" x2="936" y2="193" stroke="#52525b" stroke-width="1.5" marker-end="url(#e3g)"/><text x="908.0" y="184" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">query</text><text x="560" y="398" text-anchor="middle" font-family="Geist,sans-serif" font-size="11.5" fill="#a1a1aa">policy is data: the registry says what each wallet may do — the resolver just reads it</text></svg></div><p style="margin-top:14px;font-size:15px;color:var(--cool-600);max-width:80ch;line-height:1.6">So we mint the root ourselves. Better Auth issues one canonical <span class="mono">aomi_uid</span>; provider subjects, email, and SIWE-proved wallets all attach to it as signals with provenance. Wallets moved out of a mutable &quot;current wallet&quot; variable into a <b>registry</b> of durable records with explicit state — this one human-signs, this one goes through Para's MCP, this one is delegated, this one is read-only. The ACL resolver reads that registry per transaction. Identity became a graph, policy became data, and &quot;which wallet signs?&quot; became a query.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><span class="k win">one ID, many wallets</span><span class="k win">policy resolvable</span><span class="k win">registry, not variable</span></div></div>
+  </div>
+</section>
+
+<!-- ============ FOUR PROOFS ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">The insight</p>
+    <h2>"Sign in with a wallet" is four separate proofs.</h2>
+    <p class="lead" style="margin-top:16px">Most apps collapse them into one. Collapse them and you get either custody or chaos. We keep the <span class="hl-sky">identity plane</span> ("who you are") apart from the <span class="hl-warn">execution plane</span> ("what a wallet may sign").</p>
+    <div class="planes">
+      <div class="plane idn">
+        <div class="phd"><h3>Identity plane</h3><span class="q">answers "who"</span></div>
+        <div class="proof"><div class="ix">01</div><div class="t"><b>Login proof</b><span>evidence you satisfied a login method</span></div></div>
+        <div class="proof"><div class="ix">02</div><div class="t"><b>First-party session</b><span>authenticated continuity — you're still you</span></div></div>
+        <div class="proof"><div class="ix">03</div><div class="t"><b>Wallet association</b><span>this address is linked to this account</span></div></div>
+      </div>
+      <div class="plane exec">
+        <div class="phd"><h3>Execution plane</h3><span class="q">answers "what a wallet may do"</span></div>
+        <div class="proof"><div class="ix">04</div><div class="t"><b>Execution authority</b><span>permission to sign <em>this</em> action, from <em>this</em> wallet, right now</span></div></div>
+        <div class="note">Login is not signing. You can be logged in through one provider and execute through another — or hold a wallet whose signature stays strictly interactive.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACCOUNT GRAPH ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">The model · v3</p>
+    <h2>The account graph.</h2>
+    <p class="lead" style="margin-top:16px">We mint one canonical user ID. Every external identity, wallet, and standing approval attaches to it as a <span class="hl">signal</span> with provenance — how it was linked, which provider manages it, whether the connection is live or stored.</p>
+    <div class="svgcard" style="margin-top:26px">
+      <svg viewBox="0 0 1080 470" role="img" aria-label="Account graph: canonical user at the center with auth identities, wallets, and execution approvals attached">
+        <defs>
+          <marker id="am" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#a1a1aa"/></marker>
+        </defs>
+        <text x="150" y="38" text-anchor="middle" fill="#71717a" font-size="12" class="t-mono" letter-spacing="1">AUTH IDENTITIES</text>
+        <text x="150" y="55" text-anchor="middle" fill="#a1a1aa" font-size="10.5">how you log in</text>
+        <text x="540" y="38" text-anchor="middle" fill="#9c83a8" font-size="12" class="t-mono" letter-spacing="1">CANONICAL USER</text>
+        <text x="540" y="55" text-anchor="middle" fill="#a1a1aa" font-size="10.5">the root we mint</text>
+        <text x="930" y="38" text-anchor="middle" fill="#71717a" font-size="12" class="t-mono" letter-spacing="1">WALLETS + APPROVALS</text>
+        <text x="930" y="55" text-anchor="middle" fill="#a1a1aa" font-size="10.5">what you hold · what may sign</text>
+
+        <!-- straight edges left: from node right edge (250,y) to center left edge (452,236) -->
+        <g stroke="#d4d4d8" stroke-width="1.5">
+          <line x1="250" y1="120" x2="450" y2="228" marker-end="url(#am)"/>
+          <line x1="250" y1="225" x2="450" y2="236" marker-end="url(#am)"/>
+          <line x1="250" y1="330" x2="450" y2="246" marker-end="url(#am)"/>
+        </g>
+        <text x="334" y="160" fill="#a1a1aa" font-size="10" class="t-mono">oauth · privy</text>
+        <text x="336" y="220" fill="#a1a1aa" font-size="10" class="t-mono">oauth · para</text>
+        <text x="336" y="312" fill="#a1a1aa" font-size="10" class="t-mono">email · otp</text>
+
+        <!-- straight edges right: from center right edge (628,236) to node left edge (812,y) -->
+        <g stroke="#d4d4d8" stroke-width="1.5">
+          <line x1="630" y1="228" x2="810" y2="116" marker-end="url(#am)"/>
+          <line x1="630" y1="234" x2="810" y2="206" marker-end="url(#am)"/>
+          <line x1="630" y1="242" x2="810" y2="300" marker-end="url(#am)"/>
+          <line x1="630" y1="248" x2="810" y2="392" marker-end="url(#am)"/>
+        </g>
+        <text x="712" y="158" fill="#a1a1aa" font-size="10" class="t-mono">SIWE ✓</text>
+        <text x="705" y="212" fill="#a1a1aa" font-size="10" class="t-mono">linked</text>
+        <text x="706" y="290" fill="#a1a1aa" font-size="10" class="t-mono">provider-managed</text>
+        <text x="700" y="384" fill="#a1a1aa" font-size="10" class="t-mono">delegated grant</text>
+
+        <!-- center -->
+        <rect x="452" y="192" width="176" height="88" rx="18" fill="#e3d8e6" stroke="#9c83a8" stroke-width="1.6"/>
+        <text x="540" y="226" text-anchor="middle" fill="#09090b" font-size="14.5" font-weight="700">aomi_uid</text>
+        <text x="540" y="246" text-anchor="middle" fill="#6b5875" font-size="11" class="t-mono">usr_7f3a…c19</text>
+        <text x="540" y="264" text-anchor="middle" fill="#9c83a8" font-size="10">stable · app-owned</text>
+
+        <!-- left nodes -->
+        <g class="t-mono" font-size="12">
+          <g><rect x="70" y="100" width="180" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><text x="86" y="118" fill="#09090b">privy:sub</text><text x="86" y="132" fill="#71717a" font-size="10">provider subject</text></g>
+          <g><rect x="70" y="205" width="180" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><text x="86" y="223" fill="#09090b">para:sub</text><text x="86" y="237" fill="#71717a" font-size="10">provider subject</text></g>
+          <g><rect x="70" y="310" width="180" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><text x="86" y="328" fill="#09090b">email</text><text x="86" y="342" fill="#71717a" font-size="10">alice@gmail.com</text></g>
+        </g>
+        <!-- right nodes -->
+        <g class="t-mono" font-size="12">
+          <g><rect x="812" y="96" width="200" height="40" rx="11" fill="#ffffff" stroke="#e4d0b0"/><circle cx="828" cy="116" r="5" fill="#d9982b"/><text x="842" y="113" fill="#09090b">0x123…</text><text x="842" y="127" fill="#71717a" font-size="10">MetaMask · self-custody</text></g>
+          <g><rect x="812" y="186" width="200" height="40" rx="11" fill="#ffffff" stroke="#e4d0b0"/><circle cx="828" cy="206" r="5" fill="#9c83a8"/><text x="842" y="203" fill="#09090b">0x456…</text><text x="842" y="217" fill="#71717a" font-size="10">Para embedded</text></g>
+          <g><rect x="812" y="280" width="200" height="40" rx="11" fill="#ffffff" stroke="#bfe0cf"/><circle cx="828" cy="300" r="5" fill="#2e9e6b"/><text x="842" y="297" fill="#09090b">N2e3df…</text><text x="842" y="311" fill="#71717a" font-size="10">Privy embedded · SVM</text></g>
+          <g><rect x="812" y="372" width="200" height="40" rx="11" fill="#e4f3ec" stroke="#2e9e6b"/><g stroke="#2e9e6b" stroke-width="1.5" fill="none" stroke-linecap="round"><circle cx="827" cy="390" r="3.4"/><line x1="830.4" y1="390" x2="836" y2="390"/><line x1="834" y1="390" x2="834" y2="393.4"/></g><text x="844" y="394" fill="#217a51">delegated key</text><text x="828" y="406" fill="#71717a" font-size="10">KMS · scoped · revocable</text></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SIGN MODULE ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">The plumbing · Sign Module</p>
+    <h2>Where the wallet gets resolved.</h2>
+    <p class="lead" style="margin-top:16px">A background thread queues transactions against public keys. At signing time, the <span class="hl">WalletResolver</span> reconciles two sources of truth — the live <span class="hl-sky">connected snapshot</span> and the durable <span class="hl-good">authorized grants</span> — and writes the effective wallet into the tool envelope <em>only</em>.</p>
+    <div class="svgcard" style="margin-top:26px">
+      <svg viewBox="0 0 1080 372" role="img" aria-label="Request pipeline from client to chain, with the WalletResolver reconciling connected and authorized wallets">
+        <defs>
+          <marker id="pm" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a1a1aa"/></marker>
+          <marker id="pmb" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5288c2"/></marker>
+          <marker id="pmg" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2e9e6b"/></marker>
+        </defs>
+        <!-- pipeline row -->
+        <g class="t-mono" font-size="11.5">
+          <g><rect x="20" y="156" width="132" height="58" rx="13" fill="#ffffff" stroke="#e4e4e7"/><text x="86" y="182" text-anchor="middle" fill="#09090b" font-size="12.5" font-weight="600">Client / CLI</text><text x="86" y="198" text-anchor="middle" fill="#71717a" font-size="10">POST /api/chat</text></g>
+          <g><rect x="196" y="156" width="150" height="58" rx="13" fill="#ffffff" stroke="#e4e4e7"/><text x="271" y="178" text-anchor="middle" fill="#09090b" font-size="12.5" font-weight="600">chat_endpoint</text><text x="271" y="194" text-anchor="middle" fill="#71717a" font-size="10">stamps metadata,</text><text x="271" y="206" text-anchor="middle" fill="#71717a" font-size="10">does NOT overwrite state</text></g>
+          <g><rect x="390" y="156" width="132" height="58" rx="13" fill="#ffffff" stroke="#e4e4e7"/><text x="456" y="182" text-anchor="middle" fill="#09090b" font-size="12.5" font-weight="600">Runtime / Thread</text><text x="456" y="198" text-anchor="middle" fill="#71717a" font-size="10">queues tx · LLM tool call</text></g>
+          <g><rect x="566" y="153" width="164" height="64" rx="14" fill="#e3d8e6" stroke="#9c83a8" stroke-width="1.5"/><text x="648" y="179" text-anchor="middle" fill="#09090b" font-size="13" font-weight="700">WalletResolver</text><text x="648" y="196" text-anchor="middle" fill="#6b5875" font-size="10">resolve(user_id, mode,</text><text x="648" y="207" text-anchor="middle" fill="#6b5875" font-size="10">wallet_ref, snapshot)</text></g>
+          <g><rect x="774" y="156" width="140" height="58" rx="13" fill="#ffffff" stroke="#e4e4e7"/><text x="844" y="178" text-anchor="middle" fill="#09090b" font-size="12.5" font-weight="600">ToolCallCtx</text><text x="844" y="194" text-anchor="middle" fill="#71717a" font-size="10">envelope carries</text><text x="844" y="206" text-anchor="middle" fill="#71717a" font-size="10">effective wallet</text></g>
+          <g><rect x="958" y="156" width="104" height="58" rx="13" fill="#e4f3ec" stroke="#bfe0cf"/><text x="1010" y="180" text-anchor="middle" fill="#09090b" font-size="12" font-weight="600">EVM / SVM</text><text x="1010" y="196" text-anchor="middle" fill="#71717a" font-size="10">tool executes</text></g>
+        </g>
+        <!-- straight horizontal arrows -->
+        <g stroke="#a1a1aa" stroke-width="1.5">
+          <line x1="152" y1="185" x2="190" y2="185" marker-end="url(#pm)"/>
+          <line x1="346" y1="185" x2="384" y2="185" marker-end="url(#pm)"/>
+          <line x1="522" y1="185" x2="560" y2="185" marker-end="url(#pm)"/>
+          <line x1="730" y1="185" x2="768" y2="185" marker-end="url(#pm)"/>
+          <line x1="914" y1="185" x2="952" y2="185" marker-end="url(#pm)"/>
+        </g>
+        <!-- sources directly above/below resolver → straight vertical arrows -->
+        <g class="t-mono" font-size="11">
+          <g><rect x="538" y="34" width="220" height="48" rx="12" fill="#e2eef8" stroke="#aecbe8"/><text x="556" y="57" fill="#3a628f" font-size="11.5" font-weight="600">SessionState</text><text x="556" y="72" fill="#71717a" font-size="10">connected-wallet snapshot (live)</text></g>
+          <g><rect x="538" y="290" width="220" height="48" rx="12" fill="#e4f3ec" stroke="#bfe0cf"/><text x="556" y="313" fill="#217a51" font-size="11.5" font-weight="600">AuthorizationRepository</text><text x="556" y="328" fill="#71717a" font-size="10">authorized grants · DB (durable)</text></g>
+        </g>
+        <g stroke-width="1.5">
+          <line x1="648" y1="82" x2="648" y2="151" stroke="#5288c2" marker-end="url(#pmb)"/>
+          <line x1="648" y1="290" x2="648" y2="219" stroke="#2e9e6b" marker-end="url(#pmg)"/>
+        </g>
+        <text x="664" y="120" fill="#5288c2" font-size="10" class="t-mono">"who's plugged in"</text>
+        <text x="664" y="262" fill="#2e9e6b" font-size="10" class="t-mono">"what may sign"</text>
+      </svg>
+    </div>
+    <div class="invariant">
+      <span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+      <p><b>The invariant.</b> Client-facing <span class="mono">user_state</span> always stays the connected-wallet snapshot. Only the tool envelope ever receives the effective authorized wallet — so resolution is invisible to the client and no state gets clobbered.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SEQUENCE DIAGRAM ============ -->
+<section>
+  <div class="wrap-wide">
+    <p class="eyebrow">The full trace · request lifecycle</p>
+    <h2>One request, end to end.</h2>
+    <p class="lead" style="margin-top:16px;max-width:72ch">A message enters at the client; the agent emits transactions; the <span class="hl">WalletResolver</span> picks the effective wallet from the durable grants + the live session — and then one of three things happens, per wallet policy.</p>
+    <div class="svgcard seq" style="margin-top:26px">
+<svg viewBox="0 0 1220 784" role="img" aria-label="Simplified request lifecycle with three resolution outcomes"><defs><marker id="sc" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#52525b"/></marker><marker id="sr" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a1a1aa"/></marker><marker id="sg" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2e9e6b"/></marker><marker id="sw" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#d9982b"/></marker><marker id="sd" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#d2495b"/></marker></defs><line x1="90" y1="60" x2="90" y2="716" stroke="#d4d4d8" stroke-width="1" stroke-dasharray="3 4"/><line x1="298" y1="60" x2="298" y2="716" stroke="#d4d4d8" stroke-width="1" stroke-dasharray="3 4"/><line x1="506" y1="60" x2="506" y2="716" stroke="#d4d4d8" stroke-width="1" stroke-dasharray="3 4"/><line x1="714" y1="60" x2="714" y2="716" stroke="#d4d4d8" stroke-width="1" stroke-dasharray="3 4"/><line x1="922" y1="60" x2="922" y2="716" stroke="#d4d4d8" stroke-width="1" stroke-dasharray="3 4"/><line x1="1130" y1="60" x2="1130" y2="716" stroke="#d4d4d8" stroke-width="1" stroke-dasharray="3 4"/><rect x="294" y="100" width="8" height="54" rx="2" fill="#f4f4f5" stroke="#d4d4d8"/><rect x="502" y="146" width="8" height="554" rx="2" fill="#f4f4f5" stroke="#d4d4d8"/><rect x="710" y="242" width="8" height="104" rx="2" fill="#efe9f1" stroke="#d3c2d8"/><rect x="918" y="278" width="8" height="34" rx="2" fill="#f4f4f5" stroke="#d4d4d8"/><rect x="15" y="20" width="150" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><text x="90" y="45" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11.5" fill="#09090b" font-weight="600">Client</text><rect x="223" y="20" width="150" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><text x="298" y="45" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11.5" fill="#09090b" font-weight="600">Backend · BFF</text><rect x="431" y="20" width="150" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><text x="506" y="45" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11.5" fill="#09090b" font-weight="600">Agent thread</text><rect x="639" y="20" width="150" height="40" rx="11" fill="#efe9f1" stroke="#d3c2d8"/><text x="714" y="45" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11.5" fill="#6b5875" font-weight="600">WalletResolver</text><rect x="847" y="20" width="150" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><text x="922" y="45" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11.5" fill="#09090b" font-weight="600">Grants DB</text><rect x="1055" y="20" width="150" height="40" rx="11" fill="#ffffff" stroke="#e4e4e7"/><text x="1130" y="45" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11.5" fill="#09090b" font-weight="600">Chain</text><line x1="95" y1="100" x2="290" y2="100" stroke="#52525b" stroke-width="1.5" marker-end="url(#sc)"/><text x="194.0" y="92" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b">message + connected user_state</text><circle cx="102" cy="99" r="9" fill="#ffffff" stroke="#d4d4d8"/><text x="102" y="102" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#71717a">1</text><line x1="303" y1="146" x2="498" y2="146" stroke="#52525b" stroke-width="1.5" marker-end="url(#sc)"/><text x="402.0" y="138" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b">stamp account_id · mode · wallet_ref</text><text x="402.0" y="160" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#a1a1aa">session stays the connected snapshot</text><circle cx="310" cy="145" r="9" fill="#ffffff" stroke="#d4d4d8"/><text x="310" y="148" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#71717a">2</text><path d="M506,196 h46 v18 h-46" fill="none" stroke="#52525b" stroke-width="1.5" marker-end="url(#sc)"/><text x="562" y="199" text-anchor="start" font-family="Geist Mono,monospace" font-size="11" fill="#09090b">LLM emits a tx (tool call)</text><circle cx="506" cy="183" r="9" fill="#ffffff" stroke="#d4d4d8"/><text x="506" y="186" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#71717a">3</text><line x1="511" y1="242" x2="706" y2="242" stroke="#52525b" stroke-width="1.5" marker-end="url(#sc)"/><text x="610.0" y="234" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b">resolve(user_id, wallet_ref, snapshot)</text><circle cx="518" cy="241" r="9" fill="#ffffff" stroke="#d4d4d8"/><text x="518" y="244" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#71717a">4</text><line x1="719" y1="278" x2="914" y2="278" stroke="#52525b" stroke-width="1.5" marker-end="url(#sc)"/><text x="818.0" y="270" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#09090b">read grants</text><circle cx="726" cy="277" r="9" fill="#ffffff" stroke="#d4d4d8"/><text x="726" y="280" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#71717a">5</text><line x1="917" y1="312" x2="722" y2="312" stroke="#a1a1aa" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#sr)"/><text x="818.0" y="304" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">grants</text><circle cx="910" cy="311" r="9" fill="#ffffff" stroke="#d4d4d8"/><text x="910" y="314" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#71717a">6</text><line x1="709" y1="346" x2="514" y2="346" stroke="#a1a1aa" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#sr)"/><text x="610.0" y="338" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">effective wallet · per policy</text><circle cx="702" cy="345" r="9" fill="#ffffff" stroke="#d4d4d8"/><text x="702" y="348" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#71717a">7</text><rect x="56" y="380" width="1108" height="286" rx="16" fill="#ffffff" stroke="#d4d4d8"/><text x="74" y="399" text-anchor="start" font-family="Geist,sans-serif" font-size="11" fill="#71717a" font-weight="600">then — what happens next, per wallet policy</text><rect x="66" y="406" width="1088" height="74" rx="11" fill="#e4f3ec" stroke="#bfe0cf"/><text x="82" y="424" text-anchor="start" font-family="Geist Mono,monospace" font-size="9.5" fill="#217a51" font-weight="600">ASYNC · AUTO-SIGN</text><rect x="66" y="488" width="1088" height="74" rx="11" fill="#fbf1de" stroke="#e8cf95"/><text x="82" y="506" text-anchor="start" font-family="Geist Mono,monospace" font-size="9.5" fill="#9a6a15" font-weight="600">SYNC · HUMAN-IN-THE-LOOP</text><rect x="66" y="570" width="1088" height="74" rx="11" fill="#fbe9ec" stroke="#f0bcc5"/><text x="82" y="588" text-anchor="start" font-family="Geist Mono,monospace" font-size="9.5" fill="#d2495b" font-weight="600">READ-ONLY</text><line x1="511" y1="450" x2="1122" y2="450" stroke="#2e9e6b" stroke-width="1.6" marker-end="url(#sg)"/><text x="818.0" y="442" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10.5" fill="#217a51">aomi KMS signs with the delegated key → broadcast</text><text x="818.0" y="464" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#a1a1aa">no human awake · revocable any time</text><line x1="501" y1="530" x2="98" y2="530" stroke="#d9982b" stroke-width="1.6" marker-end="url(#sw)"/><text x="298.0" y="522" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10.5" fill="#9a6a15">tx pushed to frontend — human signs in their wallet</text><line x1="95" y1="554" x2="1122" y2="554" stroke="#d9982b" stroke-width="1.6" marker-end="url(#sw)"/><text x="610.0" y="546" text-anchor="middle" font-family="Geist Mono,monospace" font-size="10" fill="#9a6a15">signed tx → broadcast</text><line x1="511" y1="618" x2="716" y2="618" stroke="#d2495b" stroke-width="1.6"/><line x1="722" y1="612" x2="734" y2="624" stroke="#d2495b" stroke-width="2"/><line x1="722" y1="624" x2="734" y2="612" stroke="#d2495b" stroke-width="2"/><text x="746" y="622" text-anchor="start" font-family="Geist Mono,monospace" font-size="10.5" fill="#d2495b">signature request auto-rejected — nothing signs</text><line x1="501" y1="700" x2="98" y2="700" stroke="#a1a1aa" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#sr)"/><text x="298.0" y="692" text-anchor="middle" font-family="Geist Mono,monospace" font-size="11" fill="#71717a">assistant response · receipts</text><circle cx="494" cy="699" r="9" fill="#ffffff" stroke="#d4d4d8"/><text x="494" y="702" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#71717a">8</text><rect x="56" y="730" width="1108" height="40" rx="11" fill="#e4f3ec" stroke="#bfe0cf"/><text x="610.0" y="754" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="#217a51">user_state stays the connected snapshot — only the tool envelope carries the effective wallet.</text></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BIPARTITE ============ -->
+<section>
+  <div class="wrap-wide">
+    <p class="eyebrow">The mental model · one picture</p>
+    <h2>Login keys, wallets, chains, queues, signers.</h2>
+    <p class="lead" style="margin-top:16px;max-width:74ch">The whole protocol as one graph. <span class="hl-crit">Pink</span> holds keys, <span class="hl-sky">blue</span> is a public key, <span class="hl-warn">yellow</span> is a chain. Auth identities attach wallets; the thread's wallet × chain topology is the user state; txs queue per public key; and resolution maps every queue back to the one signer allowed to serve it.</p>
+    <div class="svgcard seq" style="margin-top:26px">
+<svg viewBox="0 0 1320 660" role="img" aria-label="Bipartite flow: auth identities to wallets and chains to transaction queues to resolved signers"><defs><marker id="bn" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a1a1aa"/></marker><marker id="bg" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#2e9e6b"/></marker><marker id="bw" markerWidth="9" markerHeight="9" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#d9982b"/></marker></defs><circle cx="84" cy="40" r="9" fill="#fbe4ef" stroke="#df5d90" stroke-width="1.5"/><text x="104" y="45" text-anchor="start" font-family="Geist,sans-serif" font-size="14.1" fill="#71717a">signing authority — holds a key</text><circle cx="400.9" cy="40" r="9" fill="#e2eef8" stroke="#5288c2" stroke-width="1.5"/><text x="420.9" y="45" text-anchor="start" font-family="Geist,sans-serif" font-size="14.1" fill="#71717a">wallet · public key</text><circle cx="623.0" cy="40" r="9" fill="#fdf3d7" stroke="#d9982b" stroke-width="1.5"/><text x="643.0" y="45" text-anchor="start" font-family="Geist,sans-serif" font-size="14.1" fill="#71717a">chain</text><rect x="727.5" y="30" width="14" height="20" rx="4" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.5"/><text x="754.5" y="45" text-anchor="start" font-family="Geist,sans-serif" font-size="14.1" fill="#71717a">queued tx</text><text x="120" y="140" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#71717a" font-weight="600">AUTH IDENTITIES</text><text x="120" y="158" text-anchor="middle" font-family="Geist,sans-serif" font-size="12.2" fill="#a1a1aa">alice@gmail.com · two logins</text><circle cx="120" cy="250" r="20" fill="#fbe4ef" stroke="#df5d90" stroke-width="1.6"/><text x="120" y="288" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#a64668">para login</text><circle cx="120" cy="400" r="20" fill="#fbe4ef" stroke="#df5d90" stroke-width="1.6"/><text x="120" y="438" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#a64668">privy login</text><text x="120" y="456" text-anchor="middle" font-family="Geist,sans-serif" font-size="12.2" fill="#a1a1aa">delegation key</text><text x="120" y="470" text-anchor="middle" font-family="Geist,sans-serif" font-size="12.2" fill="#a1a1aa">registered here</text><rect x="250" y="170" width="350" height="390" rx="22" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><text x="425.0" y="144" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#71717a" font-weight="600">THREAD CONTEXT = USER STATE</text><text x="425.0" y="160" text-anchor="middle" font-family="Geist,sans-serif" font-size="12.2" fill="#a1a1aa">wallet × chain topology</text><line x1="348" y1="250" x2="504" y2="315" stroke="#d4d4d8" stroke-width="1.4"/><line x1="348" y1="250" x2="504" y2="405" stroke="#d4d4d8" stroke-width="1.4"/><line x1="348" y1="360" x2="504" y2="225" stroke="#d4d4d8" stroke-width="1.4"/><line x1="348" y1="470" x2="504" y2="495" stroke="#d4d4d8" stroke-width="1.4"/><circle cx="330" cy="250" r="18" fill="#e2eef8" stroke="#5288c2" stroke-width="1.6"/><text x="330" y="286" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#3a628f">0x123…</text><circle cx="330" cy="360" r="18" fill="#e2eef8" stroke="#5288c2" stroke-width="1.6"/><text x="330" y="396" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#3a628f">0x456…</text><circle cx="330" cy="470" r="18" fill="#e2eef8" stroke="#5288c2" stroke-width="1.6"/><text x="330" y="506" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#3a628f">N2e3df…</text><circle cx="520" cy="225" r="15" fill="#fdf3d7" stroke="#d9982b" stroke-width="1.6"/><text x="520" y="258" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#9a6a15">Base</text><circle cx="520" cy="315" r="15" fill="#fdf3d7" stroke="#d9982b" stroke-width="1.6"/><text x="520" y="348" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#9a6a15">Optimism</text><circle cx="520" cy="405" r="15" fill="#fdf3d7" stroke="#d9982b" stroke-width="1.6"/><text x="520" y="438" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#9a6a15">Arbitrum</text><circle cx="520" cy="495" r="15" fill="#fdf3d7" stroke="#d9982b" stroke-width="1.6"/><text x="520" y="528" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#9a6a15">Solana</text><text x="742" y="150" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#71717a" font-weight="600">TX QUEUES</text><text x="742" y="166" text-anchor="middle" font-family="Geist,sans-serif" font-size="12.2" fill="#a1a1aa">keyed by public key</text><line x1="600" y1="250" x2="670" y2="250" stroke="#a1a1aa" stroke-width="1.4" marker-end="url(#bn)"/><rect x="680" y="236.0" width="20" height="28" rx="6" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><rect x="707" y="236.0" width="20" height="28" rx="6" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><rect x="734" y="236.0" width="20" height="28" rx="6" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><circle cx="787" cy="250" r="16" fill="#e2eef8" stroke="#5288c2" stroke-width="1.6"/><text x="787" y="284" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12.8" fill="#3a628f">0x123…</text><line x1="600" y1="360" x2="670" y2="360" stroke="#a1a1aa" stroke-width="1.4" marker-end="url(#bn)"/><rect x="680" y="346.0" width="20" height="28" rx="6" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><rect x="707" y="346.0" width="20" height="28" rx="6" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><circle cx="787" cy="360" r="16" fill="#e2eef8" stroke="#5288c2" stroke-width="1.6"/><text x="787" y="394" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12.8" fill="#3a628f">0x456…</text><line x1="600" y1="470" x2="670" y2="470" stroke="#a1a1aa" stroke-width="1.4" marker-end="url(#bn)"/><rect x="680" y="456.0" width="20" height="28" rx="6" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><rect x="707" y="456.0" width="20" height="28" rx="6" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><rect x="734" y="456.0" width="20" height="28" rx="6" fill="#ffffff" stroke="#d4d4d8" stroke-width="1.4"/><circle cx="787" cy="470" r="16" fill="#e2eef8" stroke="#5288c2" stroke-width="1.6"/><text x="787" y="504" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12.8" fill="#3a628f">N2e3df…</text><rect x="747" y="206" width="80" height="324" rx="18" fill="none" stroke="#9c83a8" stroke-width="1.4" stroke-dasharray="5 5"/><text x="787.0" y="542" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#6b5875" font-weight="600">one canonical user_id</text><text x="1090" y="150" text-anchor="middle" font-family="Geist Mono,monospace" font-size="13.4" fill="#71717a" font-weight="600">RESOLUTION</text><text x="1090" y="166" text-anchor="middle" font-family="Geist,sans-serif" font-size="12.2" fill="#a1a1aa">which key actually signs</text><circle cx="1090" cy="300" r="20" fill="#fbe4ef" stroke="#df5d90" stroke-width="1.6"/><text x="1124" y="296" text-anchor="start" font-family="Geist Mono,monospace" font-size="14.1" fill="#a64668" font-weight="600">sync signer</text><text x="1124" y="312" text-anchor="start" font-family="Geist,sans-serif" font-size="12.2" fill="#a1a1aa">human · via Para / MetaMask</text><circle cx="1090" cy="470" r="20" fill="#fbe4ef" stroke="#df5d90" stroke-width="1.6"/><text x="1124" y="466" text-anchor="start" font-family="Geist Mono,monospace" font-size="14.1" fill="#a64668" font-weight="600">async signer</text><text x="1124" y="482" text-anchor="start" font-family="Geist,sans-serif" font-size="12.2" fill="#a1a1aa">aomi KMS · Privy delegated</text><line x1="803" y1="250" x2="1072" y2="292" stroke="#d9982b" stroke-width="1.7" marker-end="url(#bw)"/><line x1="803" y1="360" x2="1071" y2="306" stroke="#d9982b" stroke-width="1.7" marker-end="url(#bw)"/><line x1="803" y1="470" x2="1070" y2="470" stroke="#2e9e6b" stroke-width="1.7" marker-end="url(#bg)"/><text x="938.5" y="238" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12.2" fill="#9a6a15">sync · human signs</text><text x="938.5" y="452" text-anchor="middle" font-family="Geist Mono,monospace" font-size="12.2" fill="#217a51">async · auto-sign</text><line x1="138" y1="244" x2="312" y2="250" stroke="#a1a1aa" stroke-width="1.4" marker-end="url(#bn)"/><line x1="138" y1="258" x2="312" y2="360" stroke="#a1a1aa" stroke-width="1.4" marker-end="url(#bn)"/><line x1="138" y1="400" x2="312" y2="470" stroke="#a1a1aa" stroke-width="1.4" marker-end="url(#bn)"/><rect x="120" y="586" width="1080" height="46" rx="12" fill="#efe9f1" stroke="#d3c2d8"/><text x="660.0" y="608" text-anchor="middle" font-family="Geist Mono,monospace" font-size="16.0" fill="#6b5875" font-weight="700">alice@gmail.com</text><text x="660.0" y="625" text-anchor="middle" font-family="Geist,sans-serif" font-size="11.5" fill="#9c83a8">resolved as one canonical user_id</text></svg>
+    </div>
+    <div style="margin-top:18px;display:grid;gap:10px">
+      <div style="border:1px solid var(--border);border-left:3px solid var(--warning);border-radius:12px;padding:13px 17px;font-size:14.5px;color:var(--cool-700);background:var(--bg)">By Alice's configuration, a tx generated for <b>Base</b> is built for <span class="mono">0x456…</span> — and resolves to a <b>Para</b> signature, human-in-the-loop.</div>
+      <div style="border:1px solid var(--border);border-left:3px solid var(--success);border-radius:12px;padding:13px 17px;font-size:14.5px;color:var(--cool-700);background:var(--bg)">A tx generated for <b>Solana</b> is built for <span class="mono">N2e3df…</span> — authorized through Alice's <b>Privy</b> OAuth to be signed by a delegated key managed by Aomi.</div>
+    </div>
+    <p class="kicker" style="margin-top:16px">The execution thread context loads the chain → address map; the ACL module resolves the signature consumers.</p>
+  </div>
+</section>
+
+<!-- ============ RESOLUTION OUTCOMES ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">The payoff · which wallet signs?</p>
+    <h2>Same thread. One user. Three signing paths.</h2>
+    <p class="lead" style="margin-top:16px">The thread commits transactions to three of Alice's addresses. The resolver reads each wallet's policy from the account graph and routes signing accordingly — per address, per provider, per chain.</p>
+    <div class="policybar">
+      <div class="pol good"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>Auto-sign · async</b><span class="d">delegated key in Aomi KMS — signs unattended</span></div></div>
+      <div class="pol warn"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2a8 8 0 0 1-6.5-3.3l-2.8-4a2 2 0 0 1 3.3-2.3L8 16"/></svg></span><div><b>Human-in-the-loop · sync</b><span class="d">pushed to frontend for interactive signature</span></div></div>
+      <div class="pol crit"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></span><div><b>Read-only</b><span class="d">known wallet, all signature requests auto-rejected</span></div></div>
+    </div>
+    <div class="cards3">
+      <div class="who warn">
+        <div class="top"><div class="name"><span class="addr">0x123…</span><span class="badge sync">Sync</span></div><div class="custody">MetaMask · self-custody</div></div>
+        <div class="rows">
+          <div class="row"><span class="lab">key</span><span class="val">Real secret key lives in <b>MetaMask</b>, surfaced through Para.</span></div>
+          <div class="row"><span class="lab">signs</span><span class="val">Only the human, in the browser. Aomi never sees the key.</span></div>
+        </div>
+        <div class="flow-final"><span class="arrow">→</span> tx pushed to FE · <b>human signs</b></div>
+      </div>
+      <div class="who warn2">
+        <div class="top"><div class="name"><span class="addr">0x456…</span><span class="badge sync">Sync</span></div><div class="custody">Para embedded · via Aomi MCP</div></div>
+        <div class="rows">
+          <div class="row"><span class="lab">key</span><span class="val">Provider key share held by <b>Para</b>; reached through the Aomi MCP client.</span></div>
+          <div class="row"><span class="lab">signs</span><span class="val">Interactive — OAuth to Para authorizes each signature.</span></div>
+        </div>
+        <div class="flow-final"><span class="arrow">→</span> OAuth to Para · <b>interactive sign</b></div>
+      </div>
+      <div class="who good">
+        <div class="top"><div class="name"><span class="addr">N2e3df…</span><span class="badge async">Async</span></div><div class="custody">Privy embedded · delegated</div></div>
+        <div class="rows">
+          <div class="row"><span class="lab">key</span><span class="val">A <b>delegated key</b> registered through Privy, held by Aomi in KMS.</span></div>
+          <div class="row"><span class="lab">signs</span><span class="val">Agent signs unattended — the "auto-sign next morning" path.</span></div>
+        </div>
+        <div class="flow-final"><span class="arrow">→</span> KMS green pass · <b>auto-signs</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CUSTODY ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">The claim, earned</p>
+    <h2>The only thing we ever hold is a leash you can drop.</h2>
+    <div class="kill">
+      <div class="keybox">
+        <div class="keyrow"><div class="kc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 20 3"/><path d="M17.5 5.5 20 8"/><path d="M14.5 8.5 16.5 10.5"/></svg></div><div class="kt"><b>Scoped</b><span>Bound to specific wallets and actions — not your account.</span></div></div>
+        <div class="keyrow"><div class="kc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></div><div class="kt"><b>Registered through the provider</b><span>Minted via Privy/Para delegation, not extracted from your wallet.</span></div></div>
+        <div class="keyrow"><div class="kc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 2.6v5.2c0 4.1-2.9 7.1-7 8.2-4.1-1.1-7-4.1-7-8.2V5.6z"/><path d="M9 12h6"/></svg></div><div class="kt"><b>Fail-closed</b><span>A chain of independent checks; any failure hard-rejects the signature.</span></div></div>
+      </div>
+      <div>
+        <p class="lead" style="font-size:17.5px">For synchronous wallets, Aomi holds nothing — the human or the provider signs. For async execution, we hold one <span class="hl-good">scoped, delegated key</span> in KMS.</p>
+        <div class="revoke"><p style="font-size:15px;color:var(--cool-700)"><b>Revoke it and the agent signs nothing.</b> A standing grant is not custody. You can pull the delegation at any time, from the provider, and the auto-sign path goes dark instantly.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<div class="wrap foot">
+  <span class="lock"><svg class="mark"><use href="#aomi-mark"/></svg><span class="word">aomi</span><span class="tag">Research</span></span>
+  <h2>A wallet is not a user. A provider is not the identity root. A session is not a signing grant.</h2>
+  <a class="cta" href="https://aomi.dev/research/auth-across-two-worlds">Read the full write-up <span class="a">→</span></a>
+  <p class="u">aomi.dev/research/auth-across-two-worlds</p>
+</div>
+
+</body>
+</html>
