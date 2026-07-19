@@ -66,4 +66,4 @@ The capture scripts require Playwright in the active project. Install its Chromi
 - Do not claim an integration, capability, chain, transaction, or launch detail as factual without confirming it. Clearly frame speculative product behavior as a demonstration.
 - Keep temporary capture artifacts out of git unless the user wants them committed.
 
-Use `video/somm/launch-section.html` and `video/somm/architecture-animation.html` as examples of a completed storybook-to-animation workflow when they are available, not as universal content templates.
+Use `deliverables/videos/somm/launch-section.html` and `deliverables/videos/somm/architecture-animation.html` as examples of a completed storybook-to-animation workflow when they are available, not as universal content templates.
