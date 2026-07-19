@@ -2,6 +2,13 @@
 
 The Aomi design system — design tokens and core React components for the agentic, on-chain UX. This repo is the upstream source of truth; the published package feeds Aomi's product surfaces (the `AomiFrame` widget, the chat portal, and the docs site).
 
+## Two halves, one repo
+
+1. **The design system** (`src/`, `assets/`, `docs/`, `playground/`) — the brand's ground truth, published as this npm package.
+2. **Marketing deliverables** (`deliverables/`) — the artifacts we ship outward (posts, decks, videos, doc pieces), tracked by the **marketing map** in aomi-scrum. Each deliverable's identity is a GitHub **issue** here; its lifecycle (idea → drafting → ready → delivered) is derived from repo reality. See [`deliverables/README.md`](deliverables/README.md) for the contract, [`TONE.md`](TONE.md) for the company voice.
+
+Rule of thumb: defines the brand → system; the map should track it → `deliverables/<type>/`; makes deliverables → `skills/`; neither yet → `lab/`.
+
 ## What's in here
 
 - **Tokens** — colors, typography, spacing, radius, elevation, and motion, authored as CSS custom properties (`src/tokens/tokens.css`) with a typed mirror for JS (`src/tokens/tokens.ts`).
