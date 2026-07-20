@@ -29,3 +29,6 @@ URL for tweet 7. Next week: MPP settlement deep-dive as a follow-up story.
 
 ## 2026-07-20 18:12
 in order to write this post I need more info about deployment as well
+
+## 2026-07-20 20:54
+multi-session write test A — from session one
