@@ -32,3 +32,6 @@ in order to write this post I need more info about deployment as well
 
 ## 2026-07-20 20:54
 multi-session write test A — from session one
+
+## 2026-07-20 20:54
+multi-session write test B — from session two
