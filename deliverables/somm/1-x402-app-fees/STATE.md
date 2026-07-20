@@ -1,5 +1,12 @@
 # State — the story's running log
 
+## Planned artifacts
+- [ ] medium-post — Main long-form explainer (publish-ready): end-to-end x402 + MPP fee implementation, include diagram, code snippets, deployment notes, observability checklist — target 1,200–1,800 words
+- [ ] x-post-thread — Twitter/X thread derived from finished Medium post (per STATE rule) — waits for Medium URL to include in tweet 7
+- [ ] fee-flow-diagram — Interactive SVG/HTML visual for the post (embed in Medium) showing control-plane, payment intent mapping, AA execution lanes, deferred credit gate/ TURN_CAP checkpoints
+- [ ] bundle-update-and-state — Update story bundle: commit medium post to post/, archive drafts to draft/archive, add STATE.md entries and links to PRs and related repos
+- [ ] short-link-asset — Short summary blurb (280–300 chars) for cross-posting and social meta description
+
 ## 2026-07-20 04:58
 Center the post on the deferred credit gate: TURN_CAP checkpoints, balance allowed to run negative between checks, gate slams at settlement. The x-post thread should be derived from the finished doc, not written independently.
 
