@@ -19,3 +19,6 @@ Friday 07-24.
 Victor: v3 adopted → post/, posts Friday. v1/v2 retired to archive. The x thread
 (x-thread-x402-v1.md) stays in draft until the medium link is live — it needs the
 URL for tweet 7. Next week: MPP settlement deep-dive as a follow-up story.
+
+## 2026-07-20 18:12
+in order to write this post I need more info about deployment as well
