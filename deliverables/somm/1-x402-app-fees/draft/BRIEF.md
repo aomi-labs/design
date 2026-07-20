@@ -8,3 +8,9 @@ can u search across for the relavant PR related to our overview?
 
 ## 2026-07-20 05:37
 can u search across our codebase for related PR that u might need for this?
+
+## 2026-07-20 16:10
+Victor: taking this over for the week. Plan — turn the adopted x402 doc into a
+medium post (iterate here as medium-x402-fees-vN), derive the x thread from the
+finished draft per the 04:58 rule, add a fee-flow visual. Target: medium posts
+Friday 07-24.
