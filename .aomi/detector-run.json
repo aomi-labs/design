@@ -1,45 +1,17 @@
 {
-  "ranAt": "2026-07-20T23:50:16.046Z",
-  "candidates": 60,
+  "ranAt": "2026-07-20T23:51:44.933Z",
+  "candidates": 58,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 2,
-  "applied": 2,
+  "judged": 0,
+  "applied": 0,
   "needsConfirm": [
     {
-      "number": 25,
-      "postId": "2069452271574786409",
+      "number": 58,
+      "postId": "2076666912067420300",
       "confidence": 0.9,
-      "reason": "Post points to runtime and evals/testing links and notes the guides for runtime and testing — matching the docs rewrite deliverable describing those doc changes.",
-      "url": "https://x.com/aomi_labs/status/2069452271574786409"
-    },
-    {
-      "number": 9,
-      "postId": "2064373605547282656",
-      "confidence": 0.95,
-      "reason": "Post announces AomiBench v0.1 live and describes the benchmark—direct match to the deliverable.",
-      "url": "https://x.com/aomi_labs/status/2064373605547282656"
-    },
-    {
-      "number": 12,
-      "postId": "2064778903546150960",
-      "confidence": 0.9,
-      "reason": "Post announces rebuilt docs/quickstart and links to the docs site, matching the docs v1.1 deliverable.",
-      "url": "https://x.com/aomi_labs/status/2064778903546150960"
-    },
-    {
-      "number": 3,
-      "postId": "2076717492710330724",
-      "confidence": 0.9,
-      "reason": "Post announces Somm building on Aomi with details of the integration—matches the Somm × Aomi launch deliverable.",
-      "url": "https://x.com/aomi_labs/status/2076717492710330724"
-    },
-    {
-      "number": 23,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Matches the founder POV that agentic wallets guard at runtime vs Aomi's compile-time/simulation guard — same thesis and language.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+      "reason": "Main-account post states the platform hosts/runs apps with forked-chain simulation and noncustodial signing, matching the deliverable's message about what you keep when running an agent through a platform.",
+      "url": "https://x.com/aomi_labs/status/2076666912067420300"
     }
   ],
   "errors": [],
