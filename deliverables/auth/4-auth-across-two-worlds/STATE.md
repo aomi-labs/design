@@ -6,7 +6,7 @@
 - [ ] blog_excerpt — Short blog post (800–1,200 words) summarizing research for a broader audience with links to technical doc.
 - [ ] technical_summary_pdf — One-page technical summary PDF for engineering/product teams with checklist of dependent PRs and migration steps.
 - [ ] slide_deck — 5–10 slide deck for internal demos and partner briefings covering problem, v1→v3 evolution, and adoption plan.
-- [ ] release_notes_entry — Changelog/release notes snippet for product-mono and relevant repos describing the auth changes and URLs.
+- [x] release_notes_entry — Changelog/release notes snippet for product-mono and relevant repos describing the auth changes and URLs.
 - [ ] annex_pr_checklist — PR checklist file listing engineering issues/PRs to link/close before publish and suggested labels.
 - [ ] short_video — 90–120s explainer video (script + storyboard) summarizing the problem and v3 benefits for non-technical audiences.
 
