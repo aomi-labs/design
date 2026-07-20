@@ -5,3 +5,6 @@ Center the post on the deferred credit gate: TURN_CAP checkpoints, balance allow
 
 ## 2026-07-20 05:27
 can u search across for the relavant PR related to our overview?
+
+## 2026-07-20 05:37
+can u search across our codebase for related PR that u might need for this?
