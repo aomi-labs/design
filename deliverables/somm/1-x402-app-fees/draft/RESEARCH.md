@@ -1,60 +1,55 @@
 <!-- aomi-origin src=research adopted=2026-07-20 -->
 # Research — engineering behind this story
 
-_2026-07-20 05:38 · ask: can u search across our codebase for related PR that u might need for this?_
+_2026-07-20 05:42 · ask: can u search across our codebase for related PR that u might need for this?_
 
-Mapping claims in the design explainer to engineering artifacts
+Mapping of story claims to code/PR evidence
 
-- How app pricing (x402) is surfaced in the deployment/authoring UX and bound to a deployed app so fees are discoverable and immutable
-  - product-mono#764 — adds app-level billing sidecars and x402 partner settlement; this is the primary control-plane change that introduces app billing metadata.
-  - deployment-authoring-manager-backend-github-integration-depl — authoring and GitHub integration used to bind config to a deployed release.
-  - deployment-deploy-sdk-cli-client-activation-watchdeployment- & deployment-authoring-aomi-build-deployments-ux-project-pages — UX and CLI surfaces that expose deployment-bound metadata (used to make the billing config discoverable and tied to a deployment).
-  - product-mono#750 — permits app tokens to read deployment status, enabling runtime discovery of bound billing metadata.
+1) How app pricing (x402) is surfaced in the deployment/authoring UX and bound to a deployed app
+- repo:aomi-labs/product-mono#764 — primary implementation of app-level billing sidecars and x402 partner settlement.
+- repo:aomi-labs/product-mono#750 — app tokens can read deployment status (used to surface/verify bound billing config).
+- repo:aomi-labs/product-mono#787 — deploy control-plane manager and GitHub proxy changes used by the deployment flow.
+- tree:deployment-authoring-aomi-build-deployments-ux-project-pages (dependent) — active authoring/deploy UX work; required for the UX claims in the post.
+- tree:runtime-app-loader-appstore-runtime-catalog-and-init (dependent) — runtime catalog/app loader changes required to make pricing discoverable and immutable at runtime.
+- repo:aomi-labs/aomi-sdk#62 — `config` subcommand for live registry edits; shows how billing config can be edited/inspected.
 
-- How the payments backend maps an app fee config to MPP-enabled payment intents for execution and partner settlement
-  - payments-billing-payments-mpp-partner-settlement-ui-backend- — the shipped MPP + partner-settlement backend that converts billing configs into multi-path payment intents and settlement records.
-  - product-mono#764 — x402 partner-settlement hooks that connect app billing sidecars to the payments backend.
-  - product-mono#814 — split of platform vs partner thresholds, relevant for how thresholds/gates are enforced in partner settlement.
+2) How the payments backend maps an app fee config to MPP-enabled payment intents for execution and partner settlement
+- repo:aomi-labs/product-mono#764 — billing sidecars + partner settlement mapping logic.
+- tree:runtime-wallet-aa-svm-batch-multi-wallet-tx-execution — runtime support for batched/multi-wallet txs used to materialize MPP payment batches.
+- repo:aomi-labs/product-mono#321 and #326 — managed batch simulation and managed-fork batch simulation used to generate & validate MPP-enabled payment intents and settlement scenarios.
+- repo:aomi-labs/product-mono#357 — wallet queueing & batch execution primitives used when emitting multi-path/multi-wallet payment intents.
 
-- Where fee collection hooks live in the transaction execution path (simulation → AA lane → signed execution) and how wallet-backed signing authorizes fee transfers
-  - transactions-transaction-execution-simulation-infra-aa-anvil — simulation and AA infra where service-fee hooks run during simulate and pre-exec checks.
-  - runtime-internal-actions-routed-action-execution-simulate-sc — runtime routing layer tying internal actions and billing hooks into the execution lane.
-  - runtime-wallet-aa-svm-batch-multi-wallet-tx-execution & repo:aomi-labs/product-mono#357/#312 — batch/multi-wallet execution and wallet TX ordering, which underpin how fee transfers are signed/batched.
-  - aomi#75 and aomi#76 — client-side AA fee simulation and fee injection (SDK) that show how fees are modelled at simulate time and injected for AA execution.
-  - auth-privy-wallet-backed-auth-signer-flow-solana-e2e — example signer flows (Privy) for wallet-backed authorization; threads-era wallet signing (wallet-sign-threads-era-wallet-signing-svm-aa-backend-integr) is active and MUST ship before we present wallet-backed signing as fully shipped in the doc.
-  - evm-tx-endpoint-threads-multi-chain-transaction-flow-mcp-gat is active and provides the MCP→exec surfaces referenced by the end-to-end execution path; it MUST ship before the story is published if we assert those endpoints are available.
+3) Where fee collection hooks live in the transaction execution path (simulation → AA lane → signed execution) and how wallet-backed signing authorizes fee transfers
+- tree:transactions-transaction-execution-simulation-infra-aa-anvil — simulation and AA infra (simulate → AA lane) used in the explainers' execution path.
+- tree:runtime-internal-actions-routed-action-execution-simulate-sc — routed internal action execution and simulation; where fee hooks are called.
+- repo:aomi-labs/product-mono#778 — AA-to-BE signing/broadcast lane that surfaces the AA signing/broadcast lane referenced in the flow.
+- repo:aomi-labs/aomi#75 and #76 — client CLI AA fee simulation and AA fee injection support; shows simulation & injection behavior.
+- repo:aomi-labs/aomi#144 — fixes to x402 chat failures and wallet thread persistence; ties x402 handling to wallet-threaded execution.
+- tree:wallet-sign-threads-era-wallet-signing-svm-aa-backend-integr (dependent) — active wallet-backed auth & authorized signing integration required for the wallet-backed signing claims.
+- repo:aomi-labs/product-mono#312 — fixes wallet tx validation and approval emission ordering relevant to correct authorization ordering for fee transfers.
 
-- Observability and deployment touchpoints you need to validate fee routing, retries, and settlement (what to monitor and debug)
-  - product-mono#840 — observability logs and AA path recovery groundwork; useful for tracing fee routes and error modes.
-  - aomi#375 — connects observability detail to live backend data; practical traces and dashboards.
-  - ops-deploy-ci-and-observability-backend-infra — infra and CI work that provides the monitoring/alerting channels and dashboards referenced in the doc.
-  - product-mono#841 — release/observability build gating that enabled the above merges.
+4) Observability and deployment touchpoints to validate fee routing, retries, and settlement
+- repo:aomi-labs/product-mono#840 — observability logs, flop cleanup, and AA path recovery work; primary observability evidence.
+- repo:aomi-labs/aomi#375 — connects observability detail to live backend data (used for concrete monitor/debug guidance).
+- repo:aomi-labs/product-mono#841 — ensures observability changes are included in the backend release build.
 
-Notes on the deferred-credit gate (TURN_CAP) and sequencing
+Notes on dependencies (must-ship before announce)
+- tree:wallet-sign-threads-era-wallet-signing-svm-aa-backend-integr is active and implements the wallet-backed signing integration the story treats as real; this must land before publishing the explainer that claims wallet-backed signing behavior is available.
+- tree:deployment-authoring-aomi-build-deployments-ux-project-pages is active and supplies the deployment/authoring UX surface the doc shows; the UX claims depend on this landing.
+- tree:runtime-app-loader-appstore-runtime-catalog-and-init is active and required to make pricing discoverable via the runtime catalog and to bind billing metadata to deployed apps; this should land prior to claiming immutable discoverability.
 
-- The design brief emphasizes the deferred-credit gate (TURN_CAP checkpoints, allowing balances to run negative between checks, gate slam at settlement). The billing sidecars + partner-settlement work (product-mono#764) together with the payments MPP/partner-settlement backend implement the control-plane and runtime hooks the doc will describe. The runtime enforcement and AA-path recovery traces live in the transaction simulation/execution infra (transactions-transaction-execution-simulation-infra-aa-anvil, runtime-internal-actions-routed-action-execution-simulate-sc) and the observability/ops merges (product-mono#840, ops-deploy-ci-and-observability-backend-infra) provide the monitoring needed to validate checkpoints and settlement behavior.
-
-Operational checklist for the writer / post author
-
-- Mark dependent gaps to confirm before publish:
-  - wallet-sign-threads-era-wallet-signing-svm-aa-backend-integr (active) — confirm this completes so wallet-backed signing flows can be shown as shipped.
-  - evm-tx-endpoint-threads-multi-chain-transaction-flow-mcp-gat (active) — confirm MCP→exec endpoint work is merged if the doc shows those endpoints as available.
-- Concrete artifacts to pull into the doc: PR diffs and code pointers from product-mono#764 (billing sidecars/x402), payments-billing MPP tree (MPP mapping + settlement logic), transactions-transaction-execution-simulation-infra-aa-anvil (simulation hooks), aomi#76 (SDK fee injection) and product-mono#840 (observability logs/traces).
-
-If you want, I can: (a) produce a short wireframe of the post with these refs assigned to each section, or (b) open a short checklist issue enumerating the remaining active PRs that must land before publishing.
+Quick checklist for the doc author
+- Point to product-mono#764 as the canonical implementation of x402 billing sidecars.
+- Show simulation samples and CLI commands from aomi#75/#76 to demonstrate pre-flight simulation of AA fees.
+- Use product-mono#321/#326 and the simulation infra tree to show how MPP intents are built and validated in managed simulation runs.
+- Reference product-mono#778 and the transactions simulation infra when describing the AA lane → signed execution transition and where fee hooks run.
+- For observability examples and concrete log fields/traces, draw from product-mono#840 and aomi#375.
+- Hold off public claims about wallet-backed signing UX and deployment-surface until the two active trees (wallet-sign threads + deployment-authoring/runtime-app-loader) have landed; those are marked dependent above.
 
 ## Proposed links
-- `repo:aomi-labs/product-mono#764` **related** — Add app-level billing sidecars and x402 partner settlement — core control-plane & billing config surface for app fees.
-- `tree:payments-billing-payments-mpp-partner-settlement-ui-backend-` **related** — Payments backend (MPP + partner settlement) that maps fee configs into payment intents and settlement flows.
-- `repo:aomi-labs/product-mono#840` **related** — Observability logs and AA path recovery groundwork — used for fee routing observability and AA lane tracing.
-- `tree:transactions-transaction-execution-simulation-infra-aa-anvil` **related** — Transaction simulation and AA lane infra where fee-collection hooks (simulation → AA) are implemented.
-- `tree:runtime-internal-actions-routed-action-execution-simulate-sc` **related** — Runtime routed/internal-action simulation surfaces — ties billing hooks into action execution path.
-- `tree:runtime-wallet-aa-svm-batch-multi-wallet-tx-execution` **related** — Wallet / AA / batch execution plumbing that enforces signing semantics for fee transfers.
-- `repo:aomi-labs/aomi#75` **related** — Client CLI AA service fee simulation — helps reproduce and debug fee injection at simulation time.
-- `repo:aomi-labs/aomi#76` **related** — AA service fee injection and SDK upgrade — SDK/runtime pieces for injecting app fees into AA execution.
-- `tree:auth-privy-wallet-backed-auth-signer-flow-solana-e2e` **related** — Wallet-backed auth / signer flows (Privy) — relevant to wallet-backed authorization of fee transfers.
-- `tree:wallet-sign-threads-era-wallet-signing-svm-aa-backend-integr` **dependent** — Active work on threads-era wallet signing and SVM/AA backend integration — required before documenting wallet-backed signing as shipped.
-- `tree:evm-tx-endpoint-threads-multi-chain-transaction-flow-mcp-gat` **dependent** — Active multi-chain endpoint / MCP gateway work — the story's end-to-end exec path (MCP → exec surfaces) depends on this shipping.
-- `tree:deployment-authoring-manager-backend-github-integration-depl` **related** — Control-plane authoring & GitHub integration used to surface pricing in deploy/authoring UX and bind configs to a release.
-- `tree:deployment-deploy-sdk-cli-client-activation-watchdeployment-` **related** — Deploy / CLI / client surfaces (activation, watchDeployment) that expose discoverable/immutable config tied to deployed apps.
-- `tree:deployment-authoring-aomi-build-deployments-ux-project-pages` **related** — Deployments UX and project pages that surface app pricing and deployment-bound metadata to end users.
+- `repo:aomi-labs/product-mono#778` **related** — AA-to-BE signing/broadcast lane — provides the AA signing/broadcast path and SVM anchor integration referenced in the execution lanes.
+- `repo:aomi-labs/product-mono#357` **related** — Wallet execution primitives: queueing and batch wallet execution that underpin wallet-backed signing and batching of fee transfers.
+- `repo:aomi-labs/aomi#144` **related** — Fixes x402 chat failures and wallet thread persistence — ties x402 handling to wallet-threaded execution flows.
+- `repo:aomi-labs/product-mono#321` **related** — Adds managed batch simulation for pending transactions — used by the payments backend to produce MPP-enabled payment intents and simulate settlement outcomes.
+- `repo:aomi-labs/product-mono#326` **related** — Restores managed-fork batch simulation for arbitrary EOAs — supports testing/replay of multi-path payment intents and negative-balance/deferred checks.
+- `repo:aomi-labs/product-mono#312` **related** — Fixes wallet tx validation and approval emission ordering — important for correct wallet-backed signing and fee transfer authorization ordering.
