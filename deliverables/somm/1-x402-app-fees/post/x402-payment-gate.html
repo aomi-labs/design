@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<!-- aomi-origin src=cowork session=x402-payment-processing-graph adopted=2026-07-20 by=CeciliaZ030 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>x402 Payment Processing — Deferred Credit Gate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ===== Aomi ramps (from src/tokens/tokens.css) ===== */
+    --aomi-cool-0:#ffffff; --aomi-cool-50:#fafafa; --aomi-cool-100:#f4f4f5; --aomi-cool-200:#e4e4e7;
+    --aomi-cool-300:#d4d4d8; --aomi-cool-400:#a1a1aa; --aomi-cool-500:#71717a; --aomi-cool-600:#52525b;
+    --aomi-cool-700:#3f3f46; --aomi-cool-800:#27272a; --aomi-cool-900:#18181b; --aomi-cool-950:#09090b;
+    --aomi-lilac-100:#efe9f1; --aomi-lilac-200:#e3d8e6; --aomi-lilac-300:#d3c2d8;
+    --aomi-lilac-400:#b9a3c1; --aomi-lilac-500:#9c83a8;
+    --aomi-sky-400:#7facd6; --aomi-sky-500:#5288c2;
+    --aomi-pink-400:#e77ba6; --aomi-pink-500:#df5d90;
+    --aomi-success:#2e9e6b; --aomi-warning:#d9982b; --aomi-danger:#d2495b; --aomi-info:#416cac;
+
+    --font-display:"PT Serif",ui-serif,Georgia,Cambria,serif;
+    --font-sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+    --r-md:0.75rem; --r-lg:1rem; --r-xl:1.5rem; --r-2xl:2rem; --r-pill:9999px;
+
+    /* ===== Semantic roles — LIGHT (default, matches aomi.dev editorial surface) ===== */
+    --bg:#fafafa;
+    --panel:#ffffff;
+    --panel-2:#f4f4f5;
+    --border:#e4e4e7;
+    --border-strong:#d4d4d8;
+    --ink:#09090b;
+    --muted:#71717a;
+    --subtle:#a1a1aa;
+    --accent:#9c83a8;
+    --code-bg:#f4f4f5;
+    --code-ink:#3f3f46;
+
+    /* status text (on-surface, per theme) */
+    --st-ok:#1f7a50; --st-warn:#8f6410; --st-bad:#bf3448; --st-info:#3f6fa3; --st-pink:#b34474;
+
+    /* chart literals (read by JS via getComputedStyle — kept literal so var() chains don't leak) */
+    --c-bg:#ffffff; --c-ink:#09090b; --c-muted:#71717a; --c-subtle:#a1a1aa; --c-grid:#e4e4e7;
+    --c-gate:#a06d0e; --c-gate-pill:#fbf4e3; --c-green:#1f7a50; --c-green-ink:#1a6e48;
+    --c-red:#c0374a; --c-red-ink:#b23343; --c-blue:#3f6fa3;
+  }
+
+  /* ===== Dark theme override (add class="dark" or data-theme="dark" on <html>) ===== */
+  .dark, [data-theme="dark"]{
+    --bg:var(--aomi-cool-950);
+    --panel:var(--aomi-cool-900);
+    --panel-2:var(--aomi-cool-800);
+    --border:var(--aomi-cool-800);
+    --border-strong:var(--aomi-cool-700);
+    --ink:var(--aomi-cool-50);
+    --muted:var(--aomi-cool-400);
+    --subtle:var(--aomi-cool-500);
+    --accent:var(--aomi-lilac-400);
+    --code-bg:#0e0e10;
+    --code-ink:#e4e4e7;
+
+    --st-ok:#41bd8c; --st-warn:#d9982b; --st-bad:#e8808f; --st-info:#7facd6; --st-pink:#e77ba6;
+
+    --c-bg:#09090b; --c-ink:#fafafa; --c-muted:#a1a1aa; --c-subtle:#71717a; --c-grid:#27272a;
+    --c-gate:#d9982b; --c-gate-pill:#241f13; --c-green:#2e9e6b; --c-green-ink:#41bd8c;
+    --c-red:#d2495b; --c-red-ink:#e8808f; --c-blue:#7facd6;
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);
+    line-height:1.55;-webkit-font-smoothing:antialiased;padding:44px 20px 64px}
+  .wrap{max-width:1060px;margin:0 auto}
+
+  header.hero{margin-bottom:26px}
+  .eyebrow{font:500 12px/1 var(--font-sans);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:14px}
+  h1{font-family:var(--font-display);font-weight:400;font-size:34px;margin:0 0 10px;
+    letter-spacing:-.02em;line-height:1.15}
+  .sub{color:var(--muted);max-width:72ch;font-size:15px}
+  .sub em{color:var(--ink);font-style:italic}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .chip{font:500 12.5px/1 var(--font-mono);background:var(--panel-2);border:1px solid var(--border-strong);
+    color:var(--ink);padding:8px 12px;border-radius:var(--r-pill)}
+  .chip b{color:var(--accent);font-weight:600}
+
+  section{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-xl);
+    padding:24px 26px;margin-top:20px}
+  .sec-h{display:flex;align-items:center;gap:12px;margin:0 0 6px}
+  h2{font-family:var(--font-display);font-weight:400;font-size:20px;margin:0;letter-spacing:-.01em}
+  .sec-note{color:var(--muted);font-size:13.5px;margin:8px 0 20px;max-width:78ch}
+  .note{display:flex;gap:12px;align-items:flex-start;margin:0 0 18px;padding:13px 15px;
+    background:rgba(156,131,168,.09);border:1px solid rgba(156,131,168,.32);
+    border-left:3px solid var(--accent);border-radius:var(--r-md);font-size:13.5px;color:var(--ink);max-width:84ch}
+  .note .k{font:700 10.5px/1.5 var(--font-mono);color:var(--accent);letter-spacing:.06em;
+    padding:3px 9px;border-radius:var(--r-pill);background:rgba(156,131,168,.16);white-space:nowrap}
+  .note b{color:var(--ink);font-weight:600}
+
+  .tl{width:100%;height:auto;display:block}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .legend .bar{width:18px;height:5px;border-radius:2px;display:inline-block}
+
+  .flow{display:flex;flex-direction:column;gap:0;font-size:13.5px}
+  .node{border:1px solid var(--border-strong);background:var(--panel-2);border-radius:var(--r-md);padding:13px 16px}
+  .node .t{font-weight:600}
+  .node .d{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .decision{background:transparent}
+  .arrow{color:var(--subtle);text-align:center;font:600 12px/1 var(--font-mono);padding:8px 0}
+  .branch{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+  .lane{display:flex;flex-direction:column;gap:8px}
+  .lane .tag{font:600 11px/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase;
+    padding:6px 9px;border-radius:var(--r-pill);align-self:flex-start}
+  .tag.no{color:var(--st-ok);background:rgba(46,158,107,.14);border:1px solid rgba(46,158,107,.4)}
+  .tag.yes{color:var(--st-warn);background:rgba(217,152,43,.13);border:1px solid rgba(217,152,43,.4)}
+  .pass{border-color:rgba(46,158,107,.45);background:rgba(46,158,107,.10)}
+  .fail{border-color:rgba(210,73,91,.45);background:rgba(210,73,91,.10)}
+  .mono{font-family:var(--font-mono)}
+  .pill{display:inline-block;font:600 11px/1 var(--font-mono);padding:3px 7px;border-radius:var(--r-pill);
+    background:rgba(46,158,107,.14);color:var(--st-ok);border:1px solid rgba(46,158,107,.4)}
+  .pill.r{background:rgba(210,73,91,.14);color:var(--st-bad);border-color:rgba(210,73,91,.4)}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{border:1px solid var(--border-strong);border-radius:var(--r-lg);padding:20px;background:var(--panel-2)}
+  .card h3{margin:0 0 4px;font-size:15px;font-family:var(--font-mono);font-weight:600}
+  .card .lead{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+  .card ul{margin:0;padding-left:18px;font-size:13px}
+  .card li{margin:6px 0}
+  .card.strict{border-color:rgba(217,152,43,.4)}
+  .card.relaxed{border-color:rgba(46,158,107,.4)}
+  .card.x402{border-color:rgba(82,136,194,.45)}
+  .card.mpp{border-color:rgba(223,93,144,.45)}
+  .card.flat{border-color:rgba(82,136,194,.4)}
+  .card.outcome{border-color:rgba(156,131,168,.5)}
+  .badge{font:600 10.5px/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase;
+    padding:5px 8px;border-radius:var(--r-pill);float:right}
+  .badge.b1{color:var(--st-warn);background:rgba(217,152,43,.13)}
+  .badge.b3{color:var(--st-ok);background:rgba(46,158,107,.14)}
+  .badge.bx{color:var(--st-info);background:rgba(82,136,194,.14)}
+  .badge.bm{color:var(--st-pink);background:rgba(223,93,144,.14)}
+  .badge.bf{color:var(--st-info);background:rgba(82,136,194,.14)}
+  .badge.bo{color:var(--accent);background:rgba(156,131,168,.18)}
+  code{font-family:var(--font-mono);background:var(--code-bg);border:1px solid var(--border);
+    padding:1px 5px;border-radius:6px;font-size:12px;color:var(--code-ink)}
+
+  .foot{margin-top:22px;color:var(--muted);font-size:13px;display:flex;gap:10px;align-items:flex-start}
+  .foot .ok{color:var(--st-ok);font-weight:700}
+  .foot b{color:var(--ink)}
+
+  @media(max-width:720px){.branch,.cards{grid-template-columns:1fr}h1{font-size:27px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">x402 payment processing</div>
+    <h1>Deferred Credit Gate</h1>
+    <p class="sub">Instead of verifying payment on <em>every</em> API turn, we keep a running credit balance
+    and only re-check it at a checkpoint every <em>TURN_CAP</em> turns. Between checkpoints the balance is
+    allowed to run negative — turns keep flowing, and the user isn't billed each time.</p>
+    <div class="chips">
+      <span class="chip">credit<sub>0</sub> = <b>1</b></span>
+      <span class="chip">TURN_CAP = <b>3</b></span>
+      <span class="chip">cost / turn = <b>5</b></span>
+      <span class="chip">gate: <b>balance ≥ 0</b></span>
+    </div>
+  </header>
+
+  <!-- ================= SECTION 1 : TIMELINE ================= -->
+  <section>
+    <div class="sec-h"><h2>Running balance across turns</h2></div>
+    <p class="sec-note">The amber rail is the <b>pay gate</b> — a request clears only while <code>balance ≥ 0</code>.
+      But the gate is <em>only checked at a checkpoint</em> (every <code>TURN_CAP</code> turns). Turns 2 &amp; 3
+      ride through on credit; the debt is caught when the gate slams shut at turn 4.</p>
+    <svg class="tl" viewBox="0 0 1000 390" role="img" aria-label="Balance timeline with pay gate"></svg>
+    <div class="legend">
+      <span><i class="bar" style="background:var(--c-gate)"></i> pay gate · request clears if balance ≥ 0</span>
+      <span><i class="dot" style="background:var(--c-green)"></i> checkpoint · gate open → serve</span>
+      <span><i class="dot" style="background:var(--c-muted)"></i> in-window turn · no check, serve on credit</span>
+      <span><i class="dot" style="background:var(--c-red)"></i> checkpoint · gate shut (balance &lt; 0) → 402</span>
+      <span><i class="dot" style="background:var(--c-blue)"></i> balance trajectory · top-up lifts it back through</span>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 2 : DECISION FLOW ================= -->
+  <section>
+    <div class="sec-h"><h2>The gate logic, per turn</h2></div>
+    <p class="sec-note">Most turns take the fast path — no balance check, no billing event. Only every
+      <code>TURN_CAP</code>-th turn actually settles.</p>
+    <div class="flow">
+      <div class="node"><div class="t">Turn <span class="mono">N</span> arrives</div>
+        <div class="d">deduct cost from balance: <code>balance -= 5</code></div></div>
+      <div class="arrow">↓</div>
+      <div class="node decision"><div class="t">Checkpoint? <span class="mono">turns_since_check ≥ TURN_CAP</span></div>
+        <div class="d">counts turns since the last settle</div></div>
+      <div class="branch">
+        <div class="lane">
+          <span class="tag no">No → fast path</span>
+          <div class="node pass"><div class="t">Serve immediately</div>
+            <div class="d">no check, no billing. Balance may go negative — that's allowed.</div></div>
+        </div>
+        <div class="lane">
+          <span class="tag yes">Yes → settle</span>
+          <div class="node decision"><div class="t">balance ≥ 0 ?</div></div>
+          <div class="node pass"><span class="pill">≥ 0</span> &nbsp;Serve &amp; reset counter
+            <div class="d">debt cleared by prior credit / top-ups</div></div>
+          <div class="node fail"><span class="pill r">&lt; 0</span> &nbsp;Reject → <code>HTTP 402 Payment Required</code>
+            <div class="d">user tops up → balance ≥ 0 → retry, OK again</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 3 : TURN_CAP TUNING ================= -->
+  <section>
+    <div class="sec-h"><h2>What TURN_CAP buys you</h2></div>
+    <p class="sec-note"><b>Normal x402</b> gates every request. Our impl defers the gate to once every
+      <code>TURN_CAP</code> turns — the same check, just amortized. Here's the difference over 6 turns:</p>
+    <svg class="cmp" viewBox="0 0 1000 300" role="img" aria-label="Normal x402 versus our deferred gate over 6 turns"></svg>
+    <div class="legend" style="margin-bottom:4px">
+      <span><i class="bar" style="background:var(--c-gate)"></i> gate check (a 402 pre-check)</span>
+      <span><i class="dot" style="background:var(--c-gate)"></i> $ settlement / billing event</span>
+      <span><i class="dot" style="background:var(--c-green)"></i> fast path · no check, no bill</span>
+    </div>
+    <div class="cards" style="margin-top:20px">
+      <div class="card strict"><span class="badge b1">per-request</span>
+        <h3>Normal x402</h3>
+        <p class="lead">Gate on every call.</p>
+        <ul>
+          <li>Balance checked before every turn — the classic per-request 402 gate.</li>
+          <li>A settlement / billing event fires every turn → chattier, slower.</li>
+          <li>Zero credit exposure: a request never runs while below zero.</li>
+        </ul>
+      </div>
+      <div class="card relaxed"><span class="badge b3">deferred · CAP 3</span>
+        <h3>Our deferred gate</h3>
+        <p class="lead">Gate once per TURN_CAP.</p>
+        <ul>
+          <li>2 of 3 turns skip the gate → fewer round-trips, fewer bills, faster.</li>
+          <li>Balance may run negative between checkpoints; caught at the next gate.</li>
+          <li>Even a user starting at <code>0</code> flows — set <code>CAP=1</code> to recover strict x402.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 4 : x402 vs MPP ================= -->
+  <section>
+    <div class="sec-h"><h2>x402 vs MPP — same accounting, different gate position</h2></div>
+    <p class="sec-note">The credit/turn-cap bookkeeping is agnostic. The two variants differ only in
+      <em>when</em> the balance check runs relative to the API call.</p>
+    <div class="cards">
+      <div class="card x402"><span class="badge bx">x402</span>
+        <h3>Pre-check gate</h3>
+        <p class="lead">Verify <em>before</em> serving.</p>
+        <ul>
+          <li>Check runs <b>ahead of</b> the API call at each checkpoint.</li>
+          <li>Fails closed: <code>402 Payment Required</code> blocks the call.</li>
+          <li>Payment headers negotiated up front, then the response is served.</li>
+        </ul>
+      </div>
+      <div class="card mpp"><span class="badge bm">MPP</span>
+        <h3>Post-check settle</h3>
+        <p class="lead">Verify <em>after</em> serving.</p>
+        <ul>
+          <li>API call runs first; the balance check happens <b>after</b>.</li>
+          <li>Serve-then-settle — reconcile on the trailing edge.</li>
+          <li>Same running-balance + TURN_CAP math underneath.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 5 : OUTCOME-BASED PRICING ================= -->
+  <section>
+    <div class="sec-h"><h2>Outcome-based pricing — settle on what actually happened onchain</h2></div>
+    <p class="sec-note"><b>What's next.</b> Flat pricing bills the same per <em>API call</em> — no matter what that
+      call actually does <em>on-chain</em>. The richer model prices each turn on its realized
+      <em>on-chain side-effects</em>: the turn's smart-contract calls are replayed inside an <em>isolated chain
+      head</em> in our hosted runtime, and the settlement is adhered to the metered outcome before it commits to
+      canonical state.</p>
+
+    <div class="note"><span class="k">Why</span>
+      <span><b>Aomi is a blockchain harness built around execution.</b> The value of a turn is in what it does
+      on-chain — so it makes sense for us, and for the apps running on us, to charge for <b>on-chain side-effects</b>,
+      not just API round-trips.</span></div>
+
+    <div class="note"><span class="k">How · AA</span>
+      <span>Settlement rides <b>account abstraction</b>. Say an app managing a <b>Morpho</b> pool emits three
+      on-chain calls in one turn — <code>wrap ETH</code>, <code>deposit</code>, <code>transfer</code>. We treat them
+      as <b>user-ops</b> and batch them into a <b>single account-abstracted Tx</b>. The outcome is the simulation
+      result of those first three calls; we then adhere a <b>fourth call — the payment</b> — routed to the
+      <b>treasury of the app's operator</b>.</span></div>
+
+    <svg class="sim" viewBox="0 0 1000 430" role="img"
+      aria-label="Account-abstracted turn: batch the app's on-chain calls as user-ops, simulate ops 1 to 3 in an isolated chain head, measure the outcome, adhere a fourth payment op to the operator treasury, commit one AA transaction"></svg>
+    <div class="legend" style="margin-top:6px">
+      <span><i class="bar" style="background:var(--c-blue)"></i> app's on-chain calls · user-ops (wrap · deposit · transfer)</span>
+      <span><i class="dot" style="background:var(--c-gate)"></i> adhered payment op · priced on outcome → operator treasury</span>
+      <span><i class="bar" style="background:var(--accent)"></i> isolated chain head · sandboxed simulation</span>
+    </div>
+
+    <p class="sec-note" style="margin-top:24px">Same turn, two pricing models — flat bills a constant per API call;
+      outcome-based rides the realized on-chain effect:</p>
+    <svg class="price" viewBox="0 0 1000 230" role="img"
+      aria-label="Price versus realized on-chain outcome: flat per-API-call is constant, outcome-based scales with the measured effect"></svg>
+
+    <div class="cards" style="margin-top:20px">
+      <div class="card flat"><span class="badge bf">flat · today</span>
+        <h3>Flat per-API-call pricing</h3>
+        <p class="lead">One price per API call, whatever it does on-chain.</p>
+        <ul>
+          <li>A read-only call and a call that moves funds on-chain are billed identically.</li>
+          <li>Simple to reason about — the current x402 / credit model.</li>
+          <li>Leaves value on the table and can under-price risky on-chain effects.</li>
+        </ul>
+      </div>
+      <div class="card outcome"><span class="badge bo">simulation engine</span>
+        <h3>Outcome-based pricing</h3>
+        <p class="lead">Priced on the measured on-chain outcome.</p>
+        <ul>
+          <li>Batch the turn's on-chain calls as <b>user-ops</b> into one account-abstracted Tx.</li>
+          <li>Simulate ops 1–3 in an <b>isolated chain head</b>; meter every side-effect.</li>
+          <li>Adhere a <b>4th payment op</b> priced on the outcome → the <b>operator's treasury</b>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span class="ok">✓</span>
+    <span>Payment-header plumbing is implemented and shared across both variants — the gate is
+      <b>x402 + MPP agnostic</b>. Swapping variant only moves the check from before the call (x402)
+      to after it (MPP).</span>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const pts = [
+    {turn:0, bal:1,   kind:'start',  cap:false},
+    {turn:1, bal:-4,  kind:'pass',   cap:true },
+    {turn:2, bal:-9,  kind:'serve',  cap:false},
+    {turn:3, bal:-14, kind:'serve',  cap:false},
+    {turn:4, bal:-14, kind:'reject', cap:true },
+  ];
+  const topupBal = 6;
+
+  const svg = document.querySelector('svg.tl');
+  const W=1000, H=390, L=70, R=40, T=44, B=70;
+  const pw = W-L-R, ph = H-T-B;
+  const vMax = 7, vMin = -18;
+  const x = t => L + (t/4)*pw;
+  const y = v => T + (vMax - v)/(vMax - vMin)*ph;
+  const y0 = y(0);
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const add=e=>svg.appendChild(e);
+
+  // colours pulled from the aomi tokens (literal chart vars)
+  const cs=getComputedStyle(document.documentElement), V=k=>cs.getPropertyValue(k).trim();
+  const C={bg:V('--c-bg'),ink:V('--c-ink'),muted:V('--c-muted'),subtle:V('--c-subtle'),grid:V('--c-grid'),
+    gate:V('--c-gate'),gatePill:V('--c-gate-pill'),green:V('--c-green'),greenInk:V('--c-green-ink'),
+    red:V('--c-red'),redInk:V('--c-red-ink'),blue:V('--c-blue')};
+  const MONO='"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+
+  const defs=el('defs',{}); const mk=el('marker',{id:'ah',markerWidth:9,markerHeight:9,
+    refX:4.5,refY:4.5,orient:'auto'}); mk.appendChild(el('path',{d:'M0 0 L9 4.5 L0 9 z',fill:C.blue}));
+  defs.appendChild(mk); add(defs);
+
+  // credit zone (below the gate)
+  add(el('rect',{x:L,y:y0,width:pw,height:y(vMin)-y0,fill:C.red,'fill-opacity':0.07}));
+  add(el('text',{x:L+8,y:y(vMin)-12,'text-anchor':'start',fill:C.redInk,'font-size':11.5,
+    'font-family':MONO,opacity:0.85})).textContent='▽ credit zone — turns served on IOU while below the gate';
+
+  // negative grid lines + value labels
+  [-4,-9,-14].forEach(v=>{
+    add(el('line',{x1:L,y1:y(v),x2:W-R,y2:y(v),stroke:C.grid,'stroke-width':1,'stroke-dasharray':'3 5'}));
+    add(el('text',{x:L-12,y:y(v)+4,'text-anchor':'end',fill:C.muted,'font-size':12,'font-family':MONO})).textContent=v;
+  });
+
+  // ===== THE PAY GATE (rail at balance = 0) =====
+  add(el('line',{x1:L,y1:y0,x2:W-R,y2:y0,stroke:C.gate,'stroke-width':3}));
+  for(let gx=L+6; gx<=W-R-6; gx+=22){
+    add(el('line',{x1:gx,y1:y0-3.5,x2:gx,y2:y0+3.5,stroke:C.gate,'stroke-width':1,opacity:.42}));
+  }
+  add(el('text',{x:L-12,y:y0+4,'text-anchor':'end',fill:C.gate,'font-size':12,'font-weight':700,
+    'font-family':MONO})).textContent='0';
+  (function(){ const cx=632,w=246,h=22;
+    add(el('rect',{x:cx-w/2,y:y0-h/2,width:w,height:h,rx:11,fill:C.gatePill,
+      stroke:C.gate,'stroke-width':1}));
+    add(el('text',{x:cx,y:y0+4,'text-anchor':'middle',fill:C.gate,'font-size':11.5,'font-weight':700,
+      'font-family':MONO})).textContent='PAY GATE — clears if balance ≥ 0';
+  })();
+
+  // ===== balance path =====
+  let d='';
+  pts.forEach((p,i)=>{ d += (i?'L':'M') + x(p.turn) + ' ' + y(p.bal) + ' '; });
+  add(el('path',{d,fill:'none',stroke:C.blue,'stroke-width':2.5,'stroke-linejoin':'round','stroke-linecap':'round'}));
+
+  // top-up arrow — lifts balance back UP THROUGH the gate
+  add(el('line',{x1:x(4),y1:y(-14),x2:x(4),y2:y(topupBal),stroke:C.blue,'stroke-width':2.5,
+    'stroke-dasharray':'2 6','stroke-linecap':'round','marker-end':'url(#ah)'}));
+
+  // dashed connector tying turn-1 gate check to that turn's balance
+  add(el('line',{x1:x(1),y1:y0,x2:x(1),y2:y(-4),stroke:C.green,'stroke-width':1,'stroke-dasharray':'2 4',opacity:.5}));
+
+  // ===== nodes + value labels =====
+  const kindCol={start:C.muted,pass:C.green,serve:C.muted,reject:C.red};
+  pts.forEach(p=>{
+    const c = kindCol[p.kind];
+    if(p.cap){ add(el('circle',{cx:x(p.turn),cy:y(p.bal),r:11,fill:'none',stroke:c,'stroke-width':1.5,'stroke-dasharray':'2 3'})); }
+    add(el('circle',{cx:x(p.turn),cy:y(p.bal),r:6,fill:c,stroke:C.bg,'stroke-width':2}));
+    const above = p.kind==='start';
+    add(el('text',{x:x(p.turn),y:y(p.bal)+(above?-16:24),'text-anchor':'middle',fill:C.ink,'font-size':12.5,
+      'font-weight':700,'font-family':MONO})).textContent=(p.bal>0?'+':'')+p.bal;
+  });
+
+  // ===== gate barrier glyphs at checkpoints (toll-barrier metaphor) =====
+  function gate(cx, state){
+    const c = state==='open' ? C.green : C.red;
+    const ink = state==='open' ? C.greenInk : C.redInk;
+    add(el('circle',{cx:cx,cy:y0,r:4.5,fill:c,stroke:C.bg,'stroke-width':1.5}));
+    if(state==='open'){
+      add(el('line',{x1:cx,y1:y0,x2:cx-28,y2:y0-30,stroke:c,'stroke-width':4,'stroke-linecap':'round'}));
+      add(el('circle',{cx:cx-28,cy:y0-30,r:3,fill:c}));
+      add(el('line',{x1:cx,y1:y0,x2:cx-42,y2:y0,stroke:c,'stroke-width':1,'stroke-dasharray':'2 4',opacity:.4}));
+      add(el('text',{x:cx-28,y:y0-40,'text-anchor':'middle',fill:ink,'font-size':11,'font-weight':700,
+        'font-family':MONO})).textContent='GATE OPEN';
+    } else {
+      const ax=cx-54;
+      add(el('line',{x1:cx,y1:y0,x2:ax,y2:y0,stroke:c,'stroke-width':5,'stroke-linecap':'round'}));
+      for(let i=1;i<=4;i++){ const hx=cx-11*i; add(el('line',{x1:hx,y1:y0-4,x2:hx-6,y2:y0+4,stroke:C.bg,'stroke-width':1.6})); }
+      add(el('circle',{cx:ax,cy:y0,r:3,fill:c}));
+      add(el('text',{x:cx-6,y:y0-12,'text-anchor':'end',fill:ink,'font-size':11,'font-weight':700,
+        'font-family':MONO})).textContent='GATE SHUT · 402';
+    }
+  }
+  gate(x(1),'open');
+  gate(x(4),'closed');
+
+  // ===== x-axis turn labels (+ checkpoint markers) =====
+  pts.forEach(p=>{
+    add(el('text',{x:x(p.turn),y:H-32,'text-anchor':'middle',fill:C.muted,'font-size':12,
+      'font-family':MONO})).textContent = p.turn===0 ? 'start' : ('turn '+p.turn);
+    if(p.cap){ add(el('text',{x:x(p.turn),y:H-16,'text-anchor':'middle',fill:C.gate,'font-size':10,
+      'font-family':MONO})).textContent='◆ checkpoint'; }
+  });
+
+  // ===== callouts =====
+  function callout(tx,ty,text,color,anchor){
+    add(el('text',{x:tx,y:ty,'text-anchor':anchor||'middle',fill:color,'font-size':11.5,
+      'font-family':MONO})).textContent=text;
+  }
+  callout(x(1), y(-4)+42, 'served ✓  (was ≥ 0 at the gate)', C.greenInk);
+  callout((x(2)+x(3))/2, y(-9)-16, 'no check · serve on credit', C.muted);
+  callout(x(4), y(-14)+42, 'blocked ✗  (below gate → 402)', C.redInk, 'end');
+  callout(x(4)-14, y(topupBal)+3, 'top-up lifts back through gate', C.blue, 'end');
+})();
+
+// ===== section 3 : normal x402 vs deferred gate (lane comparison) =====
+(function(){
+  const svg=document.querySelector('svg.cmp'); if(!svg) return;
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const add=e=>svg.appendChild(e);
+  const cs=getComputedStyle(document.documentElement), V=k=>cs.getPropertyValue(k).trim();
+  const C={bg:V('--c-bg'),ink:V('--c-ink'),muted:V('--c-muted'),subtle:V('--c-subtle'),grid:V('--c-grid'),
+    gate:V('--c-gate'),green:V('--c-green'),greenInk:V('--c-green-ink'),red:V('--c-red'),blue:V('--c-blue')};
+  const MONO='"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+
+  const x0=200, x1=946, N=6, cw=(x1-x0)/N;
+  const cx=i=>x0+(i-0.5)*cw;
+
+  const lanes=[
+    {y:80, coinY:114, tallyY:140, title:'Normal x402', sub:'gate on every turn',
+     checked:()=>true, ours:false, tally:'6 gate checks · 6 settlements  / 6 turns'},
+    {y:214, coinY:248, tallyY:274, title:'Our deferred gate', sub:'gate every TURN_CAP = 3',
+     checked:i=>(i===1||i===4), ours:true, tally:'2 gate checks · 2 settlements  / 6 turns   —   ~3× fewer, faster'},
+  ];
+
+  add(el('text',{x:14,y:22,fill:C.subtle,'font-size':10.5,'font-family':MONO,'letter-spacing':'0.08em'}))
+    .textContent='GATE CHECKS & BILLING · 6 TURNS';
+  add(el('line',{x1:12,y1:154,x2:988,y2:154,stroke:C.grid,'stroke-width':1}));
+
+  lanes.forEach(L=>{
+    add(el('text',{x:14,y:L.y-3,fill:C.ink,'font-size':13,'font-weight':700,'font-family':MONO})).textContent=L.title;
+    add(el('text',{x:14,y:L.y+15,fill:C.muted,'font-size':11,'font-family':MONO})).textContent=L.sub;
+
+    add(el('line',{x1:x0,y1:L.y,x2:x1,y2:L.y,stroke:C.grid,'stroke-width':2}));
+    // green "flowing" segments where our gate lets turns through unchecked
+    for(let i=1;i<=N;i++){
+      if(L.ours && !L.checked(i)){
+        const xa = i===1 ? x0 : cx(i-1);
+        add(el('line',{x1:xa,y1:L.y,x2:cx(i),y2:L.y,stroke:C.green,'stroke-width':2.5,opacity:.75}));
+      }
+    }
+
+    for(let i=1;i<=N;i++){
+      const isChk=L.checked(i);
+      if(isChk){
+        const bx=cx(i)-30;                                   // barrier just before the turn
+        add(el('line',{x1:bx,y1:L.y-17,x2:bx,y2:L.y+17,stroke:C.gate,'stroke-width':2.5}));
+        add(el('line',{x1:bx-3.5,y1:L.y-13,x2:bx-3.5,y2:L.y+13,stroke:C.gate,'stroke-width':1,opacity:.5}));
+        add(el('circle',{cx:cx(i),cy:L.coinY,r:8,fill:C.gate,'fill-opacity':0.16,stroke:C.gate,'stroke-width':1}));
+        add(el('text',{x:cx(i),y:L.coinY+3.6,'text-anchor':'middle',fill:C.gate,'font-size':10,'font-weight':700,'font-family':MONO})).textContent='$';
+      } else {
+        add(el('text',{x:cx(i),y:L.coinY+3.6,'text-anchor':'middle',fill:C.greenInk,'font-size':9.5,'font-family':MONO,opacity:.9})).textContent='no bill';
+      }
+      add(el('circle',{cx:cx(i),cy:L.y,r:15,fill:C.bg,stroke:isChk?C.gate:C.green,'stroke-width':2}));
+      add(el('text',{x:cx(i),y:L.y+4,'text-anchor':'middle',fill:C.ink,'font-size':12,'font-weight':700,'font-family':MONO})).textContent=i;
+    }
+
+    // right-edge headline badge — the comparison at a glance
+    (function(){
+      const bx=950, bc=L.ours?C.greenInk:C.gate, n=L.ours?'2':'6';
+      add(el('rect',{x:bx-41,y:L.y-17,width:82,height:34,rx:9,fill:C.bg,stroke:bc,'stroke-width':1.4}));
+      add(el('text',{x:bx-9,y:L.y+5,'text-anchor':'middle',fill:bc,'font-size':19,'font-weight':700,'font-family':MONO})).textContent=n;
+      add(el('text',{x:bx+16,y:L.y-1,'text-anchor':'middle',fill:bc,'font-size':8,'font-weight':600,'font-family':MONO,'letter-spacing':'0.04em'})).textContent='BILLS';
+      add(el('text',{x:bx+16,y:L.y+9,'text-anchor':'middle',fill:bc,'font-size':8,'font-weight':600,'font-family':MONO,'letter-spacing':'0.04em'})).textContent='/ 6';
+    })();
+
+    add(el('text',{x:x0,y:L.tallyY,fill:L.ours?C.greenInk:C.muted,'font-size':11.5,'font-family':MONO})).textContent=L.tally;
+  });
+})();
+
+// ===== section 5a : outcome-based pricing — account-abstracted turn, simulated =====
+(function(){
+  const svg=document.querySelector('svg.sim'); if(!svg) return;
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const add=e=>svg.appendChild(e);
+  const cs=getComputedStyle(document.documentElement), V=k=>cs.getPropertyValue(k).trim();
+  const C={bg:V('--c-bg'),ink:V('--c-ink'),muted:V('--c-muted'),subtle:V('--c-subtle'),grid:V('--c-grid'),
+    gate:V('--c-gate'),green:V('--c-green'),red:V('--c-red'),blue:V('--c-blue'),accent:V('--accent')};
+  const MONO='"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+  const A=C.accent;
+  const rr=(x,y,w,h,r,o)=>add(el('rect',Object.assign({x,y,width:w,height:h,rx:r},o)));
+  const tx=(x,y,s,o)=>{const t=add(el('text',Object.assign({x,y,'font-family':MONO},o))); t.textContent=s; return t;};
+
+  const defs=el('defs',{});
+  const mkr=(id,color)=>{const m=el('marker',{id,markerWidth:9,markerHeight:9,refX:5,refY:4.5,orient:'auto'});
+    m.appendChild(el('path',{d:'M0 0 L9 4.5 L0 9 z',fill:color})); defs.appendChild(m);};
+  mkr('ahA',A); mkr('ahG',C.gate); add(defs);
+
+  // ---- canonical chain (top) ----
+  tx(14,20,'CANONICAL CHAIN · MAINNET STATE',{fill:C.subtle,'font-size':10.5,'letter-spacing':'0.08em'});
+  const cy=56;
+  add(el('line',{x1:100,y1:cy,x2:770,y2:cy,stroke:C.blue,'stroke-width':2,opacity:.45}));
+  rr(120,cy-16,64,32,7,{fill:C.bg,stroke:C.blue,'stroke-width':1.6});
+  tx(152,cy+4,'n−1',{'text-anchor':'middle',fill:C.ink,'font-size':12,'font-weight':700});
+  rr(268,cy-17,84,34,7,{fill:C.blue,'fill-opacity':0.12,stroke:C.blue,'stroke-width':2});
+  tx(310,cy+4,'head n',{'text-anchor':'middle',fill:C.ink,'font-size':12,'font-weight':700});
+  add(el('line',{x1:770,y1:cy,x2:900,y2:cy,stroke:C.blue,'stroke-width':2,'stroke-dasharray':'2 5',opacity:.5}));
+  rr(812,cy-18,90,36,7,{fill:C.bg,stroke:C.blue,'stroke-width':1.6,'stroke-dasharray':'3 3'});
+  tx(857,cy-2,'n+1',{'text-anchor':'middle',fill:C.ink,'font-size':11.5,'font-weight':700});
+  tx(857,cy+11,'one AA Tx',{'text-anchor':'middle',fill:C.gate,'font-size':8,'font-weight':600});
+
+  // ---- fork + commit labels ----
+  tx(150,118,'fork isolated head',{fill:A,'font-size':10,'font-style':'italic','text-anchor':'end'});
+  tx(800,118,'commit → one AA Tx',{fill:A,'font-size':10,'font-style':'italic','text-anchor':'end'});
+
+  // ---- sandbox (isolated chain head) ----
+  const sx=78, sy=138, sw=712, sh=236;
+  rr(sx,sy,sw,sh,14,{fill:A,'fill-opacity':0.05,stroke:A,'stroke-width':1.4,'stroke-dasharray':'5 4'});
+  rr(288,sy-11,292,22,11,{fill:C.bg,stroke:A,'stroke-width':1.2});
+  tx(434,sy+4,'ISOLATED CHAIN HEAD · HOSTED-RUNTIME SIM',{'text-anchor':'middle',fill:A,'font-size':9.5,'font-weight':700,'letter-spacing':'0.03em'});
+
+  // ---- account-abstracted Tx envelope with 4 op cards ----
+  tx(434,sy+40,'ACCOUNT-ABSTRACTED Tx · user-ops batched atomically',{'text-anchor':'middle',fill:C.muted,'font-size':10,'font-weight':600,'letter-spacing':'0.02em'});
+  const ey=sy+50;
+  rr(110,ey,648,46,10,{fill:'none',stroke:A,'stroke-width':1.2,'stroke-dasharray':'4 3'});
+  const ops=[{t:'op 1 · wrap ETH',c:C.blue},{t:'op 2 · deposit',c:C.blue},{t:'op 3 · transfer',c:C.blue},{t:'op 4 · pay treasury',c:C.gate}];
+  const ow=148, ogap=14, ox0=122, oy=ey+8, oh=30;
+  const ocx=i=>ox0+i*(ow+ogap)+ow/2;
+  ops.forEach((o,i)=>{ const x=ox0+i*(ow+ogap);
+    rr(x,oy,ow,oh,7,{fill:o.c,'fill-opacity':0.10,stroke:o.c,'stroke-width':1.4});
+    tx(x+ow/2,oy+19,o.t,{'text-anchor':'middle',fill:o.c,'font-size':10.5,'font-weight':600}); });
+
+  // brace under ops 1–3
+  const b1=ox0, b2=ox0+2*(ow+ogap)+ow, bmid=(b1+b2)/2, by=oy+oh+14;
+  add(el('path',{d:'M'+b1+' '+(by-6)+' L'+b1+' '+by+' L'+b2+' '+by+' L'+b2+' '+(by-6),fill:'none',stroke:C.muted,'stroke-width':1.2}));
+  add(el('line',{x1:bmid,y1:by,x2:bmid,y2:by+7,stroke:C.muted,'stroke-width':1.2}));
+  tx(bmid,by+21,'ops 1–3 run on the isolated fork',{'text-anchor':'middle',fill:C.muted,'font-size':10});
+
+  // measured-outcome meter (under the brace)
+  const meterY=by+40, mbase=meterY+42;
+  tx(bmid,meterY-2,'measured outcome',{'text-anchor':'middle',fill:C.ink,'font-size':10,'font-weight':600});
+  const bars=[{h:30,c:C.blue,l:'val'},{h:20,c:C.gate,l:'gas'},{h:40,c:C.green,l:'logs'},{h:14,c:C.red,l:'risk'}];
+  const mw=22, mgap=16, mtot=bars.length*mw+(bars.length-1)*mgap, mx0=bmid-mtot/2;
+  bars.forEach((b,i)=>{ const x=mx0+i*(mw+mgap);
+    add(el('rect',{x,y:mbase-b.h,width:mw,height:b.h,rx:3,fill:b.c,'fill-opacity':0.85}));
+    tx(x+mw/2,mbase+11,b.l,{'text-anchor':'middle',fill:C.muted,'font-size':8}); });
+
+  // derive arrow: measured outcome → op 4 (the payment)
+  add(el('path',{d:'M'+(mx0+mtot+8)+' '+(mbase-16)+' C 520 '+(mbase-8)+', '+(ocx(3)-16)+' '+(oy+oh+34)+', '+(ocx(3)-ow/2+4)+' '+(oy+oh/2+4),
+    fill:'none',stroke:C.gate,'stroke-width':1.8,'marker-end':'url(#ahG)'}));
+  tx(ocx(3),oy+oh+22,'payment = f(outcome)',{'text-anchor':'middle',fill:C.gate,'font-size':10,'font-weight':600});
+  tx(ocx(3),oy+oh+36,'→ operator treasury',{'text-anchor':'middle',fill:C.gate,'font-size':9.5});
+
+  // fork arrow (head n → envelope) + commit arrow (envelope → pending block)
+  add(el('path',{d:'M310 '+(cy+16)+' C 258 92, 176 112, 172 '+(oy-4),fill:'none',stroke:A,'stroke-width':2,'marker-end':'url(#ahA)'}));
+  add(el('path',{d:'M752 '+(oy+oh/2)+' C 828 '+oy+', 857 118, 857 '+(cy+20),fill:'none',stroke:A,'stroke-width':2,'marker-end':'url(#ahA)'}));
+
+  // caption
+  tx(500, sy+sh+24, 'One turn → one account-abstracted Tx: ops 1–3 are simulated in isolation to price op 4 — the payment — which settles to the app operator’s treasury.',
+    {'text-anchor':'middle',fill:C.muted,'font-size':10.5});
+})();
+
+// ===== section 5b : flat vs outcome-based price curve =====
+(function(){
+  const svg=document.querySelector('svg.price'); if(!svg) return;
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const add=e=>svg.appendChild(e);
+  const cs=getComputedStyle(document.documentElement), V=k=>cs.getPropertyValue(k).trim();
+  const C={bg:V('--c-bg'),ink:V('--c-ink'),muted:V('--c-muted'),subtle:V('--c-subtle'),grid:V('--c-grid'),
+    gate:V('--c-gate'),green:V('--c-green'),blue:V('--c-blue'),accent:V('--accent')};
+  const MONO='"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+  const A=C.accent;
+  const tx=(x,y,s,o)=>{const t=add(el('text',Object.assign({x,y,'font-family':MONO},o))); t.textContent=s; return t;};
+
+  const L=120,R=60,T=34,B=52, x1=1000-R, base=230-B, top=T;
+  const X=t=>L+t*(x1-L), Y=v=>base-v*(base-top);
+
+  tx(14,18,'PRICE vs REALIZED OUTCOME',{fill:C.subtle,'font-size':10.5,'letter-spacing':'0.08em'});
+  // axes
+  add(el('line',{x1:L,y1:top,x2:L,y2:base,stroke:C.grid,'stroke-width':1.4}));
+  add(el('line',{x1:L,y1:base,x2:x1,y2:base,stroke:C.grid,'stroke-width':1.4}));
+  tx(L-8,top+2,'price',{'text-anchor':'end',fill:C.muted,'font-size':10});
+  tx(L-8,top+14,'↑',{'text-anchor':'end',fill:C.muted,'font-size':11});
+  tx((L+x1)/2,base+34,'realized on-chain outcome  —  value moved · gas · events  →',{'text-anchor':'middle',fill:C.muted,'font-size':10.5});
+
+  // outcome-based curve (rides the effect)
+  const pts=[]; for(let i=0;i<=10;i++){const t=i/10; pts.push([t, 0.06+0.86*Math.pow(t,1.28)]);}
+  let d='',a='M'+X(0)+' '+base+' ';
+  pts.forEach((p,i)=>{ d+=(i?'L':'M')+X(p[0])+' '+Y(p[1])+' '; a+='L'+X(p[0])+' '+Y(p[1])+' '; });
+  a+='L'+X(1)+' '+base+' Z';
+  add(el('path',{d:a,fill:A,'fill-opacity':0.08,stroke:'none'}));
+  add(el('path',{d,fill:'none',stroke:A,'stroke-width':2.6,'stroke-linejoin':'round','stroke-linecap':'round'}));
+  add(el('circle',{cx:X(1),cy:Y(pts[10][1]),r:4,fill:A}));
+  tx(X(0.66)+6,Y(0.06+0.86*Math.pow(0.66,1.28))-10,'outcome-based · priced on effect',{fill:A,'font-size':10.5,'font-weight':600});
+
+  // flat line (constant)
+  const flat=0.28;
+  add(el('line',{x1:X(0),y1:Y(flat),x2:X(1),y2:Y(flat),stroke:C.muted,'stroke-width':2,'stroke-dasharray':'6 5'}));
+  tx(X(1)+6,Y(flat)+4,'flat',{fill:C.muted,'font-size':10.5,'font-weight':600});
+  tx(X(0.04),Y(flat)-9,'flat per API call · same price every time',{fill:C.muted,'font-size':10});
+})();
+</script>
+</body>
+</html>
