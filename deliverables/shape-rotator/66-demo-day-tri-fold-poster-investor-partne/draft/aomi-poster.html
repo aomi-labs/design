@@ -1,0 +1,297 @@
+<!doctype html>
+
+<!-- aomi-origin src=upload adopted=2026-07-21 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aomi — Tri-Fold Poster (investor / partner)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#09090B;
+    --paper:#FFFFFF;
+    --panel:#FAFAFA;
+    --panel-2:#F4F4F5;
+    --border:#E4E4E7;
+    --muted:#71717A;
+    --sky:#5288C2;
+    --pink:#DF5D90;
+    --serif:"PT Serif", Georgia, "Times New Roman", serif;
+    --sans:"Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono:"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#E8E8EA; color:var(--ink);
+    font-family:var(--sans); line-height:1.5;
+    padding:40px 24px 80px;
+  }
+  .meta{max-width:1180px; margin:0 auto 20px; color:#52525B; font-size:.82rem;}
+  .meta b{color:#18181B;}
+  .meta .fill{color:var(--pink); font-weight:600;}
+
+  /* ---------- the board ---------- */
+  .board{
+    max-width:1180px; margin:0 auto;
+    background:var(--paper);
+    display:grid; grid-template-columns:1fr 2fr 1fr;
+    border:1px solid #D4D4D8;
+  }
+  .panel{padding:26px 22px; display:flex; flex-direction:column; gap:16px;}
+  .panel + .panel{border-left:2px dashed #D4D4D8;} /* physical folds */
+
+  .kicker{
+    font-family:var(--sans); font-size:.66rem; font-weight:600;
+    letter-spacing:.22em; text-transform:uppercase; color:var(--sky);
+    text-align:center; padding-bottom:10px; border-bottom:1px solid var(--border);
+  }
+  .kicker span{color:var(--muted); font-weight:500;}
+
+  .blk h4{
+    font-family:var(--sans); font-size:.7rem; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--ink);
+    margin:0 0 6px;
+  }
+  .blk p{margin:0; font-size:.9rem; color:#3F3F46;}
+  .blk ul{margin:0; padding-left:18px;}
+  .blk li{font-size:.9rem; margin:5px 0; color:#3F3F46;}
+  .blk li b{color:var(--ink);}
+  .muted{color:var(--muted);}
+
+  /* value-prop callout */
+  .callout{
+    border:1px solid var(--pink); border-left:4px solid var(--pink);
+    background:#FDF2F7; padding:14px 16px;
+  }
+  .callout h4{color:var(--pink);}
+  .callout p{color:#27272A; font-size:.95rem;}
+
+  /* ---------- center ---------- */
+  .title-banner{text-align:center; padding:8px 0 14px; border-bottom:1px solid var(--border);}
+  .wordmark{
+    font-family:var(--serif); font-weight:700; font-size:4.2rem; line-height:1;
+    letter-spacing:-.02em; margin:0; color:var(--ink);
+  }
+  .wordmark .dot{color:var(--sky);}
+  .tagline{font-family:var(--serif); font-style:italic; font-size:1.25rem; color:#3F3F46; margin:10px 0 0;}
+
+  .hero{
+    border:1px dashed var(--sky); background:var(--panel);
+    min-height:220px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; gap:6px; padding:20px;
+  }
+  .hero .label{font-family:var(--mono); font-size:.8rem; color:var(--sky);}
+  .hero .fill{font-size:.82rem; color:var(--muted); max-width:46ch;}
+  .caption{font-size:.78rem; color:var(--muted); text-align:center; margin-top:6px;}
+
+  /* how-it-works flow */
+  .flow{display:flex; align-items:stretch; gap:0; flex-wrap:nowrap;}
+  .step{
+    flex:1 1 0; background:var(--panel-2); border:1px solid var(--border);
+    padding:10px 8px; text-align:center; position:relative;
+  }
+  .step .n{
+    display:inline-flex; width:22px; height:22px; border-radius:999px;
+    background:var(--sky); color:#fff; font-size:.72rem; font-weight:700;
+    align-items:center; justify-content:center; margin-bottom:6px;
+  }
+  .step p{font-size:.74rem; line-height:1.25; margin:0; color:#27272A;}
+  .arrow{display:flex; align-items:center; color:var(--sky); font-weight:700; padding:0 2px;}
+  .flow-ends{display:flex; justify-content:space-between; font-family:var(--mono);
+             font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:8px;}
+
+  /* demo callout */
+  .demo{
+    border:1px solid var(--sky); background:#EEF4FB;
+    display:flex; align-items:center; gap:16px; padding:14px 16px;
+  }
+  .qr{
+    width:74px; height:74px; flex:none; border:1px dashed var(--sky);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:.6rem; color:var(--sky); text-align:center; background:#fff;
+  }
+  .demo h4{color:var(--sky);}
+  .demo p{font-size:.86rem; color:#27272A;}
+
+  /* ---------- right / proof ---------- */
+  .metrics{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .metric{border:1px solid var(--border); background:var(--panel); padding:12px; text-align:center;}
+  .metric .num{font-family:var(--serif); font-weight:700; font-size:2rem; line-height:1; color:var(--sky);}
+  .metric .num.fill{color:var(--pink); font-size:1.25rem;}
+  .metric .cap{font-size:.68rem; color:var(--muted); margin-top:6px; letter-spacing:.02em;}
+
+  .badges{display:flex; flex-wrap:wrap; gap:6px;}
+  .badge{
+    font-family:var(--mono); font-size:.68rem; color:#3F3F46;
+    border:1px solid var(--border); border-radius:999px; padding:3px 10px; background:#fff;
+  }
+
+  .feat li{display:flex; gap:8px; align-items:baseline;}
+  .feat li .dot{color:var(--sky); font-weight:700;}
+
+  .contact{border-top:1px solid var(--border); padding-top:12px; display:flex; gap:14px; align-items:center;}
+  .contact .qr{width:60px; height:60px;}
+  .contact .who p{margin:0; font-size:.8rem; color:#3F3F46;}
+  .contact .who .fill{color:var(--pink);}
+
+  .fill{color:var(--pink);}
+  .fill-inline{color:var(--pink); font-weight:600;}
+
+  @media (max-width:900px){
+    .board{grid-template-columns:1fr;}
+    .panel + .panel{border-left:none; border-top:2px dashed #D4D4D8;}
+    .wordmark{font-size:3rem;}
+  }
+  @media print{
+    body{background:#fff; padding:0;}
+    .meta{display:none;}
+    .board{border:none; max-width:none;}
+    @page{size:landscape;}
+  }
+</style>
+</head>
+<body>
+
+  <p class="meta">
+    <b>Aomi tri-fold — investor / partner draft.</b>
+    Light board · ink text · sky <code>#5288C2</code> + rosy pink <code>#DF5D90</code> · PT Serif / Geist.
+    Everything in <span class="fill">pink</span> is a <span class="fill">⟨FILL⟩</span> placeholder — drop in real metrics, team, links, and the hero screenshot before printing.
+  </p>
+
+  <div class="board">
+
+    <!-- ============ LEFT · WHY ============ -->
+    <div class="panel">
+      <div class="kicker">Left · 12″ <span>· the why</span></div>
+
+      <div class="blk">
+        <h4>The problem</h4>
+        <p>Getting software to act on-chain from natural language is slow and dangerous. Teams hand-wire an LLM to wallets and RPC endpoints, ship custodial glue code, and still can't guarantee a transaction does what the user asked.</p>
+      </div>
+
+      <div class="blk">
+        <h4>Who it's for</h4>
+        <p>Teams building agentic applications on crypto — DeFi assistants, agentic trading products, fintech + wallet apps — and the platforms that host many such Apps.</p>
+      </div>
+
+      <div class="blk">
+        <h4>Today's solutions &amp; gaps</h4>
+        <ul>
+          <li>DIY LLM→wallet glue — custodial, unaudited, no simulation.</li>
+          <li>Generic agent frameworks — not chain-aware, no type safety.</li>
+          <li>Custodial trading products — the user surrenders their keys.</li>
+        </ul>
+      </div>
+
+      <div class="blk callout">
+        <h4>Our approach</h4>
+        <p>Non-custodial by construction. Every action is compile-time type-checked and simulated before it can be signed — an unsafe transaction is impossible to express.</p>
+      </div>
+    </div>
+
+    <!-- ============ CENTER · WHAT & HOW ============ -->
+    <div class="panel">
+      <div class="kicker">Center · 24″ <span>· the what &amp; how</span></div>
+
+      <div class="title-banner">
+        <p class="wordmark">aomi<span class="dot">.</span></p>
+        <p class="tagline">The native harness on blockchains.</p>
+      </div>
+
+      <div>
+        <div class="hero">
+          <span class="label">▣ HERO VISUAL</span>
+          <span class="fill">⟨FILL: portal screenshot mid-execution — intent typed + simulation result showing. The single biggest element on the board.⟩</span>
+        </div>
+        <p class="caption">Natural-language intent → simulated outcome → non-custodial signature.</p>
+      </div>
+
+      <div class="blk">
+        <h4>How it works</h4>
+        <div class="flow">
+          <div class="step"><span class="n">1</span><p>State intent in natural language</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">2</span><p>Resolve to typed protocol calls</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">3</span><p>Simulate vs. live chain state</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">4</span><p>Sign — non-custodially</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">5</span><p>Execute on-chain, return outcome</p></div>
+        </div>
+        <div class="flow-ends"><span>input</span><span>outcome</span></div>
+      </div>
+
+      <div class="demo">
+        <div class="qr">QR<br>demo</div>
+        <div>
+          <h4>▶ Live demo</h4>
+          <p>"Swap 100 USDC to ETH on Base" — resolve, simulate, execute non-custodially in under a minute. <span class="fill-inline">⟨FILL: demo video URL → QR⟩</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ RIGHT · PROOF ============ -->
+    <div class="panel">
+      <div class="kicker">Right · 12″ <span>· the proof</span></div>
+
+      <div class="blk feat">
+        <h4>Key features</h4>
+        <ul>
+          <li><span class="dot">•</span><span><b>Non-custodial by construction</b> — keys never leave the user</span></li>
+          <li><span class="dot">•</span><span><b>Compile-time type checking</b> — invalid calls won't build</span></li>
+          <li><span class="dot">•</span><span><b>Simulate before sign</b> — see the outcome first</span></li>
+          <li><span class="dot">•</span><span><b>Cloud-hosted Apps</b> — ship in days, not months</span></li>
+          <li><span class="dot">•</span><span><b>Native payment rails</b> — x402 pricing, MPP settlement</span></li>
+        </ul>
+      </div>
+
+      <div class="blk">
+        <h4>Results</h4>
+        <div class="metrics">
+          <div class="metric"><div class="num fill">⟨#⟩</div><div class="cap">APPS LIVE</div></div>
+          <div class="metric"><div class="num fill">⟨$⟩</div><div class="cap">VALUE EXECUTED</div></div>
+          <div class="metric"><div class="num fill">⟨#⟩</div><div class="cap">TXNS SIMULATED</div></div>
+          <div class="metric"><div class="num">days</div><div class="cap">TO SHIP · vs <span class="fill">⟨months⟩</span></div></div>
+        </div>
+      </div>
+
+      <div class="blk">
+        <h4>Tech stack</h4>
+        <div class="badges">
+          <span class="badge">Rust · Axum</span>
+          <span class="badge">MCP server</span>
+          <span class="badge">Aomi SDK 3.0.3</span>
+          <span class="badge">@aomi-labs/client 0.3.2</span>
+          <span class="badge">Cloudflare edge</span>
+          <span class="badge">Telegram · Discord</span>
+          <span class="badge">x402 · MPP</span>
+        </div>
+      </div>
+
+      <div class="blk">
+        <h4>Roadmap</h4>
+        <ul>
+          <li>Agent-held wallets &amp; delegation <span class="fill">⟨confirm⟩</span></li>
+          <li>Multi-App hosting fleet / App marketplace</li>
+          <li>Broader protocol + chain coverage</li>
+        </ul>
+      </div>
+
+      <div class="contact">
+        <div class="qr">QR<br>site</div>
+        <div class="who">
+          <p><b>Aomi Labs</b></p>
+          <p class="fill">⟨FILL: team + roles⟩</p>
+          <p class="fill">⟨FILL: aomi.dev · github.com/aomi-labs · Discord⟩</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
