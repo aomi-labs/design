@@ -17,3 +17,7 @@ Added `draft/traction-one-pager-v2.html`. This revision removes the unit-price, 
 ## 2026-07-21 — raised five-year scale targets and restored modeled transaction volume
 
 Added `draft/traction-one-pager-v3.html`. Per founder direction, the prior year-five account and app targets move into year one. The scale case reaches 1,000,000 active accounts and 5,000 production apps in year five. Transaction volume is modeled monthly as active accounts multiplied by a founder-provided per-account assumption: $10 now, $20 in year one, then $27.50, $35, $42.50, and $50 through year five. Every transaction-volume value remains labeled as modeled rather than observed.
+
+## 2026-07-21 — wallet-benchmarked active-account base case
+
+Added `draft/traction-one-pager-v4.html`. After benchmarking major-wallet MAU disclosures, the year-five active-account base case is reduced from 1,000,000 to 250,000 while the founder-confirmed 5,000-app target remains. The active-account path is 40,320 → 75,000 → 120,000 → 180,000 → 250,000; the app path is 333 → 750 → 1,500 → 3,000 → 5,000. With the existing per-account assumptions, modeled monthly transaction volume reaches $12.5M in year five.
