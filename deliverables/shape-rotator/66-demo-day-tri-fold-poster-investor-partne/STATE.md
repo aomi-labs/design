@@ -13,3 +13,7 @@ Added `draft/traction-one-pager.html`, a one-page investor view separating obser
 ## 2026-07-21 — replaced financial scenarios with five-year operating growth
 
 Added `draft/traction-one-pager-v2.html`. This revision removes the unit-price, GMV, platform-take, hosting-revenue, and transaction-value model. It projects only accounts with a thread, production apps, and transaction simulation steps across five years, with exact annual targets and explicit assumptions. Transaction simulations remain labeled as an activity proxy rather than settled onchain transactions.
+
+## 2026-07-21 — raised five-year scale targets and restored modeled transaction volume
+
+Added `draft/traction-one-pager-v3.html`. Per founder direction, the prior year-five account and app targets move into year one. The scale case reaches 1,000,000 active accounts and 5,000 production apps in year five. Transaction volume is modeled monthly as active accounts multiplied by a founder-provided per-account assumption: $10 now, $20 in year one, then $27.50, $35, $42.50, and $50 through year five. Every transaction-volume value remains labeled as modeled rather than observed.

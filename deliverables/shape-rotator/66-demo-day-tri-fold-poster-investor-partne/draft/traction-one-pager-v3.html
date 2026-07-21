@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aomi — Observed Traction &amp; 5-Year Scale Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;family=PT+Serif:ital,wght@0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#09090b; --ink2:#3f3f46; --muted:#71717a; --faint:#a1a1aa;
+    --paper:#fff; --panel:#fafafa; --panel2:#f4f4f5; --line:#e4e4e7;
+    --sky:#5288c2; --sky2:#416cac; --tint:#e2eef8; --tintline:#aecbe8;
+    --pink:#df5d90; --pinktint:#fbe4ef; --pinkline:#efa6c5;
+    --green:#2e9e6b; --greentint:#e4f3ec;
+    --serif:"PT Serif",Georgia,serif; --sans:"Geist",system-ui,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:#e9eaec;color:var(--ink);font-family:var(--sans)}
+  body{padding:12px}
+  .page{
+    width:min(1440px,100%); min-height:min(876px,calc(100vh - 24px)); margin:0 auto;
+    background:var(--paper); border:1px solid #d4d4d8; box-shadow:0 18px 60px rgba(9,9,11,.10);
+    padding:24px 32px 18px; display:grid; grid-template-rows:auto auto 1fr auto; gap:14px;
+  }
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:30px}
+  .brand{display:flex;align-items:baseline;gap:16px}
+  .wordmark{font:700 2.5rem/1 var(--serif);letter-spacing:-.04em}.wordmark i{color:var(--sky);font-style:normal}
+  .kicker{font:600 .69rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--sky2)}
+  .stamp{text-align:right;color:var(--muted);font-size:.68rem;line-height:1.45}
+  .stamp b{color:var(--ink2);font-weight:600}
+  .hero{display:grid;grid-template-columns:1.6fr .8fr;gap:28px;align-items:end;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  h1{font:700 clamp(2.35rem,4vw,4.25rem)/.94 var(--serif);letter-spacing:-.045em;margin:0;max-width:17ch}
+  h1 em{color:var(--sky);font-style:italic;font-weight:400}
+  .thesis{font-size:1.03rem;line-height:1.5;color:var(--ink2);margin:0 0 3px;max-width:43ch}
+  .thesis b{color:var(--ink)}
+  .content{display:grid;grid-template-columns:1.18fr .82fr;gap:20px;min-height:0}
+  .actual,.model{border:1px solid var(--line);padding:16px;min-width:0}
+  .model{background:linear-gradient(145deg,#f7fbff 0%,#fff 58%);border-color:var(--tintline)}
+  .section-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:12px}
+  h2{font-size:.77rem;line-height:1;text-transform:uppercase;letter-spacing:.13em;margin:0}
+  .label{font:500 .66rem/1.3 var(--mono);color:var(--muted)}
+  .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .metric{background:var(--panel);border:1px solid var(--line);padding:11px 10px;min-height:92px;display:flex;flex-direction:column;justify-content:space-between}
+  .metric.primary{background:var(--tint);border-color:var(--tintline)}
+  .num{font:700 clamp(1.7rem,2.6vw,2.8rem)/.95 var(--serif);letter-spacing:-.035em;color:var(--sky2)}
+  .metric.primary .num{color:var(--ink)}
+  .cap{font-size:.67rem;line-height:1.3;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .sub{font:500 .62rem/1.25 var(--mono);color:var(--sky2);margin-top:5px}
+  .usage{display:grid;grid-template-columns:1.05fr .95fr;gap:10px;margin-top:10px}
+  .usage-card{border:1px solid var(--line);padding:12px;background:#fff}
+  .usage-card h3,.volume h3{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;margin:0 0 10px}
+  .funnel{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:8px}
+  .funnel .f-num{font:700 1.45rem/1 var(--serif)}
+  .funnel .f-cap{font-size:.57rem;color:var(--muted);text-transform:uppercase;line-height:1.25;margin-top:4px}
+  .arrow{color:var(--faint)}
+  .download{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .download strong{font:700 2.15rem/1 var(--serif);color:var(--pink)}
+  .download p{font-size:.65rem;line-height:1.3;color:var(--muted);margin:0;text-align:right}
+  .spark{height:28px;margin-top:10px;display:flex;align-items:flex-end;gap:4px}
+  .spark span{flex:1;background:var(--pinkline);border-radius:2px 2px 0 0}.spark span:last-child{background:var(--pink)}
+  .caveat{font-size:.58rem;line-height:1.35;color:var(--muted);margin:10px 0 0}
+  .targets{display:grid;gap:11px}
+  .target{display:grid;grid-template-columns:124px 1fr 72px;gap:10px;align-items:center}
+  .target-name{font-size:.68rem;color:var(--ink2)}
+  .target-name small{display:block;color:var(--muted);font:400 .57rem/1.2 var(--mono);margin-top:2px}
+  .track{height:8px;background:var(--panel2);position:relative;overflow:hidden}
+  .track i{display:block;height:100%;background:var(--sky);position:relative}
+  .track i:after{content:"";position:absolute;right:0;top:0;height:100%;width:3px;background:var(--sky2)}
+  .target-value{text-align:right;font:700 1.15rem/1 var(--serif);color:var(--sky2)}
+  .target-value small{font:500 .54rem/1 var(--mono);color:var(--muted);display:block;margin-top:4px}
+  .model-note{font-size:.6rem;line-height:1.4;color:var(--muted);border-top:1px solid var(--tintline);padding-top:11px;margin:14px 0 0}
+  .growth{grid-column:1/-1;border:1px solid var(--line);padding:12px 16px;background:var(--panel)}
+  .growth-head{display:flex;align-items:baseline;justify-content:space-between;gap:18px;margin-bottom:8px}
+  .growth-head h3{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;margin:0}
+  .growth-head p{margin:0;font:500 .54rem/1.35 var(--mono);color:var(--muted);text-align:right}
+  .growth-table{width:100%;border-collapse:separate;border-spacing:6px 5px;table-layout:fixed}
+  .growth-table th,.growth-table td{padding:7px 8px;text-align:right}
+  .growth-table thead th{font:500 .52rem/1.2 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:transparent}
+  .growth-table thead th:first-child{text-align:left;width:18%}
+  .growth-table tbody th{text-align:left;background:#fff;border-left:3px solid var(--tintline);font-size:.65rem;line-height:1.15}
+  .growth-table tbody th small{display:block;margin-top:3px;font:400 .46rem/1.2 var(--mono);color:var(--muted)}
+  .growth-table td{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);font:700 1.02rem/1 var(--serif);color:var(--sky2)}
+  .growth-table td.observed{color:var(--ink);background:var(--tint);border-color:var(--tintline)}
+  .growth-table td.y5{color:var(--pink);background:var(--pinktint);border-color:var(--pinkline)}
+  .growth-table td small{display:block;margin-top:4px;font:500 .44rem/1 var(--mono);color:var(--muted)}
+  .growth-note{margin:5px 0 0;font-size:.5rem;line-height:1.35;color:var(--muted)}
+  .footer{display:flex;justify-content:space-between;align-items:flex-start;gap:25px;border-top:1px solid var(--line);padding-top:8px}
+  .source{font-size:.54rem;line-height:1.45;color:var(--muted);max-width:110ch;margin:0}
+  .ask{font:600 .63rem/1.4 var(--mono);color:var(--sky2);text-align:right;max-width:44ch;margin:0}
+  @media(max-width:1000px){body{padding:0}.page{border:0;min-height:100vh;padding:26px}.hero,.content{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(2,1fr)}.usage{grid-template-columns:1fr}.growth{overflow-x:auto}.growth-table{min-width:820px}}
+  @media(max-width:620px){.top,.footer{display:block}.stamp,.ask{text-align:left;margin-top:10px}.hero{gap:16px}.metric-grid{grid-template-columns:1fr 1fr}.target{grid-template-columns:105px 1fr 58px}.growth-head{display:block}.growth-head p{text-align:left;margin-top:5px}}
+  @media print{
+    @page{size:A4 landscape;margin:0}
+    html,body{width:297mm;height:210mm;background:#fff}.page{width:297mm;height:210mm;min-height:0;border:0;box-shadow:none;padding:5mm 8mm;gap:2.5mm}
+    .hero{grid-template-columns:1.6fr .8fr;gap:7mm;padding:2mm 0}.hero .thesis{font-size:8pt}.content{grid-template-columns:1.18fr .82fr;gap:3mm}
+    .metric-grid{grid-template-columns:repeat(4,1fr)}.usage{grid-template-columns:1.05fr .95fr}
+    h1{font-size:9.5mm}.wordmark{font-size:7mm}.metric{min-height:20mm;padding:2mm}.actual,.model{padding:3mm}.usage-card{padding:2mm}
+    .growth{padding:2mm 3mm}.growth-table{border-spacing:1.2mm .8mm}.growth-table th,.growth-table td{padding:1.2mm 1.5mm}.growth-table td{font-size:9pt}.growth-note{font-size:4.8pt}
+    .model-note{font-size:5pt;line-height:1.3;padding-top:2mm;margin-top:2.5mm}.footer{padding-top:1.5mm}.source{font-size:4.8pt}.ask{font-size:5.2pt}
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="top">
+    <div class="brand"><div class="wordmark">aomi<i>.</i></div><div class="kicker">Traction brief · investor view</div></div>
+    <div class="stamp"><b>Measured July 21, 2026</b><br>Production activity + public registry data · mixed usage noted</div>
+  </header>
+
+  <section class="hero">
+    <h1>Distribution is real. <em>Now scale the network.</em></h1>
+    <p class="thesis"><b>33 apps are loaded in production</b>, 1,734 accounts have entered a product thread, and 662 transaction simulation steps are recorded. The five-year scale case follows active accounts, production apps, and modeled monthly transaction volume.</p>
+  </section>
+
+  <section class="content">
+    <div class="actual">
+      <div class="section-head"><h2>Current traction</h2><span class="label">Observed activity · sourced</span></div>
+      <div class="metric-grid">
+        <article class="metric primary"><div class="num">2,583</div><div><div class="cap">Registered accounts</div><div class="sub">production DB · mixed activity</div></div></article>
+        <article class="metric primary"><div class="num">1,734</div><div><div class="cap">Accounts with ≥1 product thread</div><div class="sub">67% · cumulative proxy</div></div></article>
+        <article class="metric"><div class="num">33</div><div><div class="cap">Apps loaded in production</div><div class="sub">live runtime artifacts</div></div></article>
+        <article class="metric"><div class="num">5,349</div><div><div class="cap">Product threads</div><div class="sub">24,221 messages · mixed activity</div></div></article>
+      </div>
+
+      <div class="usage">
+        <article class="usage-card">
+          <h3>Transaction-prep activity recorded</h3>
+          <div class="funnel">
+            <div><div class="f-num">662</div><div class="f-cap">simulation<br>steps</div></div><span class="arrow">→</span>
+            <div><div class="f-num">486</div><div class="f-cap">batch<br>results</div></div><span class="arrow">→</span>
+            <div><div class="f-num">4</div><div class="f-cap">submissions<br>tracked</div></div>
+          </div>
+          <p class="caveat">Separate recorded layers—not a conversion funnel. Simulation and batch activity includes internal/test usage; four tracked submissions are not four unique customers.</p>
+        </article>
+        <article class="usage-card">
+          <h3>Developer distribution</h3>
+          <div class="download"><strong>23.7k</strong><p>lifetime public<br>registry downloads</p></div>
+          <div class="spark" aria-label="Package download momentum"><span style="height:28%"></span><span style="height:34%"></span><span style="height:42%"></span><span style="height:55%"></span><span style="height:72%"></span><span style="height:100%"></span></div>
+          <p class="caveat">4,641 in the latest 30 days. Downloads are not unique developers or users.</p>
+        </article>
+      </div>
+    </div>
+
+    <aside class="model">
+      <div class="section-head"><h2>Year-five scale case</h2><span class="label">Founder targets · not guidance</span></div>
+      <div class="targets">
+        <div class="target"><div class="target-name">Active accounts<small>1,734 current proxy</small></div><div class="track"><i style="width:3%"></i></div><div class="target-value">1.0M<small>576.7×</small></div></div>
+        <div class="target"><div class="target-name">Production apps<small>33 now</small></div><div class="track"><i style="width:3%"></i></div><div class="target-value">5,000<small>151.5×</small></div></div>
+        <div class="target"><div class="target-name">Transaction volume / mo<small>$17.3k modeled now</small></div><div class="track"><i style="width:3%"></i></div><div class="target-value">$50M<small>2,884×</small></div></div>
+      </div>
+      <p class="model-note"><b>Model shape:</b> the prior year-five goals become year one: 40,320 active accounts and 333 apps. Monthly transaction volume equals active accounts × an assumed $10 per account now, $20 in year one, then rises linearly to $50 in year five. These are founder-provided scale assumptions—not observed volume.</p>
+    </aside>
+
+    <section class="growth">
+      <div class="growth-head">
+        <h3>Illustrative five-year operating path</h3>
+        <p>Aggressive scale case · future values are planning assumptions</p>
+      </div>
+      <table class="growth-table" aria-label="Five-year growth model for active accounts, production apps, and transaction volume">
+        <thead><tr><th>Metric</th><th>Now</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>Year 4</th><th>Year 5</th></tr></thead>
+        <tbody>
+          <tr><th>Active accounts<small>accounts with ≥1 thread</small></th><td class="observed">1,734<small>current proxy</small></td><td>40,320<small>23.3×</small></td><td>100,000<small>+148%</small></td><td>250,000<small>+150%</small></td><td>500,000<small>+100%</small></td><td class="y5">1,000,000<small>+100%</small></td></tr>
+          <tr><th>Production apps<small>loaded runtime artifacts</small></th><td class="observed">33<small>observed</small></td><td>333<small>10.1×</small></td><td>750<small>+125%</small></td><td>1,500<small>+100%</small></td><td>3,000<small>+100%</small></td><td class="y5">5,000<small>+67%</small></td></tr>
+          <tr><th>Transaction volume<small>modeled monthly</small></th><td class="observed">$17.3k<small>$10 / active account</small></td><td>$806.4k<small>$20 / account</small></td><td>$2.75M<small>$27.50 / account</small></td><td>$8.75M<small>$35 / account</small></td><td>$21.25M<small>$42.50 / account</small></td><td class="y5">$50M<small>$50 / account</small></td></tr>
+        </tbody>
+      </table>
+      <p class="growth-note">Transaction volume is modeled monthly as active accounts × assumed volume per active account. The per-account values are founder-provided assumptions, not observed production volume.</p>
+    </section>
+  </section>
+
+  <footer class="footer">
+    <p class="source"><b>Sources &amp; definitions:</b> canonical Aomi production DB and production plugin container; npm registry and crates.io public download APIs, queried Jul 21, 2026. Public downloads combine @aomi-labs/client, react, widget-lib, deploy and aomi-sdk; repeats, CI and mirrors may count. “Active accounts” uses accounts with at least one product thread as the current proxy. All transaction-volume values are modeled assumptions, not retained production volume.</p>
+    <p class="ask">VC lens → 1M active accounts · 5,000 production apps · $50M modeled monthly transaction volume.</p>
+  </footer>
+</main>
+
+</body>
+</html>
