@@ -70,13 +70,6 @@
       "from": null,
       "to": null
     },
-    "docs": {
-      "name": "Docs",
-      "campaign": false,
-      "intent": "Documentation ships: site releases, rewrites, doc videos, runtime explainers.",
-      "from": null,
-      "to": null
-    },
     "deploy": {
       "name": "Deploy",
       "campaign": false,
@@ -116,6 +109,13 @@
       "name": "Building in the open",
       "campaign": false,
       "intent": "Building in the open: dev recaps, internal tooling stories (Smithers, design repo), engineering POV threads.",
+      "from": null,
+      "to": null
+    },
+    "documentation": {
+      "name": "Documentation",
+      "campaign": false,
+      "intent": "Documentation ships: site releases, rewrites, doc videos, runtime explainers.",
       "from": null,
       "to": null
     }
