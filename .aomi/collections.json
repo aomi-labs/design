@@ -1,0 +1,127 @@
+{
+  "collections": {
+    "somm": {
+      "name": "Somm.Finance",
+      "kind": "partner",
+      "partner": "Somm (Sommelier)",
+      "intent": "Partner relationship thread: Somm.Finance fee architecture (x402+MPP), settlement, pool-manager follow-ups.",
+      "from": null,
+      "to": null
+    },
+    "krexa": {
+      "name": "Krexa",
+      "kind": "partner",
+      "partner": "Krexa",
+      "intent": "Partner relationship thread: Krexa as the first external platform embedding the Aomi deploy button.",
+      "from": null,
+      "to": null
+    },
+    "monad": {
+      "name": "Monad",
+      "kind": "partner",
+      "partner": "Monad",
+      "intent": "Partner relationship thread: Monad deploy announcement, livestream recap, mainnet build log.",
+      "from": null,
+      "to": null
+    },
+    "polymarket": {
+      "name": "Polymarket demos",
+      "kind": "partner",
+      "partner": "Polymarket",
+      "intent": "World Cup window push: Goal Digger betting demo plus the live transparency page.",
+      "from": "2026-07-07",
+      "to": null
+    },
+    "auth": {
+      "name": "Auth research",
+      "kind": "topic",
+      "intent": "Research thread: auth across the web2/web3 boundary.",
+      "from": null,
+      "to": null
+    },
+    "retail-chat-ui": {
+      "name": "Retail Chat UI",
+      "kind": "topic",
+      "intent": "Consumer chat product announcements (redesign, chat-to-trade, widget UX).",
+      "from": null,
+      "to": null
+    },
+    "x402": {
+      "name": "x402 payments",
+      "kind": "topic",
+      "intent": "Topic thread: agent payments via x402 with simulate-before-pay policy.",
+      "from": null,
+      "to": null
+    },
+    "dev-series": {
+      "name": "Dev series",
+      "kind": "campaign",
+      "intent": "Numbered dev-account series teaching the build-on-Aomi workflow end to end (incl. lettered A/B/C additions).",
+      "from": "2026-07-14",
+      "to": null
+    },
+    "poc": {
+      "name": "POC drops",
+      "kind": "campaign",
+      "intent": "Dev-account proof-of-concept drops at the frontier (ERC-8004 passport, MEV-aware execution).",
+      "from": null,
+      "to": null
+    },
+    "refusals": {
+      "name": "Refusals",
+      "kind": "campaign",
+      "intent": "Anatomy-of-a-refusal series: transactions the runtime blocked and why.",
+      "from": null,
+      "to": null
+    },
+    "deploy": {
+      "name": "Deploy",
+      "kind": "topic",
+      "intent": "The one-click deploy pipeline: portal deploy, dogfooding fixes, @aomi-labs/deploy internals, release builder.",
+      "from": null,
+      "to": null
+    },
+    "platform": {
+      "name": "Run on Aomi",
+      "kind": "campaign",
+      "intent": "Main-account July push: the case for running funded agents through the hosted platform instead of your own infra.",
+      "from": "2026-07-13",
+      "to": null
+    },
+    "runtime-security": {
+      "name": "Runtime security",
+      "kind": "topic",
+      "intent": "Guardrails and trust: on-chain harness, drain challenge, spend observability, guardrail-placement research.",
+      "from": null,
+      "to": null
+    },
+    "founder-voice": {
+      "name": "Founder voice",
+      "kind": "campaign",
+      "intent": "Cecilia's long-form essays staking out the brand thesis: the agentic-wallet field is missing a security layer.",
+      "from": "2026-06-26",
+      "to": null
+    },
+    "ecosystem": {
+      "name": "Ecosystem & ships",
+      "kind": "topic",
+      "intent": "Platform ships and ecosystem signals: AomiBench, skills marketplace, Forge spotlights, Solana/multi-wallet.",
+      "from": null,
+      "to": null
+    },
+    "open-build": {
+      "name": "Building in the open",
+      "kind": "topic",
+      "intent": "Building in the open: dev recaps, internal tooling stories (Smithers, design repo), engineering POV threads.",
+      "from": null,
+      "to": null
+    },
+    "documentation": {
+      "name": "Documentation",
+      "kind": "topic",
+      "intent": "Documentation ships: site releases, rewrites, doc videos, runtime explainers.",
+      "from": null,
+      "to": null
+    }
+  }
+}
