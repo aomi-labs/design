@@ -1,10 +1,10 @@
 {
-  "ranAt": "2026-07-21T19:49:28.817Z",
-  "candidates": 58,
+  "ranAt": "2026-07-21T23:09:54.245Z",
+  "candidates": 57,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 1,
-  "applied": 1,
+  "judged": 4,
+  "applied": 4,
   "needsConfirm": [],
   "errors": [],
   "ok": true
