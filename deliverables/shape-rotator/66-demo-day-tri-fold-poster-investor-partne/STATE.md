@@ -9,3 +9,7 @@ Story filed from sector `core` with home tag `shape-rotator`.
 ## 2026-07-21 — added traction one-pager
 
 Added `draft/traction-one-pager.html`, a one-page investor view separating observed production and registry traction from a transparent 12-month planning model. Current dollar transaction volume remains undisclosed because retained production records do not contain normalized value/receipt data; the page shows the volume formula and assumptions instead of presenting an estimate as historical fact. This is supporting demo-day collateral and should not be scheduled as a social post.
+
+## 2026-07-21 — replaced financial scenarios with five-year operating growth
+
+Added `draft/traction-one-pager-v2.html`. This revision removes the unit-price, GMV, platform-take, hosting-revenue, and transaction-value model. It projects only accounts with a thread, production apps, and transaction simulation steps across five years, with exact annual targets and explicit assumptions. Transaction simulations remain labeled as an activity proxy rather than settled onchain transactions.
