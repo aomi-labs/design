@@ -1,0 +1,1056 @@
+<title>The AOMI Fee Model</title>
+<style>
+  :root {
+    --paper:    #F3F4F1;
+    --paper-2:  #FAFBF9;
+    --raised:   #FFFFFF;
+    --ink:      #17211D;
+    --muted:    #5C6862;
+    --faint:    #8A948E;
+    --line:     #DCE0D9;
+    --line-2:   #E7EAE4;
+
+    --accent:      #0B6A57;
+    --accent-deep: #084A3D;
+    --accent-soft: #E5EFEA;
+
+    --chain:      #A75E2A;
+    --chain-soft: #F2E8DE;
+
+    --slate:      #42597A;
+    --slate-soft: #E4E9F1;
+
+    --gain:  #0B6A57;
+    --drain: #B0492F;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono:  "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, Menlo, Consolas, monospace;
+
+    --maxw: 74rem;
+    --read: 40rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:    #0E1512;
+      --paper-2:  #131B17;
+      --raised:   #182019;
+      --ink:      #E7ECE7;
+      --muted:    #97A49C;
+      --faint:    #6C7A72;
+      --line:     #26312B;
+      --line-2:   #202A24;
+
+      --accent:      #35C6A0;
+      --accent-deep: #2A9E80;
+      --accent-soft: #10261F;
+
+      --chain:      #DB914F;
+      --chain-soft: #241811;
+
+      --slate:      #8AA1C2;
+      --slate-soft: #151E2B;
+
+      --gain:  #35C6A0;
+      --drain: #E0876F;
+    }
+  }
+
+  :root[data-theme="light"] {
+    --paper:#F3F4F1; --paper-2:#FAFBF9; --raised:#FFFFFF; --ink:#17211D; --muted:#5C6862;
+    --faint:#8A948E; --line:#DCE0D9; --line-2:#E7EAE4; --accent:#0B6A57; --accent-deep:#084A3D;
+    --accent-soft:#E5EFEA; --chain:#A75E2A; --chain-soft:#F2E8DE; --slate:#42597A; --slate-soft:#E4E9F1;
+    --gain:#0B6A57; --drain:#B0492F;
+  }
+  :root[data-theme="dark"] {
+    --paper:#0E1512; --paper-2:#131B17; --raised:#182019; --ink:#E7ECE7; --muted:#97A49C;
+    --faint:#6C7A72; --line:#26312B; --line-2:#202A24; --accent:#35C6A0; --accent-deep:#2A9E80;
+    --accent-soft:#10261F; --chain:#DB914F; --chain-soft:#241811; --slate:#8AA1C2; --slate-soft:#151E2B;
+    --gain:#35C6A0; --drain:#E0876F;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(1.1rem, 4vw, 3rem); }
+
+  /* ---------- Masthead ---------- */
+  header.masthead {
+    border-bottom: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, var(--paper-2), var(--paper));
+  }
+  .masthead-inner { padding: clamp(2.4rem, 6vw, 4.2rem) 0 clamp(1.8rem, 4vw, 2.6rem); }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .eyebrow .sep { color: var(--faint); }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.5rem, 7vw, 4.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    margin: 1.1rem 0 0;
+    text-wrap: balance;
+  }
+  .lede {
+    max-width: 34rem;
+    color: var(--muted);
+    font-size: 1.12rem;
+    margin: 1.1rem 0 0;
+    text-wrap: pretty;
+  }
+
+  /* denomination key */
+  .denom {
+    margin-top: clamp(1.8rem, 4vw, 2.4rem);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    padding: 0.85rem 1.25rem;
+    background: var(--raised);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .denom .k { color: var(--faint); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  .denom .eq { color: var(--accent); font-weight: 600; }
+  .denom b { font-weight: 600; }
+
+  /* ---------- Index nav ---------- */
+  nav.index {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .index-inner { display: flex; gap: 0.4rem 1.4rem; flex-wrap: wrap; padding: 0.7rem 0; }
+  nav.index a {
+    font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.03em;
+    color: var(--muted); text-decoration: none; white-space: nowrap;
+    padding: 0.2rem 0; border-bottom: 1.5px solid transparent;
+  }
+  nav.index a:hover { color: var(--ink); border-color: var(--accent); }
+  nav.index a .n { color: var(--faint); margin-right: 0.4rem; }
+
+  /* ---------- Sections ---------- */
+  main { padding-bottom: 5rem; }
+  section { padding: clamp(2.8rem, 6vw, 4.6rem) 0 0; scroll-margin-top: 3.5rem; }
+  .part-label {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--faint);
+    display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem;
+  }
+  .part-label::before { content: ""; width: 1.6rem; height: 1px; background: var(--faint); }
+  h2 {
+    font-family: var(--serif); font-weight: 600;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem); line-height: 1.1;
+    letter-spacing: -0.01em; margin: 0.1rem 0 0; text-wrap: balance;
+  }
+  h2 .arm-tag {
+    font-family: var(--mono); font-size: 0.62em; font-weight: 500;
+    letter-spacing: 0.04em; vertical-align: middle;
+    padding: 0.2em 0.6em; border-radius: 999px; margin-left: 0.7rem;
+    border: 1px solid currentColor;
+  }
+  .tag-credit { color: var(--accent); }
+  .tag-chain  { color: var(--chain); }
+  .tag-stmt   { color: var(--slate); }
+
+  h3 {
+    font-family: var(--sans); font-weight: 650; font-size: 1.12rem;
+    letter-spacing: -0.005em; margin: 2.2rem 0 0.4rem;
+  }
+  p { margin: 0.75rem 0; max-width: var(--read); }
+  p.wide { max-width: 54rem; }
+  .section-intro { color: var(--muted); font-size: 1.06rem; margin-top: 0.9rem; }
+  a.inline { color: var(--accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+  a.inline:hover { border-color: var(--accent); }
+  code {
+    font-family: var(--mono); font-size: 0.86em;
+    background: var(--accent-soft); color: var(--accent-deep);
+    padding: 0.1em 0.4em; border-radius: 3px; font-variant-ligatures: none;
+  }
+  :root[data-theme="dark"] code, @media (prefers-color-scheme: dark) { }
+  strong { font-weight: 650; }
+
+  /* ---------- Thesis schematic ---------- */
+  .thesis { margin-top: clamp(2rem, 4vw, 2.8rem); }
+  .arms {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .arm {
+    background: var(--raised); border: 1px solid var(--line);
+    border-top: 3px solid var(--edge, var(--accent));
+    border-radius: 4px; padding: 1.3rem 1.4rem;
+  }
+  .arm.credit { --edge: var(--accent); }
+  .arm.chain  { --edge: var(--chain); }
+  .arm .who {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--edge);
+  }
+  .arm .title { font-family: var(--serif); font-size: 1.32rem; margin: 0.3rem 0 0.5rem; }
+  .arm ul { margin: 0.6rem 0 0; padding: 0; list-style: none; }
+  .arm li {
+    display: grid; grid-template-columns: 7.4rem 1fr; gap: 0.7rem;
+    padding: 0.42rem 0; border-top: 1px solid var(--line-2); font-size: 0.92rem;
+  }
+  .arm li .lab { color: var(--faint); font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.03em; padding-top: 0.12rem; }
+  .arm li .val { color: var(--ink); }
+  .derived {
+    margin-top: 1rem; background: var(--slate-soft);
+    border: 1px solid color-mix(in srgb, var(--slate) 25%, var(--line));
+    border-left: 3px solid var(--slate); border-radius: 4px;
+    padding: 1.05rem 1.3rem; display: flex; gap: 1rem; align-items: baseline; flex-wrap: wrap;
+  }
+  .derived .who { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--slate); }
+  .derived .txt { color: var(--ink); font-size: 0.96rem; flex: 1 1 20rem; }
+  .derived b { color: var(--slate); font-weight: 650; }
+
+  /* ---------- Cards / rails ---------- */
+  .rails { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.6rem; }
+  .rail {
+    background: var(--raised); border: 1px solid var(--line); border-radius: 4px;
+    padding: 1.15rem 1.25rem; position: relative;
+  }
+  .rail .head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
+  .rail .name { font-weight: 650; font-size: 1.02rem; }
+  .rail .wire {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--accent);
+    background: var(--accent-soft); padding: 0.15em 0.5em; border-radius: 3px; white-space: nowrap;
+  }
+  .rail .timing {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--faint); margin-top: 0.55rem;
+  }
+  .rail p { font-size: 0.92rem; color: var(--muted); margin: 0.35rem 0 0; max-width: none; }
+  .order {
+    margin-top: 1.3rem; padding: 0.9rem 1.2rem; background: var(--paper-2);
+    border: 1px dashed var(--line); border-radius: 4px;
+    font-family: var(--mono); font-size: 0.85rem; color: var(--muted);
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .order .arrow { color: var(--accent); }
+  .order b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Tables ---------- */
+  .table-scroll { overflow-x: auto; margin: 1.5rem 0 0; border: 1px solid var(--line); border-radius: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 34rem; }
+  caption {
+    caption-side: top; text-align: left; padding: 0.9rem 1rem 0.2rem;
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  thead th {
+    text-align: left; font-family: var(--mono); font-weight: 500;
+    font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    padding: 0.7rem 1rem; border-bottom: 1px solid var(--line); white-space: nowrap;
+    background: var(--paper-2);
+  }
+  tbody td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--line-2); }
+  tbody tr:last-child td { border-bottom: none; }
+  .num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .model-name { font-weight: 600; }
+  .family { color: var(--faint); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.04em; }
+  tbody tr.fam-head td { background: var(--paper-2); }
+  .note-cell { color: var(--chain); font-family: var(--mono); font-size: 0.72rem; }
+
+  /* rate card two-col unit note */
+  .unit-note {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--muted);
+    margin-top: 0.7rem; display: flex; gap: 0.5rem; align-items: center;
+  }
+  .unit-note .chip { color: var(--accent); }
+
+  /* ---------- Rule list (bucket rules) ---------- */
+  .rules { margin-top: 1.4rem; display: grid; gap: 0; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .rules .row { display: grid; grid-template-columns: 12.5rem 1fr; gap: 1.1rem; padding: 0.85rem 1.1rem; border-top: 1px solid var(--line-2); }
+  .rules .row:first-child { border-top: none; }
+  .rules .row .k { font-family: var(--mono); font-size: 0.8rem; color: var(--accent-deep); font-variant-numeric: tabular-nums; }
+  :root[data-theme="dark"] .rules .row .k { color: var(--accent); }
+  .rules .row .v { color: var(--ink); font-size: 0.94rem; }
+  .rules .row .v em { color: var(--muted); font-style: normal; }
+
+  /* formula block */
+  .formula {
+    margin: 1.3rem 0 0; padding: 1.1rem 1.3rem; background: var(--raised);
+    border: 1px solid var(--line); border-left: 3px solid var(--edge, var(--accent));
+    border-radius: 4px; font-family: var(--mono); font-size: 0.98rem;
+    overflow-x: auto; font-variant-numeric: tabular-nums;
+  }
+  .formula.chain { --edge: var(--chain); }
+  .formula .lhs { color: var(--edge, var(--accent)); font-weight: 600; }
+  .formula .cmt { color: var(--faint); }
+
+  /* callout */
+  .callout {
+    margin-top: 1.3rem; padding: 0.95rem 1.2rem; border-radius: 4px;
+    background: var(--chain-soft); border: 1px solid color-mix(in srgb, var(--chain) 30%, var(--line));
+    font-size: 0.92rem;
+  }
+  .callout .tag { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--chain); font-weight: 600; }
+  .callout.credit { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); }
+  .callout.credit .tag { color: var(--accent-deep); }
+  :root[data-theme="dark"] .callout.credit .tag { color: var(--accent); }
+
+  /* take-rate grid */
+  .takes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.6rem; }
+  .take {
+    background: var(--raised); border: 1px solid var(--line); border-radius: 4px;
+    padding: 1.2rem 1.3rem; border-top: 3px solid var(--slate);
+  }
+  .take .rate { font-family: var(--mono); font-size: 2rem; font-weight: 600; color: var(--slate); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .take .rate .u { font-size: 0.9rem; color: var(--muted); font-weight: 500; margin-left: 0.15rem; }
+  .take .name { font-weight: 650; margin-top: 0.35rem; }
+  .take p { font-size: 0.9rem; color: var(--muted); margin: 0.3rem 0 0; max-width: none; }
+  .take .src { font-family: var(--mono); font-size: 0.7rem; color: var(--faint); margin-top: 0.7rem; }
+
+  /* worked example */
+  .example { margin-top: 1.7rem; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: var(--raised); }
+  .example .scene {
+    padding: 1.15rem 1.4rem; background: var(--paper-2); border-bottom: 1px solid var(--line);
+    font-size: 0.98rem;
+  }
+  .example .scene b { color: var(--ink); }
+  .ex-row { display: grid; grid-template-columns: 8.5rem 1fr auto; gap: 1rem; padding: 0.95rem 1.4rem; border-top: 1px solid var(--line-2); align-items: baseline; }
+  .ex-row:first-of-type { border-top: none; }
+  .ex-row .layer { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; padding-top: 0.15rem; }
+  .ex-row.credit .layer { color: var(--accent); }
+  .ex-row.chain .layer { color: var(--chain); }
+  .ex-row.stmt .layer { color: var(--slate); }
+  .ex-row .desc { font-size: 0.93rem; }
+  .ex-row .desc .math { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); display: block; margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+  .ex-row .amt { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 1rem; }
+  .ex-row.credit .amt { color: var(--accent-deep); }
+  :root[data-theme="dark"] .ex-row.credit .amt { color: var(--accent); }
+  .ex-row.chain .amt { color: var(--chain); }
+  .ex-row.stmt .amt { color: var(--slate); }
+  .ex-foot { padding: 0.6rem 1.4rem 1.1rem; font-size: 0.8rem; color: var(--faint); font-style: italic; }
+
+  /* flow legend */
+  .flowlegend { margin-top: 1.5rem; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .flowlegend .fl { display: grid; grid-template-columns: 9.5rem 1fr; gap: 1rem; padding: 0.8rem 1.15rem; border-top: 1px solid var(--line-2); align-items: baseline; }
+  .flowlegend .fl:first-child { border-top: none; }
+  .flowlegend .fl .who { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; }
+  .flowlegend .fl-credit .who { color: var(--accent); }
+  .flowlegend .fl-chain .who { color: var(--chain); }
+  .flowlegend .fl-stmt .who { color: var(--slate); }
+  .flowlegend .fl .path { font-size: 0.92rem; color: var(--ink); }
+  .flowlegend .fl .path b { font-weight: 650; }
+  .flowlegend .fl .path .arrow { color: var(--faint); margin: 0 0.15rem; font-family: var(--mono); }
+
+  /* balance ledger */
+  .ledger { min-width: 42rem; font-variant-numeric: tabular-nums; }
+  .ledger th.party, .ledger td.party { text-align: right; font-family: var(--mono); white-space: nowrap; width: 6.6rem; }
+  .ledger td.what .sub { display: block; font-family: var(--mono); font-size: 0.76rem; color: var(--faint); margin-top: 0.15rem; }
+  .ledger tr.grp td { background: var(--paper-2); border-bottom: 1px solid var(--line); border-top: 1px solid var(--line); padding: 0.55rem 1rem; }
+  .ledger tr.grp .arm-name { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .ledger tr.grp .flow { font-family: var(--mono); font-size: 0.7rem; color: var(--faint); }
+  .ledger tr.grp-credit .arm-name { color: var(--accent); }
+  .ledger tr.grp-chain .arm-name { color: var(--chain); }
+  .ledger tr.grp-stmt .arm-name { color: var(--slate); }
+  .ledger td.party.gain { color: var(--gain); }
+  .ledger td.party.drain { color: var(--drain); }
+  .ledger td.party.zero { color: var(--faint); }
+  .ledger td.party.resv { color: var(--faint); }
+  .resv-tag {
+    display: inline-block; font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--chain);
+    border: 1px solid color-mix(in srgb, var(--chain) 40%, var(--line));
+    border-radius: 3px; padding: 0 0.35em; margin-left: 0.45rem; vertical-align: 0.1em;
+  }
+  .ledger tr.tot td { border-top: 2px solid var(--line); font-weight: 650; background: var(--paper-2); padding-top: 0.75rem; padding-bottom: 0.75rem; }
+  .ledger tr.tot .party { font-size: 1rem; }
+  .ledger tr.tot .lab { font-family: var(--sans); }
+  .ex-notes { margin-top: 1.3rem; display: grid; gap: 0.8rem; }
+  .ex-note {
+    padding: 0.9rem 1.15rem; border-radius: 4px; font-size: 0.9rem; line-height: 1.55;
+    background: var(--paper-2); border: 1px solid var(--line); border-left: 3px solid var(--edge, var(--faint));
+  }
+  .ex-note.flag { --edge: var(--chain); background: var(--chain-soft); border-color: color-mix(in srgb, var(--chain) 30%, var(--line)); }
+  .ex-note .tag { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--edge, var(--muted)); font-weight: 600; display: block; margin-bottom: 0.2rem; }
+  .ex-note.flag .tag { color: var(--chain); }
+
+  /* ---------- App-type profiles ---------- */
+  .profiles { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.7rem; }
+  .profile {
+    background: var(--raised); border: 1px solid var(--line); border-radius: 5px;
+    padding: 1.3rem 1.4rem; border-top: 3px solid var(--edge, var(--accent));
+    display: flex; flex-direction: column;
+  }
+  .profile.p-outcome { --edge: var(--chain); }
+  .profile.p-tool    { --edge: var(--accent); }
+  .profile.p-hosting { --edge: var(--slate); }
+  .profile.p-first   { --edge: var(--chain); }
+  .profile .pname { font-family: var(--serif); font-size: 1.32rem; font-weight: 600; line-height: 1.1; }
+  .profile .parch {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.04em;
+    color: var(--edge, var(--muted)); margin-top: 0.35rem;
+  }
+  .meters { margin: 1.1rem 0 0; display: grid; gap: 0.42rem; }
+  .meter { display: grid; grid-template-columns: 5rem 1fr; gap: 0.7rem; align-items: center; }
+  .meter .ml { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+  .meter .track { height: 6px; background: var(--line-2); border-radius: 3px; overflow: hidden; }
+  .meter .fill { height: 100%; border-radius: 3px; background: var(--accent); }
+  .meter.m-tool .fill { background: color-mix(in srgb, var(--accent) 65%, var(--slate)); }
+  .meter.m-outcome .fill { background: var(--chain); }
+  .meter.m-hosting .fill { background: var(--slate); }
+  .pscenario { margin-top: 1.05rem; padding-top: 0.9rem; border-top: 1px solid var(--line-2); font-size: 0.9rem; color: var(--ink); line-height: 1.5; }
+  .pscenario .fig { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .pbal { margin-top: 0.9rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  .pbal .tile { background: var(--paper-2); border: 1px solid var(--line-2); border-radius: 4px; padding: 0.6rem 0.7rem; }
+  .pbal .tk { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--faint); }
+  .pbal .tv { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 1.02rem; font-weight: 600; margin-top: 0.22rem; color: var(--ink); }
+  .pbal .tv.pay { color: var(--drain); }
+  .pbal .tv.earn { color: var(--gain); }
+  .pbal .tsub { font-family: var(--mono); font-size: 0.64rem; color: var(--faint); margin-top: 0.2rem; line-height: 1.35; }
+  .pengine { margin-top: 0.95rem; padding-top: 0.85rem; border-top: 1px solid var(--line-2); font-size: 0.86rem; color: var(--muted); line-height: 1.5; }
+  .pengine b { color: var(--edge, var(--accent)); font-weight: 650; }
+  .meter-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; margin-top: 1.2rem; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+  .meter-legend .lg { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .meter-legend .sw { width: 0.7rem; height: 0.7rem; border-radius: 2px; display: inline-block; }
+  .synth {
+    margin-top: 1.6rem; padding: 1.15rem 1.35rem; border-radius: 4px;
+    background: var(--slate-soft); border: 1px solid color-mix(in srgb, var(--slate) 25%, var(--line));
+    border-left: 3px solid var(--slate); font-size: 0.94rem; line-height: 1.6;
+  }
+  .synth .tag { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); font-weight: 600; display: block; margin-bottom: 0.3rem; }
+  .synth b { font-weight: 650; }
+  @media (max-width: 52rem) { .profiles { grid-template-columns: 1fr; } }
+
+  /* ---------- Footer ---------- */
+  footer {
+    margin-top: 4rem; border-top: 1px solid var(--line);
+    padding: 2.2rem 0 3rem; color: var(--muted); font-size: 0.86rem;
+  }
+  footer .sources { font-family: var(--mono); font-size: 0.76rem; line-height: 1.9; color: var(--faint); }
+  footer .sources b { color: var(--muted); font-weight: 500; }
+  footer code { background: none; color: var(--faint); padding: 0; }
+
+  /* theme toggle */
+  .toggle {
+    position: fixed; top: 0.85rem; right: 0.85rem; z-index: 40;
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--raised); color: var(--muted); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.4rem 0.8rem; cursor: pointer;
+  }
+  .toggle:hover { color: var(--ink); border-color: var(--accent); }
+  .toggle:focus-visible, a:focus-visible, nav.index a:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+  }
+
+  @media (max-width: 40rem) {
+    body { font-size: 16px; }
+    .arms, .rails, .takes { grid-template-columns: 1fr; }
+    .arm li { grid-template-columns: 6.2rem 1fr; }
+    .rules .row { grid-template-columns: 1fr; gap: 0.25rem; }
+    .ex-row { grid-template-columns: 1fr auto; }
+    .ex-row .layer { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  html { scroll-behavior: smooth; }
+</style>
+
+<button class="toggle" id="themeToggle" aria-label="Toggle light and dark theme">Theme</button>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="eyebrow">
+      <span>Pricing Schedule</span><span class="sep">/</span>
+      <span>Sidecar v1</span><span class="sep">/</span>
+      <span>aomi-payment</span>
+    </div>
+    <h1>The AOMI Fee Model</h1>
+    <p class="lede">
+      Precisely what a user is charged for a turn, what they pay on-chain for an
+      action, and what an app owes the platform — three layers, one unit of account.
+    </p>
+    <div class="denom">
+      <span class="k">Unit of account</span>
+      <span><b>1 credit</b></span><span class="eq">=</span>
+      <span><b>$0.01</b></span><span class="eq">=</span>
+      <span><b>10,000&nbsp;µUSD</b></span>
+    </div>
+  </div>
+</header>
+
+<nav class="index">
+  <div class="wrap index-inner">
+    <a href="#rails"><span class="n">I.</span>How a user pays</a>
+    <a href="#turn"><span class="n">1</span>Turn charging</a>
+    <a href="#outcome"><span class="n">2</span>Outcome charging</a>
+    <a href="#statement"><span class="n">II.</span>What an app pays</a>
+    <a href="#example"><span class="n">§</span>Worked example</a>
+    <a href="#apptypes"><span class="n">◇</span>By app type</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- THESIS -->
+  <section id="model" aria-label="Model overview">
+    <div class="part-label">The shape of it</div>
+    <h2>Two charging arms, one derived ledger</h2>
+    <p class="section-intro wide">
+      The money system has two ways to charge and one book that reconciles them.
+      The arms share vocabulary — an app's <code>pricing.toml</code> declares prices
+      for both — but never share a settlement path. One moves credits off-chain; the
+      other rides the user's own transaction on-chain.
+    </p>
+
+    <div class="thesis">
+      <div class="arms">
+        <div class="arm credit">
+          <div class="who">Arm 1 · charged to the user</div>
+          <div class="title">Turn charging</div>
+          <ul>
+            <li><span class="lab">Charges for</span><span class="val">Compute — model tokens + priced tool calls</span></li>
+            <li><span class="lab">Unit</span><span class="val">Aomi credits, off-chain</span></li>
+            <li><span class="lab">Collected</span><span class="val">HTTP rail — x402 prepaid or Tempo postpaid</span></li>
+            <li><span class="lab">Ledger</span><span class="val"><code>llm_usage_events</code></span></li>
+          </ul>
+        </div>
+        <div class="arm chain">
+          <div class="who">Arm 2 · charged to the user</div>
+          <div class="title">Outcome charging</div>
+          <ul>
+            <li><span class="lab">Charges for</span><span class="val">A successful on-chain action's end-state</span></li>
+            <li><span class="lab">Unit</span><span class="val">The flowed token itself, on-chain</span></li>
+            <li><span class="lab">Collected</span><span class="val">A fee leg inside the user's own AA batch</span></li>
+            <li><span class="lab">Ledger</span><span class="val">The chain — receipts on <code>user_transactions</code></span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="derived">
+        <span class="who">Derived ledger · platform ↔ builder</span>
+        <span class="txt">
+          <b>statement_entries</b> reconciles both arms plus hosting into what the
+          platform bills the app builder — priced by the platform take rates in
+          <code>rates.toml</code>. It is Aomi's statement to the builder, never a
+          user-facing rail.
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PART I — USER ============ -->
+
+  <!-- RAILS -->
+  <section id="rails">
+    <div class="part-label">Part I — What a user pays</div>
+    <h2>How a turn gets paid</h2>
+    <p class="section-intro wide">
+      At admission the resolver picks one rail for the turn. Absent a
+      <code>?payment_method=</code> override it walks a fixed default chain and
+      takes the first that can service the turn; an explicit method is exclusive and
+      returns a <code>402</code> challenge if it can't pay.
+    </p>
+
+    <div class="rails">
+      <div class="rail">
+        <div class="head"><span class="name">Quota</span><span class="wire">null</span></div>
+        <div class="timing">Tier allowance</div>
+        <p>The user's included Aomi allowance. No stream channel, no BYOK key — quota rows carry the <code>null</code> sentinel on the usage ledger.</p>
+      </div>
+      <div class="rail">
+        <div class="head"><span class="name">BYOK</span><span class="wire">byok</span></div>
+        <div class="timing">Own provider key</div>
+        <p>The user's own model-provider key pays the provider directly. Aomi credits are <strong>not</strong> consumed — model tokens are waived for the turn.</p>
+      </div>
+      <div class="rail">
+        <div class="head"><span class="name">Tempo / MPP</span><span class="wire">tempo</span></div>
+        <div class="timing">Postpaid — settled after the turn</div>
+        <p>A payment channel opened at the gate; the runtime settles the real charge against it once the turn completes, via <code>Settler::settle</code>.</p>
+      </div>
+      <div class="rail">
+        <div class="head"><span class="name">Coinbase x402</span><span class="wire">coinbase</span></div>
+        <div class="timing">Prepaid — settled at HTTP time</div>
+        <p>The gate settles before the turn runs; the cleared amount lands on the row's <code>paid_credits</code> and the settlement receipt returns to the client.</p>
+      </div>
+    </div>
+
+    <div class="order">
+      <span>Default resolution:</span>
+      <b>quota</b><span class="arrow">→</span>
+      <b>byok</b><span class="arrow">→</span>
+      <b>tempo</b><span class="arrow">→</span>
+      <b>coinbase</b>
+    </div>
+
+    <div class="callout credit">
+      <span class="tag">Underwater floor</span> &nbsp;A paid user runs a tab before
+      being challenged. Platform debt accrues to a default of <strong>500 credits ($5)</strong>
+      before a model/fee x402 challenge fires; each external partner bucket accrues to
+      <strong>100 credits ($1)</strong> before its own recipient-targeted challenge.
+    </div>
+  </section>
+
+  <!-- ARM 1 — TURN -->
+  <section id="turn">
+    <div class="part-label">Part I · Arm 1</div>
+    <h2>Turn charging <span class="arm-tag tag-credit">credits · off-chain</span></h2>
+    <p class="section-intro wide">
+      Two things accrue during a turn: the model tokens it burned, and any priced
+      tool calls it made. Both fold into the turn's <code>credits_used</code> and land
+      on <code>llm_usage_events</code>.
+    </p>
+
+    <h3>Model tokens — the rate card</h3>
+    <p class="wide">
+      Each model has an authored USD rate per 1M tokens. Credits are a direct
+      conversion of that dollar figure at the unit of account.
+    </p>
+
+    <div class="table-scroll">
+      <table>
+        <caption>USD per 1M tokens · credits/1M = USD × 100</caption>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th class="num">Input&nbsp;$/1M</th>
+            <th class="num">Output&nbsp;$/1M</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="model-name">Claude Opus 4.8 / 4.7 / 4.6</td><td class="num">5.00</td><td class="num">25.00</td><td class="note-cell">cache-create ×1.25</td></tr>
+          <tr><td class="model-name">Claude Sonnet 4.6 / 4.5</td><td class="num">3.00</td><td class="num">15.00</td><td class="note-cell">cache-create ×1.25</td></tr>
+          <tr><td class="model-name">Claude Haiku 4.5</td><td class="num">1.00</td><td class="num">5.00</td><td class="note-cell">cache-create ×1.25</td></tr>
+          <tr><td class="model-name">Claude 3 Haiku</td><td class="num">0.25</td><td class="num">1.25</td><td class="note-cell">cache-create ×1.25</td></tr>
+          <tr><td class="model-name">GPT-5.5</td><td class="num">5.00</td><td class="num">30.00</td><td class="note-cell">long-ctx &gt;272K: in ×2, out ×1.5</td></tr>
+          <tr><td class="model-name">GPT-5.4</td><td class="num">2.50</td><td class="num">15.00</td><td></td></tr>
+          <tr><td class="model-name">GPT-5.4 Mini</td><td class="num">0.75</td><td class="num">4.50</td><td></td></tr>
+          <tr><td class="model-name">GPT-5.4 Nano</td><td class="num">0.20</td><td class="num">1.25</td><td></td></tr>
+          <tr><td class="model-name">GPT-5.2 / 5.3</td><td class="num">1.75</td><td class="num">14.00</td><td></td></tr>
+          <tr><td class="model-name">GPT-5 Nano</td><td class="num">0.05</td><td class="num">0.40</td><td></td></tr>
+          <tr><td class="model-name">Gemini 3 Flash</td><td class="num">0.50</td><td class="num">3.00</td><td></td></tr>
+          <tr><td class="model-name">MiniMax M2.5</td><td class="num">0.15</td><td class="num">1.15</td><td></td></tr>
+          <tr><td class="model-name">Kimi K2.5</td><td class="num">0.40</td><td class="num">1.90</td><td></td></tr>
+          <tr><td class="model-name">Kimi K2.6</td><td class="num">0.684</td><td class="num">3.42</td><td></td></tr>
+          <tr><td class="model-name">DeepSeek V3.2</td><td class="num">0.252</td><td class="num">0.378</td><td></td></tr>
+          <tr><td class="model-name">DeepSeek R1</td><td class="num">0.70</td><td class="num">2.50</td><td></td></tr>
+          <tr><td class="model-name">DeepSeek V4 Pro</td><td class="num">0.435</td><td class="num">0.870</td><td></td></tr>
+          <tr><td class="model-name">DeepSeek V4 Flash</td><td class="num">0.0983</td><td class="num">0.1966</td><td></td></tr>
+          <tr><td class="model-name">GLM-5</td><td class="num">0.60</td><td class="num">1.92</td><td></td></tr>
+          <tr><td class="model-name">GLM-5.1</td><td class="num">0.98</td><td class="num">3.08</td><td></td></tr>
+          <tr><td class="model-name">GLM-4.7</td><td class="num">0.40</td><td class="num">1.75</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="unit-note"><span class="chip">e.g.</span> Opus 4.8 input = $5.00/1M = 500 credits/1M = 0.0005 credits per 1K input tokens.</div>
+
+    <h3>How the buckets are priced</h3>
+    <p class="wide">A turn's tokens split into buckets, each priced off the model's rate:</p>
+    <div class="rules">
+      <div class="row"><span class="k">Uncached input</span><span class="v">Full input rate.</span></div>
+      <div class="row"><span class="k">Cached-input read</span><span class="v">Discounted per-model cache-read rate — <em>e.g. Opus $0.50/1M vs $5.00 base; Sonnet $0.30; Haiku 4.5 $0.10.</em></span></div>
+      <div class="row"><span class="k">Cache creation</span><span class="v">Input rate × <strong>1.25</strong> for Anthropic models; input rate otherwise.</span></div>
+      <div class="row"><span class="k">Visible output</span><span class="v">Full output rate.</span></div>
+      <div class="row"><span class="k">Reasoning output</span><span class="v">Billed at the <strong>output</strong> rate, same as visible tokens.</span></div>
+      <div class="row"><span class="k">Tool-call flat fee</span><span class="v">A per-call constant, <strong>currently $0</strong> in production (the knob exists; the rate is zero).</span></div>
+    </div>
+
+    <div class="callout credit">
+      <span class="tag">BYOK waiver</span> &nbsp;On a BYOK turn the model buckets above
+      are waived entirely — the user's own provider key already paid the provider, so
+      no credits are consumed and no model bill line is written.
+    </div>
+
+    <h3>Priced tool calls</h3>
+    <p class="wide">
+      An app declares a flat per-call price for a tool in its
+      <code>pricing.toml</code> <code>[resources.*]</code> block. Each call that
+      succeeds mints one charge line; a call blocked before dispatch or returning an
+      error envelope is <strong>never</strong> charged.
+    </p>
+    <div class="formula">
+      <span class="lhs">price_µUSD</span> = fix + base × factor / 10,000
+      <span class="cmt">&nbsp;&nbsp;// V1 uses fix only; base·factor reserved for cost-plus</span>
+    </div>
+    <div class="callout credit">
+      <span class="tag">Fail-closed</span> &nbsp;Quota and BYOK turns get a
+      <strong>zero</strong> tool budget — priced tools require a collectable rail
+      (x402 or Tempo) and are refused otherwise. Free tools are unaffected.
+    </div>
+  </section>
+
+  <!-- ARM 2 — OUTCOME -->
+  <section id="outcome">
+    <div class="part-label">Part I · Arm 2</div>
+    <h2>Outcome charging <span class="arm-tag tag-chain">token · on-chain</span></h2>
+    <p class="section-intro wide">
+      When an app moves value for the user, it can take a fee on the amount that
+      flowed. This never touches credits — it's an extra transfer leg appended to the
+      user's own transaction, paid in the flowed token, and it executes if and only if
+      the transaction does.
+    </p>
+
+    <h3>The rule</h3>
+    <p class="wide">
+      An app's <code>[[outcome]]</code> block declares an effect, a fee in basis
+      points, and a beneficiary. Today the only effect is <code>flow</code> — value
+      moved by a transfer or swap input. Bps must be <code>1..=10,000</code>
+      (100% ceiling).
+    </p>
+    <div class="formula chain">
+      <span class="lhs">fee</span> = flow × bps / 10,000
+      <span class="cmt">&nbsp;&nbsp;// in the flowed token, decimal base units</span>
+    </div>
+
+    <h3>How it settles</h3>
+    <p class="wide">
+      At commit, each stamped flow becomes an <code>AaCall</code> fee leg — a native
+      value send or an ERC-20 <code>transfer</code> to the beneficiary — appended to
+      the <strong>same UserOp</strong> as the user's action. No credits, no
+      <code>402</code>, no gate. The receipt watcher then confirms execution and
+      stamps <code>transfers</code> / <code>fee</code> onto <code>user_transactions</code>.
+    </p>
+
+    <div class="callout">
+      <span class="tag">Boundaries</span> &nbsp;A fee that floors to zero (dust) writes
+      no leg; an unresolved beneficiary is inert. Outcome fees are <strong>EVM-AA only</strong>
+      today — SVM outcome fees are not built.
+    </div>
+  </section>
+
+  <!-- ============ PART II — APP ============ -->
+  <section id="statement">
+    <div class="part-label">Part II — What an app pays</div>
+    <h2>The builder statement <span class="arm-tag tag-stmt">platform ↔ builder</span></h2>
+    <p class="section-intro wide">
+      Everything above is charged to the user. Separately, Aomi bills the app builder
+      through a derived ledger, <code>statement_entries</code>, priced by four platform
+      take rates. These are the committed source of truth in <code>rates.toml</code> —
+      the parsed struct <em>is</em> the biller, and a unit test pins the file to its
+      defaults so it can never reprice silently.
+    </p>
+
+    <div class="takes">
+      <div class="take">
+        <div class="rate">10<span class="u">%</span></div>
+        <div class="name">Tool take</div>
+        <p>Platform take on the gross of a builder's paid tool call (x402).</p>
+        <div class="src">tool_take_rate = 0.10</div>
+      </div>
+      <div class="take">
+        <div class="rate">30<span class="u">%</span></div>
+        <div class="name">Outcome take</div>
+        <p>Platform take on a builder's outcome fee — the on-chain bps-of-flow.</p>
+        <div class="src">outcome_take_rate = 0.30</div>
+      </div>
+      <div class="take">
+        <div class="rate">10<span class="u">%</span></div>
+        <div class="name">Managed-model markup</div>
+        <p>Markup on base model cost for apps using platform-managed keys. BYOK apps pay 0 — no bill line is written.</p>
+        <div class="src">managed_model_rate = 0.10</div>
+      </div>
+      <div class="take">
+        <div class="rate">$10<span class="u">/mo</span></div>
+        <div class="name">Hosting</div>
+        <p>Flat charge per app per calendar month. The whole charge is the platform's fee.</p>
+        <div class="src">hosting_usd_month = 10.0</div>
+      </div>
+    </div>
+
+    <h3>How amounts are written</h3>
+    <div class="rules">
+      <div class="row"><span class="k">model</span><span class="v">gross = base × 1.10 · &nbsp;fee = base × 0.10 · &nbsp;net = −gross. <em>Written post-turn for managed-key turns; live.</em></span></div>
+      <div class="row"><span class="k">hosting</span><span class="v">gross = fee = $10.00 · &nbsp;net = −$10.00. <em>Flat monthly; live.</em></span></div>
+      <div class="row"><span class="k">tool_invocation</span><span class="v">10% of the paid tool call. <em>Schema reserved — no writer yet.</em></span></div>
+      <div class="row"><span class="k">outcome</span><span class="v">30% of the outcome fee. <em>Schema reserved — no writer yet.</em></span></div>
+    </div>
+    <p class="wide" style="margin-top:1.1rem;color:var(--muted);font-size:0.92rem;">
+      Charges carry a negative net by convention (the builder owes), and a future
+      settlement job flips each row's <code>settlement</code> flag when it's collected.
+    </p>
+  </section>
+
+  <!-- WORKED EXAMPLE -->
+  <section id="example">
+    <div class="part-label">Whose pocket each fee lands in</div>
+    <h2>A worked example</h2>
+    <p class="section-intro wide">
+      Same turn, followed all the way through — with each charge's effect on all
+      three balances. The three layers are <strong>not one waterfall</strong>; they
+      settle on separate paths to different parties.
+    </p>
+
+    <div class="flowlegend">
+      <div class="fl fl-credit">
+        <span class="who">Compute · Arm 1</span>
+        <span class="path"><b>User</b> <span class="arrow">→</span> <b>Platform</b> &nbsp;(platform then pays the model provider). Cash, on the user's rail.</span>
+      </div>
+      <div class="fl fl-chain">
+        <span class="who">Outcome · Arm 2</span>
+        <span class="path"><b>User</b> <span class="arrow">→</span> <b>App</b> &nbsp;directly on-chain. The platform is never in the settlement path.</span>
+      </div>
+      <div class="fl fl-stmt">
+        <span class="who">Statement</span>
+        <span class="path"><b>App</b> <span class="arrow">→</span> <b>Platform</b>, reconciled later. Only <code>model</code> + <code>hosting</code> are live today; the take rates are reserved.</span>
+      </div>
+    </div>
+
+    <div class="scene" style="margin-top:1.4rem;background:var(--paper-2);border:1px solid var(--line);border-radius:4px;padding:1.15rem 1.4rem;font-size:0.98rem;">
+      A user on the <b>Coinbase x402</b> rail asks a partner app running on a
+      <b>platform-managed</b> Opus 4.8 key to place a <b>$1,000</b> ETH swap. The turn
+      burns <b>40K input + 8K output</b> tokens. The app prices its
+      <code>place_order</code> tool at <b>1.0 credit</b> and declares a <b>10 bps</b>
+      outcome fee to its own beneficiary.
+    </div>
+
+    <div class="table-scroll">
+      <table class="ledger">
+        <caption>Balance impact per party · illustrative · &minus; pays, + receives</caption>
+        <thead>
+          <tr>
+            <th>Charge</th>
+            <th class="party">User</th>
+            <th class="party">Platform</th>
+            <th class="party">App</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="grp grp-credit"><td colspan="4"><span class="arm-name">Arm 1 · Compute</span> &nbsp;<span class="flow">user pays the platform, in credits</span></td></tr>
+          <tr>
+            <td class="what">Model tokens<span class="sub">40k×500cr + 8k×2,500cr = 40 cr</span></td>
+            <td class="party drain">&minus;$0.40</td>
+            <td class="party gain">+$0.40</td>
+            <td class="party zero">—</td>
+          </tr>
+          <tr>
+            <td class="what">Priced tool · <code>place_order</code><span class="sub">1.0 credit flat · success-only · owed to app</span></td>
+            <td class="party drain">&minus;$0.01</td>
+            <td class="party zero">—</td>
+            <td class="party gain">+$0.01</td>
+          </tr>
+
+          <tr class="grp grp-chain"><td colspan="4"><span class="arm-name">Arm 2 · Outcome</span> &nbsp;<span class="flow">user pays the app, on-chain</span></td></tr>
+          <tr>
+            <td class="what">Outcome fee · 10 bps of flow<span class="sub">$1,000 × 10 / 10,000, paid in ETH to the beneficiary</span></td>
+            <td class="party drain">&minus;$1.00</td>
+            <td class="party zero">—</td>
+            <td class="party gain">+$1.00</td>
+          </tr>
+
+          <tr class="grp grp-stmt"><td colspan="4"><span class="arm-name">Statement</span> &nbsp;<span class="flow">app owes the platform, settled later</span></td></tr>
+          <tr>
+            <td class="what">Managed model · base + 10%<span class="sub">$0.36 base × 1.10 · live writer</span></td>
+            <td class="party zero">—</td>
+            <td class="party gain">+$0.396</td>
+            <td class="party drain">&minus;$0.396</td>
+          </tr>
+          <tr>
+            <td class="what">Outcome take · 30%<span class="sub">$1.00 × 0.30</span> <span class="resv-tag">reserved</span></td>
+            <td class="party zero">—</td>
+            <td class="party resv">+$0.30</td>
+            <td class="party resv">&minus;$0.30</td>
+          </tr>
+          <tr>
+            <td class="what">Tool take · 10%<span class="sub">$0.01 × 0.10</span> <span class="resv-tag">reserved</span></td>
+            <td class="party zero">—</td>
+            <td class="party resv">+$0.001</td>
+            <td class="party resv">&minus;$0.001</td>
+          </tr>
+
+          <tr class="tot">
+            <td class="lab">Net this turn <span style="font-weight:400;color:var(--faint);font-size:0.8rem;">(when takes are wired)</span></td>
+            <td class="party drain">&minus;$1.41</td>
+            <td class="party gain">+$1.097</td>
+            <td class="party gain">+$0.313</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ex-notes">
+      <div class="ex-note">
+        <span class="tag">Reconciles to zero</span>
+        The user pays <b>$1.41</b> total. Of the platform's <b>+$1.097</b>, roughly
+        <b>$0.36</b> flows straight out to the model provider (external), leaving its
+        real margin. The app takes in <b>+$1.01</b> (its tool fee + the on-chain
+        outcome) and owes back the managed-model bill and — once wired — the take
+        rates, netting <b>+$0.31</b> on the turn. Add a flat
+        <b>$10.00/month</b> hosting charge on the app's statement, amortized across
+        every turn, not booked to this one.
+      </div>
+      <div class="ex-note flag">
+        <span class="tag">Worth a second look</span>
+        The model is recorded on <b>two ledgers at once</b> — the user's compute charge
+        (Arm 1, <code>$0.40</code>) and the builder's statement (<code>$0.396</code>).
+        On a managed-key partner turn the platform books the model on both the retail
+        and wholesale side. If the intent is that the app <em>resells</em> Aomi (user
+        on the app's allowance, builder pays wholesale), one of these two should be
+        zero — worth confirming against <code>background.rs</code> before this is the
+        story we tell partners.
+      </div>
+    </div>
+  </section>
+
+  <!-- APP-TYPE PROFILES -->
+  <section id="apptypes">
+    <div class="part-label">The same model, four app shapes</div>
+    <h2>Fee model by app type</h2>
+    <p class="section-intro wide">
+      One rate card, wildly different economics — the app's <em>usage shape</em>
+      decides which lever earns. The meters show where each app's charges concentrate;
+      the tiles show who nets what over a representative month. All figures illustrative.
+    </p>
+
+    <div class="meter-legend">
+      <span class="lg"><span class="sw" style="background:var(--accent)"></span>Compute (model)</span>
+      <span class="lg"><span class="sw" style="background:color-mix(in srgb,var(--accent) 65%,var(--slate))"></span>Tool calls</span>
+      <span class="lg"><span class="sw" style="background:var(--chain)"></span>Outcome (flow)</span>
+      <span class="lg"><span class="sw" style="background:var(--slate)"></span>Hosting</span>
+    </div>
+
+    <div class="profiles">
+
+      <!-- Vault -->
+      <div class="profile p-outcome">
+        <div class="pname">Vault management</div>
+        <div class="parch">heavy outcome · no priced tools</div>
+        <div class="meters">
+          <div class="meter m-compute"><span class="ml">Compute</span><div class="track"><div class="fill" style="width:20%"></div></div></div>
+          <div class="meter m-tool"><span class="ml">Tool</span><div class="track"><div class="fill" style="width:2%"></div></div></div>
+          <div class="meter m-outcome"><span class="ml">Outcome</span><div class="track"><div class="fill" style="width:95%"></div></div></div>
+          <div class="meter m-hosting"><span class="ml">Hosting</span><div class="track"><div class="fill" style="width:15%"></div></div></div>
+        </div>
+        <div class="pscenario">One vault moves <span class="fig">$500,000</span> in rebalances a month at <span class="fig">25 bps</span>. No external tools, light model use.</div>
+        <div class="pbal">
+          <div class="tile"><div class="tk">User pays</div><div class="tv pay">$1,250</div><div class="tsub">the outcome fee</div></div>
+          <div class="tile"><div class="tk">App keeps</div><div class="tv earn">$1,238</div><div class="tsub">→ $863 when takes wired</div></div>
+          <div class="tile"><div class="tk">Platform</div><div class="tv earn">$10</div><div class="tsub">→ $385 when takes wired</div></div>
+        </div>
+        <div class="pengine">The engine is the <b>30% outcome take</b> — but it's reserved, so today the platform captures ~$10 of a $1,250 revenue event (model margin + hosting). Wiring the outcome take is what turns vaults into real platform revenue.</div>
+      </div>
+
+      <!-- Market insight -->
+      <div class="profile p-tool">
+        <div class="pname">Market insight</div>
+        <div class="parch">high volume of priced API calls</div>
+        <div class="meters">
+          <div class="meter m-compute"><span class="ml">Compute</span><div class="track"><div class="fill" style="width:45%"></div></div></div>
+          <div class="meter m-tool"><span class="ml">Tool</span><div class="track"><div class="fill" style="width:90%"></div></div></div>
+          <div class="meter m-outcome"><span class="ml">Outcome</span><div class="track"><div class="fill" style="width:10%"></div></div></div>
+          <div class="meter m-hosting"><span class="ml">Hosting</span><div class="track"><div class="fill" style="width:15%"></div></div></div>
+        </div>
+        <div class="pscenario">A user makes <span class="fig">~20,000</span> priced calls a month at <span class="fig">0.5 credit</span> each = <span class="fig">$100</span> in tool fees; heavier model use.</div>
+        <div class="pbal">
+          <div class="tile"><div class="tk">User pays</div><div class="tv pay">$100</div><div class="tsub">the priced API calls</div></div>
+          <div class="tile"><div class="tk">App keeps</div><div class="tv earn">$68</div><div class="tsub">→ $58 when takes wired</div></div>
+          <div class="tile"><div class="tk">Platform</div><div class="tv earn">$12</div><div class="tsub">→ $22 when takes wired</div></div>
+        </div>
+        <div class="pengine">The engine is the <b>10% tool take</b> — also reserved. Today the platform earns only model margin + hosting; the tool fees pass through to the app untaxed until the take has a writer.</div>
+      </div>
+
+      <!-- Bot platform -->
+      <div class="profile p-hosting">
+        <div class="pname">Bot platform</div>
+        <div class="parch">many small hosted bots · users BYOK</div>
+        <div class="meters">
+          <div class="meter m-compute"><span class="ml">Compute</span><div class="track"><div class="fill" style="width:5%"></div></div></div>
+          <div class="meter m-tool"><span class="ml">Tool</span><div class="track"><div class="fill" style="width:2%"></div></div></div>
+          <div class="meter m-outcome"><span class="ml">Outcome</span><div class="track"><div class="fill" style="width:50%"></div></div></div>
+          <div class="meter m-hosting"><span class="ml">Hosting</span><div class="track"><div class="fill" style="width:90%"></div></div></div>
+        </div>
+        <div class="pscenario"><span class="fig">200</span> hosted bots. Users bring their own model keys (compute waived), no priced tools; bots take ~<span class="fig">$2,000</span>/mo across <span class="fig">$2M</span> of retail-trade flow.</div>
+        <div class="pbal">
+          <div class="tile"><div class="tk">Users pay</div><div class="tv pay">$2,000</div><div class="tsub">outcome only · BYOK compute $0</div></div>
+          <div class="tile"><div class="tk">Owners keep</div><div class="tv">≈ $0</div><div class="tsub">fees ≈ hosting · → −$600 wired</div></div>
+          <div class="tile"><div class="tk">Platform</div><div class="tv earn">$2,000</div><div class="tsub">all hosting · → $2,600 wired</div></div>
+        </div>
+        <div class="pengine">BYOK zeroes model margin and there's no tool price, so <b>hosting</b> ($10 × 200) is the platform's entire live revenue. It's a hosting business today; the 30% outcome take would stack on top once wired.</div>
+      </div>
+
+      <!-- Wallet -->
+      <div class="profile p-first">
+        <div class="pname">Wallet</div>
+        <div class="parch">first-party hosted app · no external tools · high flow</div>
+        <div class="meters">
+          <div class="meter m-compute"><span class="ml">Compute</span><div class="track"><div class="fill" style="width:25%"></div></div></div>
+          <div class="meter m-tool"><span class="ml">Tool</span><div class="track"><div class="fill" style="width:2%"></div></div></div>
+          <div class="meter m-outcome"><span class="ml">Outcome</span><div class="track"><div class="fill" style="width:85%"></div></div></div>
+          <div class="meter m-hosting"><span class="ml">Hosting</span><div class="track"><div class="fill" style="width:10%"></div></div></div>
+        </div>
+        <div class="pscenario">A wallet user moves <span class="fig">$1,000,000</span> a month at <span class="fig">5 bps</span>. The beneficiary is Aomi itself, so the outcome settles on-chain straight to the platform.</div>
+        <div class="pbal">
+          <div class="tile"><div class="tk">User pays</div><div class="tv pay">$503</div><div class="tsub">$500 outcome + compute</div></div>
+          <div class="tile"><div class="tk">App</div><div class="tv">—</div><div class="tsub">first-party · no third party</div></div>
+          <div class="tile"><div class="tk">Platform</div><div class="tv earn">$500</div><div class="tsub">full outcome, on-chain today</div></div>
+        </div>
+        <div class="pengine">Because it's first-party, there's <b>no reserved-take gap</b> — the platform is the beneficiary and captures the whole outcome on-chain now. A third-party wallet would route 100% to the builder and leave the 30% take reserved, exactly like the vault.</div>
+      </div>
+
+    </div>
+
+    <div class="synth">
+      <span class="tag">The pattern across all four</span>
+      Today the platform's live revenue is <b>model margin + hosting + any first-party
+      outcome</b>. The two big third-party levers — <b>30% of outcome</b> and
+      <b>10% of tool fees</b> — are designed but reserved (no writer yet). So the app's
+      usage shape decides whether the platform monetizes it <em>today</em>:
+      hosting-heavy and first-party apps pay now; outcome-heavy and tool-heavy
+      third-party apps mostly don't, until those takes are wired.
+    </div>
+  </section>
+
+  <footer>
+    <p style="max-width:54rem;">
+      This schedule reflects the committed configuration and pricing logic as of the
+      current branch. Rates change by editing the committed files below — never by
+      environment variable — and are pinned to their defaults by test.
+    </p>
+    <p class="sources">
+      <b>Sources of truth</b><br>
+      credit unit &amp; model rates &nbsp;·&nbsp; <code>aomi/crates/payment/src/credit.rs</code><br>
+      platform take rates &nbsp;·&nbsp; <code>aomi/crates/payment/src/rates.rs</code> + <code>rates.toml</code><br>
+      app sidecar &amp; tool pricing &nbsp;·&nbsp; <code>aomi/crates/payment/src/pricing.rs</code><br>
+      outcome rules &nbsp;·&nbsp; <code>aomi/crates/payment/src/outcome.rs</code><br>
+      rails &amp; per-turn identity &nbsp;·&nbsp; <code>aomi/crates/payment/src/{turn.rs, lib.rs}</code><br>
+      architecture map &nbsp;·&nbsp; <code>docs/topics/account-authentication/facts/billing-arms.md</code>
+    </p>
+  </footer>
+
+</main>
+
+<script>
+  (function () {
+    var btn = document.getElementById('themeToggle');
+    function current() {
+      var set = document.documentElement.getAttribute('data-theme');
+      if (set) return set;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+    });
+  })();
+</script>
