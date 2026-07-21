@@ -6,3 +6,6 @@ Parent context pack: http://localhost:3000/api/deliverables/context?number=4
 
 ## 2026-07-21 (Victor via the Brain)
 X article preview added to draft/: `x-article-preview.html` — the post as it will appear on @aomi_labs, title "A Wallet Is Not a User", all 9 images embedded, self contained. Open it to judge the post before it ships. Content recovered from #67 (the adopt bug had emptied the posting guide there; also restored in #67/x-thread). Article URL live and verified.
+
+## 2026-07-21 23:10
+Detected live on @aomi_labs: https://x.com/aomi_labs/status/2079628382719869438 (agentic detector, confidence 0.9). Main account thread on 2026-07-21 links to the full write-up about auth across the onchain–offchain boundary — matches the research follow-up.
