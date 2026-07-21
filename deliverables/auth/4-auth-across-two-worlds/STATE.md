@@ -2,7 +2,7 @@
 
 ## Planned artifacts
 - [x] research_post — Long-form co-work HTML (v3.0) explaining v1→v2→v3 identity and signing model with diagrams and examples — canonical artifact.
-- [x] x-post — Thread for X announcing the research, linking the co-work doc and highlighting three v3 pillars and migration guidance. <!-- aomi-commit artifact=deliverables/auth/4-auth-across-two-worlds/post/aomi-auth-protocol.html platform=x on=2026-07-25 -->
+- [x] x-post — Thread for X announcing the research, linking the co-work doc and highlighting three v3 pillars and migration guidance. <!-- aomi-commit artifact=deliverables/auth/4-auth-across-two-worlds/post/aomi-auth-protocol.html platform=x -->
 - [ ] blog_excerpt — Short blog post (800–1,200 words) summarizing research for a broader audience with links to technical doc.
 - [ ] technical_summary_pdf — One-page technical summary PDF for engineering/product teams with checklist of dependent PRs and migration steps.
 - [ ] slide_deck — 5–10 slide deck for internal demos and partner briefings covering problem, v1→v3 evolution, and adoption plan.
