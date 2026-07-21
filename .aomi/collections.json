@@ -122,6 +122,11 @@
       "intent": "Documentation ships: site releases, rewrites, doc videos, runtime explainers.",
       "from": null,
       "to": null
+    },
+    "shape-rotator": {
+      "name": "Shape Rotator",
+      "kind": "campaign",
+      "intent": "Accelerator (Shape Rotator) demo-day collateral — poster, deck, one-pager. Not for socials."
     }
   }
 }
