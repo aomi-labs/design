@@ -1,45 +1,31 @@
 {
-  "ranAt": "2026-07-21T11:59:03.657Z",
-  "candidates": 59,
+  "ranAt": "2026-07-21T15:52:18.886Z",
+  "candidates": 58,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 1,
-  "applied": 1,
+  "judged": 0,
+  "applied": 0,
   "needsConfirm": [
     {
       "number": 9,
-      "postId": "2062837256944332925",
-      "confidence": 0.95,
-      "reason": "Post explicitly announces AomiBench v0.1, describes the benchmark and results — directly matches the AomiBench deliverable.",
-      "url": "https://x.com/aomi_labs/status/2062837256944332925"
-    },
-    {
-      "number": 24,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Founder's thesis-style post about where guardrails and trust belong for agents ('Don't make the agent trustworthy...') — corresponds to the research on where agent guardrails live.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    },
-    {
-      "number": 29,
-      "postId": "2079228005600104641",
-      "confidence": 0.9,
-      "reason": "Dev post states the platform publishes releases from a single command and the backend fetches/builds source — matches the one-click deploy dogfood narrative.",
-      "url": "https://x.com/aomi_dev/status/2079228005600104641"
-    },
-    {
-      "number": 9,
       "postId": "2064373605547282656",
-      "confidence": 0.98,
-      "reason": "Main post text: “We shipped a public benchmark... AomiBench v0.1” — direct public release of the AomiBench deliverable.",
+      "confidence": 0.9,
+      "reason": "Post on 2026-06-09 explicitly announces AomiBench v0.1 live with results and links, matching the deliverable title and content.",
       "url": "https://x.com/aomi_labs/status/2064373605547282656"
     },
     {
       "number": 12,
       "postId": "2064778903546150960",
-      "confidence": 0.95,
-      "reason": "Main post announces a full rebuild of the Aomi docs and links the quickstart — matches the Aomi docs v1.1 deliverable.",
+      "confidence": 0.9,
+      "reason": "Post on 2026-06-10 announces the rebuilt Aomi docs (v1.1) with quickstart and toolchain details, matching the deliverable description.",
       "url": "https://x.com/aomi_labs/status/2064778903546150960"
+    },
+    {
+      "number": 29,
+      "postId": "2079225517459591258",
+      "confidence": 0.9,
+      "reason": "Post text describes the repo-as-release flow and backend-owned deployments, matching the 'we dogfooded our one click deploy' deliverable content.",
+      "url": "https://x.com/aomi_labs/status/2079225517459591258"
     }
   ],
   "errors": [],
