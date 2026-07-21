@@ -1,0 +1,415 @@
+<title>AOMI · Five-Year Revenue Model</title>
+<style>
+  :root {
+    --paper:#F3F4F1; --paper-2:#FAFBF9; --raised:#FFFFFF; --ink:#17211D; --muted:#5C6862;
+    --faint:#8A948E; --line:#DCE0D9; --line-2:#E7EAE4;
+    --accent:#0B6A57; --accent-deep:#084A3D; --accent-soft:#E5EFEA;
+    --chain:#A75E2A; --chain-soft:#F2E8DE; --slate:#42597A; --slate-soft:#E4E9F1;
+    --tool:#3E7C74; --gain:#0B6A57; --drain:#B0492F;
+    --up:#0B6A57; --down:#B0492F; --hold:#8A948E;
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Fira Code","Cascadia Code",ui-monospace,Menlo,Consolas,monospace;
+    --maxw:76rem; --read:42rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#0E1512; --paper-2:#131B17; --raised:#182019; --ink:#E7ECE7; --muted:#97A49C;
+      --faint:#6C7A72; --line:#26312B; --line-2:#202A24;
+      --accent:#35C6A0; --accent-deep:#2A9E80; --accent-soft:#10261F;
+      --chain:#DB914F; --chain-soft:#241811; --slate:#8AA1C2; --slate-soft:#151E2B;
+      --tool:#54A99E; --gain:#35C6A0; --drain:#E0876F;
+      --up:#35C6A0; --down:#E0876F; --hold:#6C7A72;
+    }
+  }
+  :root[data-theme="light"]{--paper:#F3F4F1;--paper-2:#FAFBF9;--raised:#FFFFFF;--ink:#17211D;--muted:#5C6862;--faint:#8A948E;--line:#DCE0D9;--line-2:#E7EAE4;--accent:#0B6A57;--accent-deep:#084A3D;--accent-soft:#E5EFEA;--chain:#A75E2A;--chain-soft:#F2E8DE;--slate:#42597A;--slate-soft:#E4E9F1;--tool:#3E7C74;--gain:#0B6A57;--drain:#B0492F;--up:#0B6A57;--down:#B0492F;--hold:#8A948E;}
+  :root[data-theme="dark"]{--paper:#0E1512;--paper-2:#131B17;--raised:#182019;--ink:#E7ECE7;--muted:#97A49C;--faint:#6C7A72;--line:#26312B;--line-2:#202A24;--accent:#35C6A0;--accent-deep:#2A9E80;--accent-soft:#10261F;--chain:#DB914F;--chain-soft:#241811;--slate:#8AA1C2;--slate-soft:#151E2B;--tool:#54A99E;--gain:#35C6A0;--drain:#E0876F;--up:#35C6A0;--down:#E0876F;--hold:#6C7A72;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(1.1rem,4vw,3rem);}
+
+  header.masthead{border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--paper-2),var(--paper));}
+  .masthead-inner{padding:clamp(2.4rem,6vw,4rem) 0 clamp(1.6rem,4vw,2.4rem);}
+  .eyebrow{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);display:flex;gap:0.9rem;flex-wrap:wrap;align-items:center;}
+  .eyebrow .sep{color:var(--faint);}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.3rem,6.5vw,4rem);line-height:1.03;letter-spacing:-0.015em;margin:1rem 0 0;text-wrap:balance;}
+  .lede{max-width:36rem;color:var(--muted);font-size:1.1rem;margin:1rem 0 0;text-wrap:pretty;}
+  .headline{margin-top:clamp(1.8rem,4vw,2.4rem);display:flex;gap:2.2rem;flex-wrap:wrap;}
+  .hstat .v{font-family:var(--mono);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:600;letter-spacing:-0.02em;color:var(--chain);font-variant-numeric:tabular-nums;}
+  .hstat.a .v{color:var(--accent);}
+  .hstat .k{font-family:var(--mono);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint);margin-top:0.2rem;}
+
+  nav.index{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .index-inner{display:flex;gap:0.4rem 1.4rem;flex-wrap:wrap;padding:0.7rem 0;}
+  nav.index a{font-family:var(--mono);font-size:0.76rem;color:var(--muted);text-decoration:none;white-space:nowrap;padding:0.2rem 0;border-bottom:1.5px solid transparent;}
+  nav.index a:hover{color:var(--ink);border-color:var(--accent);}
+  nav.index a .n{color:var(--faint);margin-right:0.4rem;}
+
+  main{padding-bottom:5rem;}
+  section{padding:clamp(2.6rem,6vw,4.2rem) 0 0;scroll-margin-top:3.4rem;}
+  .part-label{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--faint);display:flex;align-items:center;gap:0.8rem;margin-bottom:0.55rem;}
+  .part-label::before{content:"";width:1.6rem;height:1px;background:var(--faint);}
+  h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.7rem,3.5vw,2.4rem);line-height:1.1;letter-spacing:-0.01em;margin:0.1rem 0 0;text-wrap:balance;}
+  h3{font-family:var(--sans);font-weight:650;font-size:1.1rem;margin:2rem 0 0.4rem;}
+  .section-intro{color:var(--muted);font-size:1.05rem;margin-top:0.9rem;max-width:52rem;}
+  p{margin:0.7rem 0;max-width:var(--read);}
+  code{font-family:var(--mono);font-size:0.86em;background:var(--accent-soft);color:var(--accent-deep);padding:0.1em 0.4em;border-radius:3px;}
+  strong{font-weight:650;}
+  em{font-style:italic;color:var(--muted);}
+
+  /* variable taxonomy */
+  .tax{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.7rem;}
+  .taxcol{background:var(--raised);border:1px solid var(--line);border-radius:5px;padding:1.25rem 1.3rem;border-top:3px solid var(--edge);}
+  .taxcol.grow{--edge:var(--accent);} .taxcol.conv{--edge:var(--chain);} .taxcol.hold{--edge:var(--slate);}
+  .taxcol .th{font-family:var(--serif);font-size:1.22rem;font-weight:600;}
+  .taxcol .ts{font-family:var(--mono);font-size:0.7rem;letter-spacing:0.04em;color:var(--edge);text-transform:uppercase;margin-top:0.3rem;}
+  .taxcol .desc{font-size:0.88rem;color:var(--muted);margin:0.7rem 0 0.4rem;}
+  .var{display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:baseline;padding:0.5rem 0;border-top:1px solid var(--line-2);}
+  .var .vn{font-size:0.9rem;}
+  .var .vv{font-family:var(--mono);font-size:0.82rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink);}
+  .var .dir{font-family:var(--mono);font-size:0.72rem;margin-left:0.35rem;font-weight:700;}
+  .dir.u{color:var(--up);} .dir.d{color:var(--down);} .dir.h{color:var(--hold);}
+
+  .pairing{margin-top:1.5rem;padding:1.1rem 1.3rem;border-radius:4px;background:var(--chain-soft);border:1px solid color-mix(in srgb,var(--chain) 28%,var(--line));border-left:3px solid var(--chain);font-size:0.93rem;line-height:1.6;}
+  .pairing .tag{font-family:var(--mono);font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--chain);font-weight:600;display:block;margin-bottom:0.3rem;}
+  .pairing code{background:none;color:var(--chain);padding:0;font-weight:600;}
+
+  /* charts */
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:1.7rem;}
+  @media(max-width:54rem){.charts{grid-template-columns:1fr;}}
+  .chartcard{background:var(--raised);border:1px solid var(--line);border-radius:5px;padding:1.3rem 1.4rem;}
+  .chartcard .ct{font-family:var(--mono);font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);}
+  .chart{display:flex;align-items:flex-end;gap:clamp(0.5rem,2vw,1.3rem);height:290px;margin-top:1.3rem;padding-top:0.5rem;}
+  .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .stack{width:100%;max-width:3.4rem;display:flex;flex-direction:column-reverse;justify-content:flex-start;}
+  .seg{width:100%;}
+  .stack .seg:first-child{border-radius:0 0 2px 2px;}
+  .stack .seg:last-child{border-radius:2px 2px 0 0;}
+  .s-outcome{background:var(--chain);} .s-hosting{background:var(--slate);} .s-model{background:var(--accent);} .s-tool{background:var(--tool);}
+  .s-c-wal{background:var(--chain);} .s-c-bot{background:var(--slate);} .s-c-vault{background:var(--accent);} .s-c-mkt{background:var(--tool);} .s-c-core{background:var(--faint);}
+  .dot.s-c-wal,.dot.s-c-bot,.dot.s-c-vault,.dot.s-c-mkt,.dot.s-c-core,.sw.s-c-wal,.sw.s-c-bot,.sw.s-c-vault,.sw.s-c-mkt,.sw.s-c-core{border-radius:2px;}
+  .xl{font-family:var(--mono);font-size:0.74rem;color:var(--muted);margin-top:0.55rem;}
+  .xv{font-family:var(--mono);font-size:0.72rem;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:0.1rem;}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:0.5rem 1.1rem;margin-top:1.1rem;font-family:var(--mono);font-size:0.72rem;color:var(--muted);}
+  .chart-legend .lg{display:inline-flex;align-items:center;gap:0.4rem;}
+  .chart-legend .sw{width:0.7rem;height:0.7rem;border-radius:2px;}
+
+  /* tables */
+  .table-scroll{overflow-x:auto;margin:1.6rem 0 0;border:1px solid var(--line);border-radius:5px;}
+  table{width:100%;border-collapse:collapse;font-size:0.9rem;min-width:38rem;}
+  caption{caption-side:top;text-align:left;padding:0.9rem 1rem 0.2rem;font-family:var(--mono);font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--faint);}
+  thead th{text-align:right;font-family:var(--mono);font-weight:500;font-size:0.7rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);padding:0.7rem 1rem;border-bottom:1px solid var(--line);background:var(--paper-2);white-space:nowrap;}
+  thead th:first-child{text-align:left;}
+  tbody td{padding:0.6rem 1rem;border-bottom:1px solid var(--line-2);text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  tbody td:first-child{text-align:left;font-family:var(--sans);}
+  tbody tr:last-child td{border-bottom:none;}
+  .rowname{font-weight:600;}
+  .rowname .dot{display:inline-block;width:0.55rem;height:0.55rem;border-radius:2px;margin-right:0.5rem;vertical-align:0.02em;}
+  tr.total td{border-top:2px solid var(--line);font-weight:650;background:var(--paper-2);}
+  td.grow{color:var(--accent-deep);} :root[data-theme="dark"] td.grow{color:var(--accent);}
+  .cagr{color:var(--faint);font-size:0.82rem;}
+
+  /* live vs reserved split */
+  .split{margin-top:1.7rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  @media(max-width:48rem){.split{grid-template-columns:1fr;}}
+  .splitcard{border-radius:5px;padding:1.2rem 1.35rem;border:1px solid var(--line);}
+  .splitcard.live{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 28%,var(--line));border-left:3px solid var(--accent);}
+  .splitcard.resv{background:var(--chain-soft);border-color:color-mix(in srgb,var(--chain) 28%,var(--line));border-left:3px solid var(--chain);}
+  .splitcard .amt{font-family:var(--mono);font-size:1.9rem;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;}
+  .splitcard.live .amt{color:var(--accent);} .splitcard.resv .amt{color:var(--chain);}
+  .splitcard .amt .pct{font-size:0.9rem;color:var(--muted);margin-left:0.35rem;}
+  .splitcard .lab{font-weight:650;margin-top:0.2rem;}
+  .splitcard p{font-size:0.88rem;color:var(--muted);margin:0.4rem 0 0;max-width:none;}
+
+  /* findings */
+  .findings{margin-top:1.7rem;display:grid;gap:0.9rem;}
+  .finding{display:grid;grid-template-columns:auto 1fr;gap:1.1rem;background:var(--raised);border:1px solid var(--line);border-radius:5px;padding:1.15rem 1.35rem;border-left:3px solid var(--edge,var(--accent));}
+  .finding.f-chain{--edge:var(--chain);} .finding.f-slate{--edge:var(--slate);} .finding.f-accent{--edge:var(--accent);}
+  .finding .idx{font-family:var(--serif);font-size:1.7rem;font-weight:600;color:var(--edge,var(--accent));line-height:1;}
+  .finding .ft{font-weight:650;font-size:1.02rem;}
+  .finding .fb{color:var(--muted);font-size:0.92rem;margin-top:0.25rem;line-height:1.55;}
+  .finding .fb b{color:var(--ink);font-weight:650;}
+
+  footer{margin-top:4rem;border-top:1px solid var(--line);padding:2.2rem 0 3rem;color:var(--muted);font-size:0.86rem;}
+  footer p{max-width:54rem;}
+  footer .assume{font-family:var(--mono);font-size:0.76rem;line-height:1.85;color:var(--faint);}
+  footer a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);}
+
+  .toggle{position:fixed;top:0.85rem;right:0.85rem;z-index:40;font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;background:var(--raised);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0.4rem 0.8rem;cursor:pointer;}
+  .toggle:hover{color:var(--ink);border-color:var(--accent);}
+  .toggle:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px;}
+  @media(max-width:46rem){.tax{grid-template-columns:1fr;}}
+  @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;}}
+  html{scroll-behavior:smooth;}
+</style>
+
+<button class="toggle" id="themeToggle" aria-label="Toggle theme">Theme</button>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="eyebrow"><span>Revenue Model</span><span class="sep">/</span><span>5-Year</span><span class="sep">/</span><span>Illustrative</span></div>
+    <h1>Five-year revenue model</h1>
+    <p class="lede">Built on the fee model — five cohorts, the levers we hold fixed, and the industry variables that move on their own. What we must hit, and where the money actually is.</p>
+    <div class="headline">
+      <div class="hstat"><div class="v">$31.6M</div><div class="k">Year-5 ARR (illustrative)</div></div>
+      <div class="hstat"><div class="v">69%</div><div class="k">from the outcome lever</div></div>
+      <div class="hstat a"><div class="v">3.5M / 51k</div><div class="k">users / apps at Y5</div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="index">
+  <div class="wrap index-inner">
+    <a href="#vars"><span class="n">1</span>The variables</a>
+    <a href="#projection"><span class="n">2</span>The projection</a>
+    <a href="#mix"><span class="n">3</span>Where the money is</a>
+    <a href="#targets"><span class="n">4</span>Targets to hit</a>
+    <a href="#bet"><span class="n">5</span>The structural bet</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- VARIABLES -->
+  <section id="vars">
+    <div class="part-label">Three kinds of number</div>
+    <h2>What we drive, what drifts, what we hold</h2>
+    <p class="section-intro">
+      A revenue model is only as honest as its split between the numbers you control
+      and the ones the market hands you. Ours fall into three buckets — and the middle
+      one is where most models lie to themselves.
+    </p>
+
+    <div class="tax">
+      <div class="taxcol grow">
+        <div class="th">Growth targets</div>
+        <div class="ts">we set · all ↑ · the ambition</div>
+        <div class="desc">Counts we commit to and go earn. The whole model is gated on hitting these.</div>
+        <div class="var"><span class="vn">Users</span><span class="vv">0.02M → 3.5M</span></div>
+        <div class="var"><span class="vn">Apps</span><span class="vv">220 → 50,700</span></div>
+        <div class="var"><span class="vn">Transactions / yr</span><span class="vv">5M → 1.3B</span></div>
+        <div class="var"><span class="vn">On-chain flow / yr</span><span class="vv">$0.4B → $115B</span></div>
+      </div>
+      <div class="taxcol conv">
+        <div class="th">Industry-converging</div>
+        <div class="ts">exogenous · mixed · not ours to set</div>
+        <div class="desc">The market decides these. Some rise, some fall — and they partly cancel.</div>
+        <div class="var"><span class="vn">Model $ / 1M tokens</span><span class="vv">$3.00 → $1.00<span class="dir d">↓</span></span></div>
+        <div class="var"><span class="vn">Tokens / turn</span><span class="vv">20k → 60k<span class="dir u">↑</span></span></div>
+        <div class="var"><span class="vn">Tool $ / call</span><span class="vv">$0.005 → $0.002<span class="dir d">↓</span></span></div>
+        <div class="var"><span class="vn">Tool calls / turn</span><span class="vv">3 → 12<span class="dir u">↑</span></span></div>
+        <div class="var"><span class="vn">Outcome bps (market)</span><span class="vv">20 → 14<span class="dir d">↓</span></span></div>
+        <div class="var"><span class="vn">BYOK share</span><span class="vv">20% → 55%<span class="dir u">↑</span></span></div>
+      </div>
+      <div class="taxcol hold">
+        <div class="th">Policy-static</div>
+        <div class="ts">we hold · = · until we choose</div>
+        <div class="desc">Our take rates and hosting price. Held flat here — a lever, not a law.</div>
+        <div class="var"><span class="vn">Model markup</span><span class="vv">10%<span class="dir h">=</span></span></div>
+        <div class="var"><span class="vn">Tool take</span><span class="vv">10%<span class="dir h">=</span></span></div>
+        <div class="var"><span class="vn">Outcome take</span><span class="vv">30%<span class="dir h">=</span></span></div>
+        <div class="var"><span class="vn">Hosting / app / mo</span><span class="vv">$10<span class="dir h">=</span></span></div>
+      </div>
+    </div>
+
+    <div class="pairing">
+      <span class="tag">The trap in the middle column</span>
+      The converging variables move in <b>pairs that cancel per turn</b>: model
+      <code>$/token ↓</code> × <code>tokens/turn ↑</code> ≈ flat compute cost; tool
+      <code>$/call ↓</code> × <code>calls/turn ↑</code> ≈ flat tool spend. So per-turn
+      ARPU barely moves — revenue growth is almost entirely a function of the
+      left column (scale) monetized through one right-column tailwind that <em>doesn't</em>
+      cancel: <b>flow</b>, which compounds while our outcome take stays fixed.
+    </div>
+  </section>
+
+  <!-- PROJECTION -->
+  <section id="projection">
+    <div class="part-label">Bottoms-up by cohort</div>
+    <h2>The projection</h2>
+    <p class="section-intro">
+      Five cohorts, each with its own engine from the fee model. Revenue is computed
+      per cohort from the drivers above, not top-down from a target — the total is what
+      falls out.
+    </p>
+
+    <div class="charts">
+      <div class="chartcard">
+        <div class="ct">Total revenue · $M · stacked by lever</div>
+        <div class="chart">
+          <div class="col"><div class="stack"><div class="seg s-outcome" style="height:0.8px"></div><div class="seg s-hosting" style="height:0.4px"></div><div class="seg s-model" style="height:0.3px"></div><div class="seg s-tool" style="height:0.3px"></div></div><div class="xl">Y1</div><div class="xv">$0.1M</div></div>
+          <div class="col"><div class="stack"><div class="seg s-outcome" style="height:4.0px"></div><div class="seg s-hosting" style="height:1.3px"></div><div class="seg s-model" style="height:0.9px"></div><div class="seg s-tool" style="height:0.3px"></div></div><div class="xl">Y2</div><div class="xv">$0.8M</div></div>
+          <div class="col"><div class="stack"><div class="seg s-outcome" style="height:20.6px"></div><div class="seg s-hosting" style="height:5.7px"></div><div class="seg s-model" style="height:4.0px"></div><div class="seg s-tool" style="height:0.9px"></div></div><div class="xl">Y3</div><div class="xv">$3.9M</div></div>
+          <div class="col"><div class="stack"><div class="seg s-outcome" style="height:68.8px"></div><div class="seg s-hosting" style="height:19.0px"></div><div class="seg s-model" style="height:9.5px"></div><div class="seg s-tool" style="height:3.2px"></div></div><div class="xl">Y4</div><div class="xv">$12.8M</div></div>
+          <div class="col"><div class="stack"><div class="seg s-outcome" style="height:171.7px"></div><div class="seg s-hosting" style="height:48.3px"></div><div class="seg s-model" style="height:21.4px"></div><div class="seg s-tool" style="height:9.5px"></div></div><div class="xl">Y5</div><div class="xv">$31.6M</div></div>
+        </div>
+        <div class="chart-legend">
+          <span class="lg"><span class="sw s-outcome"></span>Outcome</span>
+          <span class="lg"><span class="sw s-hosting"></span>Hosting</span>
+          <span class="lg"><span class="sw s-model"></span>Model margin</span>
+          <span class="lg"><span class="sw s-tool"></span>Tool take</span>
+        </div>
+      </div>
+
+      <div class="chartcard">
+        <div class="ct">The same, by cohort · $M</div>
+        <div class="chart">
+          <div class="col"><div class="stack"><div class="seg s-c-wal" style="height:0.4px"></div><div class="seg s-c-bot" style="height:0.2px"></div><div class="seg s-c-vault" style="height:0.3px"></div><div class="seg s-c-mkt" style="height:0.1px"></div><div class="seg s-c-core" style="height:0.1px"></div></div><div class="xl">Y1</div><div class="xv">$0.1M</div></div>
+          <div class="col"><div class="stack"><div class="seg s-c-wal" style="height:2.4px"></div><div class="seg s-c-bot" style="height:1.6px"></div><div class="seg s-c-vault" style="height:1.6px"></div><div class="seg s-c-mkt" style="height:0.3px"></div><div class="seg s-c-core" style="height:0.8px"></div></div><div class="xl">Y2</div><div class="xv">$0.8M</div></div>
+          <div class="col"><div class="stack"><div class="seg s-c-wal" style="height:12.7px"></div><div class="seg s-c-bot" style="height:7.1px"></div><div class="seg s-c-vault" style="height:6.3px"></div><div class="seg s-c-mkt" style="height:2.4px"></div><div class="seg s-c-core" style="height:2.4px"></div></div><div class="xl">Y3</div><div class="xv">$3.9M</div></div>
+          <div class="col"><div class="stack"><div class="seg s-c-wal" style="height:45.1px"></div><div class="seg s-c-bot" style="height:25.3px"></div><div class="seg s-c-vault" style="height:18.2px"></div><div class="seg s-c-mkt" style="height:7.9px"></div><div class="seg s-c-core" style="height:5.5px"></div></div><div class="xl">Y4</div><div class="xv">$12.8M</div></div>
+          <div class="col"><div class="stack"><div class="seg s-c-wal" style="height:114.0px"></div><div class="seg s-c-bot" style="height:64.1px"></div><div class="seg s-c-vault" style="height:42.7px"></div><div class="seg s-c-mkt" style="height:19.0px"></div><div class="seg s-c-core" style="height:10.3px"></div></div><div class="xl">Y5</div><div class="xv">$31.6M</div></div>
+        </div>
+        <div class="chart-legend">
+          <span class="lg"><span class="sw s-c-wal"></span>Wallet</span>
+          <span class="lg"><span class="sw s-c-bot"></span>Bot platform</span>
+          <span class="lg"><span class="sw s-c-vault"></span>Vault</span>
+          <span class="lg"><span class="sw s-c-mkt"></span>Market insight</span>
+          <span class="lg"><span class="sw s-c-core"></span>Core direct</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <caption>Revenue by cohort · $M · illustrative</caption>
+        <thead>
+          <tr><th>Cohort · engine</th><th>Y1</th><th>Y2</th><th>Y3</th><th>Y4</th><th>Y5</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="rowname"><span class="dot s-c-wal"></span>Wallet · first-party flow</td><td>&lt;0.1</td><td>0.3</td><td>1.6</td><td>5.7</td><td>14.4</td></tr>
+          <tr><td class="rowname"><span class="dot s-c-bot"></span>Bot platform · hosting</td><td>&lt;0.1</td><td>0.2</td><td>0.9</td><td>3.2</td><td>8.1</td></tr>
+          <tr><td class="rowname"><span class="dot s-c-vault"></span>Vault · outcome take</td><td>&lt;0.1</td><td>0.2</td><td>0.8</td><td>2.3</td><td>5.4</td></tr>
+          <tr><td class="rowname"><span class="dot s-c-mkt"></span>Market insight · tool take</td><td>&lt;0.1</td><td>&lt;0.1</td><td>0.3</td><td>1.0</td><td>2.4</td></tr>
+          <tr><td class="rowname"><span class="dot s-c-core"></span>Core direct · model margin</td><td>&lt;0.1</td><td>0.1</td><td>0.3</td><td>0.7</td><td>1.3</td></tr>
+          <tr class="total"><td>Total ARR</td><td>0.1</td><td>0.8</td><td>3.9</td><td>12.8</td><td>31.6</td></tr>
+          <tr><td class="cagr">Year-over-year</td><td class="cagr">—</td><td class="cagr">6.3×</td><td class="cagr">4.8×</td><td class="cagr">3.3×</td><td class="cagr">2.5×</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- MIX -->
+  <section id="mix">
+    <div class="part-label">Read the stack</div>
+    <h2>Where the money actually is</h2>
+    <p class="section-intro">
+      The lever mix barely moves year to year — it's <strong>outcome-dominant from the
+      start</strong>. What changes is whether we can <em>collect</em> it: the flow-based
+      outcome take is the franchise, but part of it waits on a writer that doesn't exist yet.
+    </p>
+
+    <div class="split">
+      <div class="splitcard live">
+        <div class="amt">$23.2M<span class="pct">· 73%</span></div>
+        <div class="lab">Collectable with today's writers</div>
+        <p>Hosting, model margin, and <b>first-party wallet outcome</b> — the wallet captures its flow on-chain directly (Aomi is the beneficiary), no reserved take needed.</p>
+      </div>
+      <div class="splitcard resv">
+        <div class="amt">$8.4M<span class="pct">· 27%</span></div>
+        <div class="lab">Behind a reserved writer</div>
+        <p>The <b>third-party outcome take</b> (vault + bot) and the <b>tool take</b>. Real revenue in the model, uncollectable until those <code>statement_entries</code> subjects ship a writer.</p>
+      </div>
+    </div>
+
+    <p class="wide" style="margin-top:1.3rem;max-width:52rem;">
+      Put plainly: the single highest-leverage <em>engineering</em> action in this whole
+      projection is wiring the third-party outcome-take writer. It converts a quarter of
+      the Year-5 model from "designed" to "banked," and it's the lever most aligned with
+      the one tailwind that compounds.
+    </p>
+  </section>
+
+  <!-- TARGETS -->
+  <section id="targets">
+    <div class="part-label">What we have to go earn</div>
+    <h2>The targets behind the number</h2>
+    <p class="section-intro">
+      Revenue is downstream of these four counts. Miss them and the ARR curve flattens
+      no matter what the take rates are — they're the growth commitments the model rests on.
+    </p>
+
+    <div class="table-scroll">
+      <table>
+        <caption>Growth targets · the left column, over time</caption>
+        <thead>
+          <tr><th>Metric</th><th>Y1</th><th>Y2</th><th>Y3</th><th>Y4</th><th>Y5</th><th>Ramp</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="rowname">Users</td><td class="grow">0.02M</td><td class="grow">0.13M</td><td class="grow">0.59M</td><td class="grow">1.67M</td><td class="grow">3.55M</td><td class="cagr">~180×</td></tr>
+          <tr><td class="rowname">Apps (bots dominate)</td><td class="grow">220</td><td class="grow">1,260</td><td class="grow">6,150</td><td class="grow">20,350</td><td class="grow">50,700</td><td class="cagr">~230×</td></tr>
+          <tr><td class="rowname">Transactions / yr</td><td class="grow">5M</td><td class="grow">31M</td><td class="grow">165M</td><td class="grow">528M</td><td class="grow">1.27B</td><td class="cagr">~250×</td></tr>
+          <tr><td class="rowname">On-chain flow / yr</td><td class="grow">$0.4B</td><td class="grow">$2B</td><td class="grow">$13B</td><td class="grow">$45B</td><td class="grow">$115B</td><td class="cagr">~290×</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:1.1rem;color:var(--muted);font-size:0.9rem;max-width:52rem;">
+      Flow grows fastest of the four — and it's the one wired to our stickiest take. That
+      ordering is the strategy in one line: <strong>chase flow hardest</strong>, because
+      it's where a fixed take rate compounds against a rising base.
+    </p>
+  </section>
+
+  <!-- THE BET -->
+  <section id="bet">
+    <div class="part-label">So what</div>
+    <h2>The structural bet</h2>
+    <p class="section-intro">Four things the model says that a spreadsheet total won't tell you on its own.</p>
+
+    <div class="findings">
+      <div class="finding f-chain">
+        <div class="idx">1</div>
+        <div>
+          <div class="ft">Outcome is the franchise — 69% of Year-5.</div>
+          <div class="fb">Flow-based, take-rate sticky, and it rides crypto adoption rather than fighting AI deflation. It's the only lever where our growth target (<b>flow ↑</b>) and a fixed policy (<b>30% take</b>) compound in the same direction. Everything else is a supporting act.</div>
+        </div>
+      </div>
+      <div class="finding f-accent">
+        <div class="idx">2</div>
+        <div>
+          <div class="ft">Model margin is a trap — 8% and shrinking as a share.</div>
+          <div class="fb">Turns grow <b>260×</b>, yet model margin crawls to $2.7M because <b>$/token falls 3×</b> and <b>BYOK rises to 55%</b>, eroding it from both sides. Charging for tokens is a treadmill; don't build the business on it.</div>
+        </div>
+      </div>
+      <div class="finding f-slate">
+        <div class="idx">3</div>
+        <div>
+          <div class="ft">Hosting is the floor — 19%, deflation-proof.</div>
+          <div class="fb">Linear in app count, immune to token/tool price compression, and it's cash today. The <b>bot-platform cohort is a hosting annuity</b> that funds the outcome build-out while the flywheel spins up. Boring, and load-bearing.</div>
+        </div>
+      </div>
+      <div class="finding f-chain">
+        <div class="idx">4</div>
+        <div>
+          <div class="ft">It's a scale game with one collection gap.</div>
+          <div class="fb">Per-turn ARPU is ~flat (the converging variables cancel), so revenue ≈ <b>scale × flow</b>. Hitting the ARR means hitting the growth targets <em>and</em> shipping the reserved outcome-take writer that unlocks <b>27%</b> of the model. Product growth and one specific piece of billing infra are the whole story.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      Illustrative model — deliberately legible, not a forecast. Every figure derives
+      from the fee model's rates and the driver assumptions below; swap the drivers and
+      the curve moves. The companion <a href="https://claude.ai/code/artifact/2eac04eb-0766-40f5-b278-8e9d39b6983e">AOMI Fee Model</a> defines every rate used here.
+    </p>
+    <p class="assume">
+      <b>Key assumptions</b><br>
+      take rates held flat (model 10% · tool 10% · outcome 30% · hosting $10/app/mo)<br>
+      model $/1M $3.00→$1.00 · tokens/turn 20k→60k · tool $/call $0.005→$0.002 · calls/turn 3→12<br>
+      outcome bps 20→14 · BYOK 20%→55% · wallet outcome = first-party (full capture)<br>
+      fee-eligible flow: wallet 30% · bot 80% · vault turnover 15%/mo · outcome/tool takes assumed wired from Y1
+    </p>
+  </footer>
+
+</main>
+
+<script>
+  (function(){
+    var btn=document.getElementById('themeToggle');
+    function cur(){var s=document.documentElement.getAttribute('data-theme');return s?s:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
+    btn.addEventListener('click',function(){document.documentElement.setAttribute('data-theme',cur()==='dark'?'light':'dark');});
+  })();
+</script>
