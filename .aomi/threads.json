@@ -1,0 +1,123 @@
+{
+  "threads": {
+    "somm": {
+      "name": "Somm.Finance",
+      "campaign": false,
+      "intent": "Partner relationship thread: Somm.Finance fee architecture (x402+MPP), settlement, pool-manager follow-ups.",
+      "from": null,
+      "to": null
+    },
+    "krexa": {
+      "name": "Krexa",
+      "campaign": false,
+      "intent": "Partner relationship thread: Krexa as the first external platform embedding the Aomi deploy button.",
+      "from": null,
+      "to": null
+    },
+    "monad": {
+      "name": "Monad",
+      "campaign": false,
+      "intent": "Partner relationship thread: Monad deploy announcement, livestream recap, mainnet build log.",
+      "from": null,
+      "to": null
+    },
+    "polymarket": {
+      "name": "Polymarket demos",
+      "campaign": true,
+      "intent": "World Cup window push: Goal Digger betting demo plus the live transparency page.",
+      "from": "2026-07-07",
+      "to": null
+    },
+    "auth": {
+      "name": "Auth research",
+      "campaign": false,
+      "intent": "Research thread: auth across the web2/web3 boundary.",
+      "from": null,
+      "to": null
+    },
+    "retail-chat-ui": {
+      "name": "Retail Chat UI",
+      "campaign": false,
+      "intent": "Consumer chat product announcements (redesign, chat-to-trade, widget UX).",
+      "from": null,
+      "to": null
+    },
+    "x402": {
+      "name": "x402 payments",
+      "campaign": false,
+      "intent": "Topic thread: agent payments via x402 with simulate-before-pay policy.",
+      "from": null,
+      "to": null
+    },
+    "dev-series": {
+      "name": "Dev series",
+      "campaign": true,
+      "intent": "Numbered dev-account series teaching the build-on-Aomi workflow end to end (incl. lettered A/B/C additions).",
+      "from": "2026-07-14",
+      "to": null
+    },
+    "poc": {
+      "name": "POC drops",
+      "campaign": true,
+      "intent": "Dev-account proof-of-concept drops at the frontier (ERC-8004 passport, MEV-aware execution).",
+      "from": null,
+      "to": null
+    },
+    "refusals": {
+      "name": "Refusals",
+      "campaign": true,
+      "intent": "Anatomy-of-a-refusal series: transactions the runtime blocked and why.",
+      "from": null,
+      "to": null
+    },
+    "docs": {
+      "name": "Docs",
+      "campaign": false,
+      "intent": "Documentation ships: site releases, rewrites, doc videos, runtime explainers.",
+      "from": null,
+      "to": null
+    },
+    "deploy": {
+      "name": "Deploy",
+      "campaign": false,
+      "intent": "The one-click deploy pipeline: portal deploy, dogfooding fixes, @aomi-labs/deploy internals, release builder.",
+      "from": null,
+      "to": null
+    },
+    "platform": {
+      "name": "Run on Aomi",
+      "campaign": true,
+      "intent": "Main-account July push: the case for running funded agents through the hosted platform instead of your own infra.",
+      "from": "2026-07-13",
+      "to": null
+    },
+    "runtime-security": {
+      "name": "Runtime security",
+      "campaign": false,
+      "intent": "Guardrails and trust: on-chain harness, drain challenge, spend observability, guardrail-placement research.",
+      "from": null,
+      "to": null
+    },
+    "founder-voice": {
+      "name": "Founder voice",
+      "campaign": true,
+      "intent": "Cecilia's long-form essays staking out the brand thesis: the agentic-wallet field is missing a security layer.",
+      "from": "2026-06-26",
+      "to": null
+    },
+    "ecosystem": {
+      "name": "Ecosystem & ships",
+      "campaign": false,
+      "intent": "Platform ships and ecosystem signals: AomiBench, skills marketplace, Forge spotlights, Solana/multi-wallet.",
+      "from": null,
+      "to": null
+    },
+    "open-build": {
+      "name": "Building in the open",
+      "campaign": false,
+      "intent": "Building in the open: dev recaps, internal tooling stories (Smithers, design repo), engineering POV threads.",
+      "from": null,
+      "to": null
+    }
+  }
+}
