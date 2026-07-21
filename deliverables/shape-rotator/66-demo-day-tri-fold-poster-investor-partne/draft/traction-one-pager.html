@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aomi — Traction &amp; 12-Month Growth Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=PT+Serif:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#09090b; --ink2:#3f3f46; --muted:#71717a; --faint:#a1a1aa;
+    --paper:#fff; --panel:#fafafa; --panel2:#f4f4f5; --line:#e4e4e7;
+    --sky:#5288c2; --sky2:#416cac; --tint:#e2eef8; --tintline:#aecbe8;
+    --pink:#df5d90; --pinktint:#fbe4ef; --pinkline:#efa6c5;
+    --green:#2e9e6b; --greentint:#e4f3ec;
+    --serif:"PT Serif",Georgia,serif; --sans:"Geist",system-ui,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:#e9eaec;color:var(--ink);font-family:var(--sans)}
+  body{padding:12px}
+  .page{
+    width:min(1440px,100%); min-height:min(876px,calc(100vh - 24px)); margin:0 auto;
+    background:var(--paper); border:1px solid #d4d4d8; box-shadow:0 18px 60px rgba(9,9,11,.10);
+    padding:24px 32px 18px; display:grid; grid-template-rows:auto auto 1fr auto; gap:14px;
+  }
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:30px}
+  .brand{display:flex;align-items:baseline;gap:16px}
+  .wordmark{font:700 2.5rem/1 var(--serif);letter-spacing:-.04em}.wordmark i{color:var(--sky);font-style:normal}
+  .kicker{font:600 .69rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--sky2)}
+  .stamp{text-align:right;color:var(--muted);font-size:.68rem;line-height:1.45}
+  .stamp b{color:var(--ink2);font-weight:600}
+  .hero{display:grid;grid-template-columns:1.6fr .8fr;gap:28px;align-items:end;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  h1{font:700 clamp(2.35rem,4vw,4.25rem)/.94 var(--serif);letter-spacing:-.045em;margin:0;max-width:17ch}
+  h1 em{color:var(--sky);font-style:italic;font-weight:400}
+  .thesis{font-size:1.03rem;line-height:1.5;color:var(--ink2);margin:0 0 3px;max-width:43ch}
+  .thesis b{color:var(--ink)}
+  .content{display:grid;grid-template-columns:1.18fr .82fr;gap:20px;min-height:0}
+  .actual,.model{border:1px solid var(--line);padding:16px;min-width:0}
+  .model{background:linear-gradient(145deg,#f7fbff 0%,#fff 58%);border-color:var(--tintline)}
+  .section-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:12px}
+  h2{font-size:.77rem;line-height:1;text-transform:uppercase;letter-spacing:.13em;margin:0}
+  .label{font:500 .66rem/1.3 var(--mono);color:var(--muted)}
+  .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .metric{background:var(--panel);border:1px solid var(--line);padding:11px 10px;min-height:92px;display:flex;flex-direction:column;justify-content:space-between}
+  .metric.primary{background:var(--tint);border-color:var(--tintline)}
+  .num{font:700 clamp(1.7rem,2.6vw,2.8rem)/.95 var(--serif);letter-spacing:-.035em;color:var(--sky2)}
+  .metric.primary .num{color:var(--ink)}
+  .cap{font-size:.67rem;line-height:1.3;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .sub{font:500 .62rem/1.25 var(--mono);color:var(--sky2);margin-top:5px}
+  .usage{display:grid;grid-template-columns:1.05fr .95fr;gap:10px;margin-top:10px}
+  .usage-card{border:1px solid var(--line);padding:12px;background:#fff}
+  .usage-card h3,.volume h3{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;margin:0 0 10px}
+  .funnel{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:8px}
+  .funnel .f-num{font:700 1.45rem/1 var(--serif)}
+  .funnel .f-cap{font-size:.57rem;color:var(--muted);text-transform:uppercase;line-height:1.25;margin-top:4px}
+  .arrow{color:var(--faint)}
+  .download{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .download strong{font:700 2.15rem/1 var(--serif);color:var(--pink)}
+  .download p{font-size:.65rem;line-height:1.3;color:var(--muted);margin:0;text-align:right}
+  .spark{height:28px;margin-top:10px;display:flex;align-items:flex-end;gap:4px}
+  .spark span{flex:1;background:var(--pinkline);border-radius:2px 2px 0 0}.spark span:last-child{background:var(--pink)}
+  .caveat{font-size:.58rem;line-height:1.35;color:var(--muted);margin:10px 0 0}
+  .targets{display:grid;gap:11px}
+  .target{display:grid;grid-template-columns:124px 1fr 72px;gap:10px;align-items:center}
+  .target-name{font-size:.68rem;color:var(--ink2)}
+  .target-name small{display:block;color:var(--muted);font:400 .57rem/1.2 var(--mono);margin-top:2px}
+  .track{height:8px;background:var(--panel2);position:relative;overflow:hidden}
+  .track i{display:block;height:100%;background:var(--sky);position:relative}
+  .track i:after{content:"";position:absolute;right:0;top:0;height:100%;width:3px;background:var(--sky2)}
+  .target-value{text-align:right;font:700 1.15rem/1 var(--serif);color:var(--sky2)}
+  .target-value small{font:500 .54rem/1 var(--mono);color:var(--muted);display:block;margin-top:4px}
+  .model-note{font-size:.6rem;line-height:1.4;color:var(--muted);border-top:1px solid var(--tintline);padding-top:11px;margin:14px 0 0}
+  .volume{grid-column:1/-1;border:1px solid var(--line);display:grid;grid-template-columns:1.15fr 1.85fr;gap:20px;padding:12px 16px;background:var(--panel)}
+  .volume-lead{display:flex;align-items:center;gap:15px}
+  .volume-lead .big{font:700 2.4rem/1 var(--serif);color:var(--pink);white-space:nowrap}
+  .volume-lead p{font-size:.68rem;line-height:1.35;color:var(--ink2);margin:0;max-width:34ch}
+  .formula{display:grid;grid-template-columns:repeat(11,auto);justify-content:space-between;align-items:center;gap:6px}
+  .factor{text-align:center}.factor b{font:700 1.25rem/1 var(--serif);display:block}.factor span{font-size:.54rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .op{color:var(--faint);font-size:.9rem}
+  .formula .result b{color:var(--pink)}
+  .footer{display:flex;justify-content:space-between;align-items:flex-start;gap:25px;border-top:1px solid var(--line);padding-top:8px}
+  .source{font-size:.54rem;line-height:1.45;color:var(--muted);max-width:110ch;margin:0}
+  .ask{font:600 .63rem/1.4 var(--mono);color:var(--sky2);text-align:right;max-width:44ch;margin:0}
+  @media(max-width:1000px){body{padding:0}.page{border:0;min-height:100vh;padding:26px}.hero,.content,.volume{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(2,1fr)}.usage{grid-template-columns:1fr}.formula{grid-template-columns:repeat(3,1fr)}.op{display:none}}
+  @media(max-width:620px){.top,.footer{display:block}.stamp,.ask{text-align:left;margin-top:10px}.hero{gap:16px}.metric-grid{grid-template-columns:1fr 1fr}.target{grid-template-columns:105px 1fr 58px}.volume-lead{align-items:flex-start}.volume-lead .big{font-size:2.1rem}}
+  @media print{
+    @page{size:A4 landscape;margin:0}
+    html,body{width:297mm;height:210mm;background:#fff}.page{width:297mm;height:210mm;min-height:0;border:0;box-shadow:none;padding:8mm 10mm;gap:4mm}
+    .hero{grid-template-columns:1.6fr .8fr;gap:7mm}.content{grid-template-columns:1.18fr .82fr;gap:4mm}.volume{grid-template-columns:1.15fr 1.85fr}
+    .metric-grid{grid-template-columns:repeat(4,1fr)}.usage{grid-template-columns:1.05fr .95fr}.formula{grid-template-columns:repeat(11,auto)}.op{display:block}
+    h1{font-size:11mm}.wordmark{font-size:8mm}.metric{min-height:24mm}.actual,.model{padding:4mm}.volume{padding:3mm 4mm}.volume-lead{gap:2.5mm}.volume-lead p{font-size:6.5pt;max-width:none}.footer{padding-top:2mm}
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="top">
+    <div class="brand"><div class="wordmark">aomi<i>.</i></div><div class="kicker">Traction brief · investor view</div></div>
+    <div class="stamp"><b>Measured July 21, 2026</b><br>Production activity + public registry data</div>
+  </header>
+
+  <section class="hero">
+    <h1>Early platform pull is becoming <em>repeatable distribution.</em></h1>
+    <p class="thesis"><b>33 live app surfaces</b> have brought 1,734 accounts into a product thread, while open-source packages crossed 23,700 registry downloads. The next proof point is converting simulated intent into measurable onchain volume.</p>
+  </section>
+
+  <section class="content">
+    <div class="actual">
+      <div class="section-head"><h2>Current traction</h2><span class="label">Observed · not forecast</span></div>
+      <div class="metric-grid">
+        <article class="metric primary"><div class="num">2,583</div><div><div class="cap">Registered accounts</div><div class="sub">production database</div></div></article>
+        <article class="metric primary"><div class="num">1,734</div><div><div class="cap">Accounts with ≥1 thread</div><div class="sub">67% activated</div></div></article>
+        <article class="metric"><div class="num">33</div><div><div class="cap">Apps loaded in production</div><div class="sub">live runtime artifacts</div></div></article>
+        <article class="metric"><div class="num">5,349</div><div><div class="cap">Product threads</div><div class="sub">24,221 messages</div></div></article>
+      </div>
+
+      <div class="usage">
+        <article class="usage-card">
+          <h3>Transaction activity recorded</h3>
+          <div class="funnel">
+            <div><div class="f-num">662</div><div class="f-cap">simulation<br>steps</div></div><span class="arrow">→</span>
+            <div><div class="f-num">389</div><div class="f-cap">approval<br>batches</div></div><span class="arrow">→</span>
+            <div><div class="f-num">4</div><div class="f-cap">submissions<br>tracked</div></div>
+          </div>
+          <p class="caveat">Recorded layers, not a strict cohort funnel. Simulations include internal/test activity.</p>
+        </article>
+        <article class="usage-card">
+          <h3>Developer distribution</h3>
+          <div class="download"><strong>23.7k</strong><p>lifetime public<br>registry downloads</p></div>
+          <div class="spark" aria-label="Package download momentum"><span style="height:28%"></span><span style="height:34%"></span><span style="height:42%"></span><span style="height:55%"></span><span style="height:72%"></span><span style="height:100%"></span></div>
+          <p class="caveat">4,641 in the latest 30 days. Downloads are not unique developers or users.</p>
+        </article>
+      </div>
+    </div>
+
+    <aside class="model">
+      <div class="section-head"><h2>12-month base case</h2><span class="label">Planning scenario</span></div>
+      <div class="targets">
+        <div class="target"><div class="target-name">Activated accounts<small>1,734 now</small></div><div class="track"><i style="width:35%"></i></div><div class="target-value">5,000<small>2.9×</small></div></div>
+        <div class="target"><div class="target-name">Production apps<small>33 now</small></div><div class="track"><i style="width:46%"></i></div><div class="target-value">72<small>2.2×</small></div></div>
+        <div class="target"><div class="target-name">Registry downloads<small>23.7k now</small></div><div class="track"><i style="width:24%"></i></div><div class="target-value">97.5k<small>4.1×</small></div></div>
+        <div class="target"><div class="target-name">Simulation steps / mo<small>≈203 current run-rate</small></div><div class="track"><i style="width:20%"></i></div><div class="target-value">1,015<small>5.0×</small></div></div>
+      </div>
+      <p class="model-note"><b>Assumptions:</b> +272 activated accounts and +3.25 production apps per month; public downloads begin at the latest 30-day rate and grow 5% monthly; transaction simulation activity reaches 5× the measured Apr–Jul run-rate. These are operating targets—not management guidance.</p>
+    </aside>
+
+    <section class="volume">
+      <div>
+        <h3>Modeled transaction volume · base case</h3>
+        <div class="volume-lead"><div class="big">$6.1M</div><p>annualized onchain volume at month 12. Current value is <b>not yet measurable</b> from retained records; non-custodial means TVL is not the right KPI.</p></div>
+      </div>
+      <div class="formula" aria-label="Transaction volume model">
+        <div class="factor"><b>203</b><span>sim steps / mo now</span></div><div class="op">×</div>
+        <div class="factor"><b>5×</b><span>activity growth</span></div><div class="op">×</div>
+        <div class="factor"><b>50%</b><span>execution conversion</span></div><div class="op">×</div>
+        <div class="factor"><b>$1k</b><span>average tx value</span></div><div class="op">×</div>
+        <div class="factor"><b>12</b><span>months</span></div><div class="op">=</div>
+        <div class="factor result"><b>$6.1M</b><span>annualized volume</span></div>
+      </div>
+    </section>
+  </section>
+
+  <footer class="footer">
+    <p class="source"><b>Sources &amp; definitions:</b> canonical Aomi production DB and production plugin container; npm registry and crates.io public download APIs, queried Jul 21, 2026. Public downloads combine @aomi-labs/client, react, widget-lib, deploy and aomi-sdk; repeats, CI and mirrors may count. 662 simulation steps were recorded across 486 batch results from Apr 9–Jul 16. Current schema does not retain normalized transaction value or complete receipts, so no historical dollar-volume claim is made.</p>
+    <p class="ask">VC lens → prove execution conversion, instrument value, then scale the 33-app distribution wedge.</p>
+  </footer>
+</main>
+</body>
+</html>
