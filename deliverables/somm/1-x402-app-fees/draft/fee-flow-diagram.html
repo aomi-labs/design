@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>x402 fee flow — checkpoint settlement &amp; MPP split</title>
+<style>
+  :root{--ink:#18181b;--mut:#71717a;--line:#e4e4e7;--vio:#7c5c8f;--amber:#b97f24;--green:#2e7d5b;--pink:#b34d80}
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 24px;font:14px/1.5 ui-sans-serif,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#fff}
+  h1{font:600 20px/1.25 Georgia,"PT Serif",serif;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:12.5px;margin:0 0 22px}
+  .lane{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:26px}
+  .turn{width:74px;border:1.5px solid var(--line);border-radius:10px;padding:8px 0;text-align:center}
+  .turn b{display:block;font-size:12px}
+  .turn span{font-size:10.5px;color:var(--mut)}
+  .turn.credit{border-color:var(--amber);background:#fdf6e9}
+  .turn.gate{border-color:var(--pink);background:#fbeef5}
+  .arrow{color:var(--mut)}
+  .split{display:flex;gap:0;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;max-width:520px}
+  .leg{padding:12px 14px;font-size:12px}
+  .leg b{display:block;font-size:13px;margin-bottom:2px}
+  .leg small{color:var(--mut)}
+  .leg.model{flex:5;background:#efe9f3;border-right:1.5px solid var(--line)}
+  .leg.app{flex:4;background:#e9f3ee;border-right:1.5px solid var(--line)}
+  .leg.partner{flex:1.2;background:#fdf6e9;min-width:86px}
+  .cap{font-size:11.5px;color:var(--mut);margin-top:10px;max-width:560px}
+  .h2{font:600 13px ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:0 0 10px}
+</style>
+</head>
+<body>
+  <h1>x402 fee flow at Somm.Finance</h1>
+  <p class="sub">deferred credit gate (TURN_CAP = 3, cost 5/turn) → one MPP settlement per checkpoint</p>
+
+  <div class="h2">Session lane — the gate only looks every third turn</div>
+  <div class="lane">
+    <div class="turn"><b>turn 1</b><span>bal +1→−4</span></div>
+    <span class="arrow">→</span>
+    <div class="turn credit"><b>turn 2</b><span>on credit −9</span></div>
+    <span class="arrow">→</span>
+    <div class="turn credit"><b>turn 3</b><span>on credit −14</span></div>
+    <span class="arrow">→</span>
+    <div class="turn gate"><b>turn 4</b><span>GATE: settle −14</span></div>
+    <span class="arrow">→</span>
+    <div class="turn"><b>turn 5</b><span>bal fresh</span></div>
+  </div>
+
+  <div class="h2">One settlement, multi-path (MPP) — split computed once per gate</div>
+  <div class="split">
+    <div class="leg model"><b>model provider</b><small>inference share</small></div>
+    <div class="leg app"><b>Somm app fee</b><small>80% of app leg</small></div>
+    <div class="leg partner"><b>partner</b><small>20%</small></div>
+  </div>
+  <p class="cap">Because settlement is deferred to checkpoints, the split math runs in exactly one
+  place — the gate — instead of being smeared across every request handler. Exact partner
+  accounting, no per-request rounding.</p>
+</body>
+</html>
