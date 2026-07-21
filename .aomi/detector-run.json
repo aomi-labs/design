@@ -1,31 +1,38 @@
 {
-  "ranAt": "2026-07-21T05:29:41.305Z",
-  "candidates": 60,
+  "ranAt": "2026-07-21T08:42:40.338Z",
+  "candidates": 59,
   "postsFetched": 102,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 29,
-      "postId": "2079228005600104641",
-      "confidence": 0.8,
-      "reason": "Dev account post describes the platform preventing hand-written releases and the one-command deploy/release flow—matches the dogfooded one-click deploy story about deploy infra and release records.",
-      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+      "number": 3,
+      "postId": "2076717492710330724",
+      "confidence": 0.9,
+      "reason": "Thread from the main account on 2026-07-13 publicly announces Somm shipping on Aomi and explains what it took — matches the Somm × aomi launch deliverable.",
+      "url": "https://x.com/aomi_labs/status/2076717492710330724"
     },
     {
-      "number": 16,
-      "postId": "2077050550294642884",
-      "confidence": 0.8,
-      "reason": "Dev account post summarizes the build→deploy→activate path and docs fixes for builders—matches the Aomi dev recap focused on what changed for builders that week.",
-      "url": "https://x.com/aomi_dev/status/2077050550294642884"
+      "number": 33,
+      "postId": "2072744157680996745",
+      "confidence": 0.85,
+      "reason": "Main account post on 2026-07-02 references joining Monad livestream and links the full stream — matches the Monad livestream recap deliverable.",
+      "url": "https://x.com/aomi_labs/status/2072744157680996745"
     },
     {
-      "number": 4,
-      "postId": "2079225521527812262",
+      "number": 58,
+      "postId": "2079225517459591258",
       "confidence": 0.8,
-      "reason": "Main account link posted 2026-07-20 likely announcing the 'Auth Across Two Worlds' research page (matches deliverable content and URL target).",
-      "url": "https://x.com/aomi_labs/status/2079225521527812262"
+      "reason": "Main-account post explains the platform-owned deploy flow and what the platform vs user keeps, matching the deliverable’s message about what you keep when using a platform.",
+      "url": "https://x.com/aomi_labs/status/2079225517459591258"
+    },
+    {
+      "number": 37,
+      "postId": "2067324091258843436",
+      "confidence": 0.9,
+      "reason": "Main-account post is a founder essay about guardrails/where trust should live, matching the Cecilia essay brief about attack surface moving above contracts.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
     }
   ],
   "errors": [],
