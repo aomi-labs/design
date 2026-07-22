@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Five checks before an agent touches funds — Aomi video master</title>
+<style>
+  :root{
+    --bg:#f7f9fc; --ink:#0c0f14; --muted:#5c6672; --line:#dfe5ec;
+    --sky:#2f9df4; --skysoft:#e3f1fd; --pink:#f2789f; --ok:#1fa36b; --bad:#d9435f;
+    --serif:"PT Serif",Georgia,"Times New Roman",serif;
+    --sans:"Geist","Inter",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"Geist Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  body{margin:0;background:#e8ecf2;font-family:var(--sans);display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px}
+  #frame{width:min(96vw,1200px);aspect-ratio:16/9;position:relative}
+  #stage{position:absolute;inset:0;width:1200px;height:675px;transform-origin:top left;background:var(--bg);overflow:hidden;color:var(--ink)}
+  .beat{position:absolute;inset:0;opacity:0}
+  .kicker{font-family:var(--mono);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky)}
+  .claim{font-family:var(--serif);font-weight:700;line-height:1.14}
+  .sub{font-size:24px;color:var(--muted);line-height:1.45}
+  .num{font-family:var(--mono);font-size:16px;color:var(--muted)}
+  .dots{position:absolute;left:64px;bottom:44px;display:flex;gap:10px}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--line)}
+  .dot.on{background:var(--sky)}
+  .wm{position:absolute;right:64px;bottom:38px;font-family:"Source Serif 4",var(--serif);font-size:22px;color:var(--ink);opacity:.55}
+  #controls{width:min(96vw,1200px);display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;color:#444}
+  #controls button{font:inherit;padding:6px 14px;border:1px solid #bbb;background:#fff;border-radius:6px;cursor:pointer}
+  #scrub{flex:1}
+</style>
+</head>
+<body>
+<div id="frame"><div id="stage">
+
+  <!-- beat 1 · hook -->
+  <div class="beat" id="b1">
+    <div style="position:absolute;left:64px;top:150px;width:1000px">
+      <div class="kicker">Aomi · agents and user funds</div>
+      <div class="claim" style="font-size:74px;margin-top:18px" id="b1a">Can an AI agent touch user funds?</div>
+      <div class="claim" style="font-size:46px;margin-top:26px;color:var(--sky)" id="b1b">Only after five checks.</div>
+    </div>
+  </div>
+
+  <!-- beat 2 · fixed shape -->
+  <div class="beat" id="b2">
+    <div style="position:absolute;left:64px;top:96px;width:560px">
+      <div class="num">Check 1 of 5</div>
+      <div class="claim" style="font-size:52px;margin-top:10px">A fixed shape for every call</div>
+      <div class="sub" style="margin-top:20px">Every contract call has a fixed shape.<br>A wrong transaction cannot even be built.</div>
+    </div>
+    <svg width="470" height="330" viewBox="0 0 470 330" style="position:absolute;right:70px;top:170px">
+      <rect x="150" y="120" width="170" height="90" rx="12" fill="none" stroke="var(--ink)" stroke-width="3"/>
+      <path d="M 150 150 h -18 v 30 h 18" fill="none" stroke="var(--ink)" stroke-width="3"/>
+      <text x="235" y="172" text-anchor="middle" font-family="var(--mono)" font-size="17" fill="var(--muted)">contract call</text>
+      <g id="badBlock"><rect x="30" y="30" width="86" height="52" rx="26" fill="#fbe4ea" stroke="var(--bad)" stroke-width="2.5"/>
+        <text x="73" y="61" text-anchor="middle" font-family="var(--mono)" font-size="14" fill="var(--bad)">wrong</text></g>
+      <g id="goodBlock"><rect x="30" y="230" width="104" height="52" rx="8" fill="var(--skysoft)" stroke="var(--sky)" stroke-width="2.5"/>
+        <text x="82" y="261" text-anchor="middle" font-family="var(--mono)" font-size="14" fill="var(--sky)">correct</text></g>
+      <text id="b2no" x="73" y="112" text-anchor="middle" font-family="var(--mono)" font-size="15" fill="var(--bad)" opacity="0">cannot be built</text>
+    </svg>
+  </div>
+
+  <!-- beat 3 · simulate first -->
+  <div class="beat" id="b3">
+    <div style="position:absolute;left:64px;top:96px;width:560px">
+      <div class="num">Check 2 of 5</div>
+      <div class="claim" style="font-size:52px;margin-top:10px">A test run before every signature</div>
+      <div class="sub" style="margin-top:20px">Every transaction runs on a test copy of the chain first.<br>Signing only happens after the test run passes.</div>
+    </div>
+    <svg width="480" height="330" viewBox="0 0 480 330" style="position:absolute;right:60px;top:170px">
+      <text x="20" y="86" font-family="var(--mono)" font-size="14" fill="var(--muted)">test copy</text>
+      <line x1="20" y1="100" x2="440" y2="100" stroke="var(--line)" stroke-width="3" stroke-dasharray="7 7"/>
+      <text x="20" y="226" font-family="var(--mono)" font-size="14" fill="var(--muted)">real chain</text>
+      <line x1="20" y1="240" x2="440" y2="240" stroke="var(--ink)" stroke-width="3"/>
+      <circle id="simDot" cx="30" cy="100" r="11" fill="var(--sky)"/>
+      <g id="simOk" opacity="0"><circle cx="360" cy="100" r="15" fill="var(--ok)"/><path d="M 353 100 l 5 6 l 10 -12" stroke="#fff" stroke-width="3" fill="none"/></g>
+      <circle id="realDot" cx="30" cy="240" r="11" fill="var(--ink)" opacity="0"/>
+    </svg>
+  </div>
+
+  <!-- beat 4 · small permissions -->
+  <div class="beat" id="b4">
+    <div style="position:absolute;left:64px;top:96px;width:560px">
+      <div class="num">Check 3 of 5</div>
+      <div class="claim" style="font-size:52px;margin-top:10px">Small permissions, not a master key</div>
+      <div class="sub" style="margin-top:20px">The agent gets one small permission for each tool it uses.<br>There is no single key that can do everything.</div>
+    </div>
+    <svg width="470" height="330" viewBox="0 0 470 330" style="position:absolute;right:70px;top:170px">
+      <g id="master"><rect x="120" y="30" width="220" height="60" rx="10" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+        <text x="230" y="66" text-anchor="middle" font-family="var(--mono)" font-size="16" fill="var(--ink)">one master key</text>
+        <line id="mx1" x1="120" y1="30" x2="340" y2="90" stroke="var(--bad)" stroke-width="4" opacity="0"/>
+        <line id="mx2" x1="340" y1="30" x2="120" y2="90" stroke="var(--bad)" stroke-width="4" opacity="0"/></g>
+      <g id="keys"></g>
+    </svg>
+  </div>
+
+  <!-- beat 5 · one intent -->
+  <div class="beat" id="b5">
+    <div style="position:absolute;left:64px;top:96px;width:560px">
+      <div class="num">Check 4 of 5</div>
+      <div class="claim" style="font-size:52px;margin-top:10px">Many steps, one plan</div>
+      <div class="sub" style="margin-top:20px">A real trade is quote, then approve, then execute.<br>The agent treats all three as one plan, checked together.</div>
+    </div>
+    <svg width="490" height="330" viewBox="0 0 490 330" style="position:absolute;right:55px;top:170px">
+      <g id="s1"><rect x="20" y="120" width="120" height="56" rx="10" fill="var(--skysoft)" stroke="var(--sky)" stroke-width="2.5"/><text x="80" y="154" text-anchor="middle" font-family="var(--mono)" font-size="15" fill="var(--ink)">quote</text></g>
+      <g id="s2"><rect x="185" y="120" width="120" height="56" rx="10" fill="var(--skysoft)" stroke="var(--sky)" stroke-width="2.5"/><text x="245" y="154" text-anchor="middle" font-family="var(--mono)" font-size="15" fill="var(--ink)">approve</text></g>
+      <g id="s3"><rect x="350" y="120" width="120" height="56" rx="10" fill="var(--skysoft)" stroke="var(--sky)" stroke-width="2.5"/><text x="410" y="154" text-anchor="middle" font-family="var(--mono)" font-size="15" fill="var(--ink)">execute</text></g>
+      <path id="bracket" d="M 20 205 v 22 h 450 v -22" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0"/>
+      <text id="bracketLabel" x="245" y="262" text-anchor="middle" font-family="var(--mono)" font-size="16" fill="var(--ink)" opacity="0">one plan, checked together</text>
+    </svg>
+  </div>
+
+  <!-- beat 6 · refusal -->
+  <div class="beat" id="b6">
+    <div style="position:absolute;left:64px;top:96px;width:560px">
+      <div class="num">Check 5 of 5</div>
+      <div class="claim" style="font-size:52px;margin-top:10px">A way to say no</div>
+      <div class="sub" style="margin-top:20px">If the test run does not match the plan,<br>the agent refuses to sign. Nothing moves.</div>
+    </div>
+    <svg width="470" height="330" viewBox="0 0 470 330" style="position:absolute;right:70px;top:170px">
+      <rect x="60" y="60" width="160" height="56" rx="10" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+      <text x="140" y="94" text-anchor="middle" font-family="var(--mono)" font-size="15">the plan</text>
+      <rect x="250" y="60" width="160" height="56" rx="10" fill="#fbe4ea" stroke="var(--bad)" stroke-width="2.5"/>
+      <text x="330" y="94" text-anchor="middle" font-family="var(--mono)" font-size="15" fill="var(--bad)">test result</text>
+      <text x="235" y="97" text-anchor="middle" font-family="var(--sans)" font-size="26" fill="var(--bad)">≠</text>
+      <g id="stamp" opacity="0" transform="rotate(-8 235 220)">
+        <rect x="105" y="185" width="260" height="70" rx="8" fill="none" stroke="var(--bad)" stroke-width="5"/>
+        <text x="235" y="232" text-anchor="middle" font-family="var(--mono)" font-size="34" fill="var(--bad)" font-weight="bold">REFUSED</text></g>
+    </svg>
+  </div>
+
+  <!-- beat 7 · close -->
+  <div class="beat" id="b7">
+    <div style="position:absolute;left:64px;top:120px;width:1050px">
+      <div id="checkRow" style="display:flex;gap:16px;margin-bottom:34px"></div>
+      <div class="claim" style="font-size:60px" id="b7a">Five checks. Built into Aomi.</div>
+      <div class="sub" style="font-size:27px;margin-top:24px" id="b7b">Sommelier runs on this today. Keep your strategy layer.<br>Let the harness do the checking.</div>
+      <div style="font-family:var(--mono);font-size:22px;color:var(--sky);margin-top:34px" id="b7c">aomi.dev</div>
+    </div>
+  </div>
+
+  <div class="dots" id="dots"></div>
+  <div class="wm">aomi</div>
+</div></div>
+
+<div id="controls">
+  <button id="pp">play</button>
+  <input id="scrub" type="range" min="0" max="380" value="0">
+  <span id="tlabel">0.0s / 38.0s</span>
+</div>
+
+<script>
+(() => {
+  const DUR = 38;
+  const beats = [
+    { id:"b1", start:0,    end:4.5 },
+    { id:"b2", start:4.5,  end:10  },
+    { id:"b3", start:10,   end:15.5},
+    { id:"b4", start:15.5, end:21  },
+    { id:"b5", start:21,   end:26.5},
+    { id:"b6", start:26.5, end:31.5},
+    { id:"b7", start:31.5, end:38  },
+  ];
+  const $ = id => document.getElementById(id);
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  // local progress within [a,b] of beat-local time
+  const seg=(lt,a,b)=>clamp((lt-a)/(b-a),0,1);
+
+  // build 5 mini keys (beat 4)
+  const keysG=$("keys");
+  const toolNames=["swap","lend","stake","vote","read"];
+  toolNames.forEach((n,i)=>{
+    const g=document.createElementNS("http://www.w3.org/2000/svg","g");
+    g.setAttribute("id","key"+i);
+    g.innerHTML=`<rect x="${28+i*88}" y="200" width="76" height="52" rx="8" fill="var(--skysoft)" stroke="var(--sky)" stroke-width="2"/>
+      <text x="${66+i*88}" y="231" text-anchor="middle" font-family="var(--mono)" font-size="13" fill="var(--ink)">${n}</text>`;
+    keysG.appendChild(g);
+  });
+  // progress dots
+  const dotsEl=$("dots");
+  for(let i=0;i<5;i++){const d=document.createElement("div");d.className="dot";d.id="pd"+i;dotsEl.appendChild(d);}
+  // close checks row
+  const row=$("checkRow");
+  const labels=["fixed shapes","test run first","small permissions","one plan","a way to say no"];
+  labels.forEach((l,i)=>{const s=document.createElement("div");s.id="cr"+i;
+    s.style.cssText="font-family:var(--mono);font-size:16px;padding:10px 16px;border:1.5px solid var(--line);border-radius:999px;background:#fff";
+    s.textContent="✓ "+l;row.appendChild(s);});
+
+  function seek(t){
+    t=clamp(t,0,DUR);
+    // beat visibility
+    beats.forEach((b,bi)=>{
+      const el=$(b.id);
+      const inB=t>=b.start&&t<b.end||(bi===beats.length-1&&t>=b.end);
+      let o=0;
+      if(inB){
+        const lt=t-b.start;
+        const fadeIn=seg(lt,0,.5);
+        const fadeOut=(bi<beats.length-1)?1-seg(lt,(b.end-b.start)-.4,(b.end-b.start)):1;
+        o=Math.min(fadeIn,fadeOut);
+      }
+      el.style.opacity=o;
+    });
+    // progress dots during checks (beats 2..6 -> dots 0..4)
+    for(let i=0;i<5;i++){$("pd"+i).className="dot"+((t>=beats[i+1].start)?" on":"");}
+    dotsEl.style.opacity=(t>=beats[1].start&&t<beats[6].start)?1:0;
+
+    // beat 1 internals
+    { const lt=t-0;
+      $("b1a").style.opacity=seg(lt,.2,.9);
+      $("b1a").style.transform=`translateY(${(1-ease(seg(lt,.2,.9)))*24}px)`;
+      $("b1b").style.opacity=seg(lt,1.6,2.3);
+      $("b1b").style.transform=`translateY(${(1-ease(seg(lt,1.6,2.3)))*18}px)`; }
+    // beat 2: wrong block shakes & label; correct slides into slot
+    { const lt=t-4.5;
+      const shake=Math.sin(clamp(lt-1,0,1)*22)*(seg(lt,1,1.2)*(1-seg(lt,1.8,2)))*7;
+      $("badBlock").setAttribute("transform",`translate(${shake},0)`);
+      $("b2no").setAttribute("opacity",seg(lt,1.4,1.9)*(1));
+      const gx=ease(seg(lt,2.4,3.8))*122, gy=ease(seg(lt,2.4,3.8))*-116;
+      $("goodBlock").setAttribute("transform",`translate(${gx},${gy})`); }
+    // beat 3: dot runs test lane, gets check, then real lane runs
+    { const lt=t-10;
+      $("simDot").setAttribute("cx",30+ease(seg(lt,.4,2.2))*330);
+      $("simOk").setAttribute("opacity",seg(lt,2.3,2.8));
+      const rd=$("realDot");
+      rd.setAttribute("opacity",seg(lt,3,3.4));
+      rd.setAttribute("cx",30+ease(seg(lt,3.2,5))*380); }
+    // beat 4: master key struck out, small keys pop in
+    { const lt=t-15.5;
+      $("mx1").setAttribute("opacity",seg(lt,.8,1.3));
+      $("mx2").setAttribute("opacity",seg(lt,1.1,1.6));
+      $("master").setAttribute("opacity",1-seg(lt,1.8,2.6)*.55);
+      for(let i=0;i<5;i++){
+        const p=ease(seg(lt,1.6+i*.35,2.2+i*.35));
+        const k=$("key"+i);
+        k.setAttribute("opacity",p);
+        k.setAttribute("transform",`translate(0,${(1-p)*22})`);} }
+    // beat 5: steps pop, bracket draws
+    { const lt=t-21;
+      [["s1",.3],["s2",.9],["s3",1.5]].forEach(([id,at])=>{
+        const p=ease(seg(lt,at,at+.5));
+        const el=$(id); el.setAttribute("opacity",p);
+        el.setAttribute("transform",`translate(0,${(1-p)*18})`);});
+      $("bracket").setAttribute("opacity",seg(lt,2.2,2.8));
+      $("bracketLabel").setAttribute("opacity",seg(lt,2.8,3.4)); }
+    // beat 6: stamp slams
+    { const lt=t-26.5;
+      const p=ease(seg(lt,1.6,2.1));
+      const st=$("stamp");
+      st.setAttribute("opacity",p);
+      st.setAttribute("transform",`rotate(-8 235 220) scale(${1.6-0.6*p})`);
+      st.setAttribute("transform-origin","235 220"); }
+    // beat 7: check pills cascade, then claims
+    { const lt=t-31.5;
+      for(let i=0;i<5;i++){
+        const p=ease(seg(lt,.2+i*.28,.7+i*.28));
+        const el=$("cr"+i);
+        el.style.opacity=p; el.style.transform=`translateY(${(1-p)*14}px)`;}
+      $("b7a").style.opacity=seg(lt,1.9,2.5);
+      $("b7b").style.opacity=seg(lt,2.7,3.3);
+      $("b7c").style.opacity=seg(lt,3.4,4);}
+    // scrub ui
+    $("scrub").value=Math.round(t*10);
+    $("tlabel").textContent=t.toFixed(1)+"s / "+DUR.toFixed(1)+"s";
+    cur=t;
+  }
+
+  let cur=0, playing=false, raf=null, last=null;
+  function tick(ts){
+    if(!playing) return;
+    if(last!=null){ cur+=(ts-last)/1000; if(cur>=DUR){cur=DUR; playing=false; $("pp").textContent="play";} seek(cur); }
+    last=ts; raf=requestAnimationFrame(tick);
+  }
+  function play(){ if(playing) return; if(cur>=DUR) cur=0; playing=true; last=null; $("pp").textContent="pause"; raf=requestAnimationFrame(tick); }
+  function pause(){ playing=false; last=null; $("pp").textContent="play"; }
+  $("pp").onclick=()=>playing?pause():play();
+  $("scrub").oninput=e=>{ pause(); seek(e.target.value/10); };
+
+  // responsive scale (controls stay outside #stage)
+  function fit(){ const f=document.getElementById("frame"); const s=f.clientWidth/1200; document.getElementById("stage").style.transform=`scale(${s})`; }
+  window.addEventListener("resize",fit); fit();
+
+  window.__AOMI_VIDEO__={ duration:DUR, seek, play, pause };
+  window.__seek=seek;
+  seek(0);
+})();
+</script>
+</body>
+</html>
