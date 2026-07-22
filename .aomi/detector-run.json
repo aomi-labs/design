@@ -1,11 +1,40 @@
 {
-  "ranAt": "2026-07-21T23:09:54.245Z",
-  "candidates": 57,
+  "ranAt": "2026-07-22T05:28:39.577Z",
+  "candidates": 53,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 4,
-  "applied": 4,
-  "needsConfirm": [],
+  "judged": 0,
+  "applied": 0,
+  "needsConfirm": [
+    {
+      "number": 34,
+      "postId": "2064778903546150960",
+      "confidence": 0.9,
+      "reason": "Post explicitly announces the docs rebuild, quickstart, and links to aomi.dev/docs matching the documentation migration deliverable.",
+      "url": "https://x.com/aomi_labs/status/2064778903546150960"
+    },
+    {
+      "number": 33,
+      "postId": "2072744160163987614",
+      "confidence": 0.9,
+      "reason": "Post contains the full livestream link and states it was with Monad, matching the Monad livestream recap deliverable.",
+      "url": "https://x.com/aomi_labs/status/2072744160163987614"
+    },
+    {
+      "number": 25,
+      "postId": "2069452271574786409",
+      "confidence": 0.9,
+      "reason": "Post links the runtime and evals/testing docs pages and describes the execution model and testing layers, matching the runtime and evals/testing docs rewrite deliverable.",
+      "url": "https://x.com/aomi_labs/status/2069452271574786409"
+    },
+    {
+      "number": 58,
+      "postId": "2079628355322679660",
+      "confidence": 0.9,
+      "reason": "Main-account thread explains what a user keeps/trust split and describes Aomi running build/hosting/simulation while platform owns launch — matches the deliverable's thesis and audience.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    }
+  ],
   "errors": [],
   "ok": true
 }
