@@ -1,17 +1,17 @@
 {
-  "ranAt": "2026-07-22T15:51:04.496Z",
+  "ranAt": "2026-07-22T19:41:20.562Z",
   "candidates": 53,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 0,
-  "applied": 0,
+  "judged": 1,
+  "applied": 1,
   "needsConfirm": [
     {
-      "number": 54,
-      "postId": "2076717509571698872",
-      "confidence": 0.9,
-      "reason": "Post explicitly announces Somm building agentic finance on Aomi and describes the vaults→agents pattern (pool manager pattern) matching the deliverable about Sommelier follow-up.",
-      "url": "https://x.com/aomi_labs/status/2076717509571698872"
+      "number": 36,
+      "postId": "2067324091258843436",
+      "confidence": 0.8,
+      "reason": "Post teases/links the founder essay about shifting attack surface and guardrails, matching the deliverable brief for Cecilia on the same topic from the main account.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
     }
   ],
   "errors": [],
