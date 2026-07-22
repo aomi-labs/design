@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — 3-min deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;700&family=PT+Serif:wght@700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --dim:#71717a; --faint:#a1a1aa; --hl:#416cac; --hl2:#5288c2;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg2)}
+#deck{position:fixed;inset:0}
+
+.frame{position:absolute;inset:0;width:100%;height:100%;border:0;
+  opacity:0;visibility:hidden;transition:opacity .45s var(--ease);z-index:1}
+.frame.active{opacity:1;visibility:visible;z-index:2}
+
+/* ---- blank runtime placeholder (slide 2) ---- */
+.blank{display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg)}
+.blank .bchrome{position:absolute;font-family:var(--mono);color:var(--dim)}
+.blank #b-brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+.blank #b-brand svg{width:20px;height:20px;color:var(--ink)}
+.blank #b-brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em;color:var(--ink)}
+.blank #b-brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+.blank #b-page{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+.blank #b-page i{color:var(--ink);font-style:normal}
+.blank .mid{text-align:center}
+.blank .mid .e{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl);margin-bottom:14px}
+.blank .mid h2{font-family:var(--serif);font-weight:700;font-size:44px;letter-spacing:-.02em;color:var(--line2)}
+.blank .mid .n{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:14px}
+
+/* ---- deck chrome ---- */
+.navbtn{position:fixed;top:0;bottom:0;width:13%;z-index:55;cursor:pointer;background:transparent;border:0}
+#prev{left:0}#next{right:0}
+#dots{position:fixed;left:0;right:0;bottom:11px;z-index:60;display:flex;gap:9px;justify-content:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line2);cursor:pointer;transition:all .25s var(--ease)}
+.dot.on{background:var(--hl2);width:22px;border-radius:999px}
+#rail{position:fixed;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:70}
+.rdot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid var(--line2);
+  color:var(--dim);font-family:var(--mono);font-size:9px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s var(--ease);box-shadow:0 1px 2px rgba(13,13,15,.05)}
+.rdot:hover{border-color:var(--hl);color:var(--hl)}
+.rdot.on{background:var(--hl);border-color:var(--hl);color:#fff;font-weight:700}
+#hint{position:fixed;right:20px;bottom:22px;z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  color:var(--faint);text-transform:uppercase;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="deck">
+  <iframe class="frame" data-src="cover-0722.html" data-title="Cover"></iframe>
+  <iframe class="frame" data-src="problem-economics-0722.html" data-title="Problem · unit economics"></iframe>
+
+  <iframe class="frame" data-src="runtime-0716.html" data-title="The runtime"></iframe>
+
+  <iframe class="frame" data-src="arch-pipeline-0716.html" data-title="Architecture + pipeline"></iframe>
+  <iframe class="frame" data-src="pricing-model-0722.html" data-title="Pricing model"></iframe>
+  <iframe class="frame" data-src="gtm-market-0722.html" data-title="Go-to-market"></iframe>
+</div>
+
+<button class="navbtn" id="prev" aria-label="previous"></button>
+<button class="navbtn" id="next" aria-label="next"></button>
+<div id="dots"></div>
+<div id="rail"></div>
+<div id="hint">← → to move</div>
+
+<script>
+(function(){
+  var frames = [].slice.call(document.querySelectorAll('.frame'));
+  var total = frames.length;
+  var cur = 0;
+  var dotsWrap = document.getElementById('dots');
+  var railWrap = document.getElementById('rail');
+
+  frames.forEach(function(f,i){
+    var d = document.createElement('div');
+    d.className = 'dot' + (i===0?' on':'');
+    d.addEventListener('click', function(){ go(i); });
+    dotsWrap.appendChild(d);
+    var r = document.createElement('div');
+    r.className = 'rdot' + (i===0?' on':'');
+    r.textContent = i+1;
+    r.title = f.dataset.title || ('slide '+(i+1));
+    r.addEventListener('click', function(){ go(i); });
+    railWrap.appendChild(r);
+  });
+  var dots = [].slice.call(dotsWrap.children);
+  var rdots = [].slice.call(railWrap.children);
+
+  function pad(n){ return (n<10?'0':'')+n; }
+
+  // normalize the in-slide page number to the deck position (non-destructive, same-origin)
+  function fixPage(f,i){
+    try{
+      var doc = f.contentDocument; if(!doc) return;
+      var pg = doc.querySelector('#pageno');
+      if(pg) pg.innerHTML = '<i class="cur">'+pad(i+1)+'</i> / '+pad(total);
+    }catch(e){}
+  }
+  // forward arrow keys pressed inside an iframe back up to the deck
+  function forwardKeys(f){
+    try{ f.contentWindow.document.addEventListener('keydown', onKey); }catch(e){}
+  }
+
+  function go(i){
+    if(i<0) i=0; if(i>=total) i=total-1;
+    frames.forEach(function(f,j){ f.classList.toggle('active', j===i); });
+    dots.forEach(function(d,j){ d.classList.toggle('on', j===i); });
+    rdots.forEach(function(r,j){ r.classList.toggle('on', j===i); });
+    cur = i;
+    var f = frames[i];
+    if(f.tagName === 'IFRAME'){
+      if(!f.getAttribute('src') && f.dataset.src){
+        f.addEventListener('load', function(){ fixPage(f,i); forwardKeys(f); }, {once:true});
+        f.setAttribute('src', f.dataset.src);   // lazy-load on first view
+      } else {
+        fixPage(f,i);
+      }
+    }
+  }
+
+  function onKey(e){
+    if(e.key==='ArrowRight' || e.key==='PageDown' || e.key===' '){ e.preventDefault(); go(cur+1); }
+    else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+    else if(e.key==='Home'){ go(0); }
+    else if(e.key==='End'){ go(total-1); }
+  }
+  document.addEventListener('keydown', onKey);
+  document.getElementById('next').addEventListener('click', function(){ go(cur+1); });
+  document.getElementById('prev').addEventListener('click', function(){ go(cur-1); });
+
+  go(0);
+})();
+</script>
+</body>
+</html>

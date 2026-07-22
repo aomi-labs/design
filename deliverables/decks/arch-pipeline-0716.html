@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — architecture + pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* aomi design tokens — light theme · ink text · sky-blue + rosy-pink accents · lilac tints */
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef; --sommline:#efa6c5; --sommline2:#f6cbdd;
+  --lilac:#e3d8e6; --lilacline:#d3c2d8; --lilacink:#453a4e;
+  --ok:#2e9e6b; --oktint:#e4f3ec; --okline:#a8d8c0;
+  --sh-sm:0 1px 2px rgba(13,13,15,.04); --sh-md:0 4px 16px rgba(13,13,15,.06); --sh-lg:0 12px 40px rgba(13,13,15,.10);
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+/* ---------- scaled stage ---------- */
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+/* persistent chrome */
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+@keyframes forkpulse{0%,100%{box-shadow:0 0 0 0 rgba(82,136,194,0)}45%{box-shadow:0 0 0 5px rgba(82,136,194,.20)}}
+
+/* ============ LEFT · TX PIPELINE (labels far-left · rail + dots to their right) ============ */
+.pl{position:absolute;left:0;top:0;width:320px;height:720px;z-index:5}
+.pl-rail{position:absolute;left:243px;top:255px;width:2px;height:255px;
+  background:linear-gradient(180deg,var(--line2),var(--tintline) 55%,var(--line2))}
+.pstep{position:absolute;left:0;width:320px;height:40px}
+.pstep .dot{position:absolute;left:224px;top:0;width:40px;height:40px;border-radius:11px;
+  background:var(--panel);border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--sh-sm);z-index:3}
+.pstep .dot svg{width:19px;height:19px;color:var(--hl2)}
+.pstep.hot .dot{border-color:var(--hl);background:var(--tint);box-shadow:0 0 0 5px rgba(82,136,194,.12)}
+.pstep.hot .dot svg{color:var(--hl)}
+.pstep .info{position:absolute;left:24px;top:13px;width:184px;text-align:right}
+.pstep .n{font-family:var(--serif);font-weight:700;font-size:14px;color:var(--ink);line-height:1}
+.pstep .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.02em;color:var(--dim);line-height:1.5;margin-top:4px}
+.pstep .badge{display:inline-block;margin-top:6px;white-space:nowrap;
+  font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--sommtext);
+  border:1px solid var(--sommline2);background:var(--sommtint);border-radius:999px;padding:2px 7px}
+.pstep.sign .badge{color:var(--ok);border-color:var(--okline);background:var(--oktint)}
+/* floating tx dots down the pipeline (build → broadcast) */
+.pl-dot{position:absolute;left:240px;top:251px;width:8px;height:8px;border-radius:50%;
+  background:var(--hl2);box-shadow:0 0 9px 2px rgba(82,136,194,.5);z-index:6;opacity:0}
+.pl-dot{animation:pflow 4.2s var(--ease) infinite}
+.pl-dot.b{animation-delay:1.4s}
+.pl-dot.c{animation-delay:2.8s}
+@keyframes pflow{
+  0%{opacity:0;transform:translateY(0) scale(.6)}
+  7%{opacity:1;transform:translateY(0) scale(1)}
+  92%{opacity:1}
+  100%{opacity:0;transform:translateY(255px) scale(.6)}
+}
+
+/* ============ RIGHT · ARCHITECTURE (slide 4) ============ */
+#sarch .ahd{position:absolute;left:92px;top:96px;z-index:6}
+#sarch .a-scale{position:absolute;inset:0;transform:translate(300px,100px) scale(.70);transform-origin:0 0}
+/* tx round-trip · language IN (gold) → spin around target fork → tx OUT (green) → back to user */
+.tx-dot{position:absolute;top:0;left:0;width:12px;height:12px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,#ffe08a,#d9a72e);
+  box-shadow:0 0 0 3px rgba(217,167,46,.22),0 0 14px 3px rgba(217,167,46,.45);
+  offset-path:path('M462,180 L462,430 L900,430 L1000,430 A38,38 0 0 1 1000,354 A38,38 0 0 1 1000,430 L900,430 L462,430 L462,180');
+  offset-rotate:0deg;offset-anchor:center;opacity:0;z-index:7;
+  animation:txmove 6s linear infinite, txtint 6s linear infinite, txfade 6s linear infinite}
+.tx-dot.t2{animation-delay:-3s}
+@keyframes txmove{0%{offset-distance:0%}100%{offset-distance:100%}}
+@keyframes txtint{
+  0%,50%{background:radial-gradient(circle at 40% 35%,#ffe08a,#d9a72e);
+    box-shadow:0 0 0 3px rgba(217,167,46,.22),0 0 14px 3px rgba(217,167,46,.45)}
+  58%,100%{background:radial-gradient(circle at 40% 35%,#8ef0b8,#2e9e6b);
+    box-shadow:0 0 0 3px rgba(46,158,107,.22),0 0 14px 3px rgba(46,158,107,.45)}
+}
+@keyframes txfade{0%{opacity:0}4%{opacity:1}96%{opacity:1}100%{opacity:0}}
+#sarch .ahd .e{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl)}
+#sarch .ahd h2{font-family:var(--serif);font-weight:700;font-size:37px;margin-top:12px;letter-spacing:-.02em;line-height:1.05;color:var(--ink)}
+#sarch .ahd h2 .i{color:var(--hl)}
+#sarch .ahd .sub{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--mut);line-height:1.7;margin-top:16px}
+#sarch .ahd .sub b{color:var(--ink);font-weight:500}
+#sarch .ahd .sub b.hl{color:var(--hl)}
+#sarch .ahd .sub b.ok{color:var(--ok)}
+#sarch .a-svg{position:absolute;left:0;top:0;width:1280px;height:720px;z-index:4;pointer-events:none;overflow:visible}
+.a-box{position:absolute;border:1.4px solid var(--line2);border-radius:14px;background:var(--panel);z-index:2;box-shadow:var(--sh-sm)}
+.a-box .t{position:absolute;left:0;right:0;font-family:var(--serif);font-weight:700;color:var(--ink);text-align:center}
+.a-box .c{position:absolute;left:0;right:0;font-family:var(--mono);color:var(--mut);text-align:center}
+.a-emoji{position:absolute;z-index:5}
+.a-txt{position:absolute;font-family:var(--mono);color:var(--dim);z-index:5}
+.a-hatch{position:absolute;border:1.4px solid var(--lilacline);border-radius:12px;z-index:2;
+  background:repeating-linear-gradient(45deg,rgba(227,216,230,.85) 0 7px,rgba(246,243,247,.55) 7px 15px);
+  display:flex;align-items:center;justify-content:center}
+.a-hatch b{font-family:var(--serif);font-weight:700;color:var(--ink);font-size:16px}
+.a-band{position:absolute;background:var(--lilac);
+  border:1px solid var(--lilacline);border-radius:8px;display:flex;align-items:center;justify-content:center;z-index:3}
+.a-band span{font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--lilacink)}
+.a-tube{position:absolute;border:1.4px solid var(--line2);border-radius:11px;background:var(--bg2);z-index:1}
+.a-diamond{position:absolute;border:1.4px solid var(--line2);background:var(--panel);transform:rotate(45deg);
+  border-radius:9px;z-index:2;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm)}
+.a-diamond span{transform:rotate(-45deg);font-family:var(--mono);font-size:10px;color:var(--ink2);text-align:center;line-height:1.3}
+.a-diamond.hot{border-color:var(--sommline);background:var(--sommtint)}
+.a-diamond.hot span{color:var(--sommtext)}
+.a-model{position:absolute;border:1.4px solid var(--line2);border-radius:50%;background:var(--panel);z-index:2;
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);color:var(--ink2);box-shadow:var(--sh-sm)}
+.a-fork{position:absolute;border-radius:50%;background:radial-gradient(circle at 38% 32%,#eaf3fb,#aecbe8);
+  border:1px solid var(--hlsoft);color:#253a56;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:500;font-size:12px;z-index:3;animation:forkpulse 2.8s var(--ease) infinite}
+.a-forkbox{position:absolute;border:1.4px solid var(--tintline2);border-radius:20px;background:rgba(82,136,194,.04);z-index:2}
+.a-vlabel{position:absolute;font-family:var(--serif);font-weight:700;color:var(--mut);writing-mode:vertical-rl;letter-spacing:.01em;z-index:5}
+.a-cyl{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:linear-gradient(180deg,#aecbe8,#7facd6);border:1px solid var(--hl2);border-radius:50%/20px;
+  color:#1e3450;font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.05}
+.a-cyl::before{content:"";position:absolute;left:-1px;right:-1px;top:0;height:22px;border:1px solid var(--hl2);border-radius:50%;
+  background:#cfe1f3;z-index:-1}
+
+/* ============ ADDITIONAL FEATURES (bottom band) ============ */
+.feat{position:absolute;left:92px;top:602px;width:1096px;z-index:6}
+.feat .hd{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--hl)}
+.feat .cols{display:flex;gap:60px;margin-top:12px}
+.feat .col{flex:1}
+.feat .ft-t{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--ink);display:flex;align-items:center;gap:9px}
+.feat .ft-t .dt{width:8px;height:8px;border-radius:2px;background:var(--hl2);flex:none}
+.feat .col.b .ft-t .dt{background:var(--somm)}
+.feat .ft-d{font-family:var(--mono);font-size:9.5px;letter-spacing:.01em;line-height:1.68;color:var(--mut);margin-top:7px}
+.feat .ft-d b{color:var(--ink);font-weight:500}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <!-- chrome -->
+  <div class="chrome" id="brand">
+    <svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b><span class="tag">investor overview</span>
+  </div>
+  <div class="chrome" id="pageno"><i>core</i> · architecture</div>
+
+  <section class="slide active" id="sarch" data-title="Architecture + Pipeline">
+
+    <!-- ======== LEFT · tx pipeline (native vertical · horizontal labels) ======== -->
+    <div class="pl">
+      <div class="pl-rail"></div>
+
+      <!-- Build (top · center 112) -->
+      <div class="pstep" style="top:235px">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg></div>
+        <div class="info"><div class="n">Build</div><div class="k">tool composes the exact tx</div></div>
+      </div>
+
+      <!-- Simulate (center 284) -->
+      <div class="pstep hot" style="top:320px">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="info"><div class="n">Simulate</div><div class="k">prove the real outcome is safe</div><span class="badge">forked state · ~200ms</span></div>
+      </div>
+
+      <!-- Sign (center 456) -->
+      <div class="pstep sign" style="top:405px">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16.5" cy="14" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+        <div class="info"><div class="n">Sign</div><div class="k">you approve exact changes</div><span class="badge">AA bundler · your wallet</span></div>
+      </div>
+
+      <!-- Broadcast (bottom · center 628) -->
+      <div class="pstep" style="top:490px">
+        <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h11"/><path d="M11 7l6 5-6 5"/><rect x="17" y="4" width="3.5" height="16" rx="1"/></svg></div>
+        <div class="info"><div class="n">Broadcast</div><div class="k">confirmed onchain</div><span class="badge">AA + Solana Jito</span></div>
+      </div>
+
+      <!-- floating tx dots -->
+      <span class="pl-dot"></span>
+      <span class="pl-dot b"></span>
+      <span class="pl-dot c"></span>
+    </div>
+
+    <!-- ======== RIGHT · architecture (slide 4, verbatim) ======== -->
+    <div class="ahd">
+      <div class="e">System architecture</div>
+      <h2>One harness. Many apps. <span class="i">Every chain, forked.</span></h2>
+      <div class="sub">built directly on a <b class="hl">full node</b> · runtime forks every chain <b class="hl">~200ms</b> · <b class="ok">AA bundler + Solana Jito</b> broadcast built in</div>
+    </div>
+
+    <div class="a-scale">
+    <!-- users (centered over dispatch, x-center 462) -->
+    <span class="a-emoji" style="left:292px;top:148px;font-size:30px">🧑</span>
+    <span class="a-emoji" style="left:372px;top:148px;font-size:30px">🧑</span>
+    <span class="a-emoji" style="left:452px;top:148px;font-size:30px">🧑</span>
+    <span class="a-txt" style="left:522px;top:156px;font-size:22px;letter-spacing:.14em;color:var(--faint)">····</span>
+    <span class="a-emoji" style="left:596px;top:148px;font-size:30px">🧑</span>
+    <span class="a-txt" style="left:680px;top:150px;width:160px;font-size:11px;line-height:1.5">User-specific<br>context</span>
+    <span class="a-txt" style="left:302px;top:192px;font-size:15px;color:var(--faint)">↕</span>
+    <span class="a-txt" style="left:382px;top:192px;font-size:15px;color:var(--faint)">↕</span>
+    <span class="a-txt" style="left:462px;top:192px;font-size:15px;color:var(--faint)">↕</span>
+    <span class="a-txt" style="left:606px;top:192px;font-size:15px;color:var(--faint)">↕</span>
+
+    <!-- stateless dispatch -->
+    <div class="a-hatch" style="left:92px;top:222px;width:740px;height:40px"><b>Stateless Dispatch</b></div>
+
+    <!-- vertical channels (behind boxes) -->
+    <div class="a-tube" style="left:150px;top:340px;width:26px;height:180px"></div>
+    <div class="a-tube" style="left:224px;top:340px;width:26px;height:180px"></div>
+    <div class="a-tube" style="left:770px;top:340px;width:26px;height:180px"></div>
+
+    <!-- application -->
+    <div class="a-box" style="left:92px;top:278px;width:740px;height:74px">
+      <div class="t" style="top:12px;font-size:19px">Application</div>
+      <div class="c" style="top:44px;font-size:14px"><span style="color:var(--ink2)">[app1, app2, ..]</span>.start()</div>
+    </div>
+
+    <!-- runtime -->
+    <div class="a-box" style="left:92px;top:366px;width:740px;height:128px">
+      <div class="t" style="top:12px;font-size:19px">Runtime</div>
+      <div class="c" style="top:44px;font-size:13px">Scheduler.run()</div>
+    </div>
+    <span class="a-emoji" style="left:151px;top:400px;font-size:25px">🤖</span>
+    <span class="a-emoji" style="left:225px;top:400px;font-size:25px">🤖</span>
+    <span class="a-emoji" style="left:771px;top:400px;font-size:25px">🤖</span>
+    <div class="a-band" style="left:112px;top:456px;width:700px;height:26px"><span>Memory &amp; IPC</span></div>
+
+    <!-- tool scheduler + llm interface -->
+    <div class="a-box" style="left:92px;top:512px;width:330px;height:48px"><div class="t" style="top:14px;font-size:16px">Tool Scheduler</div></div>
+    <div class="a-box" style="left:502px;top:512px;width:330px;height:48px"><div class="t" style="top:14px;font-size:16px">LLM Interface</div></div>
+
+    <!-- tools · neat row, centers 152/262/372 @ y624 -->
+    <div class="a-diamond hot" style="left:114px;top:586px;width:76px;height:76px"><span>evm-<br>gateway</span></div>
+    <div class="a-diamond" style="left:224px;top:586px;width:76px;height:76px"><span>db-driver</span></div>
+    <div class="a-diamond" style="left:334px;top:586px;width:76px;height:76px"><span>web-search</span></div>
+
+    <!-- models · shared center line y620 -->
+    <div class="a-model" style="left:530px;top:572px;width:96px;height:96px;font-size:14px">gpt5</div>
+    <div class="a-model" style="left:646px;top:584px;width:72px;height:72px;font-size:11px">Opus4.5</div>
+    <div class="a-model" style="left:738px;top:590px;width:60px;height:60px;font-size:10px">kimi-k2</div>
+
+    <!-- forks infrastructure · per-chain color · spread out · no container -->
+    <div class="a-fork" style="left:969px;top:210px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#eaf6ff,#a9d6f5);border-color:#4a9fd8;color:#1c5a86">Arb</div>
+    <div class="a-fork" style="left:969px;top:284px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#e9efff,#9fb6ff);border-color:#3b6bf0;color:#26439c;animation-delay:.5s">Base</div>
+    <div class="a-fork" style="left:969px;top:358px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#ffecee,#ffa8b0);border-color:#f0455a;color:#b02334;animation-delay:1s">OP</div>
+    <div class="a-fork" style="left:969px;top:432px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#eeeffb,#b8c0ef);border-color:#6b7fe0;color:#3f4aa0;animation-delay:1.5s">Mainnet</div>
+    <div class="a-fork" style="left:969px;top:506px;width:62px;height:62px;background:linear-gradient(135deg,#e7d8ff,#cbf5e4);border-color:#9a5cf0;color:#6a2fb0;animation-delay:2s">solana</div>
+    <div class="a-vlabel" style="left:1118px;top:300px;font-size:18px">Forks Infrastructure</div>
+
+    <!-- full node -->
+    <div class="a-cyl" style="left:912px;top:592px;width:176px;height:100px">Full<br>Node</div>
+
+    <!-- connectors -->
+    <svg class="a-svg" viewBox="0 0 1280 720">
+      <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#5288c2"/></marker></defs>
+      <path d="M78,315 V624 H92" fill="none" stroke="#5288c2" stroke-width="1.4" stroke-dasharray="5 5" marker-end="url(#ah)"/>
+      <path d="M832,430 H958" fill="none" stroke="#7facd6" stroke-width="1.3" stroke-dasharray="4 5"/>
+      <path d="M1000,568 V592" fill="none" stroke="#7facd6" stroke-width="1.3" stroke-dasharray="4 5"/>
+    </svg>
+    <span class="a-txt" style="left:44px;top:400px;font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg);color:var(--dim)">application-define</span>
+    <span class="a-txt" style="left:838px;top:412px;font-size:9.5px;color:var(--hl)">forks ~200ms</span>
+
+    <!-- animated transaction flowing to the chain -->
+    <span class="tx-dot"></span>
+    <span class="tx-dot t2"></span>
+    </div>
+
+    <!-- additional features (bottom band) -->
+    <div class="feat">
+      <div class="hd">Additional features</div>
+      <div class="cols">
+        <div class="col a">
+          <div class="ft-t"><span class="dt"></span>Multi-threaded async execution</div>
+          <div class="ft-d">Agents run concurrent threads server-side, so work continues while you chat — <b>background trading</b> &amp; strategy bots, <b>limit / stop orders</b>, <b>copy-trading</b> a target wallet, scheduled <b>DCA</b> &amp; rebalances, and liquidation guards that fire on their own.</div>
+        </div>
+        <div class="col b">
+          <div class="ft-t"><span class="dt"></span>Access control</div>
+          <div class="ft-d">Provider-native key delegation — <b>Privy · Para</b> compatible — with machine auth solved: an agent signs only under a <b>scoped, revocable policy</b> (value caps, human-sync or autonomous). Keys never leave the user's own wallet.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div></div>
+
+<script>
+(function(){
+  // scale 1280x720 stage to fit viewport
+  var stage=document.getElementById('stage');
+  function fit(){
+    var s=Math.min(window.innerWidth/1280, window.innerHeight/720);
+    stage.style.transform='scale('+s+')';
+  }
+  window.addEventListener('resize',fit); fit();
+})();
+</script>
+</body>
+</html>

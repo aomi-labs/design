@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — the problem · unit economics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* aomi design tokens — light theme · ink text · sky-blue + rosy-pink accents · lilac tints */
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef; --sommline:#efa6c5; --sommline2:#f6cbdd;
+  --red:#dc2634;
+  --lilac:#e3d8e6; --lilacline:#d3c2d8; --lilacink:#453a4e;
+  --ok:#2e9e6b; --oktint:#e4f3ec; --okline:#a8d8c0;
+  --sh-sm:0 1px 2px rgba(13,13,15,.04); --sh-md:0 4px 16px rgba(13,13,15,.06); --sh-lg:0 12px 40px rgba(13,13,15,.10);
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+/* ---------- scaled stage ---------- */
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+/* persistent chrome */
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+/* ---------- slide ---------- */
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+.pad{position:absolute;inset:0;padding:104px 92px 92px}
+
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.04;color:var(--ink)}
+.i{color:var(--hl);font-style:normal}
+.co{color:var(--sommtext);font-style:normal}
+.ok{color:var(--ok);font-style:normal}
+
+/* reveal-on-active helpers */
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}
+.d4{animation-delay:.42s}.d5{animation-delay:.56s}.d6{animation-delay:.7s}.d7{animation-delay:.86s}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+.lead{font-family:var(--serif);font-weight:700;font-size:41px;line-height:1.06;letter-spacing:-.02em;max-width:15ch}
+#sprob .usecases{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--dim);margin-top:13px;white-space:nowrap}
+
+/* ============ SLIDE · PROBLEM ============ */
+#sprob .colhd{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
+#sprob .stackwrap{position:absolute;left:92px;top:250px;width:474px}
+#sprob .stack{transform-origin:50% 100%}
+.slide.active #sprob-stack{animation:teeter 5.5s ease-in-out infinite}
+@keyframes teeter{0%,100%{transform:rotate(.45deg)}50%{transform:rotate(-.55deg)}}
+.pblk{position:relative;background:var(--panel);border:1.4px solid var(--line2);border-radius:10px;
+  padding:9px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  box-shadow:var(--sh-md)}
+.pblk:nth-child(odd){rotate:-.7deg;margin-left:12px;margin-right:2px}
+.pblk:nth-child(even){rotate:.6deg;margin-left:0;margin-right:14px}
+.pblk .nm{font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+.pblk .sb{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:2px;white-space:nowrap}
+.pblk .mo{font-family:var(--mono);font-size:11px;color:var(--sommtext);white-space:nowrap}
+.pblk.hot{border-color:var(--sommline);background:#fdf2f7}
+#sprob .toll{margin-top:15px;font-family:var(--mono);font-size:10.5px;line-height:1.75;color:var(--mut);
+  border-top:1px dashed var(--line2);padding-top:12px}
+#sprob .toll b{color:var(--sommtext);font-weight:600}
+#sprob .vs{position:absolute;left:598px;top:398px;font-family:var(--serif);font-weight:700;font-style:italic;
+  font-size:22px;color:var(--faint)}
+#sprob .withA{position:absolute;left:660px;top:236px;width:492px}
+#sprob .flowrow{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+#sprob .minicube{width:54px;height:60px;flex:none;animation:floaty 4s ease-in-out infinite}
+#sprob .minicube svg{width:100%;height:100%;overflow:visible}
+#sprob .flowrow .arr{font-family:var(--mono);color:var(--dim);font-size:16px}
+#sprob .rtchip{display:flex;align-items:center;gap:9px;background:var(--tint);border:1px solid var(--tintline);
+  border-radius:12px;padding:11px 16px}
+#sprob .rtchip svg{width:16px;height:16px;color:var(--ink)}
+#sprob .rtchip b{font-family:var(--wm);font-weight:600;font-size:16px}
+#sprob .rtchip span{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--hl)}
+#sprob .cmp{margin-top:2px}
+#sprob .crow{margin-bottom:16px}
+#sprob .cl{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+#sprob .cnums{display:flex;align-items:baseline;gap:18px}
+#sprob .old{font-family:var(--serif);font-weight:700;font-size:39px;line-height:1;letter-spacing:-.02em;color:var(--red);
+  text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:var(--red);white-space:nowrap}
+#sprob .arr{font-family:var(--mono);font-size:22px;color:var(--faint);align-self:center}
+#sprob .new{font-family:var(--serif);font-weight:700;font-size:45px;line-height:1;letter-spacing:-.02em;color:var(--ok);white-space:nowrap}
+#sprob .cnums .u{font-family:var(--mono);font-size:12.5px;color:var(--dim);font-weight:400;margin-left:-10px}
+#sprob .pfoot{font-family:var(--mono);font-size:10.5px;color:var(--mut);line-height:1.7;margin-top:8px}
+#sprob .pfoot b{color:var(--hl);font-weight:500}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <!-- chrome -->
+  <div class="chrome" id="brand">
+    <svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b><span class="tag">investor overview</span>
+  </div>
+  <div class="chrome" id="pageno"><i class="cur">02</i> / <span id="ptotal">11</span></div>
+
+  <!-- ============ SLIDE · THE PROBLEM ============ -->
+  <section class="slide active" id="sprob" data-title="Problem">
+    <div class="pad">
+      <div class="eyebrow rise d1">The problem</div>
+      <h1 class="lead rise d2" style="margin-top:14px;max-width:33ch;font-size:34px">Enterprises struggle with AI on crypto rails. Building <span class="co">all of this</span>?</h1>
+      <div class="usecases rise d3">onchain agents · digital-asset automation · vault management · trading bots …</div>
+    </div>
+
+    <div class="stackwrap">
+      <div class="colhd rise d1" style="color:var(--sommtext)">without aomi · you build</div>
+      <div class="stack" id="sprob-stack">
+        <div class="pblk rise d6"><div><div class="nm">Surfaces</div><div class="sb">web widget · telegram · discord</div></div><span class="mo">+2 mo</span></div>
+        <div class="pblk rise d5"><div><div class="nm">Solana path</div><div class="sb">separate stack · jito bundles</div></div><span class="mo">+1.5 mo</span></div>
+        <div class="pblk rise d4"><div><div class="nm">AA bundler + paymaster</div><div class="sb">erc-4337 userOps · sponsorship</div></div><span class="mo">+1.5 mo</span></div>
+        <div class="pblk hot rise d3"><div><div class="nm">Simulation infra</div><div class="sb">full nodes × 6 chains · fresh forks</div></div><span class="mo">+3 mo</span></div>
+        <div class="pblk rise d2"><div><div class="nm">TX pipeline</div><div class="sb">nonce · gas · retries · batching</div></div><span class="mo">+2 mo</span></div>
+        <div class="pblk rise d1"><div><div class="nm">Agent orchestration</div><div class="sb">one instance / user · llm loop · sessions</div></div><span class="mo">+3 mo</span></div>
+      </div>
+      <div class="toll rise d7">≈ <b>4 crypto engineers · 9 months · ~$1M</b> before the first user signs<br>then <b>$100k+/yr infra</b> · <b>$20/user·mo</b> per dedicated instance · 1 FTE chasing hardforks — forever</div>
+    </div>
+
+    <div class="vs rise d4">vs</div>
+
+    <div class="withA">
+      <div class="colhd rise d3" style="color:var(--hl)">with aomi</div>
+      <div class="flowrow rise d4">
+        <div class="minicube"><svg viewBox="0 0 100 110">
+          <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/>
+          <polygon points="50,2 95,27 50,52 5,27" fill="#fbe4ef" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/>
+          <polygon points="50,52 95,27 95,79 50,104" fill="#fdf2f7" stroke="#df5d90" stroke-width="2.4" stroke-linejoin="round"/></svg></div>
+        <span class="arr">→</span>
+        <div class="rtchip"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg><b>aomi</b><span>hosted runtime</span></div>
+      </div>
+      <div class="cmp">
+        <div class="crow rise d5">
+          <div class="cl">build time</div>
+          <div class="cnums"><span class="old">9 months</span><span class="arr">→</span><span class="new">3 days</span></div>
+        </div>
+        <div class="crow rise d6">
+          <div class="cl">platform infra · per year</div>
+          <div class="cnums"><span class="old">$100k+/yr</span><span class="arr">→</span><span class="new">$0</span></div>
+        </div>
+        <div class="crow rise d6">
+          <div class="cl">per-user runtime · monthly</div>
+          <div class="cnums"><span class="old">$20</span><span class="arr">→</span><span class="new">~$0</span><span class="u">/ user</span></div>
+        </div>
+      </div>
+      <div class="pfoot rise d7">one runtime serves <b>thousands</b> of users · ≈ <b>250× cheaper</b><br>at 10k users that's <b>$2.4M/yr</b> of idle containers — <b>gone</b></div>
+    </div>
+  </section>
+
+</div></div>
+
+<script>
+(function(){
+  // scale 1280x720 stage to fit viewport
+  var stage=document.getElementById('stage');
+  function fit(){
+    var s=Math.min(window.innerWidth/1280, window.innerHeight/720);
+    stage.style.transform='scale('+s+')';
+  }
+  window.addEventListener('resize',fit); fit();
+})();
+</script>
+</body>
+</html>

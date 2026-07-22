@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — the runtime</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* aomi design tokens — light theme · ink text · sky-blue + rosy-pink accents · lilac tints */
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef; --sommline:#efa6c5; --sommline2:#f6cbdd;
+  --lilac:#e3d8e6; --lilacline:#d3c2d8; --lilacink:#453a4e;
+  --ok:#2e9e6b; --oktint:#e4f3ec; --okline:#a8d8c0;
+  --sh-sm:0 1px 2px rgba(13,13,15,.04); --sh-md:0 4px 16px rgba(13,13,15,.06); --sh-lg:0 12px 40px rgba(13,13,15,.10);
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+/* ---------- scaled stage ---------- */
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+/* persistent chrome */
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+/* ---------- title ---------- */
+#hd{position:absolute;left:92px;top:88px;z-index:10}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl)}
+.lead{font-family:var(--serif);font-weight:700;font-size:33px;line-height:1.05;letter-spacing:-.02em;color:var(--ink);margin-top:11px}
+.i{color:var(--hl);font-style:normal}
+
+/* ============ LEFT · CASE STUDY column ============ */
+.cs-head{position:absolute;left:92px;top:214px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.cs-head b{color:var(--ink);font-weight:700;letter-spacing:.1em}
+
+.api{position:absolute;left:92px;top:252px;font-family:var(--mono);font-size:14.5px;line-height:2.0;color:var(--ink3,#3f3f46)}
+.api .r{white-space:nowrap;color:var(--ink2)}
+.api .g{color:var(--ok);font-weight:500}
+.api .p{color:var(--sommtext);font-weight:500}
+.api .a{color:var(--dim);margin-left:6px}
+
+.slm{position:absolute;left:312px;top:242px;width:83px;height:91px}
+.slm svg{width:100%;height:100%;overflow:visible}
+.slm-lbl{position:absolute;left:240px;top:340px;width:228px;text-align:center;
+  font-family:var(--serif);font-weight:700;font-size:16px;line-height:1.15;color:var(--ink)}
+
+/* hosted runtime panel */
+.rt{position:absolute;left:92px;top:432px;width:376px;height:206px;
+  background:linear-gradient(180deg,rgba(82,136,194,.10),rgba(82,136,194,.02));
+  border:1px solid var(--tintline2);border-radius:20px}
+.rt .zl{position:absolute;top:14px;left:18px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--hl)}
+.rt .zt{position:absolute;top:28px;left:18px;display:flex;align-items:center;gap:7px;font-weight:600;font-size:15px}
+.rt .zt svg{width:15px;height:15px;color:var(--ink)}
+.rt .zt .wmk{font-family:var(--wm);font-weight:600}
+.rt .keys{position:absolute;right:16px;top:16px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;
+  color:var(--hl);border:1px solid var(--tintline2);border-radius:999px;padding:4px 10px;background:rgba(255,255,255,.7)}
+.rt .keys b{color:var(--ok);font-weight:700}
+.rt .cubes{position:absolute;left:24px;right:24px;bottom:26px;display:flex;gap:20px;justify-content:center}
+.cube{width:64px;height:72px;position:relative}
+.cube svg{width:100%;height:100%;overflow:visible}
+.cube .ctag{position:absolute;left:-10px;right:-10px;top:74px;text-align:center;font-family:var(--mono);
+  font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.cube.new .ctag{color:var(--sommtext)}
+
+/* ============ CENTER · browser widget ============ */
+.bcard{position:absolute;left:492px;top:214px;width:424px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh-lg)}
+.bbar{height:34px;background:#18181b;display:flex;align-items:center;gap:6px;padding:0 13px}
+.bbar .wd{width:8px;height:8px;border-radius:50%;background:#3f3f46}
+.bbar .u{font-family:var(--mono);font-size:11px;color:#b7b3c2;margin-left:auto;letter-spacing:.02em}
+.bbody{padding:15px 17px 16px;display:flex;flex-direction:column;gap:9px}
+.bch{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim);padding-bottom:10px;border-bottom:1px solid var(--panel2)}
+.bch b{color:var(--ink);font-weight:700}
+.bu{align-self:flex-end;max-width:88%;background:var(--panel2);border-radius:11px 11px 3px 11px;
+  padding:10px 13px;font-size:14px;line-height:1.45;color:var(--ink)}
+.btr{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:11.5px;
+  color:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:8px 11px;background:var(--bg2)}
+.btr i{font-style:normal;color:var(--ok)}
+.btr .rs{color:var(--dim)}
+.btx{border:1px solid var(--tintline);background:#eef5fb;border-radius:9px;padding:10px 12px;
+  font-family:var(--mono);font-size:11.5px;line-height:1.8;color:var(--ink2)}
+.btx .bt{color:var(--hl);font-weight:700}
+.btx .sim{color:var(--ok)}
+.brow{display:flex;align-items:center;justify-content:space-between;margin-top:3px}
+.signbtn{font-family:var(--sans);font-size:13.5px;font-weight:600;background:var(--ink);color:#fff;
+  border-radius:999px;padding:9px 18px}
+.runson{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.runson i{font-style:normal;color:var(--hl)}
+
+/* live-widget reveal animation */
+.rev{opacity:0;transform:translateY(9px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.rev.on{opacity:1;transform:none}
+.btr .lft{display:flex;align-items:center;gap:7px;min-width:0}
+.btr .stat{width:12px;height:12px;flex:none;display:inline-flex;align-items:center;justify-content:center}
+.btr .sp{width:11px;height:11px;border:1.6px solid var(--line2);border-top-color:var(--hl);border-radius:50%;animation:spin .8s linear infinite}
+.btr .ck{display:none;color:var(--ok);font-style:normal;font-size:12px;line-height:1}
+.btr.done .sp{display:none}
+.btr.done .ck{display:inline}
+@keyframes spin{to{transform:rotate(360deg)}}
+.signbtn{position:relative;overflow:visible;transition:transform .2s var(--ease),background .35s var(--ease),color .35s var(--ease)}
+.signbtn .ring{position:absolute;inset:-1px;border-radius:999px;border:2px solid var(--ok);opacity:0;pointer-events:none}
+.signbtn.press{transform:scale(.93)}
+.signbtn.press .ring{animation:sbring .55s var(--ease)}
+.signbtn.signed{background:var(--oktint);color:var(--ok)}
+@keyframes sbring{0%{opacity:.65;transform:scale(1)}100%{opacity:0;transform:scale(1.3)}}
+
+/* ============ surface switcher · center views (deck slide 9 mocks) ============ */
+.cview{position:absolute;display:none}
+.cview.show{display:block;animation:cfade .45s var(--ease)}
+@keyframes cfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.cscale{transform:scale(.76);transform-origin:top left}
+.appwin{position:relative;width:604px;height:378px;border-radius:14px;overflow:hidden;
+  box-shadow:var(--sh-lg);border:1px solid var(--line);display:flex;background:var(--panel);text-align:left}
+
+/* --- telegram mock (desktop · light) --- */
+.tgmock .side{width:168px;background:#fff;border-right:1px solid #e7ebee;display:flex;flex-direction:column;flex:none}
+.tgmock .srch{margin:8px;height:24px;border-radius:999px;background:#f1f4f7;display:flex;align-items:center;
+  padding:0 10px;font-size:9.5px;color:#9aa7b1}
+.tgmock .it{display:flex;align-items:center;gap:8px;padding:7px 10px}
+.tgmock .it .av{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:12px;font-weight:700}
+.tgmock .it .nm{font-size:10px;font-weight:600;color:#1a2026}
+.tgmock .it .pv{font-size:8.5px;color:#95a3ad;margin-top:1px;white-space:nowrap;overflow:hidden;max-width:104px;text-overflow:ellipsis}
+.tgmock .it.on{background:#3390ec}
+.tgmock .it.on .nm,.tgmock .it.on .pv{color:#fff}
+.tgmock .it.on .pv{color:rgba(255,255,255,.75)}
+.tgmock .main{flex:1;display:flex;flex-direction:column;background:#dfeaf2}
+.tgmock .head{height:34px;background:#fff;border-bottom:1px solid #e7ebee;display:flex;align-items:center;gap:7px;padding:0 12px}
+.tgmock .head .av{width:22px;height:22px;border-radius:50%;background:var(--somm);color:#fff;display:flex;
+  align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.tgmock .head b{font-size:10.5px;color:#1a2026}
+.tgmock .head .bot{font-size:8.5px;color:#3390ec}
+.tgmock .head .dots{margin-left:auto;color:#9aa7b1;font-size:12px;letter-spacing:2px}
+.tgmock .chat{flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.tgmock .bub{max-width:82%;border-radius:12px;padding:6px 9px;font-size:10px;line-height:1.45;color:#1a2026;position:relative}
+.tgmock .bub .tm{display:block;text-align:right;font-size:7.5px;color:#93a3b0;margin-top:2px}
+.tgmock .bub.out{align-self:flex-end;background:#e3fee0;border-bottom-right-radius:3px}
+.tgmock .bub.out .tm{color:#4fae4e}
+.tgmock .bub.in{align-self:flex-start;background:#fff;border-bottom-left-radius:3px}
+.tgmock .trow{font-family:var(--mono);font-size:8.5px;color:#3f3f46;margin:1px 0}
+.tgmock .trow i{font-style:normal;color:#2e9e6b}
+.tgmock .plan{background:#f2f7fb;border-left:2px solid #3390ec;border-radius:4px;padding:5px 7px;margin:5px 0 3px;
+  font-family:var(--mono);font-size:8.5px;line-height:1.6;color:#3f3f46}
+.tgmock .plan .bt{color:#3390ec;font-weight:700}
+.tgmock .sim{font-family:var(--mono);font-size:8.5px;color:#2e9e6b}
+.tgmock .ikb{align-self:flex-start;width:82%;background:rgba(255,255,255,.92);border-radius:8px;text-align:center;
+  padding:6px;font-size:9.5px;font-weight:600;color:#3390ec;box-shadow:0 1px 2px rgba(16,35,47,.08)}
+.tgmock .inp{height:34px;background:#fff;border-top:1px solid #e7ebee;display:flex;align-items:center;gap:8px;
+  padding:0 12px;font-size:10px;color:#9aa7b1}
+.tgmock .inp .ic{margin-left:auto;letter-spacing:4px;font-size:11px}
+
+/* --- discord mock (dark) --- */
+.dcmock{background:#313338;border-color:#1e1f22}
+.dcmock .rail{width:44px;background:#1e1f22;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding-top:10px;flex:none}
+.dcmock .srv{width:28px;height:28px;border-radius:50%;background:#313338;display:flex;align-items:center;
+  justify-content:center;font-size:10px;color:#dbdee1;position:relative}
+.dcmock .srv.on{border-radius:9px;background:var(--somm);color:#fff;font-weight:700}
+.dcmock .srv.on::before{content:"";position:absolute;left:-8px;top:6px;width:3px;height:16px;border-radius:2px;background:#fff}
+.dcmock .chans{width:136px;background:#2b2d31;flex:none;display:flex;flex-direction:column}
+.dcmock .sname{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;
+  font-size:10.5px;font-weight:700;color:#f2f3f5;border-bottom:1px solid #1f2124}
+.dcmock .sec{font-size:7.5px;letter-spacing:.06em;color:#949ba4;padding:10px 10px 3px;text-transform:uppercase}
+.dcmock .chn{display:flex;align-items:center;gap:5px;margin:1px 6px;padding:3px 6px;border-radius:4px;
+  font-size:10px;color:#949ba4}
+.dcmock .chn i{font-style:normal;color:#80848e}
+.dcmock .chn.on{background:#404249;color:#fff}
+.dcmock .dmain{flex:1;display:flex;flex-direction:column;min-width:0}
+.dcmock .dhead{height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;border-bottom:1px solid #26282c;
+  font-size:10.5px;color:#f2f3f5;font-weight:700}
+.dcmock .dhead i{font-style:normal;color:#80848e;font-weight:400}
+.dcmock .dhead .topic{font-size:8.5px;color:#949ba4;font-weight:400;border-left:1px solid #3f4147;padding-left:8px;margin-left:2px}
+.dcmock .dchat{flex:1;padding:8px 12px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.dcmock .grp{display:flex;gap:8px}
+.dcmock .grp .av{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#fff;font-weight:700}
+.dcmock .grp .nm{font-size:10px;font-weight:600}
+.dcmock .grp .ts{font-size:7.5px;color:#949ba4;margin-left:5px;font-weight:400}
+.dcmock .grp .tx{font-size:10px;color:#dbdee1;margin-top:1px;line-height:1.45}
+.dcmock .app{display:inline-flex;align-items:center;background:#5865f2;color:#fff;font-size:6.5px;font-weight:700;
+  border-radius:3px;padding:1px 4px;margin-left:4px;letter-spacing:.04em;vertical-align:1px}
+.dcmock .emb{max-width:330px;background:#2b2d31;border-left:3px solid var(--somm);border-radius:4px;
+  padding:7px 9px;margin-top:5px}
+.dcmock .emb .et{font-size:9px;font-weight:700;color:#9db4d8;margin-bottom:3px}
+.dcmock .emb .el{font-family:var(--mono);font-size:8.5px;line-height:1.6;color:#b5bac1}
+.dcmock .emb .es{font-family:var(--mono);font-size:8.5px;color:#3fbc80;margin-top:2px}
+.dcmock .btns{display:flex;gap:6px;margin-top:7px}
+.dcmock .dbtn{font-size:8.5px;font-weight:600;color:#fff;background:#5865f2;border-radius:3px;padding:4px 10px}
+.dcmock .dbtn.sec{background:#4e5058}
+.dcmock .dinp{margin:0 12px 10px;height:32px;background:#383a40;border-radius:8px;display:flex;align-items:center;
+  gap:8px;padding:0 10px;font-size:9.5px;color:#6d7178}
+.dcmock .dinp .plus{width:16px;height:16px;border-radius:50%;background:#b5bac1;color:#383a40;display:flex;
+  align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}
+
+/* --- slack mock (light · aubergine) --- */
+.slmock .sside{width:150px;background:#4a154b;flex:none;display:flex;flex-direction:column;color:#cfc3cf}
+.slmock .wsp{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;
+  border-bottom:1px solid #5d2c5d;color:#fff;font-weight:800;font-size:11.5px}
+.slmock .wsp .pen{width:18px;height:18px;border-radius:50%;background:#fff;color:#4a154b;display:flex;
+  align-items:center;justify-content:center;font-size:9px}
+.slmock .ssec{font-size:8.5px;color:#a889a8;padding:10px 10px 3px}
+.slmock .sch{display:flex;align-items:center;gap:5px;padding:3px 10px;font-size:10px}
+.slmock .sch i{font-style:normal;opacity:.7}
+.slmock .sch.on{background:#1164a3;color:#fff}
+.slmock .sch .pr{width:7px;height:7px;border-radius:2px;background:#2eb67d;flex:none;margin-right:1px}
+.slmock .smain{flex:1;display:flex;flex-direction:column;background:#fff;min-width:0}
+.slmock .shead{height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid #e2e2e2}
+.slmock .shead b{font-size:11px;color:#1d1c1d}
+.slmock .shead span{font-size:9px;color:#616061}
+.slmock .schat{flex:1;padding:8px 12px;display:flex;flex-direction:column;gap:9px;overflow:hidden}
+.slmock .smsg{display:flex;gap:8px}
+.slmock .smsg .av{width:26px;height:26px;border-radius:6px;flex:none;display:flex;align-items:center;
+  justify-content:center;font-size:10px;color:#fff;font-weight:700}
+.slmock .smsg .nm{font-size:10px;font-weight:800;color:#1d1c1d}
+.slmock .smsg .ts{font-size:7.5px;color:#616061;margin-left:5px}
+.slmock .smsg .tx{font-size:10px;color:#1d1c1d;margin-top:1px;line-height:1.45}
+.slmock .sapp{display:inline-block;background:#e8e8e8;color:#616061;font-size:6.5px;font-weight:700;
+  border-radius:2px;padding:1px 3px;margin-left:4px;vertical-align:1px}
+.slmock .att{max-width:330px;border-left:3px solid #416cac;padding:4px 0 4px 9px;margin-top:5px}
+.slmock .att .et{font-size:9px;font-weight:700;color:#416cac;margin-bottom:2px}
+.slmock .att .el{font-family:var(--mono);font-size:8.5px;line-height:1.6;color:#3f3f46}
+.slmock .att .es{font-family:var(--mono);font-size:8.5px;color:#007a5a;margin-top:2px}
+.slmock .sbtns{display:flex;gap:6px;margin-top:7px}
+.slmock .sbtn{font-size:8.5px;font-weight:700;color:#fff;background:#007a5a;border-radius:4px;padding:4px 10px}
+.slmock .sbtn.sec{background:#fff;color:#1d1c1d;border:1px solid #bbb}
+.slmock .sinp{margin:0 12px 10px;height:32px;border:1px solid #c9c9c9;border-radius:8px;display:flex;
+  align-items:center;gap:8px;padding:0 10px;font-size:10px;color:#616061}
+.slmock .sinp .ic{margin-left:auto;font-size:9px;letter-spacing:3px;color:#616061}
+
+/* ============ RIGHT · product surfaces ============ */
+.surf-head{position:absolute;right:60px;top:220px;width:200px;font-family:var(--mono);font-size:13px;
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);line-height:1.45}
+.surf{position:absolute;right:60px;top:298px;width:200px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.surf-row{display:flex;align-items:center;width:100%}
+.surf-row .lead-in{width:20px;border-top:1.4px dashed var(--line2);flex:none}
+.chip{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;color:var(--ink);
+  background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 15px;box-shadow:var(--sh-sm);white-space:nowrap}
+.chip .d{width:8px;height:8px;border-radius:50%;flex:none;background:var(--hl2)}
+.chip.on{border:1.4px solid var(--somm);color:var(--sommtext);box-shadow:0 0 0 3px var(--sommtint)}
+.surf-row.on .lead-in{border-top-color:var(--sommline)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <!-- chrome -->
+  <div class="chrome" id="brand">
+    <svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b><span class="tag">investor overview</span>
+  </div>
+  <div class="chrome" id="pageno"><i>product</i> · runtime</div>
+
+  <!-- ============ TITLE (kept) ============ -->
+  <div id="hd">
+    <div class="eyebrow">The product</div>
+    <h1 class="lead">A hosted runtime you <span class="i">build on</span>.</h1>
+  </div>
+
+  <!-- ============ LEFT · case study ============ -->
+  <div class="cs-head">Case study · <b>Somm Finance</b></div>
+
+  <div class="api">
+    <div class="r"><span class="g">GET</span> /idle_assets</div>
+    <div class="r"><span class="g">GET</span> /risk_snapshot</div>
+    <div class="r"><span class="p">POST</span> /assess-position <span class="a">→</span></div>
+    <div class="r"><span class="g">GET</span> /credit-balance</div>
+    <div class="r"><span class="p">POST</span> /propose-intent</div>
+  </div>
+
+  <div class="slm"><svg viewBox="0 0 100 110">
+    <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#09090b" stroke-width="2.4" stroke-linejoin="round"/>
+    <polygon points="50,2 95,27 50,52 5,27" fill="#f4f4f5" stroke="#09090b" stroke-width="2.4" stroke-linejoin="round"/>
+    <polygon points="50,52 95,27 95,79 50,104" fill="#fafafa" stroke="#09090b" stroke-width="2.4" stroke-linejoin="round"/>
+    <g transform="translate(17,56)">
+      <circle cx="0" cy="0" r="4.1" fill="#df5d90"/><circle cx="10" cy="0" r="4.1" fill="#df5d90"/><circle cx="20" cy="0" r="4.1" fill="#df5d90"/>
+      <circle cx="0" cy="10" r="4.1" fill="#df5d90"/><circle cx="10" cy="10" r="4.1" fill="#df5d90"/><circle cx="20" cy="10" r="4.1" fill="#df5d90"/>
+      <circle cx="0" cy="20" r="4.1" fill="#df5d90"/><circle cx="10" cy="20" r="4.1" fill="#df5d90"/><circle cx="20" cy="20" r="4.1" fill="#df5d90"/>
+    </g>
+  </svg></div>
+  <div class="slm-lbl">Somm Liquidity<br>Manager</div>
+
+  <!-- hosted runtime panel -->
+  <div class="rt">
+    <span class="zl">Aomi</span>
+    <div class="zt"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg><span class="wmk">aomi</span> · Hosted Runtime</div>
+    <span class="keys">KEYS: <b>0</b></span>
+    <div class="cubes">
+      <div class="cube"><svg viewBox="0 0 100 110">
+        <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/>
+        <polygon points="50,2 95,27 50,52 5,27" fill="#e2eef8" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/>
+        <polygon points="50,52 95,27 95,79 50,104" fill="#f1f7fc" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/></svg>
+        <span class="ctag">kuroko</span></div>
+      <div class="cube"><svg viewBox="0 0 100 110">
+        <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#ffffff" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/>
+        <polygon points="50,2 95,27 50,52 5,27" fill="#e2eef8" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/>
+        <polygon points="50,52 95,27 95,79 50,104" fill="#f1f7fc" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/></svg>
+        <span class="ctag">orca</span></div>
+      <div class="cube new"><svg viewBox="0 0 100 110">
+        <polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="none" stroke="#efa6c5" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"/>
+        <polyline points="5,27 50,52 95,27" fill="none" stroke="#efa6c5" stroke-width="2" stroke-dasharray="6 5"/>
+        <line x1="50" y1="52" x2="50" y2="104" stroke="#efa6c5" stroke-width="2" stroke-dasharray="6 5"/></svg>
+        <span class="ctag">+ new</span></div>
+    </div>
+  </div>
+
+  <!-- ============ CENTER · live widget (Somm Frontend / web) ============ -->
+  <div class="bcard cview show" id="v-web">
+    <div class="bbar"><span class="wd"></span><span class="wd"></span><span class="wd"></span><span class="u">somm.finance</span></div>
+    <div class="bbody">
+      <div class="bch"><b>Somm Assistant</b> · powered by aomi</div>
+      <div class="bu rev" id="m-bu">Rebalance my liquidity from EtherFi to Morpho</div>
+      <div class="btr rev" id="m-tr1"><span class="lft"><span class="stat"><span class="sp"></span><span class="ck">✓</span></span>querying your positions</span><span class="rs">2,400 weETH</span></div>
+      <div class="btr rev" id="m-tr2"><span class="lft"><span class="stat"><span class="sp"></span><span class="ck">✓</span></span>risk check</span><span class="rs">band A · +1.9%</span></div>
+      <div class="btx rev" id="m-btx">
+        <div class="bt">building transaction · aomi core pipeline</div>
+        <div>→ withdraw · etherfi · 2,400 weETH</div>
+        <div>→ approve · weETH → morpho blue</div>
+        <div>→ supply · morpho @ 91.2% util</div>
+        <div class="sim">batched → 1 signature · SIMULATED ✓</div>
+      </div>
+      <div class="brow rev" id="m-brow">
+        <span class="signbtn" id="signBtn"><span class="lbl">Approve &amp; Sign</span><span class="ring"></span></span>
+        <span class="runson">⌘ runs on <i>aomi</i></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CENTER · Telegram surface ============ -->
+  <div class="cview" id="v-tg" style="left:490px;top:308px"><div class="cscale">
+    <div class="appwin tgmock">
+      <div class="side">
+        <div class="srch">🔍&nbsp; Search</div>
+        <div class="it on"><span class="av" style="background:#df5d90">S</span><div><div class="nm">Somm Assistant</div><div class="pv">batched → 1 signature · SIM…</div></div></div>
+        <div class="it"><span class="av" style="background:#6faae2">M</span><div><div class="nm">Morpho Updates</div><div class="pv">rates digest — band A 4.1%</div></div></div>
+        <div class="it"><span class="av" style="background:#7bc862">D</span><div><div class="nm">DeFi News</div><div class="pv">weekly wrap: L2 fees at ath…</div></div></div>
+        <div class="it"><span class="av" style="background:#a695e7">A</span><div><div class="nm">Alice</div><div class="pv">did you see the somm bot??</div></div></div>
+      </div>
+      <div class="main">
+        <div class="head"><span class="av">S</span><b>Somm Assistant</b><span class="bot">bot</span><span class="dots">⋮</span></div>
+        <div class="chat">
+          <div class="bub out">Rebalance my liquidity from EtherFi to Morpho<span class="tm">09:41 ✓✓</span></div>
+          <div class="bub in">
+            <div class="trow"><i>✓</i> querying your positions — 2,400 weETH · etherfi</div>
+            <div class="trow"><i>✓</i> risk check — morpho band A · +1.9%</div>
+            <div class="plan"><span class="bt">building transaction · aomi core pipeline</span><br>→ withdraw · etherfi · 2,400 weETH<br>→ approve · weETH → morpho blue<br>→ supply · morpho @ 91.2% util</div>
+            <div class="sim">batched → 1 signature · SIMULATED ✓</div>
+            <span class="tm">09:41</span>
+          </div>
+          <div class="ikb">⌘ Approve &amp; Sign</div>
+        </div>
+        <div class="inp">Message<span class="ic">📎 🎤</span></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- ============ CENTER · Discord surface ============ -->
+  <div class="cview" id="v-dc" style="left:490px;top:308px"><div class="cscale">
+    <div class="appwin dcmock">
+      <div class="rail">
+        <div class="srv on">S</div>
+        <div class="srv">⌂</div>
+        <div class="srv">+</div>
+      </div>
+      <div class="chans">
+        <div class="sname">Somm <span style="font-weight:400;color:#949ba4">⌄</span></div>
+        <div class="sec">Text channels</div>
+        <div class="chn"><i>#</i> general</div>
+        <div class="chn on"><i>#</i> somm-assistant</div>
+        <div class="chn"><i>#</i> governance</div>
+        <div class="chn"><i>#</i> support</div>
+      </div>
+      <div class="dmain">
+        <div class="dhead"><i>#</i> somm-assistant <span class="topic">aomi-powered treasury agent</span></div>
+        <div class="dchat">
+          <div class="grp">
+            <span class="av" style="background:#5865f2">C</span>
+            <div><span class="nm" style="color:#e77ba6">cecilia</span><span class="ts">Today at 9:41 AM</span>
+              <div class="tx">Rebalance my liquidity from EtherFi to Morpho</div></div>
+          </div>
+          <div class="grp">
+            <span class="av" style="background:#df5d90">S</span>
+            <div><span class="nm" style="color:#9db4d8">Somm Assistant</span><span class="app">✓ APP</span><span class="ts">Today at 9:41 AM</span>
+              <div class="tx">✓ positions — 2,400 weETH · etherfi&nbsp;&nbsp;✓ risk — morpho band A · +1.9%</div>
+              <div class="emb">
+                <div class="et">building transaction · aomi core pipeline</div>
+                <div class="el">→ withdraw · etherfi · 2,400 weETH<br>→ approve · weETH → morpho blue<br>→ supply · morpho @ 91.2% util</div>
+                <div class="es">batched → 1 signature · SIMULATED ✓</div>
+                <div class="btns"><span class="dbtn">Approve &amp; Sign</span><span class="dbtn sec">Details</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dinp"><span class="plus">+</span>Message #somm-assistant</div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- ============ CENTER · Slack surface ============ -->
+  <div class="cview" id="v-sl" style="left:490px;top:308px"><div class="cscale">
+    <div class="appwin slmock">
+      <div class="sside">
+        <div class="wsp">Somm ⌄ <span class="pen">✎</span></div>
+        <div class="ssec">Channels</div>
+        <div class="sch"><i>#</i> treasury</div>
+        <div class="sch on"><i>#</i> somm-assistant</div>
+        <div class="sch"><i>#</i> general</div>
+        <div class="ssec">Apps</div>
+        <div class="sch"><span class="pr"></span> Somm Assistant</div>
+      </div>
+      <div class="smain">
+        <div class="shead"><b># somm-assistant</b><span>☆</span><span>24 members</span></div>
+        <div class="schat">
+          <div class="smsg">
+            <span class="av" style="background:#416cac">C</span>
+            <div><span class="nm">cecilia</span><span class="ts">9:41 AM</span>
+              <div class="tx">Rebalance my liquidity from EtherFi to Morpho</div></div>
+          </div>
+          <div class="smsg">
+            <span class="av" style="background:#df5d90">S</span>
+            <div><span class="nm">Somm Assistant</span><span class="sapp">APP</span><span class="ts">9:41 AM</span>
+              <div class="tx">✓ positions — 2,400 weETH · etherfi&nbsp;&nbsp;✓ risk — morpho band A · +1.9%</div>
+              <div class="att">
+                <div class="et">building transaction · aomi core pipeline</div>
+                <div class="el">→ withdraw · etherfi · 2,400 weETH<br>→ approve · weETH → morpho blue<br>→ supply · morpho @ 91.2% util</div>
+                <div class="es">batched → 1 signature · SIMULATED ✓</div>
+                <div class="sbtns"><span class="sbtn">Approve &amp; Sign</span><span class="sbtn sec">Cancel</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sinp">Message #somm-assistant<span class="ic">Aa&nbsp; @&nbsp; ☺</span></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- ============ RIGHT · product surfaces ============ -->
+  <div class="surf-head">Multiple product surfaces</div>
+  <div class="surf">
+    <div class="surf-row on" id="r-web"><span class="lead-in"></span><span class="chip on" id="c-web"><span class="d" style="background:#df5d90"></span>Somm Frontend</span></div>
+    <div class="surf-row" id="r-tg"><span class="lead-in"></span><span class="chip" id="c-tg"><span class="d" style="background:#3390ec"></span>Telegram</span></div>
+    <div class="surf-row" id="r-dc"><span class="lead-in"></span><span class="chip" id="c-dc"><span class="d" style="background:#5865f2"></span>Discord</span></div>
+    <div class="surf-row" id="r-sl"><span class="lead-in"></span><span class="chip" id="c-sl"><span class="d" style="background:#2eb67d"></span>Slack</span></div>
+  </div>
+
+</div></div>
+
+<script>
+(function(){
+  // scale 1280x720 stage to fit viewport
+  var stage=document.getElementById('stage');
+  function fit(){
+    var s=Math.min(window.innerWidth/1280, window.innerHeight/720);
+    stage.style.transform='scale('+s+')';
+  }
+  window.addEventListener('resize',fit); fit();
+})();
+
+/* live-widget conversation player — reveals the chat, then "clicks" Approve (turns green) */
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var signBtn=$('#signBtn'), signLbl=signBtn&&signBtn.querySelector('.lbl');
+  var revs=['#m-bu','#m-tr1','#m-tr2','#m-btx','#m-brow'];
+  var SURF=['web','tg','dc','sl'];
+  var timers=[];
+  function setSurface(k){
+    SURF.forEach(function(x){
+      var v=document.getElementById('v-'+x); if(v) v.classList.toggle('show', x===k);
+      var c=document.getElementById('c-'+x); if(c) c.classList.toggle('on', x===k);
+      var r=document.getElementById('r-'+x); if(r) r.classList.toggle('on', x===k);
+    });
+  }
+  var seq=[
+    // — beat A · Somm Frontend (web): the conversation plays, Approve is clicked —
+    [ 300, function(){ $('#m-bu').classList.add('on'); }],
+    [1050, function(){ $('#m-tr1').classList.add('on'); }],
+    [1950, function(){ $('#m-tr1').classList.add('done'); }],
+    [2300, function(){ $('#m-tr2').classList.add('on'); }],
+    [3200, function(){ $('#m-tr2').classList.add('done'); }],
+    [3700, function(){ $('#m-btx').classList.add('on'); }],
+    [4600, function(){ $('#m-brow').classList.add('on'); }],
+    [5600, function(){ signBtn.classList.add('press'); }],
+    [5950, function(){ signBtn.classList.remove('press'); signBtn.classList.add('signed'); signLbl.textContent='✓ Signed'; }],
+    // — beat B · enumerate the other surfaces, swapping the center window —
+    [ 7600, function(){ setSurface('tg'); }],
+    [ 9800, function(){ setSurface('dc'); }],
+    [12000, function(){ setSurface('sl'); }]
+  ];
+  var LOOP=14400;
+  function reset(){
+    timers.forEach(clearTimeout); timers=[];
+    revs.forEach(function(s){ $(s).classList.remove('on'); });
+    $('#m-tr1').classList.remove('done'); $('#m-tr2').classList.remove('done');
+    signBtn.classList.remove('press','signed'); signLbl.textContent='Approve & Sign';
+    setSurface('web');
+  }
+  function run(){ reset(); seq.forEach(function(st){ timers.push(setTimeout(st[1], st[0])); }); }
+  if(reduce){
+    setSurface('web');
+    revs.forEach(function(s){ $(s).classList.add('on'); });
+    $('#m-tr1').classList.add('done'); $('#m-tr2').classList.add('done');
+  } else {
+    run(); setInterval(run, LOOP);
+  }
+})();
+</script>
+</body>
+</html>

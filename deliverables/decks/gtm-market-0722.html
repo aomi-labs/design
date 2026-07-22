@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — go-to-market · TAM / SAM / SOM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* aomi design tokens — light theme · ink text · sky-blue + rosy-pink accents · lilac tints */
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef; --sommline:#efa6c5; --sommline2:#f6cbdd;
+  --sommsoft:#f3b9d1;
+  --ok:#2e9e6b; --orange:#e8853b;
+  --sh-sm:0 1px 2px rgba(13,13,15,.04); --sh-md:0 4px 16px rgba(13,13,15,.06); --sh-lg:0 12px 40px rgba(13,13,15,.10);
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;flex-shrink:0;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+.pad{position:absolute;inset:0;padding:80px 64px 44px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl)}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.04;color:var(--ink)}
+.i{color:var(--hl);font-style:normal}
+.lead{font-family:var(--serif);font-weight:700;font-size:30px;line-height:1.06;letter-spacing:-.02em}
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.05s}.d2{animation-delay:.13s}.d3{animation-delay:.22s}.d4{animation-delay:.32s}
+
+/* ============ GTM SLIDE ============ */
+#gtm .tabs{display:flex;gap:10px;margin-top:16px}
+#gtm .tab{display:flex;flex-direction:column;gap:1px;text-align:left;min-width:148px;padding:7px 12px;
+  border:1px solid var(--line2);border-radius:11px;background:var(--panel);cursor:pointer;
+  font-family:var(--sans);box-shadow:var(--sh-sm);
+  transition:border-color .4s var(--ease),background .4s var(--ease),color .4s var(--ease)}
+#gtm .tab:hover{border-color:var(--tintline)}
+#gtm .tab .tn{font-weight:600;font-size:12.5px;color:var(--ink)}
+#gtm .tab .tsom{font-family:var(--mono);font-size:9px;color:var(--dim)}
+#gtm .tab.on{background:var(--ink);border-color:var(--ink)}
+#gtm .tab.on .tn{color:#fff}
+#gtm .tab.on .tsom{color:rgba(255,255,255,.62)}
+
+#gtm .thesis{font-family:var(--sans);font-size:17.5px;font-weight:500;line-height:1.42;color:var(--ink);
+  margin-top:18px;max-width:118ch;min-height:50px}
+#gtm .thesis .em{color:var(--sommtext)}
+#gtm .thesis.fx{animation:thfade .5s var(--ease)}
+@keyframes thfade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+#gtm .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:34px;margin-top:20px;align-items:start}
+#gtm .ct{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+
+/* funnel card */
+#gtm .fcard{background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:20px 22px}
+#gtm .funnel{display:flex;flex-direction:column;gap:16px}
+#gtm .frow{display:grid;grid-template-columns:288px 1fr;gap:16px;align-items:center}
+#gtm .ftrack{display:flex}
+#gtm .fbar{height:46px;min-width:52px;width:52px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;font-weight:600;transition:width .7s var(--ease)}
+#gtm .fbar.tam{background:#e6e6e9;color:var(--ink2)}
+#gtm .fbar.sam{background:var(--tintline);color:#1e3450}
+#gtm .fbar.som{background:var(--somm);color:#fff}
+#gtm .fv b{font-family:var(--serif);font-weight:700;font-size:27px;letter-spacing:-.01em;display:block;line-height:1.05}
+#gtm .fv small{font-family:var(--mono);font-size:10px;color:var(--dim);line-height:1.45;display:block;margin-top:3px}
+#gtm .fv.som b{color:var(--sommtext)}
+#gtm .fnote{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:16px;line-height:1.5}
+
+/* right column: ramp + donut */
+#gtm .ramp{display:flex;align-items:flex-end;gap:12px;height:150px;padding-top:4px}
+#gtm .rb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+#gtm .rfill{width:100%;max-width:42px;height:3px;background:var(--somm);border-radius:5px 5px 0 0;min-height:3px;transition:height .7s var(--ease)}
+#gtm .rb.dim .rfill{background:var(--sommsoft)}
+#gtm .rb b{font-family:var(--mono);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+#gtm .rb span{font-family:var(--mono);font-size:10px;color:var(--dim)}
+
+#gtm .mix{display:flex;align-items:center;gap:22px}
+#gtm .donut{flex:0 0 auto}
+#gtm .donut circle{transition:stroke-dasharray .7s var(--ease),stroke-dashoffset .7s var(--ease)}
+#gtm .donut .dc-val{font-family:var(--serif);font-weight:700;font-size:23px;fill:var(--ink)}
+#gtm .donut .dc-lbl{font-family:var(--mono);font-size:7.5px;fill:var(--dim);letter-spacing:.14em}
+#gtm .legend{flex:1;display:flex;flex-direction:column}
+#gtm .lrow{display:grid;grid-template-columns:14px 1fr auto;gap:11px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+#gtm .lrow:first-child{border-top:0}
+#gtm .ldot{width:11px;height:11px;border-radius:3px}
+#gtm .lname{font-weight:600;font-size:13px;color:var(--ink)}
+#gtm .lval{font-family:var(--mono);font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums}
+
+#gtm .gfoot{font-family:var(--mono);font-size:10px;color:var(--mut);margin-top:16px}
+#gtm .gfoot b{color:var(--hl);font-weight:500}
+
+/* current-traction cluster (top-right) */
+#gtm .trac{position:absolute;top:74px;left:672px;width:544px;z-index:6}
+#gtm .trac-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+#gtm .trac-hd .t{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);font-weight:700}
+#gtm .trac-hd .s{font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;color:var(--faint)}
+#gtm .trow{display:flex;gap:8px}
+#gtm .tb{flex:1;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:9px 10px;box-shadow:var(--sh-sm)}
+#gtm .tb.hlbg{background:var(--tint);border-color:var(--tintline2)}
+#gtm .tb .num{font-family:var(--serif);font-weight:700;font-size:25px;line-height:1;letter-spacing:-.01em;color:var(--ink)}
+#gtm .tb .lbl{font-family:var(--mono);font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);line-height:1.45;margin-top:7px}
+#gtm .tb .sub{font-family:var(--mono);font-size:7px;letter-spacing:.02em;line-height:1.45;margin-top:6px}
+#gtm .tb .sub.hl{color:var(--hl)}
+#gtm .tb .sub.dim{color:var(--faint)}
+#gtm .tb.dev{flex:1.45}
+#gtm .tb.dev .dh{font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:700}
+#gtm .tb.dev .drow{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-top:5px}
+#gtm .tb.dev .dnum{font-family:var(--serif);font-weight:700;font-size:22px;line-height:1;color:var(--sommtext)}
+#gtm .tb.dev .dcap{font-family:var(--mono);font-size:6.5px;letter-spacing:.02em;color:var(--faint);text-align:right;line-height:1.4}
+#gtm .tb.dev .bars{display:flex;align-items:flex-end;gap:4px;height:24px;margin-top:7px}
+#gtm .tb.dev .bars i{flex:1;border-radius:2px 2px 0 0}
+
+@media (prefers-reduced-motion:reduce){#gtm .fbar,#gtm .rfill,#gtm .donut circle{transition:none}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <div class="chrome" id="brand">
+    <svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b><span class="tag">investor overview</span>
+  </div>
+  <div class="chrome" id="pageno"><i class="cur">09</i> / <span>11</span></div>
+
+  <section class="slide active" id="gtm" data-title="Go-to-market">
+    <div class="pad">
+      <div class="eyebrow rise d1">Go-to-market · TAM / SAM / SOM</div>
+      <h1 class="lead rise d1" style="margin-top:9px">Three wedges, priced through <span class="i">one engine</span>.</h1>
+
+      <div class="tabs rise d2">
+        <button class="tab on" type="button" data-w="wallet"><span class="tn">Wallet &amp; retail fintech</span><span class="tsom">SOM · $35.6M/yr</span></button>
+        <button class="tab" type="button" data-w="dam"><span class="tn">Digital-asset management</span><span class="tsom">SOM · $51.4M/yr</span></button>
+        <button class="tab" type="button" data-w="platform"><span class="tn">Agent-app platform</span><span class="tsom">SOM · $17.8M/yr</span></button>
+      </div>
+
+      <div class="trac rise d3">
+        <div class="trac-hd">
+          <span class="t">Current traction</span>
+          <span class="s">Observed activity · sourced</span>
+        </div>
+        <div class="trow">
+          <div class="tb hlbg">
+            <div class="num">1,734</div>
+            <div class="lbl">Accounts with ≥1<br>product thread</div>
+            <div class="sub hl">67% · cumulative proxy</div>
+          </div>
+          <div class="tb">
+            <div class="num" style="color:var(--sommtext)">23.7k</div>
+            <div class="lbl">Public registry<br>downloads</div>
+            <div class="sub hl">lifetime · dev reach</div>
+          </div>
+          <div class="tb">
+            <div class="num">5,349</div>
+            <div class="lbl">Product threads</div>
+            <div class="sub dim">24,221 messages</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="thesis" data-thesis></p>
+
+      <div class="grid rise d4">
+        <div class="fcard">
+          <div class="ct">Market sizing · annual fee pool</div>
+          <div class="funnel" data-funnel></div>
+          <div class="fnote">Bar length tracks each tier's value · SOM = our Year-5 target.</div>
+        </div>
+        <div class="rightcol">
+          <div class="ct">5-year ramp to SOM · $M</div>
+          <div class="ramp" data-ramp></div>
+          <div class="ct" style="margin-top:24px">Revenue mix at SOM (Y5)</div>
+          <div class="mix">
+            <svg class="donut" viewBox="0 0 160 160" width="150" height="150" role="img" aria-label="Revenue mix" data-donut></svg>
+            <div class="legend" data-legend></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gfoot rise d4">Three <b>alternative futures</b>, not a sum — bets on which sector aomi wins first, each priced through the same four engines.</div>
+    </div>
+  </section>
+
+</div></div>
+
+<script>
+(function(){
+  var COLOR = { outcome:"#df5d90", tool:"#2e9e6b", model:"#e8853b", hosting:"#5288c2" };
+  var ENGINES = [["outcome","Outcome"],["tool","Paid-tool take"],["model","Model margin"],["hosting","Hosting"]];
+  var ORDER = ["wallet","dam","platform"];
+
+  var WEDGES = {
+    wallet: {
+      thesis:'Every wallet and retail-fintech app embeds aomi as its AI &amp; execution layer — <span class="em">Cash App scale, on-chain</span>. Partners like MetaMask bring their own model keys (BYOK), so managed-model margin stays thin; the money is huge retail flow.',
+      tam:["$2.5B",2.5e9,"if all retail on-chain flow ran on aomi pricing"],
+      sam:["$350M",350e6,"14% of TAM — agent-mediated, crypto-native, embeddable"],
+      som:["$35.6M",35.6e6,"10% of SAM · our Y5 target"],
+      ramp:[0.39,2.16,8.48,20.12,35.60],
+      mix:{ outcome:["$28.8M",81], tool:["$5.0M",14], model:["$1.2M",3], hosting:["$0.6M",2] }
+    },
+    dam: {
+      thesis:'Fund managers, DAO treasuries and RWA desks run execution &amp; ops through aomi agents — <span class="em">few users, enormous AUM</span>. High-touch managed AI plus rich fees on large managed flow.',
+      tam:["$3.5B",3.5e9,"execution / mgmt fees on all on-chain AUM turnover"],
+      sam:["$500M",500e6,"14% of TAM — crypto-native funds, agent-run treasury ops"],
+      som:["$51.4M",51.4e6,"10% of SAM · our Y5 target"],
+      ramp:[0.47,3.08,11.18,27.68,51.38],
+      mix:{ outcome:["$48.0M",93], tool:["$3.0M",6], model:["$0.3M",1], hosting:["$0.1M",0] }
+    },
+    platform: {
+      thesis:'A long tail of builders ship agent-apps and bots hosted on aomi — <span class="em">tens of thousands of apps</span>. Most builders never wire their own key, so they run on aomi&#39;s managed model; hosting is the annuity, managed-model is real upside.',
+      tam:["$1.0B",1.0e9,"hosting + long-tail flow across all agent-apps"],
+      sam:["$150M",150e6,"15% of TAM — builders who host on aomi vs self-host"],
+      som:["$17.8M",17.8e6,"12% of SAM · our Y5 target"],
+      ramp:[0.32,1.79,5.63,11.16,17.84],
+      mix:{ hosting:["$9.6M",54], outcome:["$6.0M",34], model:["$1.4M",8], tool:["$0.8M",4] }
+    }
+  };
+
+  // per-tier max so the funnel shape holds but bar length still changes between cases
+  var TMAX = { tam:0, sam:0, som:0 };
+  ORDER.forEach(function(k){ var w=WEDGES[k]; TMAX.tam=Math.max(TMAX.tam,w.tam[1]); TMAX.sam=Math.max(TMAX.sam,w.sam[1]); TMAX.som=Math.max(TMAX.som,w.som[1]); });
+  var BASE = { tam:280, sam:176, som:112 };
+
+  var root = document.getElementById("gtm");
+  var thesisEl = root.querySelector("[data-thesis]");
+  var funnelEl = root.querySelector("[data-funnel]");
+  var rampEl = root.querySelector("[data-ramp]");
+  var donutEl = root.querySelector("[data-donut]");
+  var legendEl = root.querySelector("[data-legend]");
+  var tabs = [].slice.call(root.querySelectorAll(".tab"));
+
+  var R=68, TH=24, CIRC=2*Math.PI*R;
+
+  // ---- build persistent DOM once (so value/width/arc changes can transition) ----
+  funnelEl.innerHTML = ["tam","sam","som"].map(function(t){
+    return '<div class="frow"><div class="ftrack"><div class="fbar '+t+'" data-bar="'+t+'">'+t.toUpperCase()+'</div></div>'+
+      '<div class="fv'+(t==="som"?" som":"")+'" data-fv="'+t+'"><b></b><small></small></div></div>';
+  }).join("");
+  rampEl.innerHTML = [0,1,2,3,4].map(function(i){
+    return '<div class="rb'+(i<4?" dim":"")+'" data-rb="'+i+'"><b></b><div class="rfill"></div><span>Y'+(i+1)+'</span></div>';
+  }).join("");
+  donutEl.innerHTML = ENGINES.map(function(e){
+    return '<circle data-seg="'+e[0]+'" cx="80" cy="80" r="'+R+'" fill="none" stroke="'+COLOR[e[0]]+'" stroke-width="'+TH+'" stroke-dasharray="0 '+CIRC+'" stroke-dashoffset="0" transform="rotate(-90 80 80)"></circle>';
+  }).join("") + '<text class="dc-val" data-dcval x="80" y="79" text-anchor="middle" dominant-baseline="middle"></text><text class="dc-lbl" x="80" y="95" text-anchor="middle">SOM · Y5</text>';
+  legendEl.innerHTML = ENGINES.map(function(e){
+    return '<div class="lrow"><span class="ldot" style="background:'+COLOR[e[0]]+'"></span><span class="lname">'+e[1]+'</span><span class="lval" data-lval="'+e[0]+'"></span></div>';
+  }).join("");
+
+  function width(tier,val){ return Math.max(52, Math.round(BASE[tier]*val/TMAX[tier])); }
+
+  function render(id){
+    var w = WEDGES[id];
+    tabs.forEach(function(t){ t.classList.toggle("on", t.dataset.w===id); });
+
+    thesisEl.classList.remove("fx"); void thesisEl.offsetWidth;
+    thesisEl.innerHTML = w.thesis; thesisEl.classList.add("fx");
+
+    ["tam","sam","som"].forEach(function(t){
+      root.querySelector('[data-bar="'+t+'"]').style.width = width(t, w[t][1]) + "px";
+      var fv = root.querySelector('[data-fv="'+t+'"]');
+      fv.querySelector("b").textContent = w[t][0];
+      fv.querySelector("small").textContent = w[t][2];
+    });
+
+    var max = Math.max.apply(null, w.ramp);
+    w.ramp.forEach(function(v,i){
+      var rb = root.querySelector('[data-rb="'+i+'"]');
+      rb.querySelector("b").textContent = v.toFixed(2);
+      rb.querySelector(".rfill").style.height = Math.max(3, Math.round(v/max*118)) + "px";
+    });
+
+    var off = 0;
+    ENGINES.forEach(function(e){
+      var pct = w.mix[e[0]] ? w.mix[e[0]][1] : 0;
+      var len = pct/100*CIRC;
+      var c = root.querySelector('[data-seg="'+e[0]+'"]');
+      c.setAttribute("stroke-dasharray", len + " " + (CIRC-len));
+      c.setAttribute("stroke-dashoffset", -off);
+      off += len;
+      var lv = root.querySelector('[data-lval="'+e[0]+'"]');
+      lv.textContent = w.mix[e[0]] ? (w.mix[e[0]][0] + " · " + w.mix[e[0]][1] + "%") : "—";
+    });
+    root.querySelector("[data-dcval]").textContent = w.som[0];
+  }
+
+  // ---- auto-cycle through the three wedges ----
+  var idx = 0, timer = null, DWELL = 3400;
+  function go(i){ idx = (i % ORDER.length + ORDER.length) % ORDER.length; render(ORDER[idx]); }
+  function start(){ stop(); timer = setInterval(function(){ go(idx+1); }, DWELL); }
+  function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+
+  tabs.forEach(function(t){ t.addEventListener("click", function(){ stop(); go(ORDER.indexOf(t.dataset.w)); start(); }); });
+  root.addEventListener("mouseenter", stop);   // pause while a presenter reads
+  root.addEventListener("mouseleave", start);
+
+  go(0); start();
+
+  var stage = document.getElementById("stage");
+  function fit(){ stage.style.transform = "scale(" + Math.min(window.innerWidth/1280, window.innerHeight/720) + ")"; }
+  window.addEventListener("resize", fit); fit();
+})();
+</script>
+</body>
+</html>
