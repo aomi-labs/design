@@ -1,11 +1,33 @@
 {
-  "ranAt": "2026-07-22T08:42:20.927Z",
+  "ranAt": "2026-07-22T12:02:08.233Z",
   "candidates": 53,
   "postsFetched": 102,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 58,
+      "postId": "2079628355322679660",
+      "confidence": 0.9,
+      "reason": "Main account post explicitly explains the non‑custodial split of trust and what the platform vs Aomi owns — matches the deliverable's framing about 'what you keep' when using a platform.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    },
+    {
+      "number": 55,
+      "postId": "2076666912067420300",
+      "confidence": 0.8,
+      "reason": "Main account post describes launching an agent with no backend via three commands and hosted runtime/simulation — aligns with the 'Launch an agent from a web page' demo narrative (same audience and outcome).",
+      "url": "https://x.com/aomi_labs/status/2076666912067420300"
+    },
+    {
+      "number": 34,
+      "postId": "2064778903546150960",
+      "confidence": 0.9,
+      "reason": "The post explicitly announces the Aomi docs rebuild and quickstart live at aomi.dev/docs, matching the Fumadocs→Mintlify migration and docs deliverable.",
+      "url": "https://x.com/aomi_labs/status/2064778903546150960"
+    }
+  ],
   "errors": [],
   "ok": true
 }
