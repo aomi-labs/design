@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-22T23:14:41.327Z",
+  "ranAt": "2026-07-23T05:33:49.317Z",
   "candidates": 52,
   "postsFetched": 102,
   "prePass": 0,
@@ -7,32 +7,46 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 54,
-      "postId": "2076717492710330724",
-      "confidence": 0.9,
-      "reason": "Thread text explicitly narrates Somm building an agentic DeFi vault on Aomi and outlines the pool manager / strategy-vs-execution split referenced in the deliverable.",
-      "url": "https://x.com/aomi_labs/status/2076717492710330724"
-    },
-    {
-      "number": 29,
-      "postId": "2079225517459591258",
+      "number": 55,
+      "postId": "2076666912067420300",
       "confidence": 0.8,
-      "reason": "Post describes the deploy flow and platform-owned release pipeline — aligns with dogfooding the one‑click deploy and fixes called out in the deliverable.",
-      "url": "https://x.com/aomi_labs/status/2079225517459591258"
-    },
-    {
-      "number": 29,
-      "postId": "2079228005600104641",
-      "confidence": 0.9,
-      "reason": "Post explicitly describes running one command and the platform fetching, building, and publishing releases—matches the 'we dogfooded our own one click deploy' teardown.",
-      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+      "reason": "Main account post describes deploying an agent app with three commands and hosting/runtime simulation—matches the 'agent from a web page / one-click launch' demo narrative.",
+      "url": "https://x.com/aomi_labs/status/2076666912067420300"
     },
     {
       "number": 54,
       "postId": "2076717509571698872",
-      "confidence": 0.85,
-      "reason": "Main-account post on 2026-07-13 explicitly announces Sommelier/Somm using Aomi and describes the pool-manager/strategy->execution split matching the deliverable's angle.",
+      "confidence": 0.9,
+      "reason": "Post explicitly announces Somm building on Aomi and describes the pool manager / execution pattern referenced in the deliverable.",
       "url": "https://x.com/aomi_labs/status/2076717509571698872"
+    },
+    {
+      "number": 13,
+      "postId": "2060063160690733471",
+      "confidence": 0.85,
+      "reason": "Post opens the Early Forge program to the public, matching the deliverable’s spotlight/series brief about Early Forge projects.",
+      "url": "https://x.com/aomi_labs/status/2060063160690733471"
+    },
+    {
+      "number": 58,
+      "postId": "2079628355322679660",
+      "confidence": 0.9,
+      "reason": "Main-account thread explicitly explains the platform vs Aomi trust split, non-custodial delegation, and simulation flow matching the deliverable text.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    },
+    {
+      "number": 37,
+      "postId": "2067324091258843436",
+      "confidence": 0.9,
+      "reason": "Main-account founder essay style post (Cecilia brief) discussing agent attack surface and moving guardrails above contracts matches the deliverable description.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+    },
+    {
+      "number": 29,
+      "postId": "2079228005600104641",
+      "confidence": 0.8,
+      "reason": "Dev-account post describing the release/deploy flow and prohibition on hand-written release PRs aligns with the 'we dogfooded our one click deploy' deliverable theme.",
+      "url": "https://x.com/aomi_dev/status/2079228005600104641"
     }
   ],
   "errors": [],
