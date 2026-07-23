@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-23T16:02:07.071Z",
+  "ranAt": "2026-07-23T19:43:52.753Z",
   "candidates": 52,
   "postsFetched": 102,
   "prePass": 0,
@@ -10,29 +10,8 @@
       "number": 34,
       "postId": "2064778903546150960",
       "confidence": 0.9,
-      "reason": "Post text explicitly says the Aomi docs got a full rebuild and lists the quickstart and build toolchain—matches the Mintlify/docs migration deliverable.",
+      "reason": "Post explicitly announces a full docs rebuild, new quickstart, and that the Aomi docs site was rebuilt and matches the deliverable description (aomi.dev/docs).",
       "url": "https://x.com/aomi_labs/status/2064778903546150960"
-    },
-    {
-      "number": 54,
-      "postId": "2076717509571698872",
-      "confidence": 0.9,
-      "reason": "Main account post explicitly announces Somm building on Aomi and describes the DeFi/agent execution split referenced by the Somm follow-up deliverable.",
-      "url": "https://x.com/aomi_labs/status/2076717509571698872"
-    },
-    {
-      "number": 55,
-      "postId": "2076666912067420300",
-      "confidence": 0.85,
-      "reason": "Main account post describes launching an agent with Aomi (no backend, three commands, hosted runtime and forked-chain simulation), matching the 'Launch an agent from a web page' demo narrative.",
-      "url": "https://x.com/aomi_labs/status/2076666912067420300"
-    },
-    {
-      "number": 23,
-      "postId": "2067324091258843436",
-      "confidence": 0.8,
-      "reason": "Main account post argues guardrails belong below the wallet and reframes where trust should live—matches the founder/positioning content of the 'Five agentic wallets shipped' deliverable.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
     }
   ],
   "errors": [],
