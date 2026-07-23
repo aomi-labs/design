@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-23T08:43:27.625Z",
+  "ranAt": "2026-07-23T12:01:27.003Z",
   "candidates": 52,
   "postsFetched": 102,
   "prePass": 0,
@@ -7,32 +7,32 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 34,
-      "postId": "2064778903546150960",
-      "confidence": 0.9,
-      "reason": "Post explicitly announces the docs rebuild, quickstart, and new docs site—matches the Mintlify/docs migration deliverable content and outcome.",
-      "url": "https://x.com/aomi_labs/status/2064778903546150960"
-    },
-    {
-      "number": 54,
+      "number": 58,
       "postId": "2079975462260891835",
-      "confidence": 0.85,
-      "reason": "Post lists what a DeFi protocol needs before an agent touches funds (typed bindings, simulation, etc.), matching the Pool Manager pattern / Somm follow-up deliverable aimed at DeFi teams.",
+      "confidence": 0.9,
+      "reason": "Same account (main) and subject — explains what a platform keeps vs the runtime when agents run (trust split / simulation-before-sign), matching the deliverable's angle and content.",
       "url": "https://x.com/aomi_labs/status/2079975462260891835"
     },
     {
       "number": 54,
       "postId": "2076717509571698872",
       "confidence": 0.9,
-      "reason": "Main account post on 2026-07-13 explicitly announces Somm building agentic finance on Aomi and describes the pattern referenced in the deliverable.",
+      "reason": "Main account post on 2026-07-13 explicitly announces Somm as building agentic finance on Aomi and matches the Somm follow-up pool manager pattern deliverable.",
       "url": "https://x.com/aomi_labs/status/2076717509571698872"
     },
     {
-      "number": 58,
-      "postId": "2079975462260891835",
+      "number": 34,
+      "postId": "2064778903546150960",
+      "confidence": 0.95,
+      "reason": "Post explicitly announces a full docs rebuild, new quickstart, and that the Aomi docs site was rebuilt — matches the Mintlify migration and site live deliverable.",
+      "url": "https://x.com/aomi_labs/status/2064778903546150960"
+    },
+    {
+      "number": 29,
+      "postId": "2079228005600104641",
       "confidence": 0.8,
-      "reason": "Main account post titled and written as a practical list of what a DeFi protocol needs before an agent touches funds, matching the deliverable's topic and audience.",
-      "url": "https://x.com/aomi_labs/status/2079975462260891835"
+      "reason": "Post describes the one-command deploy flow and platform-owned releases, matching the 'we dogfooded our one click deploy' teardown and fixes deliverable.",
+      "url": "https://x.com/aomi_dev/status/2079228005600104641"
     }
   ],
   "errors": [],
