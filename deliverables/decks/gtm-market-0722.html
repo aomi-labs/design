@@ -93,6 +93,7 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
 #gtm .fv b{font-family:var(--serif);font-weight:700;font-size:27px;letter-spacing:-.01em;display:block;line-height:1.05}
 #gtm .fv small{font-family:var(--mono);font-size:10px;color:var(--dim);line-height:1.45;display:block;margin-top:3px}
 #gtm .fv.som b{color:var(--sommtext)}
+#gtm .feq{font-family:var(--mono);font-size:10px;color:var(--sommtext);margin-top:5px;letter-spacing:.01em;font-variant-numeric:tabular-nums}
 #gtm .fnote{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:16px;line-height:1.5}
 
 /* right column: ramp + donut */
@@ -157,9 +158,9 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
       <h1 class="lead rise d1" style="margin-top:9px">Three wedges, priced through <span class="i">one engine</span>.</h1>
 
       <div class="tabs rise d2">
-        <button class="tab on" type="button" data-w="wallet"><span class="tn">Wallet &amp; retail fintech</span><span class="tsom">SOM · $35.6M/yr</span></button>
+        <button class="tab on" type="button" data-w="platform"><span class="tn">Agent-app platform</span><span class="tsom">SOM · $17.8M/yr</span></button>
+        <button class="tab" type="button" data-w="wallet"><span class="tn">Wallet &amp; retail fintech</span><span class="tsom">SOM · $35.6M/yr</span></button>
         <button class="tab" type="button" data-w="dam"><span class="tn">Digital-asset management</span><span class="tsom">SOM · $51.4M/yr</span></button>
-        <button class="tab" type="button" data-w="platform"><span class="tn">Agent-app platform</span><span class="tsom">SOM · $17.8M/yr</span></button>
       </div>
 
       <div class="trac rise d3">
@@ -215,14 +216,15 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
 (function(){
   var COLOR = { outcome:"#df5d90", tool:"#2e9e6b", model:"#e8853b", hosting:"#5288c2" };
   var ENGINES = [["outcome","Outcome"],["tool","Paid-tool take"],["model","Model margin"],["hosting","Hosting"]];
-  var ORDER = ["wallet","dam","platform"];
+  var ORDER = ["platform","wallet","dam"];
 
   var WEDGES = {
     wallet: {
       thesis:'Every wallet and retail-fintech app embeds aomi as its AI &amp; execution layer — <span class="em">Cash App scale, on-chain</span>. Partners like MetaMask bring their own model keys (BYOK), so managed-model margin stays thin; the money is huge retail flow.',
       tam:["$2.5B",2.5e9,"if all retail on-chain flow ran on aomi pricing"],
       sam:["$350M",350e6,"14% of TAM — agent-mediated, crypto-native, embeddable"],
-      som:["$35.6M",35.6e6,"10% of SAM · our Y5 target"],
+      som:["$35.6M",35.6e6,"our Y5 target"],
+      eq:"$2.5B × 14% × 10.2%",
       ramp:[0.39,2.16,8.48,20.12,35.60],
       mix:{ outcome:["$28.8M",81], tool:["$5.0M",14], model:["$1.2M",3], hosting:["$0.6M",2] }
     },
@@ -230,7 +232,8 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
       thesis:'Fund managers, DAO treasuries and RWA desks run execution &amp; ops through aomi agents — <span class="em">few users, enormous AUM</span>. High-touch managed AI plus rich fees on large managed flow.',
       tam:["$3.5B",3.5e9,"execution / mgmt fees on all on-chain AUM turnover"],
       sam:["$500M",500e6,"14% of TAM — crypto-native funds, agent-run treasury ops"],
-      som:["$51.4M",51.4e6,"10% of SAM · our Y5 target"],
+      som:["$51.4M",51.4e6,"our Y5 target"],
+      eq:"$3.5B × 14.3% × 10.3%",
       ramp:[0.47,3.08,11.18,27.68,51.38],
       mix:{ outcome:["$48.0M",93], tool:["$3.0M",6], model:["$0.3M",1], hosting:["$0.1M",0] }
     },
@@ -238,7 +241,8 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
       thesis:'A long tail of builders ship agent-apps and bots hosted on aomi — <span class="em">tens of thousands of apps</span>. Most builders never wire their own key, so they run on aomi&#39;s managed model; hosting is the annuity, managed-model is real upside.',
       tam:["$1.0B",1.0e9,"hosting + long-tail flow across all agent-apps"],
       sam:["$150M",150e6,"15% of TAM — builders who host on aomi vs self-host"],
-      som:["$17.8M",17.8e6,"12% of SAM · our Y5 target"],
+      som:["$17.8M",17.8e6,"our Y5 target"],
+      eq:"$1.0B × 15% × 11.9%",
       ramp:[0.32,1.79,5.63,11.16,17.84],
       mix:{ hosting:["$9.6M",54], outcome:["$6.0M",34], model:["$1.4M",8], tool:["$0.8M",4] }
     }
@@ -262,7 +266,7 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
   // ---- build persistent DOM once (so value/width/arc changes can transition) ----
   funnelEl.innerHTML = ["tam","sam","som"].map(function(t){
     return '<div class="frow"><div class="ftrack"><div class="fbar '+t+'" data-bar="'+t+'">'+t.toUpperCase()+'</div></div>'+
-      '<div class="fv'+(t==="som"?" som":"")+'" data-fv="'+t+'"><b></b><small></small></div></div>';
+      '<div class="fv'+(t==="som"?" som":"")+'" data-fv="'+t+'"><b></b><small></small>'+(t==="som"?'<div class="feq" data-feq></div>':'')+'</div></div>';
   }).join("");
   rampEl.innerHTML = [0,1,2,3,4].map(function(i){
     return '<div class="rb'+(i<4?" dim":"")+'" data-rb="'+i+'"><b></b><div class="rfill"></div><span>Y'+(i+1)+'</span></div>';
@@ -289,6 +293,7 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
       fv.querySelector("b").textContent = w[t][0];
       fv.querySelector("small").textContent = w[t][2];
     });
+    root.querySelector("[data-feq]").textContent = "= " + w.eq;
 
     var max = Math.max.apply(null, w.ramp);
     w.ramp.forEach(function(v,i){
@@ -311,17 +316,26 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
     root.querySelector("[data-dcval]").textContent = w.som[0];
   }
 
-  // ---- auto-cycle through the three wedges ----
-  var idx = 0, timer = null, DWELL = 3400;
-  function go(i){ idx = (i % ORDER.length + ORDER.length) % ORDER.length; render(ORDER[idx]); }
-  function start(){ stop(); timer = setInterval(function(){ go(idx+1); }, DWELL); }
-  function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+  // ---- manual wedge stepping · no auto-cycle · opens on the first wedge ----
+  var idx = 0;
+  function go(i){ idx = Math.max(0, Math.min(ORDER.length - 1, i)); render(ORDER[idx]); }
 
-  tabs.forEach(function(t){ t.addEventListener("click", function(){ stop(); go(ORDER.indexOf(t.dataset.w)); start(); }); });
-  root.addEventListener("mouseenter", stop);   // pause while a presenter reads
-  root.addEventListener("mouseleave", start);
+  tabs.forEach(function(t){ t.addEventListener("click", function(){ go(ORDER.indexOf(t.dataset.w)); }); });
 
-  go(0); start();
+  // → / ← step through the wedges. Only swallow the key while a step is still
+  // possible, so at the two ends a surrounding deck can still change slides.
+  document.addEventListener("keydown", function(e){
+    if(e.key === "ArrowRight" && idx < ORDER.length - 1){ go(idx + 1); e.preventDefault(); e.stopImmediatePropagation(); }
+    else if(e.key === "ArrowLeft" && idx > 0){ go(idx - 1); e.preventDefault(); e.stopImmediatePropagation(); }
+  }, true);
+
+  // make sure the arrow keys land in this slide when it's on screen
+  // (grab focus on load and on any pointer interaction)
+  function grab(){ try{ window.focus(); }catch(e){} }
+  window.addEventListener("load", grab);
+  root.addEventListener("pointerdown", grab);
+
+  go(0);
 
   var stage = document.getElementById("stage");
   function fit(){ stage.style.transform = "scale(" + Math.min(window.innerWidth/1280, window.innerHeight/720) + ")"; }

@@ -254,10 +254,19 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
   align-items:center;gap:8px;padding:0 10px;font-size:10px;color:#616061}
 .slmock .sinp .ic{margin-left:auto;font-size:9px;letter-spacing:3px;color:#616061}
 
+/* observability proof · moved from pricing slide · top-right, right of title */
+.rt-obs{position:absolute;top:78px;left:931px;width:288px;height:157px;
+  border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--sh-lg);
+  background:#0f0f12;z-index:6}
+.rt-obs img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
+.rt-obs-cap{position:absolute;top:240px;left:931px;width:288px;font-family:var(--mono);
+  font-size:9px;letter-spacing:.04em;color:var(--dim);z-index:6}
+.rt-obs-cap b{color:var(--ink2);font-weight:500}
+
 /* ============ RIGHT · product surfaces ============ */
-.surf-head{position:absolute;right:60px;top:220px;width:200px;font-family:var(--mono);font-size:13px;
+.surf-head{position:absolute;right:60px;top:280px;width:200px;font-family:var(--mono);font-size:13px;
   font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);line-height:1.45}
-.surf{position:absolute;right:60px;top:298px;width:200px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.surf{position:absolute;right:60px;top:358px;width:200px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
 .surf-row{display:flex;align-items:center;width:100%}
 .surf-row .lead-in{width:20px;border-top:1.4px dashed var(--line2);flex:none}
 .chip{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;color:var(--ink);
@@ -461,6 +470,10 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
       </div>
     </div>
   </div></div>
+
+  <!-- observability proof · moved from pricing slide -->
+  <div class="rt-obs"><img src="assets/observability.png" alt="aomi Observability — per-app telemetry dashboard"></div>
+  <div class="rt-obs-cap"><b>Live observability</b> · per-app telemetry</div>
 
   <!-- ============ RIGHT · product surfaces ============ -->
   <div class="surf-head">Multiple product surfaces</div>

@@ -97,15 +97,15 @@ table.led{width:100%;border-collapse:collapse}
 .obs-cap{position:absolute;left:730px;top:304px;width:458px;font-family:var(--mono);font-size:10px;
   line-height:1.55;letter-spacing:.01em;color:var(--dim)}
 .obs-cap b{color:var(--ink2);font-weight:500}
-.scene{position:absolute;left:730px;top:350px;width:458px;font-family:var(--mono);font-size:10.5px;line-height:1.6;color:var(--mut)}
+.scene{position:absolute;left:730px;top:214px;width:458px;font-family:var(--mono);font-size:10.5px;line-height:1.6;color:var(--mut)}
 .scene b{color:var(--ink);font-weight:600}
 .scene .hl{color:var(--hl);font-weight:500}
 .scene .co{color:var(--sommtext);font-weight:500}
 
-.cards-lbl{position:absolute;left:730px;top:414px;font-family:var(--mono);font-size:9px;
+.cards-lbl{position:absolute;left:730px;top:278px;font-family:var(--mono);font-size:9px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
 .cards-lbl b{color:var(--mut);font-weight:500}
-.cards{position:absolute;left:730px;top:434px;width:458px;display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.cards{position:absolute;left:730px;top:298px;width:458px;display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .pcard{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--edge,var(--hl));
   border-radius:8px;padding:10px 14px 11px;box-shadow:var(--sh-sm)}
 .pcard.c-tool{--edge:var(--hl)} .pcard.c-out{--edge:var(--somm)}
@@ -118,7 +118,7 @@ table.led{width:100%;border-collapse:collapse}
 .pcard .ds{font-size:10px;color:var(--mut);line-height:1.35;margin-top:4px}
 .pcard .src{font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:7px}
 
-.synth{position:absolute;left:730px;top:628px;width:458px;
+.synth{position:absolute;left:730px;top:492px;width:458px;
   background:var(--oktint);border:1px solid var(--okline);border-left:3px solid var(--ok);border-radius:6px;
   padding:11px 14px;font-size:10.5px;line-height:1.55;color:var(--ink2)}
 .synth .tag{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;
@@ -193,9 +193,7 @@ table.led{width:100%;border-collapse:collapse}
   </div>
 
   <!-- ============ RIGHT · scene + take rates ============ -->
-  <!-- dashboard proof · framed like a browser card -->
-  <div class="obs"><img src="assets/observability.png" alt="Aomi Observability — per-app telemetry dashboard"></div>
-
+  <!-- (observability dashboard moved to slide 3 · runtime) -->
   <div class="scene">
     <b>Worked example</b> — a <b>$1,000</b> ETH swap via a partner app on a <span class="hl">managed Opus&nbsp;4.8</span> key, <span class="hl">Coinbase&nbsp;x402</span> rail. <span class="chip">place_order</span> priced <b>1.0&nbsp;cr</b>, <span class="co">10&nbsp;bps</span> outcome fee.
   </div>
