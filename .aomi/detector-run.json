@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-23T23:09:57.212Z",
+  "ranAt": "2026-07-24T05:29:18.262Z",
   "candidates": 52,
   "postsFetched": 102,
   "prePass": 0,
@@ -8,24 +8,24 @@
   "needsConfirm": [
     {
       "number": 34,
-      "postId": "2064778903546150960",
-      "confidence": 0.9,
-      "reason": "Post announces a full docs rebuild and links to https://aomi.dev/docs, matching the Mintlify migration and live docs claim.",
-      "url": "https://x.com/aomi_labs/status/2064778903546150960"
-    },
-    {
-      "number": 25,
-      "postId": "2069452271574786409",
-      "confidence": 0.9,
-      "reason": "Post links to the runtime and evals/testing docs pages, matching the runtime and evals/testing docs rewrite deliverable.",
-      "url": "https://x.com/aomi_labs/status/2069452271574786409"
-    },
-    {
-      "number": 55,
-      "postId": "2076666912067420300",
+      "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Post describes deploying an agent with three commands and hosting (no backend), which aligns with the 'Launch an agent from a web page' one-shot deploy/demo deliverable.",
-      "url": "https://x.com/aomi_labs/status/2076666912067420300"
+      "reason": "Dev account post says the docs/build path is fixed and links to the docs—matches the documentation site migration and live docs deliverable.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
+    },
+    {
+      "number": 13,
+      "postId": "2060063160690733471",
+      "confidence": 0.9,
+      "reason": "Post explicitly announces opening the Aomi Early Forge program to the public, matching the deliverable brief for the Early Forge spotlight/series.",
+      "url": "https://x.com/aomi_labs/status/2060063160690733471"
+    },
+    {
+      "number": 23,
+      "postId": "2067324091258843436",
+      "confidence": 0.8,
+      "reason": "Post discusses agentic wallet trust boundaries and guardrails, directly matching the deliverable about agentic wallets failing to stop bad transactions and the proposed differentiation.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
     }
   ],
   "errors": [],
