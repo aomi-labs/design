@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-24T15:42:36.073Z",
+  "ranAt": "2026-07-24T19:44:34.222Z",
   "candidates": 50,
   "postsFetched": 102,
   "prePass": 0,
@@ -7,18 +7,32 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 25,
-      "postId": "2069452271574786409",
+      "number": 58,
+      "postId": "2067324091258843436",
       "confidence": 0.9,
-      "reason": "Public announcement (main account) linking the runtime and evals/testing docs pages matches the docs rewrite deliverable describing those specific pages.",
-      "url": "https://x.com/aomi_labs/status/2069452271574786409"
+      "reason": "Main-account post argues the same trust split and execution-layer thesis described in the deliverable (founder/platform framing).",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
     },
     {
-      "number": 29,
-      "postId": "2079228005600104641",
+      "number": 33,
+      "postId": "2072744157680996745",
+      "confidence": 0.9,
+      "reason": "Post is a Monad livestream recap announcing the session and what was shown, matching the deliverable for a recap of the Monad stream.",
+      "url": "https://x.com/aomi_labs/status/2072744157680996745"
+    },
+    {
+      "number": 58,
+      "postId": "2079628355322679660",
+      "confidence": 0.9,
+      "reason": "Main account post explicitly explains what the platform keeps vs what the user keeps and outlines the non-custodial, simulation-before-sign model matching the deliverable's trust-split message.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    },
+    {
+      "number": 55,
+      "postId": "2076717509571698872",
       "confidence": 0.8,
-      "reason": "Dev-account post describes the platform-controlled one-command release flow (fetch, build, check, bot-publish), matching the one-click deploy dogfood narrative.",
-      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+      "reason": "Main account thread announces a deployed DeFi agent (Somm) running on Aomi with build→deploy→simulate-before-sign flow — aligns with the 'agent from a web page / demo' deliverable.",
+      "url": "https://x.com/aomi_labs/status/2076717509571698872"
     }
   ],
   "errors": [],
