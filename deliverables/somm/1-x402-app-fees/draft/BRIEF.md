@@ -14,3 +14,8 @@ Victor: taking this over for the week. Plan — turn the adopted x402 doc into a
 medium post (iterate here as medium-x402-fees-vN), derive the x thread from the
 finished draft per the 04:58 rule, add a fee-flow visual. Target: medium posts
 Friday 07-24.
+
+## 2026-07-24 09:50
+Victor: v3 adopted → post/, posts Friday. v1/v2 retired to archive. The x thread
+(x-thread-x402-v1.md) stays in draft until the medium link is live — it needs the
+URL for tweet 7. Next week: MPP settlement deep-dive as a follow-up story.
