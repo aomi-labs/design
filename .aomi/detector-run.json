@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-24T19:44:34.222Z",
+  "ranAt": "2026-07-24T23:15:02.592Z",
   "candidates": 50,
   "postsFetched": 102,
   "prePass": 0,
@@ -8,31 +8,10 @@
   "needsConfirm": [
     {
       "number": 58,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Main-account post argues the same trust split and execution-layer thesis described in the deliverable (founder/platform framing).",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    },
-    {
-      "number": 33,
-      "postId": "2072744157680996745",
-      "confidence": 0.9,
-      "reason": "Post is a Monad livestream recap announcing the session and what was shown, matching the deliverable for a recap of the Monad stream.",
-      "url": "https://x.com/aomi_labs/status/2072744157680996745"
-    },
-    {
-      "number": 58,
       "postId": "2079628355322679660",
       "confidence": 0.9,
-      "reason": "Main account post explicitly explains what the platform keeps vs what the user keeps and outlines the non-custodial, simulation-before-sign model matching the deliverable's trust-split message.",
+      "reason": "Post text explicitly states Aomi is non-custodial and explains what the platform vs agent/keys each own, matching the deliverable's audience and core message about what you keep when using a platform.",
       "url": "https://x.com/aomi_labs/status/2079628355322679660"
-    },
-    {
-      "number": 55,
-      "postId": "2076717509571698872",
-      "confidence": 0.8,
-      "reason": "Main account thread announces a deployed DeFi agent (Somm) running on Aomi with build→deploy→simulate-before-sign flow — aligns with the 'agent from a web page / demo' deliverable.",
-      "url": "https://x.com/aomi_labs/status/2076717509571698872"
     }
   ],
   "errors": [],
