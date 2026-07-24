@@ -1,31 +1,17 @@
 {
-  "ranAt": "2026-07-24T05:29:18.262Z",
+  "ranAt": "2026-07-24T08:40:42.504Z",
   "candidates": 52,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 0,
-  "applied": 0,
+  "judged": 2,
+  "applied": 2,
   "needsConfirm": [
     {
-      "number": 34,
-      "postId": "2077050550294642884",
-      "confidence": 0.8,
-      "reason": "Dev account post says the docs/build path is fixed and links to the docs—matches the documentation site migration and live docs deliverable.",
-      "url": "https://x.com/aomi_dev/status/2077050550294642884"
-    },
-    {
-      "number": 13,
-      "postId": "2060063160690733471",
-      "confidence": 0.9,
-      "reason": "Post explicitly announces opening the Aomi Early Forge program to the public, matching the deliverable brief for the Early Forge spotlight/series.",
-      "url": "https://x.com/aomi_labs/status/2060063160690733471"
-    },
-    {
-      "number": 23,
-      "postId": "2067324091258843436",
-      "confidence": 0.8,
-      "reason": "Post discusses agentic wallet trust boundaries and guardrails, directly matching the deliverable about agentic wallets failing to stop bad transactions and the proposed differentiation.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+      "number": 33,
+      "postId": "2072744160163987614",
+      "confidence": 0.85,
+      "reason": "Post shares the full livestream link and refers to the Monad session, matching the Monad livestream recap deliverable.",
+      "url": "https://x.com/aomi_labs/status/2072744160163987614"
     }
   ],
   "errors": [],
