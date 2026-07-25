@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-25T15:17:52.452Z",
+  "ranAt": "2026-07-25T19:32:40.638Z",
   "candidates": 50,
   "postsFetched": 102,
   "prePass": 0,
@@ -7,17 +7,24 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 33,
-      "postId": "2072744157680996745",
-      "confidence": 0.9,
-      "reason": "Post is a livestream recap with Monad and describes what was covered—matches the Monad livestream recap deliverable content and timing.",
-      "url": "https://x.com/aomi_labs/status/2072744157680996745"
+      "number": 23,
+      "postId": "2067324091258843436",
+      "confidence": 0.8,
+      "reason": "The post argues that guarding the wallet is insufficient and recommends moving guardrails earlier in the execution pipeline — matching the deliverable's thesis differentiating Aomi from agentic wallets.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
     },
     {
-      "number": 58,
+      "number": 13,
+      "postId": "2060063160690733471",
+      "confidence": 0.9,
+      "reason": "Public announcement opening the Aomi Early Forge program matches the Early Forge spotlight/series deliverable (same subject and audience).",
+      "url": "https://x.com/aomi_labs/status/2060063160690733471"
+    },
+    {
+      "number": 37,
       "postId": "2067324091258843436",
       "confidence": 0.9,
-      "reason": "Exact phrasing and thesis match — main account post arguing that using an agent via a platform shouldn't require blind trust (matches deliverable's subject and audience).",
+      "reason": "Founder essay about agent attack surface and guarding execution matches the Cecilia essay deliverable (same thesis and account).",
       "url": "https://x.com/aomi_labs/status/2067324091258843436"
     }
   ],
