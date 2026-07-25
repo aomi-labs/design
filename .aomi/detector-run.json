@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-24T23:15:02.592Z",
+  "ranAt": "2026-07-25T05:23:25.873Z",
   "candidates": 50,
   "postsFetched": 102,
   "prePass": 0,
@@ -10,8 +10,15 @@
       "number": 58,
       "postId": "2079628355322679660",
       "confidence": 0.9,
-      "reason": "Post text explicitly states Aomi is non-custodial and explains what the platform vs agent/keys each own, matching the deliverable's audience and core message about what you keep when using a platform.",
+      "reason": "Main account thread explicitly explains non‑custodial execution and what a user keeps when an agent runs on the platform, matching the deliverable's narrative.",
       "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    },
+    {
+      "number": 29,
+      "postId": "2079228005600104641",
+      "confidence": 0.8,
+      "reason": "Dev account post describes the one‑command deploy flow and backend‑owned release publishing, matching the deliverable about dogfooding one‑click deploy and fixing gaps.",
+      "url": "https://x.com/aomi_dev/status/2079228005600104641"
     }
   ],
   "errors": [],
