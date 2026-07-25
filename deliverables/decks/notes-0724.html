@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — presenter notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef;
+  --ok:#2e9e6b;
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;flex-shrink:0;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+.pad{position:absolute;inset:0;padding:74px 60px 40px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl)}
+.rise{opacity:0;transform:translateY(14px)}
+.slide.active .rise{animation:rise .7s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* ============ NOTES SLIDE ============ */
+#notes .head{display:flex;align-items:baseline;justify-content:space-between}
+#notes h1{font-family:var(--serif);font-weight:700;font-size:26px;letter-spacing:-.02em;color:var(--ink);margin-top:7px}
+#notes h1 .i{color:var(--hl)}
+#notes .hsub{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+#notes .cols{column-count:3;column-gap:26px;margin-top:20px}
+#notes .card{break-inside:avoid;-webkit-column-break-inside:avoid;margin-bottom:15px;
+  padding:0 0 0 14px;border-left:2px solid var(--tintline)}
+#notes .card .nl{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+#notes .card .num{font-family:var(--mono);font-size:10px;font-weight:700;color:#fff;background:var(--hl2);
+  border-radius:5px;min-width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+#notes .card .nm{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--hl)}
+#notes .card p{font-size:12px;line-height:1.5;color:var(--ink2);margin-top:4px}
+#notes .card p:first-of-type{margin-top:0}
+#notes .card b{color:var(--ink);font-weight:600}
+#notes .card .co{color:var(--sommtext);font-weight:600}
+#notes .card .ok{color:var(--ok);font-weight:600}
+#notes .foot{position:absolute;left:60px;right:60px;bottom:20px;font-family:var(--mono);font-size:9px;
+  letter-spacing:.08em;color:var(--faint);border-top:1px dashed var(--line2);padding-top:9px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <div class="chrome" id="brand">
+    <svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b><span class="tag">investor overview</span>
+  </div>
+  <div class="chrome" id="pageno"><i class="cur">07</i> / <span>07</span></div>
+
+  <section class="slide active" id="notes" data-title="Presenter notes">
+    <div class="pad">
+      <div class="head rise">
+        <div>
+          <div class="eyebrow">Presenter notes</div>
+          <h1>The <span class="i">3-minute</span> script.</h1>
+        </div>
+        <div class="hsub">Notes · 07/24 · one card per slide</div>
+      </div>
+
+      <div class="cols rise">
+        <div class="card">
+          <div class="nl"><span class="num">1</span><span class="nm">Cover · intro</span></div>
+          <p>Hi everyone, my name is Cecilia, and I'm building <b>Aomi Labs</b> — a hosted harness built natively on blockchain. In a nutshell, we operate on the state of EVM and SVM just like Claude Code runs on your OS and filesystem, so we support generic, complicated operations like <i>"find the highest-yielding pool across supported EVM chains, then bridge and stake my money."</i></p>
+          <p>That said, it's not impressive to see a crypto agent in 2026 — so <b>why does it matter?</b></p>
+        </div>
+
+        <div class="card">
+          <div class="nl"><span class="num">2</span><span class="nm">Problem</span></div>
+          <p>The hard reality: <b>enterprises still lack an out-of-the-box solution</b> to automate their operations on crypto. The trend is fintech converging onchain — but if you're a fund manager trying to leverage AI in your allocation, agentic finance isn't solved yet. Zoom into this sector with blockchain and here's everything you'd have to build. Say you want simulation infrastructure to make sure your transactions are safe, bundle that with account abstraction, or send it to Jito for Solana — how much money, time and effort is that going to take you as an enterprise?</p>
+        </div>
+
+        <div class="card">
+          <div class="nl"><span class="num">3</span><span class="nm">Runtime</span></div>
+          <p><b>Aomi is the SaaS that makes it ready to go.</b> Aside from the core Tx pipeline, we host plugins built by developers and enterprises to bring in their own tools and workflows. These plugins — we call them <b>Aomi Apps</b> — are written in Rust, so they're Turing-complete: flexible enough for your trading-bot logic or asset-allocation scheme.</p>
+          <p>For example, in our new partnership with <span class="co">Sommelier</span>, they built their liquidity-manager app wrapping their internal APIs; we give them an SDK for WebUI, Telegram, Slack — every product surface — and do the execution for them. They get observability on a Vercel-style dashboard. What would have cost them 6 months became <span class="ok">one-shot</span>.</p>
+        </div>
+
+        <div class="card">
+          <div class="nl"><span class="num">4</span><span class="nm">Architecture</span></div>
+          <p>This is the architecture — fairly self-explanatory. Like other AI harnesses, we support <b>multi-threading running in the background</b> so you can trade 24/7. We also did a lot of plumbing around authentication: crypto has self-custody addresses and embedded providers, and resolving those under one account — supporting multiple wallets across multiple threads with access control — actually becomes a hazard. We aim to be <b>enterprise-ready</b>, so all that complexity is hidden from our clients.</p>
+        </div>
+
+        <div class="card">
+          <div class="nl"><span class="num">5</span><span class="nm">Pricing</span></div>
+          <p>This is how we make money — intuitively very similar to Vercel. Hosting one app is <b>$10</b>; we take <b>10%</b> from tools if an app wants to x402-gate its API. The one thing we do differently from Vercel is <span class="co">outcome-based pricing</span>, based on the state of a contract. Say an app defines the outcome as moving money between two pools and takes 100 bips — we take <b>30 of those 100 bips</b>. It's basically a sales tax between the end user and the enterprise, based on the outcome.</p>
+        </div>
+
+        <div class="card">
+          <div class="nl"><span class="num">6</span><span class="nm">Go-to-market</span></div>
+          <p>We currently have <b>1,734 users, 23k downloads, and ~30 apps</b>. We project three wedges for our GTM over the next five years. The trivial case is an onchain agent platform, where hosting takes a big share — but crypto retail doesn't have much growth space. Go for wallet / retail-fintech products and the addressable market gets bigger. The ideal case is becoming the ready-to-go AI solution for digital assets — <b>WorkOS for Auth</b> — where the total market goes up to billions and most revenue comes from outcome.</p>
+          <p>These are all <i>projected</i> numbers — none of them are real yet, and we're trying to get there. So if you're a developer or enterprise who needs our services, <b>come talk to me.</b></p>
+        </div>
+      </div>
+
+      <div class="foot rise">Speaker script — for the presenter, not the audience · aomi · 3-min pitch · 07/24</div>
+    </div>
+  </section>
+
+</div></div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  function fit(){ stage.style.transform='scale('+Math.min(window.innerWidth/1280, window.innerHeight/720)+')'; }
+  window.addEventListener('resize',fit); fit();
+})();
+</script>
+</body>
+</html>
