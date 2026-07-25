@@ -1,19 +1,13 @@
 {
-  "ranAt": "2026-07-25T08:22:20.755Z",
+  "ranAt": "2026-07-25T11:31:53.705Z",
   "candidates": 50,
   "postsFetched": 102,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [
-    {
-      "number": 58,
-      "postId": "2079628355322679660",
-      "confidence": 0.9,
-      "reason": "Main account thread explicitly explains what a user keeps and Aomi’s non‑custodial model, matching the deliverable’s audience and thesis.",
-      "url": "https://x.com/aomi_labs/status/2079628355322679660"
-    }
+  "needsConfirm": [],
+  "errors": [
+    "judging failed: model 500: {\n  \"error\": {\n    \"message\": \"The server had an error processing your request. Sorry about that! You can retry your request, or contact us "
   ],
-  "errors": [],
-  "ok": true
+  "ok": false
 }
