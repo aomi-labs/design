@@ -1,38 +1,17 @@
 {
-  "ranAt": "2026-07-26T15:18:48.275Z",
-  "candidates": 49,
+  "ranAt": "2026-07-26T19:32:15.656Z",
+  "candidates": 48,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 1,
-  "applied": 1,
+  "judged": 0,
+  "applied": 0,
   "needsConfirm": [
     {
-      "number": 58,
-      "postId": "2079628355322679660",
-      "confidence": 0.9,
-      "reason": "Main-account post explicitly states Aomi is non-custodial and describes what the platform keeps vs user control, matching the deliverable's message about what you keep when an agent runs through a platform.",
-      "url": "https://x.com/aomi_labs/status/2079628355322679660"
-    },
-    {
       "number": 29,
-      "postId": "2079225517459591258",
+      "postId": "2079228005600104641",
       "confidence": 0.8,
-      "reason": "Main-account post describes the platform deploy flow and backend-owned release records, aligning with the deliverable about dogfooding the one-click deploy and related fixes.",
-      "url": "https://x.com/aomi_labs/status/2079225517459591258"
-    },
-    {
-      "number": 13,
-      "postId": "2060063160690733471",
-      "confidence": 0.8,
-      "reason": "Main-account post announces opening the Early Forge program to the public, which corresponds to the Spotlight/Early Forge series deliverable (public program announcement).",
-      "url": "https://x.com/aomi_labs/status/2060063160690733471"
-    },
-    {
-      "number": 37,
-      "postId": "2067324091258843436",
-      "confidence": 0.95,
-      "reason": "Founder essay-style thesis on where attack surface moves; matches Cecilia essay brief and timing on the Main account.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+      "reason": "The post describes the one-command deploy flow where the platform fetches, builds, checks, and publishes source — matching the deliverable about dogfooding the one-click deploy and backend-controlled releases.",
+      "url": "https://x.com/aomi_dev/status/2079228005600104641"
     }
   ],
   "errors": [],
