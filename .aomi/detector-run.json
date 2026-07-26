@@ -1,31 +1,24 @@
 {
-  "ranAt": "2026-07-25T19:32:40.638Z",
+  "ranAt": "2026-07-26T05:40:44.975Z",
   "candidates": 50,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 0,
-  "applied": 0,
+  "judged": 1,
+  "applied": 1,
   "needsConfirm": [
-    {
-      "number": 23,
-      "postId": "2067324091258843436",
-      "confidence": 0.8,
-      "reason": "The post argues that guarding the wallet is insufficient and recommends moving guardrails earlier in the execution pipeline — matching the deliverable's thesis differentiating Aomi from agentic wallets.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    },
-    {
-      "number": 13,
-      "postId": "2060063160690733471",
-      "confidence": 0.9,
-      "reason": "Public announcement opening the Aomi Early Forge program matches the Early Forge spotlight/series deliverable (same subject and audience).",
-      "url": "https://x.com/aomi_labs/status/2060063160690733471"
-    },
     {
       "number": 37,
       "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Founder essay about agent attack surface and guarding execution matches the Cecilia essay deliverable (same thesis and account).",
+      "confidence": 0.8,
+      "reason": "Main account founder essay on shifting attack surface and guardrails matching the brief for Cecilia about that week's synthesis.",
       "url": "https://x.com/aomi_labs/status/2067324091258843436"
+    },
+    {
+      "number": 55,
+      "postId": "2076666912067420300",
+      "confidence": 0.8,
+      "reason": "Post describes launching an agent with no backend and the three-step build/deploy flow, matching the 'Launch an agent from a web page / Launch My Agent demo' deliverable.",
+      "url": "https://x.com/aomi_labs/status/2076666912067420300"
     }
   ],
   "errors": [],
