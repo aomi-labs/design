@@ -295,6 +295,99 @@
   .cap-note{margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--muted)}
   .cap-note b{color:var(--info);font-weight:600}
 
+  /* ---------- system architecture figure (adapted from the investor deck) ---------- */
+  .archfig{margin:0}
+  .archwrap{position:relative;width:100%;overflow:hidden;border:1px solid var(--border);border-radius:16px;
+    background:radial-gradient(120% 90% at 78% 6%,rgba(82,136,194,.09),transparent 55%),#fff}
+  .archstage{position:absolute;left:0;top:0;width:1280px;height:420px;transform-origin:0 0}
+  .archinner{position:absolute;left:0;top:0;width:1280px;height:720px;transform:translateY(-182px)}
+  .archcap{margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em;line-height:1.8}
+  .archcap b{color:var(--info);font-weight:500}
+
+  @keyframes forkpulse{0%,100%{box-shadow:0 0 0 0 rgba(82,136,194,0)}45%{box-shadow:0 0 0 5px rgba(82,136,194,.20)}}
+  @keyframes pflow{0%{opacity:0;transform:translateY(0) scale(.6)}7%{opacity:1;transform:translateY(0) scale(1)}
+    92%{opacity:1}100%{opacity:0;transform:translateY(255px) scale(.6)}}
+  @keyframes txmove{0%{offset-distance:0%}100%{offset-distance:100%}}
+  @keyframes txtint{
+    0%,50%{background:radial-gradient(circle at 40% 35%,#ffe08a,#d9a72e);
+      box-shadow:0 0 0 3px rgba(217,167,46,.22),0 0 14px 3px rgba(217,167,46,.45)}
+    58%,100%{background:radial-gradient(circle at 40% 35%,#8ef0b8,#2e9e6b);
+      box-shadow:0 0 0 3px rgba(46,158,107,.22),0 0 14px 3px rgba(46,158,107,.45)}}
+  @keyframes txfade{0%{opacity:0}4%{opacity:1}96%{opacity:1}100%{opacity:0}}
+
+  /* left · tx pipeline */
+  .archinner .pl{position:absolute;left:0;top:0;width:320px;height:720px;z-index:5}
+  .archinner .pl-rail{position:absolute;left:243px;top:255px;width:2px;height:255px;
+    background:linear-gradient(180deg,var(--border-strong),var(--sky-300) 55%,var(--border-strong))}
+  .archinner .pstep{position:absolute;left:0;width:320px;height:40px}
+  .archinner .pdot{position:absolute;left:224px;top:0;width:40px;height:40px;border-radius:11px;
+    background:#fff;border:1.5px solid var(--border-strong);display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--sh-sm);z-index:3}
+  .archinner .pdot svg{width:19px;height:19px;color:var(--sky)}
+  .archinner .pstep.hot .pdot{border-color:var(--info);background:var(--sky-100);box-shadow:0 0 0 5px rgba(82,136,194,.12)}
+  .archinner .pstep.hot .pdot svg{color:var(--info)}
+  .archinner .pinfo{position:absolute;left:24px;top:13px;width:184px;text-align:right}
+  .archinner .pn2{font-family:var(--display);font-weight:700;font-size:14px;color:var(--ink);line-height:1}
+  .archinner .pk{font-family:var(--mono);font-size:8.5px;color:var(--muted);line-height:1.5;margin-top:4px}
+  .archinner .pbadge{display:inline-block;margin-top:6px;white-space:nowrap;
+    font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--pink-text);
+    border:1px solid var(--pink-200);background:var(--pink-50);border-radius:999px;padding:2px 7px}
+  .archinner .pstep.sign .pbadge{color:var(--success);border-color:var(--success-line);background:var(--success-subtle)}
+  .archinner .pl-dot{position:absolute;left:240px;top:251px;width:8px;height:8px;border-radius:50%;
+    background:var(--sky);box-shadow:0 0 9px 2px rgba(82,136,194,.5);z-index:6;opacity:0;
+    animation:pflow 4.2s var(--ease) infinite}
+  .archinner .pl-dot.b{animation-delay:1.4s}
+  .archinner .pl-dot.c{animation-delay:2.8s}
+
+  /* right · architecture */
+  .archinner .a-scale{position:absolute;left:0;top:0;width:1280px;height:720px;transform:translate(300px,100px) scale(.70);transform-origin:0 0}
+  .archinner .a-box{position:absolute;border:1.4px solid var(--border-strong);border-radius:14px;background:#fff;z-index:2;box-shadow:var(--sh-sm)}
+  .archinner .a-box .t2{position:absolute;left:0;right:0;font-family:var(--display);font-weight:700;color:var(--ink);text-align:center}
+  .archinner .a-box .c2{position:absolute;left:0;right:0;font-family:var(--mono);color:var(--muted);text-align:center}
+  .archinner .a-emoji{position:absolute;z-index:5}
+  .archinner .a-txt{position:absolute;font-family:var(--mono);color:var(--muted);z-index:5}
+  .archinner .a-hatch{position:absolute;border:1.4px solid var(--lilac-200);border-radius:12px;z-index:2;
+    background:repeating-linear-gradient(45deg,rgba(227,216,230,.85) 0 7px,rgba(246,243,247,.55) 7px 15px);
+    display:flex;align-items:center;justify-content:center}
+  .archinner .a-hatch b{font-family:var(--display);font-weight:700;color:var(--ink);font-size:16px}
+  .archinner .a-band{position:absolute;background:var(--lilac-100);border:1px solid var(--lilac-200);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;z-index:3}
+  .archinner .a-band span{font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:#453a4e}
+  .archinner .a-tube{position:absolute;border:1.4px solid var(--border-strong);border-radius:11px;background:var(--bg-subtle);z-index:1}
+  .archinner .a-diamond{position:absolute;border:1.4px solid var(--border-strong);background:#fff;transform:rotate(45deg);
+    border-radius:9px;z-index:2;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm)}
+  .archinner .a-diamond span{transform:rotate(-45deg);font-family:var(--mono);font-size:10px;color:var(--cool-700);text-align:center;line-height:1.3}
+  .archinner .a-diamond.hot{border-color:var(--pink-200);background:var(--pink-50)}
+  .archinner .a-diamond.hot span{color:var(--pink-text)}
+  .archinner .a-model{position:absolute;border:1.4px solid var(--border-strong);border-radius:50%;background:#fff;z-index:2;
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);color:var(--cool-700);box-shadow:var(--sh-sm)}
+  .archinner .a-fork{position:absolute;border-radius:50%;border:1px solid var(--sky-line);color:#253a56;
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:500;font-size:12px;z-index:3;
+    animation:forkpulse 2.8s var(--ease) infinite}
+  .archinner .a-vlabel{position:absolute;font-family:var(--display);font-weight:700;color:var(--muted);writing-mode:vertical-rl;letter-spacing:.01em;z-index:5}
+  .archinner .a-cyl{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;text-align:center;
+    background:linear-gradient(180deg,#aecbe8,#7facd6);border:1px solid var(--sky);border-radius:50%/20px;
+    color:#1e3450;font-family:var(--display);font-weight:700;font-size:19px;line-height:1.05}
+  .archinner .a-cyl::before{content:"";position:absolute;left:-1px;right:-1px;top:0;height:22px;border:1px solid var(--sky);
+    border-radius:50%;background:#cfe1f3;z-index:-1}
+  .archinner .a-svg{position:absolute;left:0;top:0;width:1280px;height:720px;z-index:4;pointer-events:none;overflow:visible}
+  .archinner .tx-dot{position:absolute;top:0;left:0;width:12px;height:12px;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%,#ffe08a,#d9a72e);
+    box-shadow:0 0 0 3px rgba(217,167,46,.22),0 0 14px 3px rgba(217,167,46,.45);
+    offset-path:path('M462,180 L462,430 L900,430 L1000,430 A38,38 0 0 1 1000,354 A38,38 0 0 1 1000,430 L900,430 L462,430 L462,180');
+    offset-rotate:0deg;offset-anchor:center;opacity:0;z-index:7;
+    animation:txmove 6s linear infinite, txtint 6s linear infinite, txfade 6s linear infinite}
+  .archinner .tx-dot.t2d{animation-delay:-3s}
+
+  /* deck feature band */
+  .featband{display:grid;grid-template-columns:1fr 1fr;gap:44px;margin-top:30px;padding-top:26px;border-top:1px solid var(--border)}
+  @media(max-width:820px){.featband{grid-template-columns:1fr;gap:24px}}
+  .featband .ft-t{font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:9px}
+  .featband .ft-t .dt{width:8px;height:8px;border-radius:2px;background:var(--sky);flex:none}
+  .featband .col.b .ft-t .dt{background:var(--pink)}
+  .featband .ft-d{font-family:var(--mono);font-size:10.5px;letter-spacing:.01em;line-height:1.85;color:var(--cool-600);margin-top:9px}
+  .featband .ft-d b{color:var(--ink);font-weight:500}
+
   .ctrl{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:14px;overflow:hidden}
   @media(max-width:820px){.ctrl{grid-template-columns:1fr}}
   .ctrl .cell{padding:22px 26px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg)}
@@ -553,11 +646,127 @@
   <div class="wrap">
     <div class="secno"><b>03</b> Capability breakdown</div>
     <h2>The capability set, in detail.</h2>
-    <p class="lead" style="margin-top:16px">Four subsystems, none bolted on — each a property of a runtime built directly on a full node that forks every chain in ~200ms, EVM + SVM.</p>
+    <p class="lead" style="margin-top:16px">The architecture, the pipeline it enforces, the controls around it, and the terms. Nothing here is bolted on — each is a property of a runtime built directly on a full node that forks every chain in ~200ms, EVM + SVM.</p>
 
-    <!-- 3.1 execution pipeline -->
+    <!-- 3.1 system architecture -->
     <div class="cap-block">
-      <div class="ch"><span class="n">3.1</span><h3>Execution pipeline</h3><span class="r">build · simulate · sign · broadcast</span></div>
+      <div class="ch"><span class="n">3.1</span><h3>System architecture</h3><span class="r">one harness · every chain, forked</span></div>
+      <figure class="archfig">
+        <div class="archwrap" id="archwrap">
+          <div class="archstage" id="archstage">
+            <div class="archinner">
+
+              <!-- left · tx pipeline -->
+              <div class="pl">
+                <div class="pl-rail"></div>
+                <div class="pstep" style="top:235px">
+                  <div class="pdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg></div>
+                  <div class="pinfo"><div class="pn2">Build</div><div class="pk">tool composes the exact tx</div></div>
+                </div>
+                <div class="pstep hot" style="top:320px">
+                  <div class="pdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+                  <div class="pinfo"><div class="pn2">Simulate</div><div class="pk">prove the real outcome is safe</div><span class="pbadge">forked state · ~200ms</span></div>
+                </div>
+                <div class="pstep sign" style="top:405px">
+                  <div class="pdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16.5" cy="14" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+                  <div class="pinfo"><div class="pn2">Sign</div><div class="pk">the user approves exact changes</div><span class="pbadge">AA bundler · their wallet</span></div>
+                </div>
+                <div class="pstep" style="top:490px">
+                  <div class="pdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h11"/><path d="M11 7l6 5-6 5"/><rect x="17" y="4" width="3.5" height="16" rx="1"/></svg></div>
+                  <div class="pinfo"><div class="pn2">Broadcast</div><div class="pk">confirmed onchain</div><span class="pbadge">AA + Solana Jito</span></div>
+                </div>
+                <span class="pl-dot"></span><span class="pl-dot b"></span><span class="pl-dot c"></span>
+              </div>
+
+              <!-- right · architecture -->
+              <div class="a-scale">
+                <span class="a-emoji" style="left:292px;top:148px;font-size:30px">🧑</span>
+                <span class="a-emoji" style="left:372px;top:148px;font-size:30px">🧑</span>
+                <span class="a-emoji" style="left:452px;top:148px;font-size:30px">🧑</span>
+                <span class="a-txt" style="left:522px;top:156px;font-size:22px;letter-spacing:.14em;color:var(--subtle)">····</span>
+                <span class="a-emoji" style="left:596px;top:148px;font-size:30px">🧑</span>
+                <span class="a-txt" style="left:680px;top:150px;width:160px;font-size:11px;line-height:1.5">User-specific<br>context</span>
+                <span class="a-txt" style="left:302px;top:192px;font-size:15px;color:var(--subtle)">↕</span>
+                <span class="a-txt" style="left:382px;top:192px;font-size:15px;color:var(--subtle)">↕</span>
+                <span class="a-txt" style="left:462px;top:192px;font-size:15px;color:var(--subtle)">↕</span>
+                <span class="a-txt" style="left:606px;top:192px;font-size:15px;color:var(--subtle)">↕</span>
+
+                <div class="a-hatch" style="left:92px;top:222px;width:740px;height:40px"><b>Stateless Dispatch</b></div>
+
+                <div class="a-tube" style="left:150px;top:340px;width:26px;height:180px"></div>
+                <div class="a-tube" style="left:224px;top:340px;width:26px;height:180px"></div>
+                <div class="a-tube" style="left:770px;top:340px;width:26px;height:180px"></div>
+
+                <div class="a-box" style="left:92px;top:278px;width:740px;height:74px">
+                  <div class="t2" style="top:12px;font-size:19px">Application</div>
+                  <div class="c2" style="top:44px;font-size:14px"><span style="color:var(--cool-700)">[app1, app2, ..]</span>.start()</div>
+                </div>
+
+                <div class="a-box" style="left:92px;top:366px;width:740px;height:128px">
+                  <div class="t2" style="top:12px;font-size:19px">Runtime</div>
+                  <div class="c2" style="top:44px;font-size:13px">Scheduler.run()</div>
+                </div>
+                <span class="a-emoji" style="left:151px;top:400px;font-size:25px">🤖</span>
+                <span class="a-emoji" style="left:225px;top:400px;font-size:25px">🤖</span>
+                <span class="a-emoji" style="left:771px;top:400px;font-size:25px">🤖</span>
+                <div class="a-band" style="left:112px;top:456px;width:700px;height:26px"><span>Memory &amp; IPC</span></div>
+
+                <div class="a-box" style="left:92px;top:512px;width:330px;height:48px"><div class="t2" style="top:14px;font-size:16px">Tool Scheduler</div></div>
+                <div class="a-box" style="left:502px;top:512px;width:330px;height:48px"><div class="t2" style="top:14px;font-size:16px">LLM Interface</div></div>
+
+                <div class="a-diamond hot" style="left:114px;top:586px;width:76px;height:76px"><span>evm-<br>gateway</span></div>
+                <div class="a-diamond" style="left:224px;top:586px;width:76px;height:76px"><span>db-driver</span></div>
+                <div class="a-diamond" style="left:334px;top:586px;width:76px;height:76px"><span>web-search</span></div>
+
+                <div class="a-model" style="left:530px;top:572px;width:96px;height:96px;font-size:14px">gpt5</div>
+                <div class="a-model" style="left:646px;top:584px;width:72px;height:72px;font-size:11px">Opus4.5</div>
+                <div class="a-model" style="left:738px;top:590px;width:60px;height:60px;font-size:10px">kimi-k2</div>
+
+                <div class="a-fork" style="left:969px;top:210px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#eaf6ff,#a9d6f5);border-color:#4a9fd8;color:#1c5a86">Arb</div>
+                <div class="a-fork" style="left:969px;top:284px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#e9efff,#9fb6ff);border-color:#3b6bf0;color:#26439c;animation-delay:.5s">Base</div>
+                <div class="a-fork" style="left:969px;top:358px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#ffecee,#ffa8b0);border-color:#f0455a;color:#b02334;animation-delay:1s">OP</div>
+                <div class="a-fork" style="left:969px;top:432px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#eeeffb,#b8c0ef);border-color:#6b7fe0;color:#3f4aa0;animation-delay:1.5s">Mainnet</div>
+                <div class="a-fork" style="left:969px;top:506px;width:62px;height:62px;background:linear-gradient(135deg,#e7d8ff,#cbf5e4);border-color:#9a5cf0;color:#6a2fb0;animation-delay:2s">solana</div>
+                <div class="a-vlabel" style="left:1118px;top:300px;font-size:18px">Forks Infrastructure</div>
+
+                <div class="a-cyl" style="left:912px;top:592px;width:176px;height:100px">Full<br>Node</div>
+
+                <svg class="a-svg" viewBox="0 0 1280 720">
+                  <defs><marker id="arch-ah" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#5288c2"/></marker></defs>
+                  <path d="M78,315 V624 H92" fill="none" stroke="#5288c2" stroke-width="1.4" stroke-dasharray="5 5" marker-end="url(#arch-ah)"/>
+                  <path d="M832,430 H958" fill="none" stroke="#7facd6" stroke-width="1.3" stroke-dasharray="4 5"/>
+                  <path d="M1000,568 V592" fill="none" stroke="#7facd6" stroke-width="1.3" stroke-dasharray="4 5"/>
+                </svg>
+                <span class="a-txt" style="left:44px;top:400px;font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg)">application-define</span>
+                <span class="a-txt" style="left:838px;top:412px;font-size:9.5px;color:var(--info)">forks ~200ms</span>
+
+                <span class="tx-dot"></span>
+                <span class="tx-dot t2d"></span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <figcaption class="archcap">
+          The pipeline on the left is the contract every chat-initiated action passes through. The runtime on the right is what the product team does <b>not</b> build: stateless dispatch, per-user agent threads, tool + model scheduling, and a fork of every chain served from a full node. <b>Language in, verified execution out.</b>
+        </figcaption>
+      </figure>
+
+      <div class="featband">
+        <div class="col a">
+          <div class="ft-t"><span class="dt"></span>Multi-threaded async execution</div>
+          <div class="ft-d">Agent threads run server-side, so work continues after the app is closed — <b>background strategies</b>, <b>limit / stop orders</b>, <b>copy-trading</b> a target wallet, scheduled <b>DCA</b> and rebalances, and liquidation guards that fire on their own. Surface area a swap screen cannot express.</div>
+        </div>
+        <div class="col b">
+          <div class="ft-t"><span class="dt"></span>Access control</div>
+          <div class="ft-d">Provider-native key delegation — <b>Para, wagmi connectors, or an in-house adapter</b> — with machine auth solved: an agent signs only under a <b>scoped, revocable policy</b> (value caps, human-sync or autonomous). Keys never leave the user's own wallet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3.2 execution pipeline -->
+    <div class="cap-block">
+      <div class="ch"><span class="n">3.2</span><h3>Execution pipeline</h3><span class="r">build · simulate · sign · broadcast</span></div>
       <div class="pipe">
         <div class="step">
           <div class="k3">Step 01</div><h4>Build</h4>
@@ -585,7 +794,7 @@
 
     <!-- 3.2 control framework -->
     <div class="cap-block">
-      <div class="ch"><span class="n">3.2</span><h3>Control framework</h3><span class="r">the policy, enforced</span></div>
+      <div class="ch"><span class="n">3.3</span><h3>Control framework</h3><span class="r">the policy, enforced</span></div>
       <div class="ctrl">
         <div class="cell">
           <div class="t"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h9"/></svg></span>Policy as configuration</div>
@@ -616,7 +825,7 @@
 
     <!-- 3.3 commercial terms -->
     <div class="cap-block">
-      <div class="ch"><span class="n">3.3</span><h3>Commercial terms</h3><span class="r">builder-code convention</span></div>
+      <div class="ch"><span class="n">3.4</span><h3>Commercial terms</h3><span class="r">builder-code convention</span></div>
       <div class="terms">
         <div>
           <p class="lead" style="font-size:16.5px">The economics follow the convention wallets already accept for embedded execution: <span class="hl">the product keeps its take rate; the platform earns a share of incremental executed flow</span>. A conversational surface converts passive balances into transaction volume the current interface never captures — growth in volume per MAU, on the existing fee.</p>
@@ -642,6 +851,29 @@
 </div>
 
 <script>
+(function(){
+  /* scale the 1280-wide architecture figure to whatever column width it lands in */
+  var wrap = document.getElementById('archwrap');
+  var stage = document.getElementById('archstage');
+  if (wrap && stage) {
+    // the deck stage is 1280 wide but its content stops at ~1105 — crop the dead column
+    var STAGE_W = 1116, STAGE_H = 420;
+    var fit = function(){
+      // never act on a zero measurement (layout not ready ⇒ would collapse the figure)
+      var w = wrap.clientWidth || (wrap.parentElement && wrap.parentElement.clientWidth) || 0;
+      if (!w) return;
+      var s = w / STAGE_W;
+      stage.style.transform = 'scale(' + s + ')';
+      wrap.style.height = Math.round(STAGE_H * s) + 'px';
+    };
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(wrap.parentElement || wrap);
+    window.addEventListener('resize', fit);
+    window.addEventListener('load', fit);
+    requestAnimationFrame(fit);
+    fit();
+  }
+})();
+
 (function(){
   /* live widget loop — the reference-deployment trace, replayed */
   var $ = function(id){ return document.getElementById(id); };
