@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-26T19:32:15.656Z",
+  "ranAt": "2026-07-26T23:10:14.036Z",
   "candidates": 48,
   "postsFetched": 102,
   "prePass": 0,
@@ -7,11 +7,32 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 29,
-      "postId": "2079228005600104641",
+      "number": 37,
+      "postId": "2067324091258843436",
+      "confidence": 0.9,
+      "reason": "Founder essay on where the attack surface moved above contracts — matches Cecilia long-form brief and founder POV deliverable.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+    },
+    {
+      "number": 55,
+      "postId": "2076666912067420300",
       "confidence": 0.8,
-      "reason": "The post describes the one-command deploy flow where the platform fetches, builds, checks, and publishes source — matching the deliverable about dogfooding the one-click deploy and backend-controlled releases.",
-      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+      "reason": "Public post describing agents going live with no backend and three-command deploy flow — aligns with the 'Launch an agent from a web page' demo deliverable.",
+      "url": "https://x.com/aomi_labs/status/2076666912067420300"
+    },
+    {
+      "number": 58,
+      "postId": "2067324091258843436",
+      "confidence": 0.8,
+      "reason": "Main account post explicitly discusses where trust/guardrails live when agents run through a platform, matching the deliverable's theme and audience.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+    },
+    {
+      "number": 13,
+      "postId": "2060063160690733471",
+      "confidence": 0.9,
+      "reason": "Post announces opening the Aomi Early Forge program to the public, matching the Spotlight Early Forge deliverable's intent and audience.",
+      "url": "https://x.com/aomi_labs/status/2060063160690733471"
     }
   ],
   "errors": [],
