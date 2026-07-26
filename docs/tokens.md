@@ -79,3 +79,32 @@ Drop shadows `--aomi-shadow-{sm,md,lg}`. The signature glass treatment composes 
 ## Motion
 
 Durations `--aomi-duration-{fast,base,slow}` (120 / 200 / 320ms) and easings `--aomi-ease-standard`, `--aomi-ease-emphasized`.
+
+
+## Component-layer tokens (2026-07-26)
+
+Added after a full pass over the portal + control-plane surfaces, where these
+were being hand-rolled as one-off opacities and greys:
+
+| Token | Light | Dark | Why it exists |
+|---|---|---|---|
+| `--aomi-state-hover-raised` | cool-100 | cool-700 | Hover for rows on a **white / raised** ground (menus, popovers). `--aomi-state-hover` is tuned for items on cool-100 and reads as a selection on white. |
+| `--aomi-accent-tint` | accent @10% | accent @10% | Fill for tinted chips, callouts and the hover state of accent-outline buttons. |
+| `--aomi-accent-outline` | accent @45% | accent @45% | Border for the same family. |
+| `--aomi-overlay-border` | muted @30% | muted @30% | The hairline on menus and tooltips — a plain border is too heavy on a floating surface. |
+| `--aomi-danger-strong` | `#b8394a` | `#c34255` | Destructive **fills**. White on `--aomi-danger-500` is 4.3:1 and fails AA at control sizes; these are 5.6:1 / 5.0:1. |
+| `--aomi-on-danger` | `#ffffff` | `#ffffff` | Text on a destructive fill. |
+| `--aomi-surface-2` | cool-100 | cool-800 | Alias of `bg-subtle` under the name the app surfaces already use. |
+
+Two corrections in the same pass:
+
+- **`--aomi-ring` was `cool-400` / `cool-500`** — a grey ring, nearly invisible
+  on a cool surface, while this file already reserved `--aomi-accent-interactive`
+  for "focus rings, links, accent CTAs". The ring now *is* the interactive accent.
+- **`--aomi-state-hover` on dark was `cool-800`, which is also `--aomi-surface-raised`.**
+  A hover painted in the same colour as the surface it sits on can never show;
+  the portal's menus had exactly this bug. Dark hover is now `cool-700`.
+  The rule to keep: **a hover fill must out-step its own ground.**
+
+`--aomi-danger-500` also gained a dark override (`#e2687a`); it had none and was
+inheriting the light red onto a dark ground.

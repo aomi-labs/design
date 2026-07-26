@@ -192,8 +192,30 @@
     --aomi-accent-interactive: var(--aomi-sky-500);
     /* Hover fill for items resting on cool-100 surfaces. */
     --aomi-state-hover: var(--aomi-cool-200);
+    /* Hover for items on a WHITE / raised ground (menus, popovers, list rows).
+       state-hover is one step too heavy there — it reads as a selection. */
+    --aomi-state-hover-raised: var(--aomi-cool-100);
 
-    --aomi-ring: var(--aomi-cool-400);
+    /* Focus ring is the interactive accent, not a grey. A neutral ring is
+       nearly invisible on a cool surface, and this file already reserves
+       accent-interactive for "focus rings, links, accent CTAs". */
+    --aomi-ring: var(--aomi-accent-interactive);
+
+    /* ---- Tinted surfaces ------------------------------------------------ */
+    /* The accent-at-10% fill + accent-at-45% border pair recurs on chips,
+       tinted buttons and callouts; the overlay hairline is what menus and
+       tooltips sit behind. Tokens so component code never hand-rolls alpha. */
+    --aomi-accent-tint: color-mix(in srgb, var(--aomi-accent-interactive) 10%, transparent);
+    --aomi-accent-outline: color-mix(in srgb, var(--aomi-accent-interactive) 45%, transparent);
+    --aomi-overlay-border: color-mix(in srgb, var(--aomi-text-muted) 30%, transparent);
+
+    /* Destructive fills need a darker step than the text/outline red:
+       white on #d2495b is 4.3:1, which fails AA at control sizes. */
+    --aomi-danger-strong: #b8394a;
+    --aomi-on-danger: #ffffff;
+
+    /* Alias: the app surfaces call this surface-2. Same value as bg-subtle. */
+    --aomi-surface-2: var(--aomi-cool-100);
 
     /* Chat surface — mirrors the portal (assistant-ui / shadcn zinc).
        User turn: light "muted" bubble with dark text. Assistant turn: no
@@ -255,9 +277,23 @@
     --aomi-accent-selected: var(--aomi-sky-500);
     --aomi-accent-selected-text: var(--aomi-cool-0);
     --aomi-accent-interactive: var(--aomi-sky-400);
-    --aomi-state-hover: var(--aomi-cool-800);
+    /* cool-800 is ALSO surface-raised on dark — a hover painted in it is
+       invisible on any raised panel. Hover must out-step its own ground. */
+    --aomi-state-hover: var(--aomi-cool-700);
+    --aomi-state-hover-raised: var(--aomi-cool-700);
 
-    --aomi-ring: var(--aomi-cool-500);
+    --aomi-ring: var(--aomi-accent-interactive);
+
+    --aomi-accent-tint: color-mix(in srgb, var(--aomi-accent-interactive) 10%, transparent);
+    --aomi-accent-outline: color-mix(in srgb, var(--aomi-accent-interactive) 45%, transparent);
+    --aomi-overlay-border: color-mix(in srgb, var(--aomi-text-muted) 30%, transparent);
+
+    /* Lifted so red carries on the dark ground; it had no dark override. */
+    --aomi-danger-500: #e2687a;
+    --aomi-danger-strong: #c34255;
+    --aomi-on-danger: #ffffff;
+
+    --aomi-surface-2: var(--aomi-cool-800);
 
     --aomi-ink: var(--aomi-cool-0);
     --aomi-ink-hover: var(--aomi-cool-100);

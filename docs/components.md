@@ -1,3 +1,9 @@
+> **Component inventory** — `playground/public/inventory.html` (served beside the
+> playground at `/inventory.html`) is the visual reference: every component with
+> its name, the tokens it is built from, live specimens in both themes, and the
+> cross-cutting rules (button shape families, selection by size, the type ladder,
+> dismissal). Read it alongside this file.
+
 # Component reference
 
 Three foundational components ship today. Each is a typed React component built on the tokens, using `class-variance-authority` for variants and the `cn()` helper for class merging. All forward refs and spread native props.

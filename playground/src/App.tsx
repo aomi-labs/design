@@ -105,12 +105,20 @@ function ThemeToggle() {
   return (
     <button
       type="button"
+      role="switch"
       onClick={() => setDark((v) => !v)}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      aria-pressed={dark}
-      className="fixed right-4 top-4 z-50 inline-flex size-10 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-sm transition-colors hover:bg-bg-subtle"
+      aria-checked={dark}
+      /* 32px tall — the same box as an icon button, so a header row of
+         controls shares one baseline. */
+      className="fixed right-4 top-4 z-50 h-8 w-14 rounded-full border border-border bg-bg-subtle transition-colors hover:border-border-strong"
     >
-      <Ic d={dark ? SUN_ICON : MOON_ICON} className="size-4" />
+      <span
+        style={{ left: dark ? 27 : 3 }}
+        className="absolute top-1/2 flex size-[26px] -translate-y-1/2 items-center justify-center rounded-full bg-ink text-[var(--aomi-ink-text)] transition-[left] duration-200"
+      >
+        <Ic d={dark ? MOON_ICON : SUN_ICON} className="size-[15px]" />
+      </span>
     </button>
   );
 }
@@ -323,35 +331,126 @@ export function App() {
         <LandingReference />
 
         <Section title="Buttons">
-          <div className="flex flex-wrap items-center gap-3">
-            <Button variant="primary">Primary</Button>
-            <Button variant="accent">Accent</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="connect">EVM Connect</Button>
-            <Button variant="danger">Danger</Button>
+          {/* Two shape families, not six loose variants. Shape says WHERE the
+              action lives; fill says how loud it is. */}
+          <div className="flex flex-col gap-5">
+            <div>
+              <p className="mb-2.5 text-xs text-ink-muted">
+                Pill pair · page level — ink commit beside a neutral dismiss
+              </p>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <Button variant="primary">Manage account</Button>
+                <Button variant="outline">Cancel</Button>
+                <button
+                  type="button"
+                  className="h-[34px] rounded-full border border-transparent bg-[var(--aomi-danger-strong)] px-4 text-[13px] font-medium text-[var(--aomi-on-danger)] transition-opacity hover:opacity-90"
+                >
+                  Remove
+                </button>
+              </div>
+              <p className="mt-1.5 text-[11px] text-ink-muted">
+                Destructive borrows the ink commit&apos;s pill and size, and swaps the
+                fill for red — same weight of action, opposite consequence.
+              </p>
+            </div>
+            <div>
+              <p className="mb-2.5 text-xs text-ink-muted">
+                Rounded-lg pair · in flow — blue commit beside a blue repair
+              </p>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  className="h-[34px] rounded-lg border border-transparent bg-[var(--aomi-accent-interactive)] px-4 text-[13px] font-medium text-[var(--aomi-text-on-brand)] transition-opacity hover:opacity-90"
+                >
+                  Sign to authorize
+                </button>
+                <button
+                  type="button"
+                  className="h-[34px] rounded-lg border border-[var(--aomi-accent-outline)] bg-transparent px-4 text-[13px] font-medium text-[var(--aomi-accent-interactive)] transition-colors hover:bg-[var(--aomi-accent-tint)]"
+                >
+                  Re-grant
+                </button>
+              </div>
+            </div>
           </div>
+        </Section>
+
+        <Section title="Selection controls">
+          {/* Selection splits by SIZE: pill-sized controls take the solid
+              accent fill; card- and row-sized selection takes accent-subtle. */}
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <p className="mb-2.5 text-xs text-ink-muted">
+                Segmented control — sunken track, accent pill
+              </p>
+              <div className="inline-flex rounded-full border border-border bg-bg-subtle p-[3px]">
+                <span className="rounded-full px-3.5 py-[5px] text-xs text-ink-muted">
+                  By app
+                </span>
+                <span className="rounded-full bg-[var(--aomi-accent-interactive)] px-3.5 py-[5px] text-xs font-medium text-[var(--aomi-text-on-brand)]">
+                  Itemized
+                </span>
+              </div>
+            </div>
+            <div>
+              <p className="mb-2.5 text-xs text-ink-muted">
+                Filter chips — same size as the segment pill
+              </p>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="mr-1 text-[10px] uppercase tracking-wide text-ink-muted">
+                  Subject
+                </span>
+                <span className="rounded-full border border-border bg-bg-subtle px-3.5 py-[5px] text-xs text-ink-muted">
+                  All
+                </span>
+                <span className="rounded-full border border-border bg-bg-subtle px-3.5 py-[5px] text-xs text-ink-muted">
+                  Models
+                </span>
+                <span className="rounded-full border border-transparent bg-[var(--aomi-accent-interactive)] px-3.5 py-[5px] text-xs font-medium text-[var(--aomi-text-on-brand)]">
+                  On-chain
+                </span>
+              </div>
+            </div>
+          </div>
+          <p className="mt-4 text-[11px] text-ink-muted">
+            Sizes climb one ladder: badge 10px → chip and segment 12px → button
+            13px. Full reference in{" "}
+            <a
+              href="/inventory.html"
+              className="text-[var(--aomi-accent-interactive)] underline underline-offset-2"
+            >
+              the component inventory
+            </a>
+            .
+          </p>
         </Section>
 
         <Section title="Selected states">
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <p className="mb-2.5 text-xs text-ink-muted">Selected nav bar</p>
+              <p className="mb-2.5 text-xs text-ink-muted">
+                Selected nav row — accent-subtle, not a solid bar
+              </p>
+              {/* Row-sized selection takes the subtle fill plus an accent
+                  indicator. A solid accent at this width is a wall of colour;
+                  the solid fill belongs to pill-sized controls (see above). */}
               <div className="flex flex-col gap-0.5 rounded-xl border border-border bg-surface p-1.5">
-                <div className="relative isolate overflow-hidden rounded-lg bg-sky-200 px-3 py-2 text-[13px] font-medium text-[var(--aomi-accent-selected-text)]">
-                  <span
-                    className="absolute inset-y-0 left-0 right-[5px] -z-10 rounded-lg bg-accent-selected"
-                    aria-hidden="true"
-                  />
+                <div className="flex items-center gap-2 rounded-lg bg-accent-subtle px-3 py-2 text-[13px] font-medium text-ink">
+                  <span className="size-1.5 shrink-0 rounded-full bg-[var(--aomi-accent-interactive)]" />
                   Build
                 </div>
-                <div className="rounded-lg px-3 py-2 text-[13px] text-ink-secondary">
+                <div className="rounded-lg px-3 py-2 pl-[26px] text-[13px] text-ink-secondary">
                   Deployments
                 </div>
-                <div className="rounded-lg bg-state-hover px-3 py-2 text-[13px] text-ink">
+                <div className="rounded-lg bg-[var(--aomi-state-hover-raised)] px-3 py-2 pl-[26px] text-[13px] text-ink">
                   Settings <span className="text-xs text-ink-muted">(hover)</span>
                 </div>
               </div>
+              <p className="mt-1.5 text-[11px] text-ink-muted">
+                Hover on a white card uses <code>state-hover-raised</code>;
+                <code> state-hover</code> is a step heavier and is tuned for rows
+                already sitting on cool-100.
+              </p>
             </div>
             <div className="flex flex-col gap-5">
               <div>
@@ -370,10 +469,10 @@ export function App() {
                 </div>
               </div>
               <div>
-                <p className="mb-2.5 text-xs text-ink-muted">Focused input</p>
+                <p className="mb-2.5 text-xs text-ink-muted">Focused input — the ring is <code>--aomi-ring</code></p>
                 <Input
                   placeholder="Ask Aomi anything…"
-                  className="border-[var(--aomi-accent-interactive)]"
+                  className="border-[var(--aomi-ring)] outline outline-2 outline-offset-2 outline-[var(--aomi-ring)]"
                 />
               </div>
             </div>
@@ -388,10 +487,11 @@ export function App() {
                 <CardDescription>Default card, cool hairline border.</CardDescription>
               </CardHeader>
               <CardFooter>
+                {/* The page-level pair: ink commit + neutral outline dismiss. */}
                 <Button variant="primary" size="sm">
                   Authorize
                 </Button>
-                <Button variant="ghost" size="sm">
+                <Button variant="outline" size="sm">
                   Cancel
                 </Button>
               </CardFooter>
@@ -405,7 +505,7 @@ export function App() {
               <CardHeader className="mt-3">
                 <CardTitle>Tinted card (sky)</CardTitle>
                 <CardDescription>
-                  The card-tinted role — the old lilac fill, now sky-200.
+                  The card-tinted role — sky-200.
                 </CardDescription>
               </CardHeader>
             </Card>
