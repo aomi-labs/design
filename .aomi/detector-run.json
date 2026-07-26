@@ -1,24 +1,38 @@
 {
-  "ranAt": "2026-07-26T05:40:44.975Z",
-  "candidates": 50,
+  "ranAt": "2026-07-26T11:35:46.546Z",
+  "candidates": 49,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 1,
-  "applied": 1,
+  "judged": 0,
+  "applied": 0,
   "needsConfirm": [
     {
-      "number": 37,
-      "postId": "2067324091258843436",
+      "number": 58,
+      "postId": "2079628355322679660",
       "confidence": 0.8,
-      "reason": "Main account founder essay on shifting attack surface and guardrails matching the brief for Cecilia about that week's synthesis.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+      "reason": "Main account thread explains the trust split and non‑custodial harness exactly matching the deliverable's theme about what the platform vs Aomi owns.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
     },
     {
-      "number": 55,
+      "number": 57,
       "postId": "2076666912067420300",
       "confidence": 0.8,
-      "reason": "Post describes launching an agent with no backend and the three-step build/deploy flow, matching the 'Launch an agent from a web page / Launch My Agent demo' deliverable.",
+      "reason": "Main account post describes launching an agent with three commands and hosted pipeline (no backend), matching the deliverable about launching a funded agent without touching infra.",
       "url": "https://x.com/aomi_labs/status/2076666912067420300"
+    },
+    {
+      "number": 14,
+      "postId": "2069452269230182912",
+      "confidence": 0.9,
+      "reason": "Post explicitly describes the on-chain harness lifecycle (load app, model+tools, stage, simulate on fork, wallet callback) matching the deliverable text exactly.",
+      "url": "https://x.com/aomi_labs/status/2069452269230182912"
+    },
+    {
+      "number": 29,
+      "postId": "2079225517459591258",
+      "confidence": 0.8,
+      "reason": "Post describes the deploy flow and platform-owned release pipeline (dogfooding the deploy path), which aligns with the deliverable about one-click deploy gaps and fixes.",
+      "url": "https://x.com/aomi_labs/status/2079225517459591258"
     }
   ],
   "errors": [],
