@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aomi — Execution Infrastructure for Trading Platforms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=PT+Serif:wght@700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cool-0:#ffffff; --cool-50:#fafafa; --cool-100:#f4f4f5; --cool-200:#e4e4e7;
+    --cool-300:#d4d4d8; --cool-400:#a1a1aa; --cool-500:#71717a; --cool-600:#52525b;
+    --cool-700:#3f3f46; --cool-800:#27272a; --cool-900:#18181b; --cool-950:#09090b;
+    --sky:#5288c2; --info:#416cac; --sky-50:#f2f7fc; --sky-100:#e2eef8; --sky-200:#cfe1f3; --sky-300:#aecbe8; --sky-line:#7facd6;
+    --pink:#df5d90; --pink-text:#c8527f; --pink-50:#fbe4ef; --pink-200:#f6cbdd;
+    --success:#2e9e6b; --success-subtle:#e4f3ec; --success-line:#a8d8c0;
+    --warning:#d9982b; --warning-subtle:#fbf1de; --warning-line:#e9d4a4;
+    --danger:#d2495b; --danger-subtle:#fbe9ec; --danger-line:#f0bcc5;
+    --ink:var(--cool-950); --muted:var(--cool-500); --subtle:var(--cool-400);
+    --bg:var(--cool-0); --bg-subtle:var(--cool-50); --panel:var(--cool-100);
+    --border:var(--cool-200); --border-strong:var(--cool-300);
+    --display:"PT Serif",ui-serif,Georgia,serif;
+    --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --word:"Source Serif 4",ui-serif,Georgia,serif;
+    --sh-sm:0 1px 2px rgba(13,13,15,.04);
+    --sh-md:0 4px 16px rgba(13,13,15,.06);
+    --sh-lg:0 12px 40px rgba(13,13,15,.10);
+    --ease:cubic-bezier(.2,0,0,1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    line-height:1.55;font-feature-settings:"cv01","ss01"}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 44px}
+  section{padding:78px 0;border-top:1px solid var(--border)}
+  @media(max-width:760px){.wrap{padding:0 22px}section{padding:52px 0}}
+
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:700;letter-spacing:-.022em}
+  h1{font-size:47px;line-height:1.1}
+  h2{font-size:33px;line-height:1.16}
+  h3{font-size:18px}
+  @media(max-width:760px){h1{font-size:31px}h2{font-size:25px}}
+  p{margin:0}
+  .lead{color:var(--cool-600);font-size:17.5px;max-width:68ch;line-height:1.65}
+  .mono{font-family:var(--mono)}
+  .hl{color:var(--ink);font-weight:600}
+  .hl-sky{color:var(--info);font-weight:600}
+
+  .secno{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);display:flex;align-items:baseline;gap:13px;margin:0 0 24px}
+  .secno b{color:var(--info);font-weight:500}
+
+  .lock{display:inline-flex;align-items:center;gap:10px}
+  .lock .mark{width:23px;height:23px;color:var(--ink)}
+  .lock .word{font-family:var(--word);font-weight:600;font-size:23px;letter-spacing:-.02em;line-height:1}
+  .lock .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+    border-left:1px solid var(--border-strong);padding-left:10px;margin-left:3px;padding-top:2px}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:54px 0 70px}
+  .hero .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:64px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--info);margin-bottom:20px}
+  .hero h1{max-width:19ch}
+  .hero .lead{margin-top:24px;font-size:18.5px;max-width:62ch}
+  .heroCta{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:#fff;font-weight:600;font-size:14.5px;
+    border-radius:9px;padding:12px 20px;text-decoration:none;box-shadow:var(--sh-sm)}
+  .btn .a{font-family:var(--mono)}
+  .btn.ghost{background:var(--bg);color:var(--ink);border:1px solid var(--border-strong);box-shadow:none}
+  .heroCta .note{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+
+  /* stat strip */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);margin-top:56px}
+  @media(max-width:860px){.strip{grid-template-columns:1fr 1fr}}
+  .st{padding:22px 24px 26px 0;border-right:1px solid var(--border);margin-right:24px}
+  .st:last-child{border-right:0;margin-right:0}
+  @media(max-width:860px){.st:nth-child(2){border-right:0;margin-right:0}}
+  .st .v{font-family:var(--display);font-weight:700;font-size:34px;letter-spacing:-.02em;line-height:1}
+  .st .v.warn{color:var(--danger)}
+  .st .v.good{color:var(--success)}
+  .st .v .u{font-size:17px;color:var(--info)}
+  .st .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;color:var(--muted);margin-top:11px;line-height:1.6}
+  .st .src{font-family:var(--mono);font-size:9px;color:var(--subtle);margin-top:7px}
+
+  /* ---------- data table ---------- */
+  .tbl{width:100%;border-collapse:collapse;margin-top:26px;font-size:14px}
+  .tbl th{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+    text-align:left;padding:9px 14px;border-bottom:1px solid var(--border-strong);white-space:nowrap;font-weight:500}
+  .tbl td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+  .tbl tr:last-child td{border-bottom:0}
+  .tbl .nm{font-weight:600;color:var(--ink)}
+  .tbl .num{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tbl .dim{color:var(--muted);font-size:13px}
+  .tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:13px;background:var(--bg)}
+  .tbl-note{font-family:var(--mono);font-size:10.5px;color:var(--subtle);margin-top:12px;line-height:1.6}
+
+  /* ---------- pipeline ---------- */
+  .pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:32px}
+  @media(max-width:900px){.pipe{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.pipe{grid-template-columns:1fr}}
+  .step{border:1px solid var(--border);border-radius:13px;padding:18px 18px 20px;background:var(--bg)}
+  .step.hot{border-color:var(--sky-line);background:var(--sky-50)}
+  .step .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--subtle)}
+  .step h4{margin:6px 0 0;font-family:var(--display);font-weight:700;font-size:17.5px;letter-spacing:-.01em}
+  .step p{margin-top:8px;font-size:13px;color:var(--cool-600);line-height:1.55}
+  .step .t3{display:inline-block;margin-top:11px;font-family:var(--mono);font-size:9px;padding:4px 9px;
+    border-radius:999px;background:var(--bg);border:1px solid var(--border);color:var(--muted)}
+  .step.hot .t3{color:var(--info);border-color:var(--sky-200);background:var(--sky-100)}
+
+  /* ---------- feature grid ---------- */
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:30px}
+  @media(max-width:820px){.fgrid{grid-template-columns:1fr}}
+  .fcell{padding:22px 24px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg)}
+  .fcell:nth-child(2n){border-right:0}
+  .fcell:nth-last-child(-n+2){border-bottom:0}
+  @media(max-width:820px){.fcell{border-right:0}.fcell:nth-last-child(2){border-bottom:1px solid var(--border)}}
+  .fcell .ft{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+  .fcell .ft .ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--sky-100);
+    color:var(--info);flex:none}
+  .fcell .ft .ic svg{width:15px;height:15px}
+  .fcell p{margin-top:9px;font-size:13.5px;color:var(--cool-600);line-height:1.6}
+  .fcell p b{color:var(--ink);font-weight:600}
+  .fcell .cmd{margin-top:11px;font-family:var(--mono);font-size:11px;color:var(--cool-700);
+    background:var(--bg-subtle);border:1px solid var(--border);border-radius:7px;padding:7px 10px;overflow-x:auto;white-space:nowrap}
+  .fcell .cmd .c{color:var(--info)}
+
+  /* ---------- fit / no-fit ---------- */
+  .fit{border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:28px}
+  .fitrow{display:grid;grid-template-columns:180px 130px 1fr;gap:16px;align-items:center;padding:14px 22px;
+    border-bottom:1px solid var(--border);background:var(--bg)}
+  .fitrow:last-child{border-bottom:0}
+  @media(max-width:820px){.fitrow{grid-template-columns:1fr;gap:5px}}
+  .fitrow .op{font-weight:600;font-size:14.5px}
+  .fitrow .bud{font-family:var(--mono);font-size:12px;color:var(--cool-600)}
+  .fitrow .vd{font-size:13.5px;color:var(--cool-600);line-height:1.55}
+  .fitrow.no{background:var(--danger-subtle)}
+  .fitrow.no .op{color:var(--danger)}
+  .badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;
+    border-radius:999px;white-space:nowrap;display:inline-block}
+  .badge.y{color:#217a51;background:var(--success-subtle);border:1px solid var(--success-line)}
+  .badge.n{color:var(--danger);background:#fff;border:1px solid var(--danger-line)}
+
+  /* ---------- callout ---------- */
+  .callout{margin-top:26px;display:flex;gap:14px;align-items:flex-start;border-radius:12px;padding:17px 20px;
+    background:var(--sky-50);border:1px solid var(--sky-200)}
+  .callout.warn{background:var(--warning-subtle);border-color:var(--warning-line)}
+  .callout .ic{flex:none;margin-top:1px;color:var(--info)}
+  .callout.warn .ic{color:#a9761f}
+  .callout p{font-size:14.5px;color:var(--cool-700);line-height:1.6}
+  .callout b{color:var(--ink)}
+
+  .quote{margin-top:26px;border-left:3px solid var(--sky);background:var(--sky-50);padding:18px 24px;max-width:80ch}
+  .quote p{font-family:var(--display);font-style:italic;font-size:16.5px;line-height:1.55;color:var(--cool-700)}
+  .quote .src{margin-top:9px;font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+
+  /* ---------- pricing ---------- */
+  .prices{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
+  @media(max-width:860px){.prices{grid-template-columns:1fr}}
+  .pc{border:1px solid var(--border);border-radius:14px;padding:22px 22px 24px;background:var(--bg);display:flex;flex-direction:column}
+  .pc.mid{border-color:var(--sky-line);box-shadow:0 0 0 3px var(--sky-50)}
+  .pc .pn{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--info)}
+  .pc .pv{font-family:var(--display);font-weight:700;font-size:33px;letter-spacing:-.02em;line-height:1;margin-top:12px}
+  .pc .pv .u{font-family:var(--sans);font-size:14px;color:var(--muted);font-weight:500;margin-left:3px}
+  .pc .pd{font-size:13.5px;color:var(--cool-600);margin-top:10px;line-height:1.6}
+  .pc ul{list-style:none;margin:16px 0 0;padding:0;font-size:13px;color:var(--cool-700)}
+  .pc li{padding:6px 0 6px 20px;position:relative;line-height:1.5}
+  .pc li::before{content:"→";position:absolute;left:0;color:var(--info);font-family:var(--mono);font-size:11px}
+  .rates{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
+  .rate{font-family:var(--mono);font-size:11.5px;color:var(--cool-700);background:var(--bg-subtle);
+    border:1px solid var(--border);border-radius:8px;padding:8px 13px}
+  .rate b{color:var(--ink)}
+
+  /* ---------- proof strip ---------- */
+  .proof{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .proof span{font-family:var(--mono);font-size:11.5px;color:var(--cool-700);border:1px solid var(--border);
+    border-radius:999px;padding:7px 14px;background:var(--bg)}
+  .proof span i{font-style:normal;color:var(--success)}
+
+  /* ---------- footer ---------- */
+  .foot{padding:74px 0 92px;text-align:center;border-top:1px solid var(--border)}
+  .foot .lock{justify-content:center;margin-bottom:26px}
+  .foot h2{max-width:22ch;margin:0 auto 20px;font-size:30px}
+  .foot .lead{margin:0 auto;text-align:center}
+  .foot .u{margin-top:26px;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  /* ---------- system architecture figure (adapted from the investor deck) ---------- */
+  /* this page's palette has no lilac — scope the two the figure needs rather than
+     adding them globally, so the page token set stays as designed */
+  .archfig{margin:38px 0 0}
+  .archwrap{--lilac-100:#efe9f1; --lilac-200:#e3d8e6;
+    position:relative;width:100%;overflow:hidden;border:1px solid var(--border);border-radius:16px;
+    background:radial-gradient(120% 90% at 78% 6%,rgba(82,136,194,.09),transparent 55%),#fff}
+  .archstage{position:absolute;left:0;top:0;width:1280px;height:420px;transform-origin:0 0}
+  .archinner{position:absolute;left:0;top:0;width:1280px;height:720px;transform:translateY(-182px)}
+  .archcap{margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em;line-height:1.8}
+  .archcap b{color:var(--info);font-weight:500}
+
+  @keyframes forkpulse{0%,100%{box-shadow:0 0 0 0 rgba(82,136,194,0)}45%{box-shadow:0 0 0 5px rgba(82,136,194,.20)}}
+  @keyframes pflow{0%{opacity:0;transform:translateY(0) scale(.6)}7%{opacity:1;transform:translateY(0) scale(1)}
+    92%{opacity:1}100%{opacity:0;transform:translateY(255px) scale(.6)}}
+  @keyframes txmove{0%{offset-distance:0%}100%{offset-distance:100%}}
+  @keyframes txtint{
+    0%,50%{background:radial-gradient(circle at 40% 35%,#ffe08a,#d9a72e);
+      box-shadow:0 0 0 3px rgba(217,167,46,.22),0 0 14px 3px rgba(217,167,46,.45)}
+    58%,100%{background:radial-gradient(circle at 40% 35%,#8ef0b8,#2e9e6b);
+      box-shadow:0 0 0 3px rgba(46,158,107,.22),0 0 14px 3px rgba(46,158,107,.45)}}
+  @keyframes txfade{0%{opacity:0}4%{opacity:1}96%{opacity:1}100%{opacity:0}}
+
+  /* left · tx pipeline */
+  .archinner .pl{position:absolute;left:0;top:0;width:320px;height:720px;z-index:5}
+  .archinner .pl-rail{position:absolute;left:243px;top:255px;width:2px;height:255px;
+    background:linear-gradient(180deg,var(--border-strong),var(--sky-300) 55%,var(--border-strong))}
+  .archinner .pstep{position:absolute;left:0;width:320px;height:40px}
+  .archinner .pdot{position:absolute;left:224px;top:0;width:40px;height:40px;border-radius:11px;
+    background:#fff;border:1.5px solid var(--border-strong);display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--sh-sm);z-index:3}
+  .archinner .pdot svg{width:19px;height:19px;color:var(--sky)}
+  .archinner .pstep.hot .pdot{border-color:var(--info);background:var(--sky-100);box-shadow:0 0 0 5px rgba(82,136,194,.12)}
+  .archinner .pstep.hot .pdot svg{color:var(--info)}
+  .archinner .pinfo{position:absolute;left:24px;top:13px;width:184px;text-align:right}
+  .archinner .pn2{font-family:var(--display);font-weight:700;font-size:14px;color:var(--ink);line-height:1}
+  .archinner .pk{font-family:var(--mono);font-size:8.5px;color:var(--muted);line-height:1.5;margin-top:4px}
+  .archinner .pbadge{display:inline-block;margin-top:6px;white-space:nowrap;
+    font-family:var(--mono);font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:var(--pink-text);
+    border:1px solid var(--pink-200);background:var(--pink-50);border-radius:999px;padding:2px 7px}
+  .archinner .pstep.sign .pbadge{color:var(--success);border-color:var(--success-line);background:var(--success-subtle)}
+  .archinner .pl-dot{position:absolute;left:240px;top:251px;width:8px;height:8px;border-radius:50%;
+    background:var(--sky);box-shadow:0 0 9px 2px rgba(82,136,194,.5);z-index:6;opacity:0;
+    animation:pflow 4.2s var(--ease) infinite}
+  .archinner .pl-dot.b{animation-delay:1.4s}
+  .archinner .pl-dot.c{animation-delay:2.8s}
+
+  /* right · architecture */
+  .archinner .a-scale{position:absolute;left:0;top:0;width:1280px;height:720px;transform:translate(300px,100px) scale(.70);transform-origin:0 0}
+  .archinner .a-box{position:absolute;border:1.4px solid var(--border-strong);border-radius:14px;background:#fff;z-index:2;box-shadow:var(--sh-sm)}
+  .archinner .a-box .t2{position:absolute;left:0;right:0;font-family:var(--display);font-weight:700;color:var(--ink);text-align:center}
+  .archinner .a-box .c2{position:absolute;left:0;right:0;font-family:var(--mono);color:var(--muted);text-align:center}
+  .archinner .a-emoji{position:absolute;z-index:5}
+  .archinner .a-txt{position:absolute;font-family:var(--mono);color:var(--muted);z-index:5}
+  .archinner .a-hatch{position:absolute;border:1.4px solid var(--lilac-200);border-radius:12px;z-index:2;
+    background:repeating-linear-gradient(45deg,rgba(227,216,230,.85) 0 7px,rgba(246,243,247,.55) 7px 15px);
+    display:flex;align-items:center;justify-content:center}
+  .archinner .a-hatch b{font-family:var(--display);font-weight:700;color:var(--ink);font-size:16px}
+  .archinner .a-band{position:absolute;background:var(--lilac-100);border:1px solid var(--lilac-200);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;z-index:3}
+  .archinner .a-band span{font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:#453a4e}
+  .archinner .a-tube{position:absolute;border:1.4px solid var(--border-strong);border-radius:11px;background:var(--bg-subtle);z-index:1}
+  .archinner .a-diamond{position:absolute;border:1.4px solid var(--border-strong);background:#fff;transform:rotate(45deg);
+    border-radius:9px;z-index:2;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm)}
+  .archinner .a-diamond span{transform:rotate(-45deg);font-family:var(--mono);font-size:10px;color:var(--cool-700);text-align:center;line-height:1.3}
+  .archinner .a-diamond.hot{border-color:var(--pink-200);background:var(--pink-50)}
+  .archinner .a-diamond.hot span{color:var(--pink-text)}
+  .archinner .a-model{position:absolute;border:1.4px solid var(--border-strong);border-radius:50%;background:#fff;z-index:2;
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);color:var(--cool-700);box-shadow:var(--sh-sm)}
+  .archinner .a-fork{position:absolute;border-radius:50%;border:1px solid var(--sky-line);color:#253a56;
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:500;font-size:12px;z-index:3;
+    animation:forkpulse 2.8s var(--ease) infinite}
+  .archinner .a-vlabel{position:absolute;font-family:var(--display);font-weight:700;color:var(--muted);writing-mode:vertical-rl;letter-spacing:.01em;z-index:5}
+  .archinner .a-cyl{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;text-align:center;
+    background:linear-gradient(180deg,#aecbe8,#7facd6);border:1px solid var(--sky);border-radius:50%/20px;
+    color:#1e3450;font-family:var(--display);font-weight:700;font-size:19px;line-height:1.05}
+  .archinner .a-cyl::before{content:"";position:absolute;left:-1px;right:-1px;top:0;height:22px;border:1px solid var(--sky);
+    border-radius:50%;background:#cfe1f3;z-index:-1}
+  .archinner .a-svg{position:absolute;left:0;top:0;width:1280px;height:720px;z-index:4;pointer-events:none;overflow:visible}
+  .archinner .tx-dot{position:absolute;top:0;left:0;width:12px;height:12px;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%,#ffe08a,#d9a72e);
+    box-shadow:0 0 0 3px rgba(217,167,46,.22),0 0 14px 3px rgba(217,167,46,.45);
+    offset-path:path('M462,180 L462,430 L900,430 L1000,430 A38,38 0 0 1 1000,354 A38,38 0 0 1 1000,430 L900,430 L462,430 L462,180');
+    offset-rotate:0deg;offset-anchor:center;opacity:0;z-index:7;
+    animation:txmove 6s linear infinite, txtint 6s linear infinite, txfade 6s linear infinite}
+  .archinner .tx-dot.t2d{animation-delay:-3s}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="aomi-mark" viewBox="0 0 362 362"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></symbol></svg>
+
+<!-- ============ HERO ============ -->
+<div class="wrap hero">
+  <div class="top">
+    <span class="lock"><svg class="mark"><use href="#aomi-mark"/></svg><span class="word">aomi</span><span class="tag">Execution Infrastructure</span></span>
+    <span class="mono" style="font-size:11px;color:var(--subtle)">for exchanges · frontends · trading platforms</span>
+  </div>
+  <div class="kicker">Execution infrastructure · trading platforms</div>
+  <h1>Every failed transaction is a fee you didn't earn.</h1>
+  <p class="lead">aomi is an execution layer trading platforms build on. It simulates every transaction against forked live chain state before signing, batches multi-step routes into one signature, and runs background order types your venue doesn't provide — from the end user's own wallet, on every chain.</p>
+  <div class="heroCta">
+    <a class="btn" href="https://aomi.dev">Read the docs <span class="a">→</span></a>
+    <a class="btn ghost" href="https://aomi.dev">Try the sandbox</a>
+    <span class="note">free to 1,000 monthly active users · no call required</span>
+  </div>
+
+  <div class="strip">
+    <div class="st">
+      <div class="v warn">73.4<span class="u">%</span></div>
+      <div class="l">of bot transactions on Solana fail</div>
+      <div class="src">ISSTA 2025 · 800M+ failed txs studied</div>
+    </div>
+    <div class="st">
+      <div class="v warn">86.4<span class="u">%</span></div>
+      <div class="l">of those failures are slippage or stale state — exactly what pre-trade simulation catches</div>
+      <div class="src">same study</div>
+    </div>
+    <div class="st">
+      <div class="v good">$65<span class="u">M+</span></div>
+      <div class="l">already paid to third-party frontends through Hyperliquid builder codes</div>
+      <div class="src">Hyperliquid docs, 2026</div>
+    </div>
+    <div class="st">
+      <div class="v">40<span class="u">%</span></div>
+      <div class="l">of Hyperliquid daily actives now trade through a third-party frontend</div>
+      <div class="src">CoinGecko research, May 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 01 · THE OPPORTUNITY ============ -->
+<section>
+  <div class="wrap">
+    <div class="secno"><b>01</b> Why this is worth building</div>
+    <h2>Execution is a revenue line now.<br>The order types aren't there yet.</h2>
+    <p class="lead" style="margin-top:16px">Builder codes settled the question of whether a venue will pay a frontend it didn't build: it will, per order, automatically, and it already has — at scale. What the venues don't ship is everything that happens <span class="hl">between</span> orders.</p>
+
+    <div class="tblwrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>Frontend</th><th>Builder revenue</th><th>Users</th><th>Revenue / user</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="nm">Phantom</td><td class="num">$20,630,022</td><td class="num">137,496</td><td class="num">$150</td></tr>
+          <tr><td class="nm">Based</td><td class="num">$15,056,894</td><td class="num">42,579</td><td class="num">$354</td></tr>
+          <tr><td class="nm">PVP.trade</td><td class="num">$7,946,185</td><td class="num">28,189</td><td class="num">$282</td></tr>
+          <tr><td class="nm">MetaMask</td><td class="num">$6,510,547</td><td class="num">43,761</td><td class="num">$149</td></tr>
+          <tr><td class="nm">Insilico</td><td class="num">$3,306,853</td><td class="num">2,962</td><td class="num">$1,116</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tbl-note">Hyperliquid builder-code earnings, HyperTracker snapshot via CoinGecko research (25 May 2026). Builder fees are capped at 10 bps perps / 100 bps spot and paid 100% to the builder. Comparable programs exist on dYdX (builder codes + order-router rev share), Extended (100% to builder, settled daily) and GMX (UI fee receiver).</div>
+
+    <div class="callout">
+      <span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+      <p><b>The gap:</b> perp venues give you spot and market orders. Limit, stop-loss, trailing, DCA, scheduled rebalancing and copy execution all have to run somewhere off the venue — continuously, per user, without holding their keys. That's the layer aomi is.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 · WHAT IT DOES ============ -->
+<section>
+  <div class="wrap">
+    <div class="secno"><b>02</b> What it does</div>
+    <h2>One pipeline. Every order lands or never leaves.</h2>
+    <p class="lead" style="margin-top:16px">aomi runs on a full blockchain client that forks every chain in <span class="hl-sky">~200ms</span>. Every transaction is composed, proven against live state, signed by the end user's own wallet, then broadcast — with account abstraction and Solana Jito built in.</p>
+
+    <div class="pipe">
+      <div class="step">
+        <div class="k">Step 01</div><h4>Build</h4>
+        <p>Compose the exact transaction from an intent or a strategy — multi-step routes batched into a single operation.</p>
+        <span class="t3">intent → exact tx</span>
+      </div>
+      <div class="step hot">
+        <div class="k">Step 02</div><h4>Simulate</h4>
+        <p>Execute against a fresh fork of live chain state. Slippage, balances and the real output are known before anything is signed.</p>
+        <span class="t3">forked state · ~200ms</span>
+      </div>
+      <div class="step">
+        <div class="k">Step 03</div><h4>Sign</h4>
+        <p>Signed by the end user's own wallet under scoped, revocable delegation. Your platform never takes custody.</p>
+        <span class="t3">AA bundler · user's wallet</span>
+      </div>
+      <div class="step">
+        <div class="k">Step 04</div><h4>Broadcast</h4>
+        <p>Confirmed onchain with account abstraction and Solana Jito. No separate broadcast infrastructure to run.</p>
+        <span class="t3">AA + Solana Jito</span>
+      </div>
+    </div>
+
+    <div class="fgrid">
+      <div class="fcell">
+        <div class="ft"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg></span>Background order types</div>
+        <p>Limit, stop-loss, trailing stop, DCA, scheduled rebalancing and copy execution run server-side and keep working after the user closes the tab — <b>each one a fill you charge a builder fee on</b>.</p>
+      </div>
+      <div class="fcell">
+        <div class="ft"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></span>Every surface, built once</div>
+        <p>The same execution layer serves your web frontend, Telegram, Discord and Slack from one runtime — <b>no separate build per channel</b>.</p>
+      </div>
+      <div class="fcell">
+        <div class="ft"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg></span>Multi-chain without the rebuild</div>
+        <p>EVM and SVM behind one interface. Adding a chain is configuration, not <b>a quarter of engineering</b> and a new broadcast path.</p>
+      </div>
+      <div class="fcell">
+        <div class="ft"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 16v-5M13 16V8M18 16v-3"/></svg></span>Per-call metering built in</div>
+        <p>Every tool call is priced and settled on-rails, so <b>you can charge for what you ship</b> — the same mechanism our launch partner Somm uses for app-level fees.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 · WHERE IT FITS ============ -->
+<section>
+  <div class="wrap">
+    <div class="secno"><b>03</b> Where it fits — and where it doesn't</div>
+    <h2>An honest latency budget.</h2>
+    <p class="lead" style="margin-top:16px">Reasoning costs time. Simulation costs time. Both are free at some horizons and disqualifying at others, so here is the line rather than a claim you'd have to benchmark to disprove.</p>
+
+    <div class="fit">
+      <div class="fitrow no">
+        <span class="op">Sniping / MEV</span>
+        <span class="bud">&lt; 50 ms</span>
+        <span class="vd"><span class="badge n">not a fit</span> &nbsp;Jito runs parallel auctions on 50ms ticks. A reasoning step cannot compete and we won't pretend otherwise.</span>
+      </div>
+      <div class="fitrow no">
+        <span class="op">Market making / HFT</span>
+        <span class="bud">sub-second</span>
+        <span class="vd"><span class="badge n">not a fit</span> &nbsp;Same reason. Keep your colocated stack.</span>
+      </div>
+      <div class="fitrow">
+        <span class="op">Intent trading &amp; swaps</span>
+        <span class="bud">2–10 s</span>
+        <span class="vd"><span class="badge y">strong fit</span> &nbsp;Simulation is free at this horizon and prevents the failed fill.</span>
+      </div>
+      <div class="fitrow">
+        <span class="op">Background order types</span>
+        <span class="bud">seconds → minutes</span>
+        <span class="vd"><span class="badge y">strong fit</span> &nbsp;Limit, stop, DCA, liquidation guards. Latency is irrelevant; correctness is everything.</span>
+      </div>
+      <div class="fitrow">
+        <span class="op">Portfolio &amp; treasury ops</span>
+        <span class="bud">minutes → hours</span>
+        <span class="vd"><span class="badge y">strong fit</span> &nbsp;Rebalancing, scheduled flows, multi-step position changes.</span>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:24px">
+      <span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span>
+      <p><b>Also worth saying plainly:</b> copy execution has a structural ceiling no infrastructure removes — the lead's own price impact lands before the follower does. We'll help you ship it and cap the damage with simulation and slippage bounds; we won't claim to make followers match leaders.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 · CUSTODY ============ -->
+<section>
+  <div class="wrap">
+    <div class="secno"><b>04</b> The architecture</div>
+    <h2>The keys never move.<br>Which means a breach isn't a fund loss.</h2>
+    <p class="lead" style="margin-top:16px">Most execution automation in this market runs on stored exchange API keys or a hosted burner wallet. Both concentrate the blast radius on your servers — and the industry has the incident history to prove it.</p>
+
+    <div class="quote">
+      <p>"Export Private Keys: Shows your Private Key to export for external use."</p>
+      <div class="src">— a leading "non-custodial" Telegram trading bot, in its own documentation</div>
+    </div>
+    <div class="tbl-note" style="margin-top:10px">A platform cannot show you a private key it does not possess. In 2022 a single bot platform leaked ~100,000 exchange API keys; the resulting class action was revived by the Ninth Circuit on 2 March 2026 and is live today.</div>
+
+    <div class="fgrid">
+      <div class="fcell">
+        <div class="ft"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>Scoped delegation, not key storage</div>
+        <p>Execution runs under a <b>revocable, permission-limited grant</b> from the user's own wallet — Privy and Para compatible. aomi holds zero keys, and the runtime's counter says so.</p>
+      </div>
+      <div class="fcell">
+        <div class="ft"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h9"/></svg></span>Policy is enforced, not prompted</div>
+        <p>Value caps, allow-listed venues and per-wallet rules are checked <b>outside the model</b>. Published research shows prompt-based defenses fail against memory injection; ours isn't one.</p>
+      </div>
+      <div class="fcell">
+        <div class="ft"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/></svg></span>Kill switch &amp; instant revoke</div>
+        <p>Halt execution or revoke a grant immediately. A failed simulation or an out-of-policy order <b>stops before signature</b>, by construction.</p>
+      </div>
+      <div class="fcell">
+        <div class="ft"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg></span>Per-tenant isolation without per-tenant containers</div>
+        <p>One runtime serves all your users. <b>No container per user</b> — the line item that otherwise scales linearly against you as you grow.</p>
+      </div>
+    </div>
+
+    <figure class="archfig">
+      <div class="archwrap" id="archwrap">
+        <div class="archstage" id="archstage">
+          <div class="archinner">
+
+            <!-- left · tx pipeline -->
+            <div class="pl">
+              <div class="pl-rail"></div>
+              <div class="pstep" style="top:235px">
+                <div class="pdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg></div>
+                <div class="pinfo"><div class="pn2">Build</div><div class="pk">tool composes the exact tx</div></div>
+              </div>
+              <div class="pstep hot" style="top:320px">
+                <div class="pdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+                <div class="pinfo"><div class="pn2">Simulate</div><div class="pk">prove the real outcome is safe</div><span class="pbadge">forked state · ~200ms</span></div>
+              </div>
+              <div class="pstep sign" style="top:405px">
+                <div class="pdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16.5" cy="14" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+                <div class="pinfo"><div class="pn2">Sign</div><div class="pk">the user approves exact changes</div><span class="pbadge">AA bundler · user's wallet</span></div>
+              </div>
+              <div class="pstep" style="top:490px">
+                <div class="pdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h11"/><path d="M11 7l6 5-6 5"/><rect x="17" y="4" width="3.5" height="16" rx="1"/></svg></div>
+                <div class="pinfo"><div class="pn2">Broadcast</div><div class="pk">confirmed onchain</div><span class="pbadge">AA + Solana Jito</span></div>
+              </div>
+              <span class="pl-dot"></span><span class="pl-dot b"></span><span class="pl-dot c"></span>
+            </div>
+
+            <!-- right · architecture -->
+            <div class="a-scale">
+              <span class="a-emoji" style="left:292px;top:148px;font-size:30px">🧑</span>
+              <span class="a-emoji" style="left:372px;top:148px;font-size:30px">🧑</span>
+              <span class="a-emoji" style="left:452px;top:148px;font-size:30px">🧑</span>
+              <span class="a-txt" style="left:522px;top:156px;font-size:22px;letter-spacing:.14em;color:var(--subtle)">····</span>
+              <span class="a-emoji" style="left:596px;top:148px;font-size:30px">🧑</span>
+              <span class="a-txt" style="left:680px;top:150px;width:160px;font-size:11px;line-height:1.5">User-specific<br>context</span>
+              <span class="a-txt" style="left:302px;top:192px;font-size:15px;color:var(--subtle)">↕</span>
+              <span class="a-txt" style="left:382px;top:192px;font-size:15px;color:var(--subtle)">↕</span>
+              <span class="a-txt" style="left:462px;top:192px;font-size:15px;color:var(--subtle)">↕</span>
+              <span class="a-txt" style="left:606px;top:192px;font-size:15px;color:var(--subtle)">↕</span>
+
+              <div class="a-hatch" style="left:92px;top:222px;width:740px;height:40px"><b>Stateless Dispatch</b></div>
+
+              <div class="a-tube" style="left:150px;top:340px;width:26px;height:180px"></div>
+              <div class="a-tube" style="left:224px;top:340px;width:26px;height:180px"></div>
+              <div class="a-tube" style="left:770px;top:340px;width:26px;height:180px"></div>
+
+              <div class="a-box" style="left:92px;top:278px;width:740px;height:74px">
+                <div class="t2" style="top:12px;font-size:19px">Application</div>
+                <div class="c2" style="top:44px;font-size:14px"><span style="color:var(--cool-700)">[app1, app2, ..]</span>.start()</div>
+              </div>
+
+              <div class="a-box" style="left:92px;top:366px;width:740px;height:128px">
+                <div class="t2" style="top:12px;font-size:19px">Runtime</div>
+                <div class="c2" style="top:44px;font-size:13px">Scheduler.run()</div>
+              </div>
+              <span class="a-emoji" style="left:151px;top:400px;font-size:25px">🤖</span>
+              <span class="a-emoji" style="left:225px;top:400px;font-size:25px">🤖</span>
+              <span class="a-emoji" style="left:771px;top:400px;font-size:25px">🤖</span>
+              <div class="a-band" style="left:112px;top:456px;width:700px;height:26px"><span>Memory &amp; IPC</span></div>
+
+              <div class="a-box" style="left:92px;top:512px;width:330px;height:48px"><div class="t2" style="top:14px;font-size:16px">Tool Scheduler</div></div>
+              <div class="a-box" style="left:502px;top:512px;width:330px;height:48px"><div class="t2" style="top:14px;font-size:16px">LLM Interface</div></div>
+
+              <div class="a-diamond hot" style="left:114px;top:586px;width:76px;height:76px"><span>evm-<br>gateway</span></div>
+              <div class="a-diamond" style="left:224px;top:586px;width:76px;height:76px"><span>db-driver</span></div>
+              <div class="a-diamond" style="left:334px;top:586px;width:76px;height:76px"><span>web-search</span></div>
+
+              <div class="a-model" style="left:530px;top:572px;width:96px;height:96px;font-size:14px">gpt5</div>
+              <div class="a-model" style="left:646px;top:584px;width:72px;height:72px;font-size:11px">Opus4.5</div>
+              <div class="a-model" style="left:738px;top:590px;width:60px;height:60px;font-size:10px">kimi-k2</div>
+
+              <div class="a-fork" style="left:969px;top:210px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#eaf6ff,#a9d6f5);border-color:#4a9fd8;color:#1c5a86">Arb</div>
+              <div class="a-fork" style="left:969px;top:284px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#e9efff,#9fb6ff);border-color:#3b6bf0;color:#26439c;animation-delay:.5s">Base</div>
+              <div class="a-fork" style="left:969px;top:358px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#ffecee,#ffa8b0);border-color:#f0455a;color:#b02334;animation-delay:1s">OP</div>
+              <div class="a-fork" style="left:969px;top:432px;width:62px;height:62px;background:radial-gradient(circle at 38% 32%,#eeeffb,#b8c0ef);border-color:#6b7fe0;color:#3f4aa0;animation-delay:1.5s">Mainnet</div>
+              <div class="a-fork" style="left:969px;top:506px;width:62px;height:62px;background:linear-gradient(135deg,#e7d8ff,#cbf5e4);border-color:#9a5cf0;color:#6a2fb0;animation-delay:2s">solana</div>
+              <div class="a-vlabel" style="left:1118px;top:300px;font-size:18px">Forks Infrastructure</div>
+
+              <div class="a-cyl" style="left:912px;top:592px;width:176px;height:100px">Full<br>Node</div>
+
+              <svg class="a-svg" viewBox="0 0 1280 720">
+                <defs><marker id="arch-ah" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#5288c2"/></marker></defs>
+                <path d="M78,315 V624 H92" fill="none" stroke="#5288c2" stroke-width="1.4" stroke-dasharray="5 5" marker-end="url(#arch-ah)"/>
+                <path d="M832,430 H958" fill="none" stroke="#7facd6" stroke-width="1.3" stroke-dasharray="4 5"/>
+                <path d="M1000,568 V592" fill="none" stroke="#7facd6" stroke-width="1.3" stroke-dasharray="4 5"/>
+              </svg>
+              <span class="a-txt" style="left:44px;top:400px;font-size:11px;writing-mode:vertical-rl;transform:rotate(180deg)">application-define</span>
+              <span class="a-txt" style="left:838px;top:412px;font-size:9.5px;color:var(--info)">forks ~200ms</span>
+
+              <span class="tx-dot"></span>
+              <span class="tx-dot t2d"></span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <figcaption class="archcap">
+        Left, the pipeline every order passes through — one that fails simulation never reaches a signature. Right, the part your platform doesn't build: stateless dispatch fanning many users into <b>one process</b>, an agent thread per user, tool and model scheduling, and a fork of every chain served from a full node. <b>One runtime, all your users — no container per tenant.</b>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ 05 · PRICING ============ -->
+<section>
+  <div class="wrap">
+    <div class="secno"><b>05</b> Pricing</div>
+    <h2>Published, usage-based, and aligned with fills.</h2>
+    <p class="lead" style="margin-top:16px">No seat licences, no demo gate, no annual minimum to start. Build against the sandbox today; pay when your users execute.</p>
+
+    <div class="prices">
+      <div class="pc">
+        <div class="pn">Sandbox</div>
+        <div class="pv">$0</div>
+        <div class="pd">Everything working end to end, against test state.</div>
+        <ul>
+          <li>1,000 monthly active users</li>
+          <li>All chains, all order types</li>
+          <li>Full simulation pipeline</li>
+          <li>No card, no call</li>
+        </ul>
+      </div>
+      <div class="pc mid">
+        <div class="pn">Production</div>
+        <div class="pv">$10<span class="u">/mo</span></div>
+        <div class="pd">Per hosted runtime — not per user, not per container.</div>
+        <ul>
+          <li>Unlimited end users per runtime</li>
+          <li>Background execution &amp; scheduling</li>
+          <li>Every surface: web, Telegram, Discord, Slack</li>
+          <li>Per-app telemetry &amp; tracing</li>
+        </ul>
+      </div>
+      <div class="pc">
+        <div class="pn">Flow</div>
+        <div class="pv">10<span class="u">bps</span></div>
+        <div class="pd">On executed outcome value, settled onchain — the rail your own app fee rides too.</div>
+        <ul>
+          <li>You price and keep your own app fee</li>
+          <li>Rates published in <span class="mono">rates.toml</span></li>
+          <li>Volume terms above $10M/mo</li>
+          <li>Charged on settlement, not attempts</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rates">
+      <span class="rate">outcome_take_rate = <b>0.30</b></span>
+      <span class="rate">tool_take_rate = <b>0.10</b></span>
+      <span class="rate">managed_model_rate = <b>0.10</b> <span style="color:var(--muted)">(waived with your own key)</span></span>
+      <span class="rate">hosting_usd_month = <b>10.0</b></span>
+    </div>
+    <div class="tbl-note">Every rate visible per application in your dashboard. Bring your own model key and the managed-model markup does not apply.</div>
+
+    <div class="proof">
+      <span><i>●</i> live in production with Somm Finance</span>
+      <span><i>●</i> app-level fees priced and settled on aomi rails</span>
+      <span><i>●</i> x402 payment rail · onchain settlement</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<div class="wrap foot">
+  <span class="lock"><svg class="mark"><use href="#aomi-mark"/></svg><span class="word">aomi</span></span>
+  <h2>Ship the order types your venue doesn't.</h2>
+  <p class="lead">Simulation before every signature, keys that never leave the user's wallet, one runtime across every chain and surface — and a fee line on every fill it lands.</p>
+  <div class="heroCta" style="justify-content:center">
+    <a class="btn" href="https://aomi.dev">Read the docs <span class="a">→</span></a>
+    <a class="btn ghost" href="https://aomi.dev">Try the sandbox</a>
+  </div>
+  <div class="u">aomi.dev · execution infrastructure for onchain trading</div>
+</div>
+
+<script>
+(function(){
+  /* scale the architecture figure to whatever column width it lands in */
+  var wrap = document.getElementById('archwrap');
+  var stage = document.getElementById('archstage');
+  if (!wrap || !stage) return;
+  // the deck stage is 1280 wide but its content stops at ~1105 — crop the dead column
+  var STAGE_W = 1116, STAGE_H = 420;
+  var tries = 0;
+  var fit = function(){
+    var w = wrap.clientWidth || (wrap.parentElement && wrap.parentElement.clientWidth) || 0;
+    // a zero measurement means layout isn't ready yet — retry instead of collapsing the figure
+    if (!w) { if (tries++ < 600) requestAnimationFrame(fit); return; }
+    tries = 0;
+    var s = w / STAGE_W;
+    stage.style.transform = 'scale(' + s + ')';
+    wrap.style.height = Math.round(STAGE_H * s) + 'px';
+  };
+  // keep a reference — an unreferenced ResizeObserver can be collected
+  var ro = window.ResizeObserver ? new ResizeObserver(fit) : null;
+  if (ro) ro.observe(wrap.parentElement || wrap);
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+  requestAnimationFrame(fit);
+  fit();
+})();
+</script>
+
+</body>
+</html>

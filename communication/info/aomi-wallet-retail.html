@@ -858,15 +858,19 @@
   if (wrap && stage) {
     // the deck stage is 1280 wide but its content stops at ~1105 — crop the dead column
     var STAGE_W = 1116, STAGE_H = 420;
+    var tries = 0;
     var fit = function(){
-      // never act on a zero measurement (layout not ready ⇒ would collapse the figure)
       var w = wrap.clientWidth || (wrap.parentElement && wrap.parentElement.clientWidth) || 0;
-      if (!w) return;
+      // a zero measurement means layout isn't ready yet — retry instead of collapsing the figure
+      if (!w) { if (tries++ < 600) requestAnimationFrame(fit); return; }
+      tries = 0;
       var s = w / STAGE_W;
       stage.style.transform = 'scale(' + s + ')';
       wrap.style.height = Math.round(STAGE_H * s) + 'px';
     };
-    if (window.ResizeObserver) new ResizeObserver(fit).observe(wrap.parentElement || wrap);
+    // keep a reference — an unreferenced ResizeObserver can be collected
+    var ro = window.ResizeObserver ? new ResizeObserver(fit) : null;
+    if (ro) ro.observe(wrap.parentElement || wrap);
     window.addEventListener('resize', fit);
     window.addEventListener('load', fit);
     requestAnimationFrame(fit);
