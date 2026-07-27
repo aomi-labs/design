@@ -1,0 +1,495 @@
+<title>Aomi design system &#8212; light/dark theme audit</title>
+<style>
+  /* ------------------------------------------------------------------------
+     The palette is NOT declared here. It is declared once, in JS, as PALETTE
+     (light + dark) and applied to :root and to each specimen pane. One source
+     in this file means the two panes can never disagree with the table that
+     measures them — and mirroring tokens.css stays a single edit.
+     src/tokens/tokens.css remains the source of truth for the values.
+     ------------------------------------------------------------------------ */
+  :root {
+    --t-display: 30px;
+    --t-section: 19px;
+    --t-lead: 13px;
+    --t-body: 12px;
+    --t-meta: 11px;
+    --t-micro: 10px;
+    --t-code: 10px;
+    --track-micro: 0.07em;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: var(--t-body)/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 48px 28px 72px; }
+
+  .eyebrow {
+    font-size: var(--t-micro); font-weight: 600; letter-spacing: var(--track-micro);
+    text-transform: uppercase; color: var(--accent-strong); margin: 0 0 12px;
+  }
+  h1 {
+    font-family: "PT Serif", Georgia, "Times New Roman", serif;
+    font-size: var(--t-display); font-weight: 400; letter-spacing: -0.015em;
+    line-height: 1.15; margin: 0 0 10px; text-wrap: balance;
+  }
+  .sub { color: var(--muted); font-size: var(--t-lead); line-height: 1.6; max-width: 78ch; margin: 0 0 6px; text-wrap: pretty; }
+  .sub code, code.i {
+    font: var(--t-code) ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--fg); background: var(--surface-2); border-radius: 6px; padding: 1px 6px;
+  }
+  h2 {
+    font-family: "PT Serif", Georgia, serif; font-weight: 400; font-size: var(--t-section);
+    margin: 48px 0 14px; letter-spacing: -0.01em;
+  }
+  h2 .count { color: var(--muted); font-size: var(--t-meta); font-family: -apple-system, sans-serif; }
+
+  /* --- audit table ------------------------------------------------------ */
+  .scroller { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; min-width: 900px; }
+  thead th {
+    text-align: left; font-size: var(--t-micro); font-weight: 600; letter-spacing: var(--track-micro);
+    text-transform: uppercase; color: var(--muted); background: var(--surface);
+    border-bottom: 1px solid var(--border); padding: 10px 14px; white-space: nowrap;
+  }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  .pair { font: var(--t-code) ui-monospace, Menlo, monospace; color: var(--fg); white-space: nowrap; }
+  .where { color: var(--muted); font-size: var(--t-meta); }
+  .num {
+    font: var(--t-code) ui-monospace, Menlo, monospace; text-align: right;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .ok { color: var(--success); }
+  .warn { color: var(--warning); }
+  .bad { color: var(--danger-strong); font-weight: 700; }
+  .need { color: var(--muted); }
+
+  .verdict { margin: 14px 0 0; font-size: var(--t-meta); color: var(--muted); }
+  .verdict b { color: var(--fg); }
+
+  /* --- ramp ------------------------------------------------------------- */
+  .ramp { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+  .chip {
+    display: flex; align-items: center; gap: 9px; padding: 8px 10px;
+    border: 1px solid var(--border); border-radius: 10px;
+  }
+  .chip i { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--overlay-border); flex: none; }
+  .chip .n { font: var(--t-code) ui-monospace, Menlo, monospace; color: var(--fg); }
+  .chip .h { font: var(--t-code) ui-monospace, Menlo, monospace; color: var(--muted); display: block; }
+
+  /* --- specimen panes --------------------------------------------------- */
+  .panes { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 1120px) { .panes { grid-template-columns: 1fr 1fr; } }
+  .pane { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .pane > .pane-h {
+    font-size: var(--t-micro); font-weight: 600; letter-spacing: var(--track-micro);
+    text-transform: uppercase; color: var(--muted);
+    background: var(--surface); border-bottom: 1px solid var(--border); padding: 9px 14px;
+  }
+  /* Inside a pane every colour comes from the pane's own token scope. */
+  .pane-body { background: var(--bg); color: var(--fg); padding: 20px; display: flex; flex-direction: column; gap: 26px; }
+  .spec-h {
+    font-size: var(--t-micro); font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 10px;
+  }
+
+  /* --- specimens (product sizes, deliberately off the page's type scale) -- */
+  .modal { display: flex; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--raised); }
+  .modal nav {
+    width: 168px; flex: none; padding: 12px; padding-top: 16px;
+    border-right: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 40%, transparent);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .modal nav .ttl { font-size: 15px; font-weight: 600; padding: 4px 10px 12px; }
+  .navrow {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
+    font-size: 13px; color: var(--muted); cursor: default;
+  }
+  .navrow.sel { background: var(--accent-subtle); color: var(--fg); font-weight: 500; }
+  .navrow:not(.sel):hover { background: var(--hover); }
+  .navrow i { width: 14px; height: 14px; border-radius: 3px; border: 1px solid currentColor; opacity: .75; flex: none; }
+  .navrow.sel i { border-color: var(--accent-strong); }
+  .modal .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .modal .hd {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 16px; font-weight: 600;
+  }
+  .xbtn {
+    width: 30px; height: 30px; border-radius: 999px; border: 0; cursor: default;
+    background: var(--surface-2); color: var(--muted);
+    display: grid; place-items: center; font-size: 14px; line-height: 1;
+  }
+  .xbtn:hover { background: var(--hover); color: var(--fg); }
+  .modal .bd { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .row { display: flex; align-items: center; justify-content: space-between; }
+  .row.rule { border-top: 1px solid var(--border); padding-top: 12px; }
+  .row .lbl { font-size: 13px; }
+  .row .sub2 { font-size: 11px; color: var(--muted); }
+  .row .val { font: 13px ui-monospace, Menlo, monospace; }
+  .row .val.b { font-weight: 600; }
+  .meter { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .meter > i { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+  .meter.over > i { background: var(--pink); }
+
+  .card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+  .cell { background: var(--bg); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+  .cell .k { font-size: 12px; color: var(--muted); }
+  .cell .v { font-size: 13px; display: flex; align-items: center; gap: 7px; }
+  .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--success); flex: none; }
+  .pad { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+
+  .seg { display: flex; padding: 3px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); }
+  .seg > span { flex: 1; text-align: center; padding: 6px 12px; border-radius: 999px; font-size: 13px; color: var(--muted); }
+  .seg > span.on { background: var(--accent-strong); color: var(--on-accent); font-weight: 500; }
+
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn { border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 500; border: 1px solid transparent; }
+  .btn.pri { background: var(--fg); color: var(--bg); }
+  .btn.sec { border-color: var(--border); color: var(--muted); background: transparent; }
+  .btn.dgr { border-color: var(--danger); color: var(--danger); background: transparent; }
+  .btn.dgr-fill { background: var(--danger-strong); color: var(--on-danger); }
+
+  .tbl { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .tr { display: grid; grid-template-columns: 1fr 84px 84px 84px; align-items: center; gap: 8px; padding: 10px 14px; }
+  .tr.head {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted);
+  }
+  .tr + .tr:not(.head):not(.tot) { border-top: 1px solid var(--border); }
+  .tr.tot { background: var(--surface); border-top: 1px solid var(--border); font-weight: 600; }
+  .tr .r { text-align: right; font: 13px ui-monospace, Menlo, monospace; }
+  .tr .nm { font-size: 13px; }
+  .tr:not(.head):not(.tot):hover { background: color-mix(in srgb, var(--surface) 70%, transparent); }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .badge {
+    font-size: 10px; text-transform: uppercase; letter-spacing: .06em; font-weight: 500;
+    border-radius: 999px; padding: 3px 9px;
+    background: var(--surface-2); color: var(--muted); border: 1px solid var(--border);
+  }
+  .badge.acc { background: var(--accent-tint); color: var(--accent); border-color: var(--accent-outline); }
+  .link { color: var(--accent); font: 11px ui-monospace, Menlo, monospace; }
+
+  .pop { border: 1px solid var(--border); border-radius: 12px; background: var(--raised); padding: 5px; width: 190px; }
+  .pop .it { padding: 8px 11px; border-radius: 8px; font-size: 13px; }
+  .pop .it.on { background: var(--hover); }
+  .tip {
+    display: inline-block; border: 1px solid var(--overlay-border); border-radius: 9px;
+    background: var(--surface-2); color: var(--fg); padding: 6px 10px; font-size: 11px;
+  }
+
+  .elev { border: 1px solid var(--border); border-radius: 12px; background: var(--bg); padding: 10px; }
+  .elev .lv { border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 12px; margin-top: 8px; }
+  .elev .lv:first-child { margin-top: 0; }
+  .elev .s1 { background: var(--surface); }
+  .elev .s2 { background: var(--raised); }
+  .elev .s3 { background: var(--surface-2); }
+  .elev .s4 { background: var(--hover); }
+  .elev .m { color: var(--muted); }
+
+  /* --- theme toggle (matches the inventory page) ------------------------- */
+  .toggle {
+    position: fixed; top: 18px; right: 20px; z-index: 30;
+    border: 1px solid var(--border); background: var(--raised); color: var(--fg);
+    border-radius: 999px; padding: 7px 14px; font-size: var(--t-meta); cursor: pointer;
+  }
+</style>
+
+<button class="toggle" id="toggle" type="button">theme</button>
+
+<div class="wrap">
+  <p class="eyebrow">Aomi · design system</p>
+  <h1>Light / dark theme audit</h1>
+  <p class="sub">
+    The companion to <code>inventory.html</code>: where the inventory names each component and the
+    tokens it is built from, this page checks that those tokens actually <em>resolve</em> to something
+    visible in both grounds. Every specimen below is rendered twice from identical markup — once in
+    each theme — and every pairing is measured, not eyeballed.
+  </p>
+  <p class="sub">
+    Values mirror <code>src/tokens/tokens.css</code>, which stays the source of truth. Ratios are
+    computed by compositing each colour over its real backdrop on a canvas, so alpha tokens and
+    <code>color-mix()</code> are measured as they actually paint.
+  </p>
+
+  <h2>Contrast audit</h2>
+  <div class="scroller">
+    <table>
+      <thead>
+        <tr>
+          <th>Pair</th><th>Where it shows</th>
+          <th style="text-align:right">Light</th><th style="text-align:right">Dark</th><th style="text-align:right">Need</th>
+        </tr>
+      </thead>
+      <tbody id="auditRows"></tbody>
+    </table>
+  </div>
+  <p class="verdict" id="verdict"></p>
+
+  <h2>Resolved ramp <span class="count">· light · dark</span></h2>
+  <div class="ramp" id="ramp"></div>
+
+  <h2>Surfaces <span class="count">· identical markup, both grounds</span></h2>
+  <div class="panes">
+    <div class="pane"><div class="pane-h">Light</div><div class="pane-body" id="paneLight"></div></div>
+    <div class="pane"><div class="pane-h">Dark</div><div class="pane-body" id="paneDark"></div></div>
+  </div>
+</div>
+
+<script>
+/* =======================================================================
+   PALETTE — the single declaration of the aomi-* semantic set in this file.
+   Mirrors src/tokens/tokens.css. Applied to :root (via the theme toggle) and
+   to each specimen pane, so the panes and the measurements can never drift.
+   ======================================================================= */
+const PALETTE = {
+  light: {
+    bg: "#ffffff", surface: "#fafafa", "surface-2": "#f4f4f5", raised: "#ffffff",
+    border: "#e4e4e7", hover: "#e9e9ec",
+    fg: "#09090b", muted: "#71717a",
+    accent: "#5288c2", "accent-strong": "#416cac", "accent-subtle": "#e2eef8", "on-accent": "#ffffff",
+    pink: "#df5d90", success: "#1f8558", warning: "#d9982b",
+    danger: "#d2495b", "danger-strong": "#b8394a", "on-danger": "#ffffff",
+    "accent-tint": "color-mix(in srgb, #5288c2 10%, transparent)",
+    "accent-outline": "color-mix(in srgb, #5288c2 45%, transparent)",
+    "overlay-border": "color-mix(in srgb, #71717a 30%, transparent)",
+  },
+  dark: {
+    bg: "#09090b", surface: "#18181b", "surface-2": "#2e2e33", raised: "#202024",
+    border: "#3f3f46", hover: "#4a4a52",
+    fg: "#fafafa", muted: "#a1a1aa",
+    accent: "#7facd6", "accent-strong": "#5288c2", "accent-subtle": "#28354a", "on-accent": "#09090b",
+    pink: "#e77ba6", success: "#35b37b", warning: "#d9982b",
+    danger: "#e2687a", "danger-strong": "#c34255", "on-danger": "#ffffff",
+    "accent-tint": "color-mix(in srgb, #7facd6 10%, transparent)",
+    "accent-outline": "color-mix(in srgb, #7facd6 45%, transparent)",
+    "overlay-border": "color-mix(in srgb, #a1a1aa 30%, transparent)",
+  },
+};
+
+function applyPalette(el, theme) {
+  for (const [name, value] of Object.entries(PALETTE[theme])) {
+    el.style.setProperty(`--${name}`, value);
+  }
+}
+
+/* --- measurement -------------------------------------------------------
+   Composite on a canvas rather than parsing getComputedStyle: Chrome
+   serialises color-mix() as `color(srgb 0.49 0.67 0.83 / 0.1)`, whose 0–1
+   channels an rgb() parser silently misreads as 0–255. Painting handles every
+   serialisation and does the alpha compositing in the same step.            */
+const ctx = Object.assign(document.createElement("canvas"), { width: 1, height: 1 })
+  .getContext("2d", { willReadFrequently: true });
+
+function composite(color, backdrop) {
+  ctx.globalCompositeOperation = "copy";
+  ctx.fillStyle = backdrop; ctx.fillRect(0, 0, 1, 1);
+  ctx.globalCompositeOperation = "source-over";
+  ctx.fillStyle = color; ctx.fillRect(0, 0, 1, 1);
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+  return [r, g, b];
+}
+const hex = ([r, g, b]) => "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("").toUpperCase();
+const lum = ([r, g, b]) => {
+  const f = (v) => { const s = v / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+};
+const ratio = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+
+/* `separation` = a non-text boundary or fill that must simply be SEEN
+   (dividers, table rules, meter tracks, elevation steps).
+   `text` = must clear WCAG AA at 4.5:1. */
+const PAIRS = [
+  ["border on raised",      "border", "raised",      1.2, "modal dividers, nav rule, card frames"],
+  ["border on bg",          "border", "bg",          1.2, "page-level cards, list rules"],
+  ["border on surface",     "border", "surface",     1.2, "table header + total rows"],
+  ["border on surface-2",   "border", "surface-2",   1.2, "badges, chips, tooltip edge"],
+  ["overlay-border on s-2", "overlay-border", "surface-2", 1.2, "tooltip / popover edge"],
+  ["raised over bg",        "raised", "bg",          1.2, "the modal panel lifting off the page"],
+  ["surface-2 on raised",   "surface-2", "raised",   1.2, "meter track, round close button, chips"],
+  ["surface on raised",     "surface", "raised",     1.2, "segmented-control track, table header"],
+  ["hover on raised",       "hover", "raised",       1.2, "menu rows, nav hover"],
+  ["hover on surface-2",    "hover", "surface-2",    1.2, "close-button hover"],
+  ["accent-subtle on raised", "accent-subtle", "raised", 1.2, "selected nav row"],
+  ["accent-tint on raised", "accent-tint", "raised", 1.2, "accent badge fill"],
+  ["fg on raised",          "fg", "raised",          4.5, "all body copy"],
+  ["muted on raised",       "muted", "raised",       4.5, "column heads, sub-labels"],
+  ["muted on surface-2",    "muted", "surface-2",    4.5, "badge text"],
+  ["accent on raised",      "accent", "raised",      4.5, "links, tx hashes"],
+  ["accent on bg",          "accent", "bg",          4.5, "links on the page ground"],
+  ["on-accent over accent-strong", "on-accent", "accent-strong", 4.5, "active segmented-control label"],
+  ["success on raised",     "success", "raised",     4.5, "'free' rows, status labels"],
+  ["danger on raised",      "danger", "raised",      4.5, "destructive text + outline buttons"],
+  // danger-strong is a FILL, never text — the pair that matters is its label.
+  ["on-danger over danger-strong", "on-danger", "danger-strong", 4.5, "label on a destructive fill"],
+];
+
+const RAMP = ["bg", "surface", "raised", "surface-2", "hover", "border", "fg", "muted",
+  "accent", "accent-strong", "accent-subtle", "accent-tint", "accent-outline",
+  "overlay-border", "on-accent", "pink", "success", "warning", "danger", "danger-strong"];
+
+function measure(theme, token, onToken) {
+  const p = PALETTE[theme];
+  const back = composite(p[onToken], "#ffffff");
+  const front = composite(p[token], `rgb(${back[0]} ${back[1]} ${back[2]})`);
+  return { r: ratio(front, back), hex: hex(front) };
+}
+
+function cls(value, need) {
+  if (value >= need) return "ok";
+  return value >= (need > 3 ? 3 : 1.1) ? "warn" : "bad";
+}
+
+function renderAudit() {
+  const body = document.getElementById("auditRows");
+  let fails = 0;
+  body.innerHTML = PAIRS.map(([label, tok, on, need, where]) => {
+    const l = measure("light", tok, on).r;
+    const d = measure("dark", tok, on).r;
+    if (l < need) fails++;
+    if (d < need) fails++;
+    return `<tr>
+      <td class="pair">${label}</td>
+      <td class="where">${where}</td>
+      <td class="num ${cls(l, need)}">${l.toFixed(2)}</td>
+      <td class="num ${cls(d, need)}">${d.toFixed(2)}</td>
+      <td class="num need">${need.toFixed(2)}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("verdict").innerHTML =
+    `<b>${fails}</b> pairing${fails === 1 ? "" : "s"} below target across both themes. ` +
+    `Separation pairs need 1.20 to read as a boundary at all; text pairs need WCAG AA 4.50.`;
+
+  document.getElementById("ramp").innerHTML = RAMP.map((name) => `
+    <div class="chip">
+      <i style="background:${hex(composite(PALETTE.light[name], PALETTE.light.bg))}"></i>
+      <i style="background:${hex(composite(PALETTE.dark[name], PALETTE.dark.bg))}"></i>
+      <span><span class="n">${name}</span>
+      <span class="h">${hex(composite(PALETTE.light[name], PALETTE.light.bg))} · ${hex(composite(PALETTE.dark[name], PALETTE.dark.bg))}</span></span>
+    </div>`).join("");
+}
+
+/* --- specimens ---------------------------------------------------------- */
+const SPECIMENS = `
+<section>
+  <p class="spec-h">Settings modal — panel, dividers, meter, close button</p>
+  <div class="modal">
+    <nav>
+      <span class="ttl">Settings</span>
+      <div class="navrow"><i></i>General</div>
+      <div class="navrow"><i></i>Account</div>
+      <div class="navrow sel"><i></i>Usage</div>
+    </nav>
+    <div class="main">
+      <div class="hd"><span>Usage</span><button class="xbtn">&times;</button></div>
+      <div class="bd">
+        <div class="row"><span class="lbl" style="font-weight:600">Usage</span><span class="sub2">July 2026</span></div>
+        <div class="row rule">
+          <span><span class="lbl">Models</span><br><span class="sub2">12 turns</span></span>
+          <span class="val">$0.30</span>
+        </div>
+        <div class="row rule"><span class="lbl" style="font-weight:600">Total</span><span class="val b">$0.30</span></div>
+        <div class="row rule" style="display:block">
+          <div class="sub2" style="margin-bottom:8px">Credits 30/500 · paid via app_key</div>
+          <div class="meter"><i style="width:6%"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="spec-h">General — hairline grid, segmented control, buttons</p>
+  <div class="card">
+    <div class="grid2">
+      <div class="cell"><span class="k">Network</span><span class="v"><i class="dot"></i>Ethereum</span></div>
+      <div class="cell"><span class="k">Status</span><span class="v"><i class="dot"></i>Active</span></div>
+    </div>
+    <div class="pad">
+      <div class="seg"><span class="on">Managed</span><span>Bring your own key</span></div>
+      <div class="btns">
+        <span class="btn pri">Primary</span>
+        <span class="btn sec">Secondary</span>
+        <span class="btn dgr">Destructive</span>
+        <span class="btn dgr-fill">Delete</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="spec-h">Data table, framed</p>
+  <div class="tbl">
+    <div class="tr head"><span>App</span><span class="r">model</span><span class="r">tool use</span><span class="r">total</span></div>
+    <div class="tr"><span class="nm">default</span><span class="r">$19.95</span><span class="r">—</span><span class="r">$19.95</span></div>
+    <div class="tr"><span class="nm">somm</span><span class="r">$12.65</span><span class="r">$0.29</span><span class="r">$43.69</span></div>
+    <div class="tr"><span class="nm">foo app</span><span class="r">$0.00</span><span class="r">$0.18</span><span class="r">$0.18</span></div>
+    <div class="tr tot"><span class="nm">Total</span><span class="r">$36.45</span><span class="r">$0.59</span><span class="r">$83.79</span></div>
+  </div>
+</section>
+
+<section>
+  <p class="spec-h">Badges, meters, popover, tooltip</p>
+  <div class="card pad">
+    <div class="badges">
+      <span class="badge">native · base</span>
+      <span class="badge">app key · model free</span>
+      <span class="badge acc">managed · +15%</span>
+      <span class="link">0x7A3f…9C21 ↗</span>
+    </div>
+    <div class="meter"><i style="width:22%"></i></div>
+    <div class="meter over"><i style="width:96%"></i></div>
+    <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+      <div class="pop">
+        <div class="it on">All apps ✓</div>
+        <div class="it">Aomi</div>
+        <div class="it">Somm</div>
+      </div>
+      <span class="tip">12 turns</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="spec-h">Elevation — each step must read off the one below</p>
+  <div class="elev">
+    <div class="lv s1">surface <span class="m">· recessed</span>
+      <div class="lv s2">raised <span class="m">· panels</span>
+        <div class="lv s3">surface-2 <span class="m">· fills on a panel</span>
+          <div class="lv s4">hover</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>`;
+
+for (const [id, theme] of [["paneLight", "light"], ["paneDark", "dark"]]) {
+  const pane = document.getElementById(id);
+  pane.innerHTML = SPECIMENS;
+  applyPalette(pane, theme);
+}
+
+renderAudit();
+
+/* --- page theme --------------------------------------------------------- */
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+let theme = localStorage.getItem("aomi-theme-audit") || (prefersDark.matches ? "dark" : "light");
+function setTheme(next) {
+  theme = next;
+  applyPalette(document.documentElement, theme);
+  document.documentElement.setAttribute("data-theme", theme);
+  document.getElementById("toggle").textContent = theme === "dark" ? "☾ dark" : "☀ light";
+  localStorage.setItem("aomi-theme-audit", theme);
+}
+document.getElementById("toggle").addEventListener("click", () => setTheme(theme === "dark" ? "light" : "dark"));
+prefersDark.addEventListener("change", (e) => {
+  if (!localStorage.getItem("aomi-theme-audit")) setTheme(e.matches ? "dark" : "light");
+});
+setTheme(theme);
+</script>
