@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-26T23:10:14.036Z",
+  "ranAt": "2026-07-27T10:06:57.389Z",
   "candidates": 48,
   "postsFetched": 102,
   "prePass": 0,
@@ -7,32 +7,18 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 37,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Founder essay on where the attack surface moved above contracts — matches Cecilia long-form brief and founder POV deliverable.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+      "number": 43,
+      "postId": "2072744157680996745",
+      "confidence": 0.8,
+      "reason": "Post (main) describes joining Monad livestream and Aomi for Monad, matching the Aomi x Monad announcement/deploy founder-narrative about Monad integration.",
+      "url": "https://x.com/aomi_labs/status/2072744157680996745"
     },
     {
       "number": 55,
-      "postId": "2076666912067420300",
+      "postId": "2076717509571698872",
       "confidence": 0.8,
-      "reason": "Public post describing agents going live with no backend and three-command deploy flow — aligns with the 'Launch an agent from a web page' demo deliverable.",
-      "url": "https://x.com/aomi_labs/status/2076666912067420300"
-    },
-    {
-      "number": 58,
-      "postId": "2067324091258843436",
-      "confidence": 0.8,
-      "reason": "Main account post explicitly discusses where trust/guardrails live when agents run through a platform, matching the deliverable's theme and audience.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    },
-    {
-      "number": 13,
-      "postId": "2060063160690733471",
-      "confidence": 0.9,
-      "reason": "Post announces opening the Aomi Early Forge program to the public, matching the Spotlight Early Forge deliverable's intent and audience.",
-      "url": "https://x.com/aomi_labs/status/2060063160690733471"
+      "reason": "Main account post on 2026-07-13 publicly announces Somm shipping an Aomi agent that executes on-chain (demo-style launch narrative matching the 'Launch an agent from a web page' demo).",
+      "url": "https://x.com/aomi_labs/status/2076717509571698872"
     }
   ],
   "errors": [],
