@@ -1,31 +1,24 @@
 {
-  "ranAt": "2026-07-27T16:33:27.676Z",
-  "candidates": 49,
+  "ranAt": "2026-07-28T08:49:22.957Z",
+  "candidates": 48,
   "postsFetched": 102,
   "prePass": 0,
   "judged": 1,
   "applied": 1,
   "needsConfirm": [
     {
-      "number": 16,
-      "postId": "2077050550294642884",
-      "confidence": 0.8,
-      "reason": "Dev account post announces the build/deploy/activate path and docs fixes, matching the weekly dev recap theme and timing.",
-      "url": "https://x.com/aomi_dev/status/2077050550294642884"
-    },
-    {
       "number": 58,
       "postId": "2079628355322679660",
       "confidence": 0.8,
-      "reason": "Thread/post explains Aomi is non-custodial and that the platform runs forked-chain simulation before signing, matching the deliverable's focus on what users keep when using a platform.",
+      "reason": "Main-account post explicitly states Aomi is non-custodial and simulates every transaction on a forked chain before keys are asked to sign—matching the deliverable's subject about what you keep when running an agent through a platform.",
       "url": "https://x.com/aomi_labs/status/2079628355322679660"
     },
     {
-      "number": 58,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Main-account post argues for minimizing trust in platforms vs agents and where responsibilities lie, matching the deliverable's message about what users keep when using a platform.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+      "number": 55,
+      "postId": "2076666912067420300",
+      "confidence": 0.8,
+      "reason": "Main-account post describes an agent app needing no backend and the three-command deploy flow (build → deploy → status), aligning with the deliverable about launching an agent from a web page and a live demo of going from nothing to funded/live.",
+      "url": "https://x.com/aomi_labs/status/2076666912067420300"
     }
   ],
   "errors": [],
