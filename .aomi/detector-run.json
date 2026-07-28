@@ -1,24 +1,24 @@
 {
-  "ranAt": "2026-07-28T08:49:22.957Z",
-  "candidates": 48,
+  "ranAt": "2026-07-28T19:50:42.936Z",
+  "candidates": 47,
   "postsFetched": 102,
   "prePass": 0,
-  "judged": 1,
-  "applied": 1,
+  "judged": 0,
+  "applied": 0,
   "needsConfirm": [
     {
-      "number": 58,
-      "postId": "2079628355322679660",
+      "number": 16,
+      "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Main-account post explicitly states Aomi is non-custodial and simulates every transaction on a forked chain before keys are asked to sign—matching the deliverable's subject about what you keep when running an agent through a platform.",
-      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+      "reason": "Dev account post describes scaffold→deploy→activate docs/path fixes matching the weekly dev recap subject and audience.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
     },
     {
-      "number": 55,
-      "postId": "2076666912067420300",
+      "number": 58,
+      "postId": "2067324091258843436",
       "confidence": 0.8,
-      "reason": "Main-account post describes an agent app needing no backend and the three-command deploy flow (build → deploy → status), aligning with the deliverable about launching an agent from a web page and a live demo of going from nothing to funded/live.",
-      "url": "https://x.com/aomi_labs/status/2076666912067420300"
+      "reason": "Main account post explicitly frames the trust split between platform and Aomi and argues for keeping execution/simulation in Aomi, matching the deliverable's topic and account.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
     }
   ],
   "errors": [],
