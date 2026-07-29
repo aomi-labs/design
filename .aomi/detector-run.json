@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-07-29T09:06:42.277Z",
+  "ranAt": "2026-07-29T12:18:02.436Z",
   "candidates": 46,
   "postsFetched": 102,
   "prePass": 0,
@@ -7,11 +7,18 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 1,
-      "postId": "2076717509571698872",
+      "number": 37,
+      "postId": "2067324091258843436",
+      "confidence": 0.95,
+      "reason": "Main account post is a founder essay about agent attack surface and guardrails, matching the Cecilia essay brief.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+    },
+    {
+      "number": 24,
+      "postId": "2067324091258843436",
       "confidence": 0.8,
-      "reason": "The post explicitly announces Somm as a team building agentic finance on Aomi and links to docs/SDK—matching the Somm.Finance app-fees explainer release subject.",
-      "url": "https://x.com/aomi_labs/status/2076717509571698872"
+      "reason": "Post text 'Don't make the agent trustworthy. Make it unauthorized...' matches the deliverable's founder/research POV on where guardrails belong (same theme and framing).",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
     }
   ],
   "errors": [],
