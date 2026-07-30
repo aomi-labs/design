@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-07-30T12:02:33.482Z",
+  "ranAt": "2026-07-30T15:59:53.724Z",
   "candidates": 49,
   "postsFetched": 102,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 16,
+      "postId": "2077050550294642884",
+      "confidence": 0.8,
+      "reason": "Dev account post announces the build/deploy/docs path fix matching the dev recap item about docs and the build lifecycle.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
+    }
+  ],
   "errors": [],
   "ok": true
 }
