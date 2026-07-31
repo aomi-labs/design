@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-07-30T19:49:03.859Z",
-  "candidates": 49,
+  "ranAt": "2026-07-31T05:45:03.427Z",
+  "candidates": 48,
   "postsFetched": 104,
   "prePass": 0,
   "judged": 1,
   "applied": 1,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 72,
+      "postId": "2079628355322679660",
+      "confidence": 0.8,
+      "reason": "Main-account post states a single transaction interface across EVM + SVM and that Aomi never holds wallets — aligns with the 'one agent across Solana and EVM' main announcement.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    }
+  ],
   "errors": [],
   "ok": true
 }
