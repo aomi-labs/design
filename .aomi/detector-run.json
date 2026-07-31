@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-07-31T16:09:46.234Z",
-  "candidates": 48,
+  "ranAt": "2026-07-31T19:49:39.439Z",
+  "candidates": 47,
   "postsFetched": 104,
   "prePass": 0,
   "judged": 1,
   "applied": 1,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 24,
+      "postId": "2067324091258843436",
+      "confidence": 0.8,
+      "reason": "Main post argues the same guardrails/verification thesis (compile-time vs wallet) called for in the Cecilia research brief.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+    }
+  ],
   "errors": [],
   "ok": true
 }
