@@ -1,19 +1,11 @@
 {
-  "ranAt": "2026-07-31T09:14:46.491Z",
+  "ranAt": "2026-07-31T12:14:52.448Z",
   "candidates": 47,
   "postsFetched": 104,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [
-    {
-      "number": 37,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Main account post on 2026-06-17 is a founder essay about shifting the attack surface above contracts, matching the Cecilia essay brief exactly.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    }
-  ],
+  "needsConfirm": [],
   "errors": [],
   "ok": true
 }
