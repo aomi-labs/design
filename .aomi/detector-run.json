@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-01T15:16:01.604Z",
+  "ranAt": "2026-08-01T19:31:21.193Z",
   "candidates": 46,
   "postsFetched": 105,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 72,
+      "postId": "2079628355322679660",
+      "confidence": 0.8,
+      "reason": "Main account post explicitly describes Aomi as a single non‑custodial transaction interface across EVM + SVM (Solana VM), matching the one‑agent‑across‑Solana‑and‑EVM subject.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    }
+  ],
   "errors": [],
   "ok": true
 }
