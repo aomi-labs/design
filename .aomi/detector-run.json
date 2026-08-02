@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-02T08:35:40.196Z",
+  "ranAt": "2026-08-02T11:33:09.808Z",
   "candidates": 46,
   "postsFetched": 105,
   "prePass": 0,
@@ -7,11 +7,25 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 72,
-      "postId": "2079628355322679660",
+      "number": 16,
+      "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Main account post explicitly states a single non‑custodial transaction interface across EVM + SVM (Solana), matching the one‑agent‑across‑chains deliverable.",
-      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+      "reason": "Dev-account post about the build/deploy docs and the single-page scaffold→deploy→activate path matches the weekly dev recap focus on what changed for builders.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
+    },
+    {
+      "number": 37,
+      "postId": "2067324091258843436",
+      "confidence": 0.85,
+      "reason": "Main-account founder-style thread about guardrails, trust, and where verification belongs matches Cecilia's essay framing that the attack surface moved above contracts.",
+      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+    },
+    {
+      "number": 72,
+      "postId": "2069452269230182912",
+      "confidence": 0.8,
+      "reason": "Main post states a single transaction interface across EVM + SVM/non-custodial runtime — matches the ‘one agent across Solana and EVM’ message.",
+      "url": "https://x.com/aomi_labs/status/2069452269230182912"
     }
   ],
   "errors": [],
