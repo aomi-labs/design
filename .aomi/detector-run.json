@@ -1,17 +1,17 @@
 {
-  "ranAt": "2026-08-02T19:31:57.004Z",
-  "candidates": 46,
+  "ranAt": "2026-08-02T23:08:46.747Z",
+  "candidates": 48,
   "postsFetched": 106,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 58,
-      "postId": "2079628355322679660",
-      "confidence": 0.9,
-      "reason": "Main-account thread explains the split of platform vs Aomi responsibilities and explicitly states Aomi is non-custodial and runs simulations — matching the deliverable's subject of what you keep when an agent runs through a platform.",
-      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+      "number": 16,
+      "postId": "2077050550294642884",
+      "confidence": 0.8,
+      "reason": "Dev account post summarizes build/deploy docs and the developer path (scaffold, version check, deploy, activate), matching the weekly Aomi dev recap theme.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
     }
   ],
   "errors": [],
