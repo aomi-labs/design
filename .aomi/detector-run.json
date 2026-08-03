@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-02T23:08:46.747Z",
+  "ranAt": "2026-08-03T05:51:50.502Z",
   "candidates": 48,
   "postsFetched": 106,
   "prePass": 0,
@@ -10,8 +10,29 @@
       "number": 16,
       "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Dev account post summarizes build/deploy docs and the developer path (scaffold, version check, deploy, activate), matching the weekly Aomi dev recap theme.",
+      "reason": "Dev account post summarizes the build/deploy path and docs fixes for builders that the weekly Aomi dev recap describes.",
       "url": "https://x.com/aomi_dev/status/2077050550294642884"
+    },
+    {
+      "number": 58,
+      "postId": "2079628355322679660",
+      "confidence": 0.85,
+      "reason": "Post explicitly states Aomi is non‑custodial and describes the split of platform responsibilities (build/hosting/simulation vs. wallet signing), matching the deliverable's user‑outcome framing.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    },
+    {
+      "number": 49,
+      "postId": "2082914520633081961",
+      "confidence": 0.8,
+      "reason": "Dev account post describes what is shown before signing (chain, calldata, calls) and touches on EVM/Solana preview behavior, aligning with the transaction lifecycle deliverable's preview/simulation focus.",
+      "url": "https://x.com/aomi_dev/status/2082914520633081961"
+    },
+    {
+      "number": 23,
+      "postId": "2079628355322679660",
+      "confidence": 0.9,
+      "reason": "Post explicitly contrasts Aomi’s non‑custodial, compile‑time/simulation guardrail approach with wallets that guard at runtime — matches the deliverable's thesis and audience.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
     }
   ],
   "errors": [],
