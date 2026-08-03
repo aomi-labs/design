@@ -319,34 +319,60 @@
 
 <!-- ============ 00 · THE PRODUCT, RUNNING ============ -->
 <style>
-  .demo{margin-top:40px;border:1px solid var(--border-strong);border-radius:10px;overflow:hidden;background:var(--cool-950)}
-  .demo video{display:block;width:100%;height:auto}
-  .demo-cap{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;
-    padding:13px 18px;background:var(--bg-subtle);border-top:1px solid var(--border);
-    font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .demos{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .demo{border:1px solid var(--border-strong);border-radius:9px;overflow:hidden;background:var(--cool-100)}
+  .demo video{display:block;width:100%;height:auto;cursor:pointer}
+  .demo-cap{padding:11px 14px;background:var(--bg-subtle);border-top:1px solid var(--border);
+    font-family:var(--mono);font-size:11px;line-height:1.55;color:var(--muted)}
+  .demo-cap .t{display:block;color:var(--info);margin-bottom:3px}
   .demo-cap b{color:var(--ink);font-weight:500}
-  .demo-cap .t{color:var(--info)}
-  .demo-note{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--subtle)}
+  .demo-note{margin-top:18px;font-family:var(--mono);font-size:11.5px;color:var(--subtle)}
+  @media (max-width:760px){ .demos{grid-template-columns:1fr;gap:18px} }
 </style>
 <section>
   <div class="wrap">
     <div class="secno"><b>00</b> The product, running</div>
-    <h2>The order goes out simulated,<br>or it doesn't go out.</h2>
-    <p class="lead" style="margin-top:16px">Unedited screen capture. A position rotation stated in one sentence: the runtime routes it,
-    proves the fill against live chain state, and stages it for the user's own wallet to approve — slippage and price
-    impact known before a signature exists.</p>
-    <div class="demo">
-      <video src="https://scrum.aomi.dev/api/core/media/trading-lst-rotation.mp4"
-             poster="https://scrum.aomi.dev/api/core/media/trading-lst-rotation.jpg"
-             controls playsinline preload="metadata" muted loop></video>
-      <div class="demo-cap">
-        <span class="t">"Move my entire mSOL position over to JitoSOL."</span>
-        <span>route · <b>Jupiter</b></span>
-        <span>price impact ~0%</span>
-        <span><b>simulation passed</b> → staged for approval</span>
+    <h2>Every order goes out simulated,<br>or it doesn't go out.</h2>
+    <p class="lead" style="margin-top:16px">Unedited screen captures. Routing, bridging, position rotation and scheduled execution — each stated in one sentence, each proven against live chain state before a signature exists. The last one keeps running after the tab closes: that is the order type your venue doesn't ship.</p>
+    <div class="demos">
+      <div class="demo">
+        <video src="https://scrum.aomi.dev/api/core/media/bridge-to-base.mp4"
+               poster="https://scrum.aomi.dev/api/core/media/bridge-to-base.jpg"
+               controls playsinline preload="none" muted loop></video>
+        <div class="demo-cap">
+          <span class="t">"Move most of my ETH over to Base — leave me enough on mainnet for gas."</span>
+          bridge · <b>Across</b> · keeps a gas buffer the user never specified · 2:20
+        </div>
+      </div>
+      <div class="demo">
+        <video src="https://scrum.aomi.dev/api/core/media/swap-and-stake.mp4"
+               poster="https://scrum.aomi.dev/api/core/media/swap-and-stake.jpg"
+               controls playsinline preload="none" muted loop></video>
+        <div class="demo-cap">
+          <span class="t">"Now stake the rest with Marinade."</span>
+          swap settles, then a follow-up instruction in the same thread · Solana · 1:06
+        </div>
+      </div>
+      <div class="demo">
+        <video src="https://scrum.aomi.dev/api/core/media/lst-rotation.mp4"
+               poster="https://scrum.aomi.dev/api/core/media/lst-rotation.jpg"
+               controls playsinline preload="none" muted loop></video>
+        <div class="demo-cap">
+          <span class="t">"Move my entire mSOL position over to JitoSOL."</span>
+          route <b>Jupiter</b> · price impact ~0% · <b>simulation passed</b> → staged for approval · 0:41
+        </div>
+      </div>
+      <div class="demo">
+        <video src="https://scrum.aomi.dev/api/core/media/scheduled-sequence.mp4"
+               poster="https://scrum.aomi.dev/api/core/media/scheduled-sequence.jpg"
+               controls playsinline preload="none" muted loop></video>
+        <div class="demo-cap">
+          <span class="t">"Yes — do the whole sequence."</span>
+          <b>Lido</b> · <b>Aave</b> · erc20 · persisted as a <b>recurring intent</b> · 0:51
+        </div>
       </div>
     </div>
-    <div class="demo-note">no audio · 0:41 · Solana mainnet · the venue never holds the key — the user's wallet signs</div>
+    <div class="demo-note">no audio · Solana and EVM · the venue never holds the key — the end user's wallet signs</div>
   </div>
 </section>
 
