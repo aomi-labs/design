@@ -1,17 +1,31 @@
 {
-  "ranAt": "2026-08-04T19:54:41.971Z",
-  "candidates": 48,
+  "ranAt": "2026-08-04T23:17:03.788Z",
+  "candidates": 47,
   "postsFetched": 113,
   "prePass": 0,
-  "judged": 1,
-  "applied": 1,
+  "judged": 0,
+  "applied": 0,
   "needsConfirm": [
     {
+      "number": 58,
+      "postId": "2079628355322679660",
+      "confidence": 0.9,
+      "reason": "Main-thread post explains non‑custodial model, delegated grants, and what the platform vs app owns — matches the deliverable's topic about what you keep when using a platform.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    },
+    {
       "number": 72,
-      "postId": "2083219382436868607",
+      "postId": "2079628355322679660",
       "confidence": 0.8,
-      "reason": "Posted on 2026-07-31 from the Main account with a short demo CTA (matches the publishOn date and likely links to the cross-chain / Solana+EVM demo described in deliverable 72.",
-      "url": "https://x.com/aomi_labs/status/2083219382436868607"
+      "reason": "Main account post explicitly states a single transaction interface across EVM + SVM and non-custodial execution, matching the 'one agent across Solana and EVM' subject.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    },
+    {
+      "number": 58,
+      "postId": "2079975462260891835",
+      "confidence": 0.8,
+      "reason": "Main account post lists what a DeFi protocol needs (typed bindings, simulation, etc.), matching the deliverable about what you keep when an agent runs through a platform.",
+      "url": "https://x.com/aomi_labs/status/2079975462260891835"
     }
   ],
   "errors": [],
