@@ -1,24 +1,17 @@
 {
-  "ranAt": "2026-08-04T16:21:18.459Z",
+  "ranAt": "2026-08-04T19:54:41.971Z",
   "candidates": 48,
   "postsFetched": 113,
   "prePass": 0,
-  "judged": 0,
-  "applied": 0,
+  "judged": 1,
+  "applied": 1,
   "needsConfirm": [
     {
-      "number": 49,
-      "postId": "2082914520633081961",
-      "confidence": 0.88,
-      "reason": "Dev account post describes the pre-sign transaction preview and EVM/Solana fields matching the transaction lifecycle content and audience of deliverable #49.",
-      "url": "https://x.com/aomi_dev/status/2082914520633081961"
-    },
-    {
       "number": 72,
-      "postId": "2082197098754396635",
+      "postId": "2083219382436868607",
       "confidence": 0.8,
-      "reason": "Main-account post explicitly contrasts chain-focused stacks and shows cross-chain safety reasoning (EVM/Solana boundary), matching the 'One agent across Solana and EVM' deliverable.",
-      "url": "https://x.com/aomi_labs/status/2082197098754396635"
+      "reason": "Posted on 2026-07-31 from the Main account with a short demo CTA (matches the publishOn date and likely links to the cross-chain / Solana+EVM demo described in deliverable 72.",
+      "url": "https://x.com/aomi_labs/status/2083219382436868607"
     }
   ],
   "errors": [],
