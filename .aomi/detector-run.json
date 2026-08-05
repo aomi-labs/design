@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-05T08:49:57.569Z",
+  "ranAt": "2026-08-05T12:14:24.606Z",
   "candidates": 47,
   "postsFetched": 115,
   "prePass": 0,
@@ -9,23 +9,9 @@
     {
       "number": 58,
       "postId": "2079628355322679660",
-      "confidence": 0.8,
-      "reason": "Main account post thread (21 Jul) explains the split of platform vs Aomi responsibilities and non‑custodial simulation flow matching the deliverable's 'what you keep' framing.",
+      "confidence": 0.9,
+      "reason": "Main-account thread post explicitly states Aomi is non-custodial and describes what the platform keeps vs user control, matching the deliverable's framing about what you keep when an agent runs through a platform.",
       "url": "https://x.com/aomi_labs/status/2079628355322679660"
-    },
-    {
-      "number": 75,
-      "postId": "2084825219684847846",
-      "confidence": 0.8,
-      "reason": "Same account (main) and exact publish date (2026-08-05); short linked post likely points to the published piece described by deliverable 75.",
-      "url": "https://x.com/aomi_labs/status/2084825219684847846"
-    },
-    {
-      "number": 58,
-      "postId": "2079628382719869438",
-      "confidence": 0.8,
-      "reason": "Main account thread post explains the split of responsibilities (what the platform owns vs what Aomi runs) matching the deliverable theme about what users keep when an agent runs through a platform.",
-      "url": "https://x.com/aomi_labs/status/2079628382719869438"
     }
   ],
   "errors": [],
