@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-05T23:17:05.245Z",
+  "ranAt": "2026-08-06T05:25:58.167Z",
   "candidates": 46,
   "postsFetched": 115,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 75,
+      "postId": "2084825219684847846",
+      "confidence": 0.8,
+      "reason": "Post is from the Main account on the same publish date (2026-08-05); likely the public release for that Main deliverable.",
+      "url": "https://x.com/aomi_labs/status/2084825219684847846"
+    }
+  ],
   "errors": [],
   "ok": true
 }
