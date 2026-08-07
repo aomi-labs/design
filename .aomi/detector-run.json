@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-07T11:05:44.713Z",
+  "ranAt": "2026-08-07T15:07:47.357Z",
   "candidates": 48,
   "postsFetched": 115,
   "prePass": 0,
@@ -10,7 +10,7 @@
       "number": 16,
       "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Dev account post describes the build/deploy docs and one-page path for scaffold→deploy which matches the weekly Aomi dev recap theme.",
+      "reason": "Dev account post describes the updated single-page build/deploy path and docs fixes, matching the weekly dev recap intent.",
       "url": "https://x.com/aomi_dev/status/2077050550294642884"
     }
   ],
