@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-06T12:16:35.686Z",
-  "candidates": 46,
+  "ranAt": "2026-08-07T00:13:41.973Z",
+  "candidates": 47,
   "postsFetched": 115,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 49,
+      "postId": "2082914520633081961",
+      "confidence": 0.8,
+      "reason": "Dev account post describes the pre-sign transaction preview and signing boundary—this is a specific piece of the transaction lifecycle content (simulation/preview before signature) matching the deliverable’s subject.",
+      "url": "https://x.com/aomi_dev/status/2082914520633081961"
+    }
+  ],
   "errors": [],
   "ok": true
 }
