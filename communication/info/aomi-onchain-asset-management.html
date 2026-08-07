@@ -439,19 +439,229 @@
 <symbol id="cube-plain" viewBox="0 0 100 110"><polygon points="50,2 95,27 95,79 50,104 5,79 5,27" fill="#fff" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/><polygon points="50,2 95,27 50,52 5,27" fill="#e2eef8" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/><polygon points="50,52 95,27 95,79 50,104" fill="#f1f7fc" stroke="#5288c2" stroke-width="2.2" stroke-linejoin="round"/></symbol></svg>
 
 <!-- ============ HERO ============ -->
+<style>
+  /* `.hero`'s shorthand padding zeroed the gutter `.wrap` sets, so the hero sat
+     flush to the viewport while every section below was inset. Restore the
+     gutter — without it the dark card below bleeds to the screen edge on phones. */
+  .wrap.hero{padding-left:48px;padding-right:48px}
+  @media(max-width:720px){.wrap.hero{padding-left:24px;padding-right:24px}}
+
+  /* two-column hero — the claim on the left, the shipped product on the right */
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:52px;align-items:center}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:44px}}
+  .hero-grid h1{font-size:42px}
+  .hero-grid .lead{margin-top:22px;font-size:17.5px;max-width:54ch}
+  .hero-proof{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:28px}
+  .hero-proof .cs-tag{margin:0}
+  .hero-proof .jump{font-family:var(--mono);font-size:11px;color:var(--info);text-decoration:none;
+    border-bottom:1px solid var(--sky-200);padding-bottom:2px}
+  /* min-width:0 — a grid item defaults to min-content width, and the marquee
+     track inside the card is 2300px wide; without this the card blows the grid out */
+  .hero-demo{min-width:0}
+  .hero-demo .dl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--subtle);margin-bottom:10px;text-align:right}
+  .hero-demo .dl a{color:var(--somm);font-weight:500;text-decoration:none;
+    border-bottom:1px solid var(--somm-line);padding-bottom:2px;transition:border-color .25s var(--ease)}
+  .hero-demo .dl a:hover{border-bottom-color:var(--somm)}
+
+  /* the live product, as it ships: dark surface, approval gate, one open venue */
+  .scard{background:linear-gradient(157deg,#272130,#1b1823 46%,#231d2c);
+    border:1px solid #38323f;border-radius:14px;overflow:hidden;box-shadow:var(--sh-lg)}
+  .sbar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #322c3b}
+  .sbar .av{width:27px;height:27px;border-radius:8px;background:linear-gradient(135deg,#e0559a,#8b5cf6);flex:none}
+  .sbar .id{min-width:0;display:flex;flex-direction:column;gap:1px}
+  .sbar .nm{font-size:12.5px;font-weight:600;color:#f2f0f6;line-height:1.25}
+  .sbar .sub{font-family:var(--mono);font-size:9px;color:#8e879c;letter-spacing:.01em;line-height:1.35}
+  .sbar .wal{margin-left:auto;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;
+    color:#cdc7d8;border:1px solid #453e50;border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .sbar .wal i{width:5px;height:5px;border-radius:50%;background:#3ddc97;font-style:normal;flex:none}
+
+  .sgate{display:flex;align-items:center;gap:10px;margin:12px 14px 0;padding:9px 12px;border-radius:9px;
+    background:rgba(224,163,62,.10);border:1px solid rgba(224,163,62,.34);font-size:11.5px;color:#cfc5b4}
+  .sgate .swatch{width:9px;height:9px;border-radius:2px;background:#e0a33e;flex:none}
+  .sgate b{color:#fff;font-weight:600}
+
+  .sbody{padding:14px;display:flex;flex-direction:column;gap:8px}
+  .smsg{opacity:0;transform:translateY(7px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+  .smsg.on{opacity:1;transform:none}
+  .su{align-self:flex-end;max-width:90%;background:#332c3d;border:1px solid #423a4e;
+    border-radius:10px 10px 3px 10px;padding:9px 12px;font-size:12.5px;line-height:1.45;color:#eeeaf4}
+  .str{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10.5px;color:#b9b2c6;
+    border:1px solid #37313f;border-radius:8px;padding:7px 10px;background:rgba(255,255,255,.025)}
+  .str .sp{width:10px;height:10px;border:1.6px solid #4a4356;border-top-color:#8b5cf6;border-radius:50%;
+    animation:sspin .8s linear infinite;flex:none}
+  .str .ck{display:none;color:#3ddc97;font-size:11px;flex:none}
+  .str.done .sp{display:none}
+  .str.done .ck{display:inline}
+  .str .rs{color:#7f7890;margin-left:auto;white-space:nowrap}
+  @keyframes sspin{to{transform:rotate(360deg)}}
+  .sbx{border:1px solid rgba(139,92,246,.42);background:rgba(139,92,246,.10);border-radius:9px;
+    padding:9px 11px;font-family:var(--mono);font-size:10.5px;line-height:1.75;color:#c6bfd4}
+  .sbx .bt{color:#c4a9ff;font-weight:500;display:flex;align-items:center;gap:6px}
+  .sbx .bt .sp{width:10px;height:10px;border:1.6px solid rgba(139,92,246,.35);border-top-color:#c4a9ff;
+    border-radius:50%;animation:sspin .8s linear infinite;flex:none}
+  .sbx.done .bt .sp{display:none}
+  .sbx .br{opacity:0;transform:translateX(-5px);transition:all .4s var(--ease)}
+  .sbx .br.on{opacity:1;transform:none}
+  .sbx .br .a{color:#c4a9ff}
+  .sbx .bf{color:#3ddc97;opacity:0;transition:opacity .4s}
+  .sbx .bf.on{opacity:1}
+  .srow{display:flex;align-items:center;gap:12px;margin-top:2px}
+  .ssign{font-size:12px;font-weight:600;color:#fff;border-radius:999px;padding:9px 16px;white-space:nowrap;
+    background:linear-gradient(90deg,#e0559a,#8b5cf6);
+    transition:transform .25s var(--ease),filter .35s var(--ease)}
+  .ssign.press{transform:scale(.94)}
+  .ssign.signed{background:linear-gradient(90deg,#2e9e6b,#2e9e6b)}
+  .srun{font-family:var(--mono);font-size:9.5px;color:#7f7890;line-height:1.5;margin-left:auto;text-align:right}
+  .srun i{font-style:normal;color:#c4a9ff}
+
+  /* the venue shelf, under the conversation: what the mandate may deposit into
+     today, and what it is only tracking. The agent picks from this shelf —
+     showing it is what makes "band A only" legible instead of a claim.
+     It scrolls on its own because six venues do not fit a hero column; the
+     track holds two copies of the set so the -50% translate loops seamlessly. */
+  .spools{border-top:1px solid #322c3b;padding:12px 0 13px}
+  .sph{display:flex;align-items:baseline;justify-content:space-between;margin:0 14px 10px;
+    font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8e879c}
+  .sph b{color:#ded8e8;font-weight:500}
+  .smarq{overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+  /* no padding on the track — -50% must land exactly on the second copy */
+  .strack{display:flex;width:max-content;animation:smarquee 42s linear infinite}
+  .smarq:hover .strack{animation-play-state:paused}
+  @keyframes smarquee{to{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.strack{animation:none}.smarq{overflow-x:auto}}
+
+  .spool{width:186px;flex:none;margin-right:8px;padding:10px 11px 11px;
+    border:1px solid #322c3b;border-radius:9px;background:rgba(255,255,255,.02)}
+  .spool.open{border-color:rgba(62,220,151,.5);background:rgba(46,158,107,.10)}
+  .spool .ph{display:flex;align-items:center;gap:6px}
+  .spool .ph .d{width:6px;height:6px;border-radius:50%;flex:none}
+  .spool .ph .n{font-size:11.5px;font-weight:600;color:#a9a2b8;white-space:nowrap}
+  .spool.open .ph .n{color:#f2f0f6}
+  .spool .ph .s{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.06em;
+    text-transform:uppercase;color:#8e879c;border:1px solid #3d3648;border-radius:999px;padding:2px 6px}
+  .spool.open .ph .s{color:#9be7c4;border-color:rgba(62,220,151,.4)}
+  .spool .pm{margin-top:4px;font-family:var(--mono);font-size:9px;color:#7f7890}
+  .spool .pa{margin-top:9px;display:flex;align-items:baseline;gap:6px;
+    font-family:var(--mono);font-size:17px;line-height:1;color:#9c95ab}
+  .spool.open .pa{color:#3ddc97}
+  .spool .pa em{font-style:normal;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:#7f7890}
+  .spool .pk{display:flex;justify-content:space-between;gap:8px;margin-top:6px;padding-top:6px;
+    border-top:1px solid rgba(255,255,255,.05);font-family:var(--mono);font-size:9.5px;color:#7f7890}
+  .spool .pk b{color:#b9b2c6;font-weight:400}
+  .spmore{margin:10px 14px 0;font-family:var(--mono);font-size:9.5px;color:#6e677f}
+  .srun i{font-style:normal;color:#c4a9ff}
+</style>
 <div class="wrap hero">
   <div class="top">
     <span class="lock"><svg class="mark"><use href="#aomi-mark"/></svg><span class="word">aomi</span><span class="tag">Execution Infrastructure</span></span>
     <span class="mono" style="font-size:11.5px;color:var(--subtle)">vaults · funds · treasuries</span>
   </div>
-  <div class="h-eyebrow">Execution infrastructure · onchain asset management</div>
-  <h1>Every vault. Every chain.<br>One execution harness.</h1>
-  <p class="lead">A manager already owns the hard part — the strategy. aomi runs everything between a decision and its settlement. Your existing logic becomes an agent that executes on every venue and chain, rehearses each transaction on a live copy of the chain before signature, and operates inside a mandate that is enforced, not promised. Keys stay with you the whole time.</p>
-  <div class="aud">
-    <span class="tag2">Vault products &amp; risk curators</span>
-    <span class="tag2">Crypto-native funds</span>
-    <span class="tag2">DAO &amp; protocol treasuries</span>
-    <span class="tag2">RWA / tokenized-fund operations</span>
+  <div class="hero-grid">
+    <div>
+      <div class="h-eyebrow">Execution infrastructure · onchain asset management</div>
+      <h1>Every vault. Every chain.<br>One execution harness.</h1>
+      <p class="lead">A manager already owns the hard part — the strategy. aomi runs everything between a decision and its settlement. Your existing logic becomes an agent that executes on every venue and chain, rehearses each transaction on a live copy of the chain before signature, and operates inside a mandate that is enforced, not promised. Keys stay with you the whole time.</p>
+      <div class="hero-proof">
+        <span class="cs-tag"><span class="g"></span> IN PRODUCTION · SOMM FINANCE</span>
+        <a class="jump" href="#somm">how it was built ↓</a>
+      </div>
+      <div class="aud">
+        <span class="tag2">Vault products &amp; risk curators</span>
+        <span class="tag2">Crypto-native funds</span>
+        <span class="tag2">DAO &amp; protocol treasuries</span>
+        <span class="tag2">RWA / tokenized-fund operations</span>
+      </div>
+    </div>
+    <div class="hero-demo">
+      <div class="dl">shipped · <a href="https://agentic.somm.finance" target="_blank" rel="noopener">agentic.somm.finance</a></div>
+      <div class="scard">
+        <div class="sbar">
+          <span class="av"></span>
+          <span class="id">
+            <span class="nm">Sommelier</span>
+            <span class="sub">Idle USDC, working on Base · powered by aomi</span>
+          </span>
+          <span class="wal"><i></i>0xa73…F5</span>
+        </div>
+        <div class="sgate"><span class="swatch"></span><span><b>You approve every move.</b> The agent never signs on its own.</span></div>
+
+        <div class="sbody">
+          <div class="smsg su" id="s-u">Put the idle USDC to work — best net yield, band A only</div>
+          <div class="smsg str" id="s-t1"><span class="sp"></span><span class="ck">✓</span>scanning venues<span class="rs">6 markets · 3 chains</span></div>
+          <div class="smsg str" id="s-t2"><span class="sp"></span><span class="ck">✓</span>mandate check<span class="rs">aave v3 · band A</span></div>
+          <div class="smsg sbx" id="s-bx">
+            <div class="bt"><span class="sp"></span>building transaction · aomi core pipeline</div>
+            <div class="br" id="s-r1"><span class="a">→</span> approve · USDC → aave v3 pool</div>
+            <div class="br" id="s-r2"><span class="a">→</span> supply · 120,000 USDC · Base</div>
+            <div class="bf" id="s-bf">batched → 1 signature · SIMULATED on forked live state ✓</div>
+          </div>
+          <div class="smsg srow" id="s-fin">
+            <span class="ssign" id="s-sign">Review deposit → Aave v3</span>
+            <span class="srun">the agent proposes · <i>you</i> sign · keys never move</span>
+          </div>
+        </div>
+
+        <div class="spools">
+          <div class="sph"><span>Venues · <b>net yield</b></span><span>1 open · 5 tracked</span></div>
+          <div class="smarq">
+            <div class="strack" id="s-track">
+              <div class="spool open">
+                <div class="ph"><span class="d" style="background:#3ddc97"></span><span class="n">Aave v3</span><span class="s">open</span></div>
+                <div class="pm">USDC · Base</div>
+                <div class="pa">3.37%<em>net apy</em></div>
+                <div class="pk"><span>30d avg</span><b>3.21%</b></div>
+                <div class="pk"><span>tvl</span><b>$24.1M</b></div>
+                <div class="pk"><span>risk band</span><b>A</b></div>
+              </div>
+              <div class="spool">
+                <div class="ph"><span class="d" style="background:#b0803f"></span><span class="n">Sky Lending</span><span class="s">post-v1</span></div>
+                <div class="pm">USDS · Ethereum</div>
+                <div class="pa">6.12%<em>net apy</em></div>
+                <div class="pk"><span>30d avg</span><b>5.88%</b></div>
+                <div class="pk"><span>tvl</span><b>$1.42B</b></div>
+                <div class="pk"><span>risk band</span><b>A</b></div>
+              </div>
+              <div class="spool">
+                <div class="ph"><span class="d" style="background:#d94f8a"></span><span class="n">Morpho</span><span class="s">post-v1</span></div>
+                <div class="pm">USDe · Base</div>
+                <div class="pa">4.47%<em>net apy</em></div>
+                <div class="pk"><span>30d avg</span><b>4.62%</b></div>
+                <div class="pk"><span>tvl</span><b>$86.3M</b></div>
+                <div class="pk"><span>risk band</span><b>B</b></div>
+              </div>
+              <div class="spool">
+                <div class="ph"><span class="d" style="background:#b0803f"></span><span class="n">Sky Lending</span><span class="s">post-v1</span></div>
+                <div class="pm">sUSDS · Ethereum</div>
+                <div class="pa">3.52%<em>net apy</em></div>
+                <div class="pk"><span>30d avg</span><b>3.50%</b></div>
+                <div class="pk"><span>tvl</span><b>$2.10B</b></div>
+                <div class="pk"><span>risk band</span><b>A</b></div>
+              </div>
+              <div class="spool">
+                <div class="ph"><span class="d" style="background:#9aa83f"></span><span class="n">Compound v3</span><span class="s">post-v1</span></div>
+                <div class="pm">USDC · Ethereum</div>
+                <div class="pa">3.30%<em>net apy</em></div>
+                <div class="pk"><span>30d avg</span><b>3.14%</b></div>
+                <div class="pk"><span>tvl</span><b>$412M</b></div>
+                <div class="pk"><span>risk band</span><b>A</b></div>
+              </div>
+              <div class="spool">
+                <div class="ph"><span class="d" style="background:#9aa83f"></span><span class="n">Compound v3</span><span class="s">post-v1</span></div>
+                <div class="pm">USDT · Ethereum</div>
+                <div class="pa">3.24%<em>net apy</em></div>
+                <div class="pk"><span>30d avg</span><b>3.09%</b></div>
+                <div class="pk"><span>tvl</span><b>$198M</b></div>
+                <div class="pk"><span>risk band</span><b>A</b></div>
+              </div>
+            </div>
+          </div>
+          <div class="spmore">rates refreshed each cycle · only band A with deposits open is eligible today</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -558,7 +768,7 @@
 </section>
 
 <!-- ============ 02 · CASE STUDY ============ -->
-<section class="cs-sec">
+<section class="cs-sec" id="somm">
   <div class="wrap">
     <div class="secno"><b>02</b> How it works — the Somm engagement</div>
     <div class="cs-tag"><span class="g"></span> IN PRODUCTION · SOMM FINANCE</div>
@@ -648,7 +858,7 @@
       </div>
 
       <div>
-        <div class="cs-step" style="margin-bottom:10px">05 · the live product · <b>somm.finance</b></div>
+        <div class="cs-step" style="margin-bottom:10px">05 · the same runtime, <b>operating the vault</b></div>
         <div class="wcard">
           <div class="wbar"><span class="wd"></span><span class="wd"></span><span class="wd"></span>
             <span class="smk sm"><i style="left:0;top:0"></i><i style="left:50%;top:0"></i><i style="left:100%;top:0"></i><i style="left:0;top:50%"></i><i style="left:50%;top:50%"></i><i style="left:100%;top:50%"></i><i style="left:0;top:100%"></i><i style="left:50%;top:100%"></i><i style="left:100%;top:100%"></i></span>
@@ -1000,6 +1210,53 @@
   }
   function run(){ reset(); seq.forEach(function(s){ timers.push(setTimeout(s[1], s[0])); }); }
   run(); setInterval(run, 11500);
+})();
+
+(function(){
+  /* hero widget loop — agentic.somm.finance, the shipped surface */
+  var $ = function(id){ return document.getElementById(id); };
+  var rows = ['s-u','s-t1','s-t2','s-bx','s-fin'];
+  var steps = ['s-r1','s-r2','s-bf'];
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    rows.forEach(function(id){ $(id).classList.add('on'); });
+    ['s-t1','s-t2','s-bx'].forEach(function(id){ $(id).classList.add('done'); });
+    steps.forEach(function(id){ $(id).classList.add('on'); });
+    return;
+  }
+  var timers = [];
+  var seq = [
+    [ 400, function(){ $('s-u').classList.add('on'); }],
+    [1300, function(){ $('s-t1').classList.add('on'); }],
+    [2300, function(){ $('s-t1').classList.add('done'); }],
+    [2600, function(){ $('s-t2').classList.add('on'); }],
+    [3500, function(){ $('s-t2').classList.add('done'); }],
+    [4000, function(){ $('s-bx').classList.add('on'); }],
+    [4600, function(){ $('s-r1').classList.add('on'); }],
+    [5200, function(){ $('s-r2').classList.add('on'); }],
+    [6100, function(){ $('s-bx').classList.add('done'); $('s-bf').classList.add('on'); }],
+    [6900, function(){ $('s-fin').classList.add('on'); }],
+    [8300, function(){ $('s-sign').classList.add('press'); }],
+    [8700, function(){ $('s-sign').classList.remove('press'); $('s-sign').classList.add('signed'); $('s-sign').textContent = '✓ Signed · depositing'; }]
+  ];
+  function reset(){
+    timers.forEach(clearTimeout); timers = [];
+    rows.forEach(function(id){ $(id).classList.remove('on','done'); });
+    steps.forEach(function(id){ $(id).classList.remove('on'); });
+    $('s-sign').classList.remove('press','signed'); $('s-sign').textContent = 'Review deposit → Aave v3';
+  }
+  function run(){ reset(); seq.forEach(function(s){ timers.push(setTimeout(s[1], s[0])); }); }
+  run(); setInterval(run, 11500);
+})();
+
+(function(){
+  /* the venue shelf loops by translating -50%, which only lands seamlessly if
+     the track holds exactly two copies of the set. Clone at runtime rather than
+     duplicating the markup, so the six tiles stay a single source of truth. */
+  var track = document.getElementById('s-track');
+  if (!track) return;
+  var copy = track.cloneNode(true);
+  copy.querySelectorAll('.spool').forEach(function(tile){ tile.setAttribute('aria-hidden', 'true'); });
+  while (copy.firstElementChild) track.appendChild(copy.firstElementChild);
 })();
 </script>
 </body>
