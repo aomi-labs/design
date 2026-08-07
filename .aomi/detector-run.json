@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-07T15:07:47.357Z",
+  "ranAt": "2026-08-07T19:12:42.189Z",
   "candidates": 48,
   "postsFetched": 115,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 16,
-      "postId": "2077050550294642884",
+      "number": 72,
+      "postId": "2083219382436868607",
       "confidence": 0.8,
-      "reason": "Dev account post describes the updated single-page build/deploy path and docs fixes, matching the weekly dev recap intent.",
-      "url": "https://x.com/aomi_dev/status/2077050550294642884"
+      "reason": "Posted on 2026-07-31 (deliverable publish date) with a short demo call-to-action matching the ‘One agent across Solana and EVM’ rollout — likely the public release link.",
+      "url": "https://x.com/aomi_labs/status/2083219382436868607"
     }
   ],
   "errors": [],
