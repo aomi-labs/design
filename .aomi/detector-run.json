@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-10T19:14:23.133Z",
+  "ranAt": "2026-08-10T22:54:48.931Z",
   "candidates": 47,
   "postsFetched": 116,
   "prePass": 0,
@@ -10,7 +10,7 @@
       "number": 16,
       "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Dev account post announces the build/deploy/docs path consolidation for builders, matching the weekly dev recap brief.",
+      "reason": "Dev account post summarises docs/deploy/build path changes—matches the weekly Aomi dev recap theme and intent.",
       "url": "https://x.com/aomi_dev/status/2077050550294642884"
     }
   ],
