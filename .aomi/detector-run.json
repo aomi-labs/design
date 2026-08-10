@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-10T08:02:21.684Z",
+  "ranAt": "2026-08-10T11:19:54.251Z",
   "candidates": 47,
   "postsFetched": 115,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 53,
-      "postId": "2082914520633081961",
+      "number": 16,
+      "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Dev account post explicitly describing the transaction preview fields shown before signing, matching the multi-step quote/approve/swap intent/preview deliverable.",
-      "url": "https://x.com/aomi_dev/status/2082914520633081961"
+      "reason": "Dev account post (2026-07-14) describing the build/deploy/docs path for builders matches the weekly dev recap brief about what changed for builders.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
     }
   ],
   "errors": [],
