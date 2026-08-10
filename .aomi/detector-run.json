@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-09T22:47:48.222Z",
+  "ranAt": "2026-08-10T04:05:41.021Z",
   "candidates": 47,
   "postsFetched": 115,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 16,
-      "postId": "2077050550294642884",
-      "confidence": 0.8,
-      "reason": "Dev account post explicitly says the build/deploy docs and one-page path were fixed—matches the Dev recap theme about what changed for builders this week.",
-      "url": "https://x.com/aomi_dev/status/2077050550294642884"
+      "number": 30,
+      "postId": "2076717509571698872",
+      "confidence": 0.9,
+      "reason": "Main thread announces Somm on Aomi and describes agentic finance use cases matching the deliverable about what agents do with money.",
+      "url": "https://x.com/aomi_labs/status/2076717509571698872"
     }
   ],
   "errors": [],
