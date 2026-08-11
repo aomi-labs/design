@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-11T11:02:54.761Z",
+  "ranAt": "2026-08-11T15:14:29.412Z",
   "candidates": 47,
   "postsFetched": 117,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 16,
-      "postId": "2077050550294642884",
+      "number": 53,
+      "postId": "2082914520633081961",
       "confidence": 0.8,
-      "reason": "Dev account post documents the build/deploy/docs path for builders and reads like a weekly/dev recap about what changed for builders.",
-      "url": "https://x.com/aomi_dev/status/2077050550294642884"
+      "reason": "Dev account post describes what is shown before signing (calldata, calls, etc.), which aligns with multi-step quote→approve→swap preview and signing flow in the deliverable.",
+      "url": "https://x.com/aomi_dev/status/2082914520633081961"
     }
   ],
   "errors": [],
