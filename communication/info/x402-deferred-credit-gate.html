@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>x402 Payment Processing — Deferred Credit Gate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ===== Aomi ramps (src/tokens/tokens.css) ===== */
+    --aomi-cool-0:#ffffff; --aomi-cool-50:#fafafa; --aomi-cool-100:#f4f4f5; --aomi-cool-150:#e9e9ec;
+    --aomi-cool-200:#e4e4e7; --aomi-cool-300:#d4d4d8; --aomi-cool-400:#a1a1aa; --aomi-cool-500:#71717a;
+    --aomi-cool-600:#52525b; --aomi-cool-700:#3f3f46; --aomi-cool-800:#27272a; --aomi-cool-900:#18181b;
+    --aomi-cool-950:#09090b;
+    --aomi-sky-100:#e2eef8; --aomi-sky-200:#cfe1f3; --aomi-sky-300:#aecbe8;
+    --aomi-sky-400:#7facd6; --aomi-sky-500:#5288c2;
+    --aomi-pink-400:#e77ba6; --aomi-pink-500:#df5d90;
+    --aomi-success:#2e9e6b; --aomi-success-subtle:#e4f3ec;
+    --aomi-warning:#d9982b; --aomi-danger:#d2495b; --aomi-info:#416cac;
+
+    --font-display:"PT Serif",ui-serif,Georgia,Cambria,serif;
+    --font-sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --font-wordmark:"Source Serif 4",ui-serif,Georgia,Cambria,serif;
+
+    --r-sm:0.5rem; --r-md:0.75rem; --r-lg:1rem; --r-xl:1.5rem; --r-pill:9999px;
+    --sh-sm:0 1px 2px rgba(13,13,15,.04);
+
+    /* ===== Light semantic roles (landing / marketing surface) ===== */
+    --bg:var(--aomi-cool-0);
+    --panel:var(--aomi-cool-0);
+    --panel-2:var(--aomi-cool-50);
+    --border:var(--aomi-cool-200);
+    --border-strong:var(--aomi-cool-300);
+    --ink:var(--aomi-cool-950);
+    --mut:var(--aomi-cool-600);
+    --dim:var(--aomi-cool-500);
+    --faint:var(--aomi-cool-400);
+    --hl:var(--aomi-info);
+    --hl2:var(--aomi-sky-500);
+    --code-bg:var(--aomi-cool-100);
+
+    /* chart literals (read by JS via getComputedStyle — kept literal so var() chains don't leak) */
+    --c-bg:#ffffff; --c-ink:#09090b; --c-muted:#52525b; --c-subtle:#71717a; --c-grid:#e4e4e7;
+    --c-gate:#d9982b; --c-gate-ink:#8a6316; --c-gate-fill:#fdf6e7;
+    --c-green:#2e9e6b; --c-green-ink:#1f7a51; --c-red:#d2495b; --c-red-ink:#b8394a;
+    --c-blue:#416cac;
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);
+    line-height:1.55;-webkit-font-smoothing:antialiased;padding:0 20px 72px}
+  .wrap{max-width:1060px;margin:0 auto}
+
+  /* ---- house top bar ---- */
+  .topbar{display:flex;align-items:center;gap:18px;padding:22px 0 20px;
+    border-bottom:1px solid var(--border);margin-bottom:38px}
+  .brand{display:inline-flex;align-items:center;gap:8px;flex:none}
+  .brand .word{font-family:var(--font-wordmark);font-weight:600;font-size:19px;letter-spacing:-.01em}
+  .crumb{font:500 10.5px/1 var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+  .topnav{margin-left:auto;font:400 10.5px/1 var(--font-mono);letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint)}
+
+  header.hero{margin-bottom:34px}
+  .eyebrow{font:500 11px/1 var(--font-mono);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--hl);margin-bottom:16px}
+  h1{font-family:var(--font-display);font-weight:400;font-size:40px;margin:0 0 14px;
+    letter-spacing:-.02em;line-height:1.12;max-width:20ch}
+  h1 em{font-style:italic;color:var(--hl)}
+  .sub{color:var(--mut);max-width:70ch;font-size:15.5px}
+  .sub em{color:var(--ink);font-style:italic}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chip{font:500 12.5px/1 var(--font-mono);background:var(--aomi-cool-50);
+    border:1px solid var(--border);color:var(--mut);padding:8px 12px;border-radius:var(--r-pill)}
+  .chip b{color:var(--ink);font-weight:600}
+
+  section{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-xl);
+    padding:26px 28px;margin-top:22px;box-shadow:var(--sh-sm)}
+  h2{font-family:var(--font-display);font-weight:400;font-size:22px;margin:0;letter-spacing:-.01em}
+  .sec-note{color:var(--mut);font-size:13.5px;margin:9px 0 22px;max-width:80ch}
+  .sec-note b{color:var(--ink);font-weight:600}
+
+  .tl,.cmp{width:100%;height:auto;display:block}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font-size:12.5px;color:var(--dim)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .legend .bar{width:18px;height:5px;border-radius:2px;display:inline-block}
+
+  .flow{display:flex;flex-direction:column;gap:0;font-size:13.5px}
+  .node{border:1px solid var(--border);background:var(--aomi-cool-0);border-radius:var(--r-md);padding:13px 16px}
+  .node .t{font-weight:600}
+  .node .d{color:var(--mut);font-size:12.5px;margin-top:3px}
+  .decision{background:var(--aomi-cool-100);border-color:var(--border-strong)}
+  .arrow{color:var(--faint);text-align:center;font:600 12px/1 var(--font-mono);padding:8px 0}
+  .branch{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+  .lane{display:flex;flex-direction:column;gap:8px}
+  .lane .tag{font:600 11px/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase;
+    padding:6px 9px;border-radius:var(--r-pill);align-self:flex-start}
+  .tag.no{color:#1f7a51;background:var(--aomi-success-subtle);border:1px solid rgba(46,158,107,.35)}
+  .tag.yes{color:#8a6316;background:#fdf6e7;border:1px solid rgba(217,152,43,.4)}
+  .pass{border-color:rgba(46,158,107,.4);background:rgba(46,158,107,.06)}
+  .fail{border-color:rgba(210,73,91,.4);background:rgba(210,73,91,.05)}
+  .mono{font-family:var(--font-mono)}
+  .pill{display:inline-block;font:600 11px/1 var(--font-mono);padding:3px 7px;border-radius:var(--r-pill);
+    background:var(--aomi-success-subtle);color:#1f7a51;border:1px solid rgba(46,158,107,.35)}
+  .pill.r{background:rgba(210,73,91,.09);color:#b8394a;border-color:rgba(210,73,91,.35)}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;background:var(--aomi-cool-50)}
+  .card h3{margin:0 0 4px;font-size:15px;font-family:var(--font-mono);font-weight:600}
+  .card .lead{color:var(--dim);font-size:12.5px;margin-bottom:12px}
+  .card ul{margin:0;padding-left:18px;font-size:13px;color:var(--mut)}
+  .card li{margin:6px 0}
+  .card li b{color:var(--ink);font-weight:600}
+  .card.strict{border-color:rgba(217,152,43,.45)}
+  .card.relaxed{border-color:rgba(46,158,107,.45)}
+  .card.x402{border-color:rgba(82,136,194,.5)}
+  .card.mpp{border-color:rgba(223,93,144,.45)}
+  .badge{font:600 10.5px/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase;
+    padding:5px 8px;border-radius:var(--r-pill);float:right}
+  .badge.b1{color:#8a6316;background:#fdf6e7}
+  .badge.b3{color:#1f7a51;background:var(--aomi-success-subtle)}
+  .badge.bx{color:#35608f;background:var(--aomi-sky-100)}
+  .badge.bm{color:#a64668;background:#fbe4ef}
+  code{font-family:var(--font-mono);background:var(--code-bg);border:1px solid var(--border);
+    padding:1px 5px;border-radius:6px;font-size:12px;color:var(--aomi-cool-800)}
+
+  .foot{margin-top:26px;padding-top:22px;border-top:1px solid var(--border);
+    color:var(--mut);font-size:13px;display:flex;gap:10px;align-items:flex-start}
+  .foot .ok{color:var(--aomi-success);font-weight:700}
+  .foot b{color:var(--ink)}
+
+  @media(max-width:720px){.branch,.cards{grid-template-columns:1fr}h1{font-size:29px}
+    .topbar{flex-wrap:wrap;gap:10px}.topnav{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="brand">
+      <svg width="17" height="17" viewBox="0 0 20 20" aria-hidden="true">
+        <circle cx="10" cy="10" r="8.4" fill="none" stroke="#09090b" stroke-width="1.7"
+                stroke-dasharray="40 12" transform="rotate(-52 10 10)"/>
+        <circle cx="10" cy="10" r="3" fill="#09090b"/>
+      </svg>
+      <span class="word">aomi</span>
+    </span>
+    <span class="crumb">Execution infrastructure · Payments</span>
+    <span class="topnav">gate · turn cap · settlement</span>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">x402 payment processing</div>
+    <h1>Deferred <em>Credit Gate</em></h1>
+    <p class="sub">Instead of verifying payment on <em>every</em> API turn, we keep a running credit balance
+    and only re-check it at a checkpoint every <em>TURN_CAP</em> turns. Between checkpoints the balance is
+    allowed to run negative — turns keep flowing, and the user isn't billed each time.</p>
+    <div class="chips">
+      <span class="chip">credit<sub>0</sub> = <b>1</b></span>
+      <span class="chip">TURN_CAP = <b>3</b></span>
+      <span class="chip">cost / turn = <b>5</b></span>
+      <span class="chip">gate: <b>balance ≥ 0</b></span>
+    </div>
+  </header>
+
+  <!-- ================= SECTION 1 : TIMELINE ================= -->
+  <section>
+    <h2>Running balance across turns</h2>
+    <p class="sec-note">The amber rail is the <b>pay gate</b> — a request clears only while <code>balance ≥ 0</code>.
+      But the gate is <em>only checked at a checkpoint</em> (every <code>TURN_CAP</code> turns). Turns 2 &amp; 3
+      ride through on credit; the debt is caught when the gate slams shut at turn 4.</p>
+    <svg class="tl" viewBox="0 0 1000 390" role="img" aria-label="Balance timeline with pay gate"></svg>
+    <div class="legend">
+      <span><i class="bar" style="background:var(--aomi-warning)"></i> pay gate · request clears if balance ≥ 0</span>
+      <span><i class="dot" style="background:var(--aomi-success)"></i> checkpoint · gate open → serve</span>
+      <span><i class="dot" style="background:var(--aomi-cool-400)"></i> in-window turn · no check, serve on credit</span>
+      <span><i class="dot" style="background:var(--aomi-danger)"></i> checkpoint · gate shut (balance &lt; 0) → 402</span>
+      <span><i class="dot" style="background:var(--aomi-info)"></i> balance trajectory · top-up lifts it back through</span>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 2 : DECISION FLOW ================= -->
+  <section>
+    <h2>The gate logic, per turn</h2>
+    <p class="sec-note">Most turns take the fast path — no balance check, no billing event. Only every
+      <code>TURN_CAP</code>-th turn actually settles.</p>
+    <div class="flow">
+      <div class="node"><div class="t">Turn <span class="mono">N</span> arrives</div>
+        <div class="d">deduct cost from balance: <code>balance -= 5</code></div></div>
+      <div class="arrow">↓</div>
+      <div class="node decision"><div class="t">Checkpoint? <span class="mono">turns_since_check ≥ TURN_CAP</span></div>
+        <div class="d">counts turns since the last settle</div></div>
+      <div class="branch">
+        <div class="lane">
+          <span class="tag no">No → fast path</span>
+          <div class="node pass"><div class="t">Serve immediately</div>
+            <div class="d">no check, no billing. Balance may go negative — that's allowed.</div></div>
+        </div>
+        <div class="lane">
+          <span class="tag yes">Yes → settle</span>
+          <div class="node decision"><div class="t">balance ≥ 0 ?</div></div>
+          <div class="node pass"><span class="pill">≥ 0</span> &nbsp;Serve &amp; reset counter
+            <div class="d">debt cleared by prior credit / top-ups</div></div>
+          <div class="node fail"><span class="pill r">&lt; 0</span> &nbsp;Reject → <code>HTTP 402 Payment Required</code>
+            <div class="d">user tops up → balance ≥ 0 → retry, OK again</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 3 : TURN_CAP TUNING ================= -->
+  <section>
+    <h2>What TURN_CAP buys you</h2>
+    <p class="sec-note"><b>Normal x402</b> gates every request. Our impl defers the gate to once every
+      <code>TURN_CAP</code> turns — the same check, just amortized. Here's the difference over 6 turns:</p>
+    <svg class="cmp" viewBox="0 0 1000 300" role="img" aria-label="Normal x402 versus our deferred gate over 6 turns"></svg>
+    <div class="legend" style="margin-bottom:4px">
+      <span><i class="bar" style="background:var(--aomi-warning)"></i> gate check (a 402 pre-check)</span>
+      <span><i class="dot" style="background:var(--aomi-warning)"></i> $ settlement / billing event</span>
+      <span><i class="dot" style="background:var(--aomi-success)"></i> fast path · no check, no bill</span>
+    </div>
+    <div class="cards" style="margin-top:20px">
+      <div class="card strict"><span class="badge b1">per-request</span>
+        <h3>Normal x402</h3>
+        <p class="lead">Gate on every call.</p>
+        <ul>
+          <li>Balance checked before every turn — the classic per-request 402 gate.</li>
+          <li>A settlement / billing event fires every turn → chattier, slower.</li>
+          <li>Zero credit exposure: a request never runs while below zero.</li>
+        </ul>
+      </div>
+      <div class="card relaxed"><span class="badge b3">deferred · CAP 3</span>
+        <h3>Our deferred gate</h3>
+        <p class="lead">Gate once per TURN_CAP.</p>
+        <ul>
+          <li>2 of 3 turns skip the gate → fewer round-trips, fewer bills, faster.</li>
+          <li>Balance may run negative between checkpoints; caught at the next gate.</li>
+          <li>Even a user starting at <code>0</code> flows — set <code>CAP=1</code> to recover strict x402.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 4 : x402 vs MPP ================= -->
+  <section>
+    <h2>x402 vs MPP — same accounting, different gate position</h2>
+    <p class="sec-note">The credit/turn-cap bookkeeping is agnostic. The two variants differ only in
+      <em>when</em> the balance check runs relative to the API call.</p>
+    <div class="cards">
+      <div class="card x402"><span class="badge bx">x402</span>
+        <h3>Pre-check gate</h3>
+        <p class="lead">Verify <em>before</em> serving.</p>
+        <ul>
+          <li>Check runs <b>ahead of</b> the API call at each checkpoint.</li>
+          <li>Fails closed: <code>402 Payment Required</code> blocks the call.</li>
+          <li>Payment headers negotiated up front, then the response is served.</li>
+        </ul>
+      </div>
+      <div class="card mpp"><span class="badge bm">MPP</span>
+        <h3>Post-check settle</h3>
+        <p class="lead">Verify <em>after</em> serving.</p>
+        <ul>
+          <li>API call runs first; the balance check happens <b>after</b>.</li>
+          <li>Serve-then-settle — reconcile on the trailing edge.</li>
+          <li>Same running-balance + TURN_CAP math underneath.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span class="ok">✓</span>
+    <span>Payment-header plumbing is implemented and shared across both variants — the gate is
+      <b>x402 + MPP agnostic</b>. Swapping variant only moves the check from before the call (x402)
+      to after it (MPP).</span>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const pts = [
+    {turn:0, bal:1,   kind:'start',  cap:false},
+    {turn:1, bal:-4,  kind:'pass',   cap:true },
+    {turn:2, bal:-9,  kind:'serve',  cap:false},
+    {turn:3, bal:-14, kind:'serve',  cap:false},
+    {turn:4, bal:-14, kind:'reject', cap:true },
+  ];
+  const topupBal = 6;
+
+  const svg = document.querySelector('svg.tl');
+  const W=1000, H=390, L=70, R=40, T=44, B=70;
+  const pw = W-L-R, ph = H-T-B;
+  const vMax = 7, vMin = -18;
+  const x = t => L + (t/4)*pw;
+  const y = v => T + (vMax - v)/(vMax - vMin)*ph;
+  const y0 = y(0);
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const add=e=>svg.appendChild(e);
+
+  // colours pulled from the aomi tokens (literal chart vars)
+  const cs=getComputedStyle(document.documentElement), V=k=>cs.getPropertyValue(k).trim();
+  const C={bg:V('--c-bg'),ink:V('--c-ink'),muted:V('--c-muted'),subtle:V('--c-subtle'),grid:V('--c-grid'),
+    gate:V('--c-gate'),gateInk:V('--c-gate-ink'),gateFill:V('--c-gate-fill'),
+    green:V('--c-green'),greenInk:V('--c-green-ink'),red:V('--c-red'),redInk:V('--c-red-ink'),
+    blue:V('--c-blue')};
+  const MONO='"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+
+  const defs=el('defs',{}); const mk=el('marker',{id:'ah',markerWidth:9,markerHeight:9,
+    refX:4.5,refY:4.5,orient:'auto'}); mk.appendChild(el('path',{d:'M0 0 L9 4.5 L0 9 z',fill:C.blue}));
+  defs.appendChild(mk); add(defs);
+
+  // credit zone (below the gate)
+  add(el('rect',{x:L,y:y0,width:pw,height:y(vMin)-y0,fill:C.red,'fill-opacity':0.05}));
+  add(el('text',{x:L+8,y:y(vMin)-12,'text-anchor':'start',fill:C.redInk,'font-size':11.5,
+    'font-family':MONO,opacity:0.9})).textContent='▽ credit zone — turns served on IOU while below the gate';
+
+  // negative grid lines + value labels
+  [-4,-9,-14].forEach(v=>{
+    add(el('line',{x1:L,y1:y(v),x2:W-R,y2:y(v),stroke:C.grid,'stroke-width':1,'stroke-dasharray':'3 5'}));
+    add(el('text',{x:L-12,y:y(v)+4,'text-anchor':'end',fill:C.muted,'font-size':12,'font-family':MONO})).textContent=v;
+  });
+
+  // ===== THE PAY GATE (rail at balance = 0) =====
+  add(el('line',{x1:L,y1:y0,x2:W-R,y2:y0,stroke:C.gate,'stroke-width':3}));
+  for(let gx=L+6; gx<=W-R-6; gx+=22){
+    add(el('line',{x1:gx,y1:y0-3.5,x2:gx,y2:y0+3.5,stroke:C.gate,'stroke-width':1,opacity:.5}));
+  }
+  add(el('text',{x:L-12,y:y0+4,'text-anchor':'end',fill:C.gateInk,'font-size':12,'font-weight':700,
+    'font-family':MONO})).textContent='0';
+  (function(){ const cx=632,w=246,h=22;
+    add(el('rect',{x:cx-w/2,y:y0-h/2,width:w,height:h,rx:11,fill:C.gateFill,
+      stroke:C.gate,'stroke-width':1}));
+    add(el('text',{x:cx,y:y0+4,'text-anchor':'middle',fill:C.gateInk,'font-size':11.5,'font-weight':700,
+      'font-family':MONO})).textContent='PAY GATE — clears if balance ≥ 0';
+  })();
+
+  // ===== balance path =====
+  let d='';
+  pts.forEach((p,i)=>{ d += (i?'L':'M') + x(p.turn) + ' ' + y(p.bal) + ' '; });
+  add(el('path',{d,fill:'none',stroke:C.blue,'stroke-width':2.5,'stroke-linejoin':'round','stroke-linecap':'round'}));
+
+  // top-up arrow — lifts balance back UP THROUGH the gate
+  add(el('line',{x1:x(4),y1:y(-14),x2:x(4),y2:y(topupBal),stroke:C.blue,'stroke-width':2.5,
+    'stroke-dasharray':'2 6','stroke-linecap':'round','marker-end':'url(#ah)'}));
+
+  // dashed connector tying turn-1 gate check to that turn's balance
+  add(el('line',{x1:x(1),y1:y0,x2:x(1),y2:y(-4),stroke:C.green,'stroke-width':1,'stroke-dasharray':'2 4',opacity:.55}));
+
+  // ===== nodes + value labels =====
+  const kindCol={start:C.subtle,pass:C.green,serve:C.subtle,reject:C.red};
+  pts.forEach(p=>{
+    const c = kindCol[p.kind];
+    if(p.cap){ add(el('circle',{cx:x(p.turn),cy:y(p.bal),r:11,fill:'none',stroke:c,'stroke-width':1.5,'stroke-dasharray':'2 3'})); }
+    add(el('circle',{cx:x(p.turn),cy:y(p.bal),r:6,fill:c,stroke:C.bg,'stroke-width':2}));
+    const above = p.kind==='start';
+    add(el('text',{x:x(p.turn),y:y(p.bal)+(above?-16:24),'text-anchor':'middle',fill:C.ink,'font-size':12.5,
+      'font-weight':700,'font-family':MONO})).textContent=(p.bal>0?'+':'')+p.bal;
+  });
+
+  // ===== gate barrier glyphs at checkpoints (toll-barrier metaphor) =====
+  function gate(cx, state){
+    const c = state==='open' ? C.green : C.red;
+    const ink = state==='open' ? C.greenInk : C.redInk;
+    add(el('circle',{cx:cx,cy:y0,r:4.5,fill:c,stroke:C.bg,'stroke-width':1.5}));
+    if(state==='open'){
+      add(el('line',{x1:cx,y1:y0,x2:cx-28,y2:y0-30,stroke:c,'stroke-width':4,'stroke-linecap':'round'}));
+      add(el('circle',{cx:cx-28,cy:y0-30,r:3,fill:c}));
+      add(el('line',{x1:cx,y1:y0,x2:cx-42,y2:y0,stroke:c,'stroke-width':1,'stroke-dasharray':'2 4',opacity:.45}));
+      add(el('text',{x:cx-28,y:y0-40,'text-anchor':'middle',fill:ink,'font-size':11,'font-weight':700,
+        'font-family':MONO})).textContent='GATE OPEN';
+    } else {
+      const ax=cx-54;
+      add(el('line',{x1:cx,y1:y0,x2:ax,y2:y0,stroke:c,'stroke-width':5,'stroke-linecap':'round'}));
+      for(let i=1;i<=4;i++){ const hx=cx-11*i; add(el('line',{x1:hx,y1:y0-4,x2:hx-6,y2:y0+4,stroke:C.bg,'stroke-width':1.6})); }
+      add(el('circle',{cx:ax,cy:y0,r:3,fill:c}));
+      add(el('text',{x:cx-6,y:y0-12,'text-anchor':'end',fill:ink,'font-size':11,'font-weight':700,
+        'font-family':MONO})).textContent='GATE SHUT · 402';
+    }
+  }
+  gate(x(1),'open');
+  gate(x(4),'closed');
+
+  // ===== x-axis turn labels (+ checkpoint markers) =====
+  pts.forEach(p=>{
+    add(el('text',{x:x(p.turn),y:H-32,'text-anchor':'middle',fill:C.muted,'font-size':12,
+      'font-family':MONO})).textContent = p.turn===0 ? 'start' : ('turn '+p.turn);
+    if(p.cap){ add(el('text',{x:x(p.turn),y:H-16,'text-anchor':'middle',fill:C.gateInk,'font-size':10,
+      'font-family':MONO})).textContent='◆ checkpoint'; }
+  });
+
+  // ===== callouts =====
+  function callout(tx,ty,text,color,anchor){
+    add(el('text',{x:tx,y:ty,'text-anchor':anchor||'middle',fill:color,'font-size':11.5,
+      'font-family':MONO})).textContent=text;
+  }
+  callout(x(1), y(-4)+42, 'served ✓  (was ≥ 0 at the gate)', C.greenInk);
+  callout((x(2)+x(3))/2, y(-9)-16, 'no check · serve on credit', C.muted);
+  callout(x(4), y(-14)+42, 'blocked ✗  (below gate → 402)', C.redInk, 'end');
+  callout(x(4)-14, y(topupBal)+3, 'top-up lifts back through gate', C.blue, 'end');
+})();
+
+// ===== section 3 : normal x402 vs deferred gate (lane comparison) =====
+(function(){
+  const svg=document.querySelector('svg.cmp'); if(!svg) return;
+  const NS='http://www.w3.org/2000/svg';
+  const el=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const add=e=>svg.appendChild(e);
+  const cs=getComputedStyle(document.documentElement), V=k=>cs.getPropertyValue(k).trim();
+  const C={bg:V('--c-bg'),ink:V('--c-ink'),muted:V('--c-muted'),subtle:V('--c-subtle'),grid:V('--c-grid'),
+    gate:V('--c-gate'),gateInk:V('--c-gate-ink'),green:V('--c-green'),greenInk:V('--c-green-ink'),
+    red:V('--c-red'),blue:V('--c-blue')};
+  const MONO='"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+
+  const x0=200, x1=946, N=6, cw=(x1-x0)/N;
+  const cx=i=>x0+(i-0.5)*cw;
+
+  const lanes=[
+    {y:80, coinY:114, tallyY:140, title:'Normal x402', sub:'gate on every turn',
+     checked:()=>true, ours:false, tally:'6 gate checks · 6 settlements  / 6 turns'},
+    {y:214, coinY:248, tallyY:274, title:'Our deferred gate', sub:'gate every TURN_CAP = 3',
+     checked:i=>(i===1||i===4), ours:true, tally:'2 gate checks · 2 settlements  / 6 turns   —   ~3× fewer, faster'},
+  ];
+
+  add(el('text',{x:14,y:22,fill:C.subtle,'font-size':10.5,'font-family':MONO,'letter-spacing':'0.08em'}))
+    .textContent='GATE CHECKS & BILLING · 6 TURNS';
+  add(el('line',{x1:12,y1:154,x2:988,y2:154,stroke:C.grid,'stroke-width':1}));
+
+  lanes.forEach(L=>{
+    add(el('text',{x:14,y:L.y-3,fill:C.ink,'font-size':13,'font-weight':700,'font-family':MONO})).textContent=L.title;
+    add(el('text',{x:14,y:L.y+15,fill:C.muted,'font-size':11,'font-family':MONO})).textContent=L.sub;
+
+    add(el('line',{x1:x0,y1:L.y,x2:x1,y2:L.y,stroke:C.grid,'stroke-width':2}));
+    // green "flowing" segments where our gate lets turns through unchecked
+    for(let i=1;i<=N;i++){
+      if(L.ours && !L.checked(i)){
+        const xa = i===1 ? x0 : cx(i-1);
+        add(el('line',{x1:xa,y1:L.y,x2:cx(i),y2:L.y,stroke:C.green,'stroke-width':2.5,opacity:.8}));
+      }
+    }
+
+    for(let i=1;i<=N;i++){
+      const isChk=L.checked(i);
+      if(isChk){
+        const bx=cx(i)-30;                                   // barrier just before the turn
+        add(el('line',{x1:bx,y1:L.y-17,x2:bx,y2:L.y+17,stroke:C.gate,'stroke-width':2.5}));
+        add(el('line',{x1:bx-3.5,y1:L.y-13,x2:bx-3.5,y2:L.y+13,stroke:C.gate,'stroke-width':1,opacity:.55}));
+        add(el('circle',{cx:cx(i),cy:L.coinY,r:8,fill:C.gate,'fill-opacity':0.14,stroke:C.gate,'stroke-width':1}));
+        add(el('text',{x:cx(i),y:L.coinY+3.6,'text-anchor':'middle',fill:C.gateInk,'font-size':10,'font-weight':700,'font-family':MONO})).textContent='$';
+      } else {
+        add(el('text',{x:cx(i),y:L.coinY+3.6,'text-anchor':'middle',fill:C.greenInk,'font-size':9.5,'font-family':MONO,opacity:.95})).textContent='no bill';
+      }
+      add(el('circle',{cx:cx(i),cy:L.y,r:15,fill:C.bg,stroke:isChk?C.gate:C.green,'stroke-width':2}));
+      add(el('text',{x:cx(i),y:L.y+4,'text-anchor':'middle',fill:C.ink,'font-size':12,'font-weight':700,'font-family':MONO})).textContent=i;
+    }
+
+    add(el('text',{x:x0,y:L.tallyY,fill:L.ours?C.greenInk:C.muted,'font-size':11.5,'font-family':MONO})).textContent=L.tally;
+  });
+})();
+</script>
+</body>
+</html>
