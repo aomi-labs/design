@@ -1,19 +1,11 @@
 {
-  "ranAt": "2026-08-10T22:54:48.931Z",
+  "ranAt": "2026-08-11T03:53:37.899Z",
   "candidates": 47,
-  "postsFetched": 116,
+  "postsFetched": 117,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [
-    {
-      "number": 16,
-      "postId": "2077050550294642884",
-      "confidence": 0.8,
-      "reason": "Dev account post summarises docs/deploy/build path changes—matches the weekly Aomi dev recap theme and intent.",
-      "url": "https://x.com/aomi_dev/status/2077050550294642884"
-    }
-  ],
+  "needsConfirm": [],
   "errors": [],
   "ok": true
 }
