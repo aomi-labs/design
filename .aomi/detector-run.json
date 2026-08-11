@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-11T19:17:05.396Z",
+  "ranAt": "2026-08-11T23:00:24.883Z",
   "candidates": 47,
   "postsFetched": 117,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 72,
+      "postId": "2079628355322679660",
+      "confidence": 0.9,
+      "reason": "Main account post explicitly states Aomi is non-custodial and describes a single transaction interface across EVM + SVM (Solana/EVM cross-chain boundary), matching the deliverable's 'One agent across Solana and EVM' theme.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    }
+  ],
   "errors": [],
   "ok": true
 }
