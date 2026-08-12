@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-12T07:49:11.624Z",
+  "ranAt": "2026-08-12T11:09:12.942Z",
   "candidates": 47,
   "postsFetched": 117,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 30,
-      "postId": "2076717509571698872",
-      "confidence": 0.9,
-      "reason": "Post thread describes Somm on Aomi and agentic finance use cases matching the deliverable's topic and timing; deliverable has no account so main account post is allowed.",
-      "url": "https://x.com/aomi_labs/status/2076717509571698872"
+      "number": 72,
+      "postId": "2083219382436868607",
+      "confidence": 0.8,
+      "reason": "Post on 2026-07-31 from the main account ('Try it out') aligns with the deliverable dated 2026-07-31 about one agent across Solana and EVM and links to the live demo — matches date, account, and intent.",
+      "url": "https://x.com/aomi_labs/status/2083219382436868607"
     }
   ],
   "errors": [],
