@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-12T19:17:30.898Z",
+  "ranAt": "2026-08-12T22:58:49.494Z",
   "candidates": 47,
   "postsFetched": 117,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 72,
+      "postId": "2083219382436868607",
+      "confidence": 0.8,
+      "reason": "Deliverable 72 is a Main account post dated 2026-07-31; the matched Main account post is from 2026-07-31 and links a demo/try-it page consistent with announcing the cross-chain (Solana+EVM) agent capability.",
+      "url": "https://x.com/aomi_labs/status/2083219382436868607"
+    }
+  ],
   "errors": [],
   "ok": true
 }
