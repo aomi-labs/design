@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-12T04:16:09.750Z",
+  "ranAt": "2026-08-12T07:49:11.624Z",
   "candidates": 47,
   "postsFetched": 117,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 30,
+      "postId": "2076717509571698872",
+      "confidence": 0.9,
+      "reason": "Post thread describes Somm on Aomi and agentic finance use cases matching the deliverable's topic and timing; deliverable has no account so main account post is allowed.",
+      "url": "https://x.com/aomi_labs/status/2076717509571698872"
+    }
+  ],
   "errors": [],
   "ok": true
 }
