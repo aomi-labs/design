@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-12T11:09:12.942Z",
+  "ranAt": "2026-08-12T15:12:34.499Z",
   "candidates": 47,
   "postsFetched": 117,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 72,
-      "postId": "2083219382436868607",
+      "number": 16,
+      "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Post on 2026-07-31 from the main account ('Try it out') aligns with the deliverable dated 2026-07-31 about one agent across Solana and EVM and links to the live demo — matches date, account, and intent.",
-      "url": "https://x.com/aomi_labs/status/2083219382436868607"
+      "reason": "Dev account post about the docs/build path update matches the deliverable 'Aomi dev recap #1' describing changes for builders this week.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
     }
   ],
   "errors": [],
