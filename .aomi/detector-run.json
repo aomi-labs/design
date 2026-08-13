@@ -1,19 +1,11 @@
 {
-  "ranAt": "2026-08-13T19:17:48.136Z",
+  "ranAt": "2026-08-13T22:59:40.502Z",
   "candidates": 47,
   "postsFetched": 117,
   "prePass": 0,
-  "judged": 0,
-  "applied": 0,
-  "needsConfirm": [
-    {
-      "number": 62,
-      "postId": "2087953069858246697",
-      "confidence": 0.9,
-      "reason": "Main account post explicitly calls out x402 and invites discussion about wiring agents to x402, matching the x402 blog subject and account.",
-      "url": "https://x.com/aomi_labs/status/2087953069858246697"
-    }
-  ],
+  "judged": 1,
+  "applied": 1,
+  "needsConfirm": [],
   "errors": [],
   "ok": true
 }
