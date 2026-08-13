@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-13T15:12:46.656Z",
+  "ranAt": "2026-08-13T19:17:48.136Z",
   "candidates": 47,
   "postsFetched": 117,
   "prePass": 0,
@@ -7,32 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 30,
-      "postId": "2076717506245349484",
+      "number": 62,
+      "postId": "2087953069858246697",
       "confidence": 0.9,
-      "reason": "Main account post describes agentic finance use cases (rebalance, arbitrage, treasury) matching the deliverable’s content and audience.",
-      "url": "https://x.com/aomi_labs/status/2076717506245349484"
-    },
-    {
-      "number": 23,
-      "postId": "2067324091258843436",
-      "confidence": 0.8,
-      "reason": "Main account post argues that agents should be unauthorized and that guardrails belong below the wallet, matching the deliverable’s differentiation vs agentic wallets.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    },
-    {
-      "number": 24,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Post is a founder POV on where guardrails belong (wallet vs compile time), matching the research brief’s thesis and timing.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    },
-    {
-      "number": 72,
-      "postId": "2083219382436868607",
-      "confidence": 0.8,
-      "reason": "Posted on 2026-07-31 by the main account with a “Try it out” link on the same date as the deliverable (one-agent-across-chains theme), matching publish date and account.",
-      "url": "https://x.com/aomi_labs/status/2083219382436868607"
+      "reason": "Main account post explicitly calls out x402 and invites discussion about wiring agents to x402, matching the x402 blog subject and account.",
+      "url": "https://x.com/aomi_labs/status/2087953069858246697"
     }
   ],
   "errors": [],
