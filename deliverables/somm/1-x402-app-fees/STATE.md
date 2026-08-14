@@ -29,3 +29,6 @@ URL for tweet 7. Next week: MPP settlement deep-dive as a follow-up story.
 
 ## 2026-07-20 18:12
 in order to write this post I need more info about deployment as well
+
+## 2026-08-14 15:05
+Detected live on @aomi_labs: https://x.com/aomi_labs/status/2076717509571698872 (agentic detector, confidence 0.95). Post announces Somm as the first team building agentic finance on Aomi and links docs/site — matches the deliverable about how Somm implements app fees and the end-to-end build (account was unspecified so either account may match).
