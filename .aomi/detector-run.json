@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-14T04:17:21.811Z",
+  "ranAt": "2026-08-14T07:47:41.690Z",
   "candidates": 46,
   "postsFetched": 117,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 37,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Main-account essay on 2026-06-17 argues the same thesis (attack surface moved above contracts, guardrails belong earlier) matching Cecilia founder POV deliverable.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+      "number": 1,
+      "postId": "2087953069858246697",
+      "confidence": 0.8,
+      "reason": "Main account post directly references wiring an agent to x402 and links for discussion—aligns with the x402 + MPP implementation explainer (deliverable is account-neutral).",
+      "url": "https://x.com/aomi_labs/status/2087953069858246697"
     }
   ],
   "errors": [],
