@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-16T18:44:59.684Z",
+  "ranAt": "2026-08-16T22:34:56.349Z",
   "candidates": 45,
   "postsFetched": 117,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 72,
+      "postId": "2079628355322679660",
+      "confidence": 0.8,
+      "reason": "Main-account post states a single transaction interface across EVM+SVM and noncustodial harness, matching the deliverable’s ‘one agent across Solana and EVM’ capability description.",
+      "url": "https://x.com/aomi_labs/status/2079628355322679660"
+    }
+  ],
   "errors": [],
   "ok": true
 }
