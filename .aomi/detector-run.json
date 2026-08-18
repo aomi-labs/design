@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-18T14:50:13.768Z",
+  "ranAt": "2026-08-18T18:54:08.162Z",
   "candidates": 45,
   "postsFetched": 117,
   "prePass": 0,
@@ -7,18 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 32,
-      "postId": "2067324091258843436",
+      "number": 16,
+      "postId": "2077050550294642884",
       "confidence": 0.8,
-      "reason": "Founder POV thesis about guardrails and execution harness matches Cecilia-style essay arguing wallet guardrails vs compile-time checks.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    },
-    {
-      "number": 37,
-      "postId": "2067324091258843436",
-      "confidence": 0.9,
-      "reason": "Main account post on 2026-06-17 matches Cecilia essay thesis about shifting the attack surface above contracts and argues for verification inside the transaction path — same subject and voice.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
+      "reason": "Dev post describes the build/deploy/activate path and docs fixes matching the weekly dev recap brief about what changed for builders.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
     }
   ],
   "errors": [],
