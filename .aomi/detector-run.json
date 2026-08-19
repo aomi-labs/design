@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-18T22:38:54.700Z",
+  "ranAt": "2026-08-19T03:08:56.273Z",
   "candidates": 45,
   "postsFetched": 117,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 72,
+      "postId": "2069452269230182912",
+      "confidence": 0.8,
+      "reason": "Main account post describes the Aomi runtime building/staging transactions across chains and mentions a single transaction interface across EVM + SVM, matching the one-agent-across-chains theme.",
+      "url": "https://x.com/aomi_labs/status/2069452269230182912"
+    }
+  ],
   "errors": [],
   "ok": true
 }
