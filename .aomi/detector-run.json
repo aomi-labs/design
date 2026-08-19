@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-19T10:44:07.649Z",
+  "ranAt": "2026-08-19T14:51:15.521Z",
   "candidates": 45,
   "postsFetched": 117,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 16,
+      "postId": "2077050550294642884",
+      "confidence": 0.8,
+      "reason": "Dev account post describes build/deploy/docs improvements for Aomi builders matching the recap brief content and audience.",
+      "url": "https://x.com/aomi_dev/status/2077050550294642884"
+    }
+  ],
   "errors": [],
   "ok": true
 }
