@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-20T03:08:22.288Z",
+  "ranAt": "2026-08-20T07:03:47.528Z",
   "candidates": 45,
   "postsFetched": 117,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 37,
+      "postId": "2088350091199316267",
+      "confidence": 0.95,
+      "reason": "Main account thread is Cecilia-style research titled 'The State of Execution Harnesses for Agentic Payments', matching the deliverable brief and author voice.",
+      "url": "https://x.com/aomi_labs/status/2088350091199316267"
+    }
+  ],
   "errors": [],
   "ok": true
 }
