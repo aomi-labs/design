@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-21T10:44:59.197Z",
+  "ranAt": "2026-08-21T14:51:37.625Z",
   "candidates": 45,
   "postsFetched": 121,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 5,
+      "postId": "2087953069858246697",
+      "confidence": 0.8,
+      "reason": "Post explicitly calls out x402 and invites teams wiring agents to x402 to comment — aligns with an MPP/x402 settlement deep-dive.",
+      "url": "https://x.com/aomi_labs/status/2087953069858246697"
+    }
+  ],
   "errors": [],
   "ok": true
 }
