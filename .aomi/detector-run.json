@@ -1,19 +1,11 @@
 {
-  "ranAt": "2026-08-22T18:46:43.779Z",
+  "ranAt": "2026-08-22T22:36:15.690Z",
   "candidates": 44,
   "postsFetched": 121,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [
-    {
-      "number": 32,
-      "postId": "2067324091258843436",
-      "confidence": 0.8,
-      "reason": "Main account post is a founder POV about agentic wallets and where guardrails should live, matching the deliverable's angle and author voice.",
-      "url": "https://x.com/aomi_labs/status/2067324091258843436"
-    }
-  ],
+  "needsConfirm": [],
   "errors": [],
   "ok": true
 }
