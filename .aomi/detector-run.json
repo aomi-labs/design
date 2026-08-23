@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-23T14:36:26.772Z",
+  "ranAt": "2026-08-23T18:46:10.745Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 37,
+      "postId": "2088350091199316267",
+      "confidence": 0.9,
+      "reason": "Main account thread (Aug 14) is a founder/strategy essay mapping execution-harness needs for agentic finance — matches Cecilia's long-form thesis on the shifted attack surface and execution layer.",
+      "url": "https://x.com/aomi_labs/status/2088350091199316267"
+    }
+  ],
   "errors": [],
   "ok": true
 }
