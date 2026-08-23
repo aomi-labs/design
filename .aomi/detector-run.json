@@ -1,17 +1,17 @@
 {
-  "ranAt": "2026-08-23T03:13:16.663Z",
-  "candidates": 44,
+  "ranAt": "2026-08-23T06:58:36.839Z",
+  "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
-  "judged": 1,
-  "applied": 1,
+  "judged": 0,
+  "applied": 0,
   "needsConfirm": [
     {
-      "number": 29,
-      "postId": "2079228005600104641",
-      "confidence": 0.9,
-      "reason": "Post describes the platform-run one-command release flow and automated build/publish, matching the deliverable about dogfooding one-click deploy and fixing gaps.",
-      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+      "number": 53,
+      "postId": "2082914520633081961",
+      "confidence": 0.8,
+      "reason": "Dev post describes the transaction preview and pre-sign details (typed calldata, number of calls) which aligns with multi-step quote→approve→swap execution choreography.",
+      "url": "https://x.com/aomi_dev/status/2082914520633081961"
     }
   ],
   "errors": [],
