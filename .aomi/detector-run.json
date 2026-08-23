@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-22T22:36:15.690Z",
+  "ranAt": "2026-08-23T03:13:16.663Z",
   "candidates": 44,
   "postsFetched": 121,
   "prePass": 0,
-  "judged": 0,
-  "applied": 0,
-  "needsConfirm": [],
+  "judged": 1,
+  "applied": 1,
+  "needsConfirm": [
+    {
+      "number": 29,
+      "postId": "2079228005600104641",
+      "confidence": 0.9,
+      "reason": "Post describes the platform-run one-command release flow and automated build/publish, matching the deliverable about dogfooding one-click deploy and fixing gaps.",
+      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+    }
+  ],
   "errors": [],
   "ok": true
 }
