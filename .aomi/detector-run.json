@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-23T22:35:54.907Z",
+  "ranAt": "2026-08-24T03:14:37.112Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 46,
+      "postId": "2090499687673700642",
+      "confidence": 0.8,
+      "reason": "Dev-account promotional intro about Aomi’s dev-facing onchain tooling fits the pinned ‘what ships here’ brief and is on the dev account.",
+      "url": "https://x.com/aomi_dev/status/2090499687673700642"
+    }
+  ],
   "errors": [],
   "ok": true
 }
