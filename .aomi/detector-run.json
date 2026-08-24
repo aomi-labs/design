@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-24T14:57:43.420Z",
+  "ranAt": "2026-08-24T18:57:28.570Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
@@ -7,10 +7,10 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 48,
+      "number": 46,
       "postId": "2090499687673700642",
       "confidence": 0.8,
-      "reason": "Post (dev account) explicitly references building Claude Code for on-chain agents / 'claude code for onchain' and shows a demo flow; aligns with installing/using a crypto agent inside Claude Code.",
+      "reason": "Dev account post is an introductory capability/identity statement for the account—matches the pinned intro deliverable's intent and audience.",
       "url": "https://x.com/aomi_dev/status/2090499687673700642"
     }
   ],
