@@ -1,19 +1,11 @@
 {
-  "ranAt": "2026-08-24T07:17:46.206Z",
+  "ranAt": "2026-08-24T10:51:18.698Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [
-    {
-      "number": 29,
-      "postId": "2079225517459591258",
-      "confidence": 0.9,
-      "reason": "The post describes the platform-controlled deploy flow and backend-driven release publishing, which matches the 'one click deploy' dogfooding and repo-as-release claims in the deliverable.",
-      "url": "https://x.com/aomi_labs/status/2079225517459591258"
-    }
-  ],
+  "needsConfirm": [],
   "errors": [],
   "ok": true
 }
