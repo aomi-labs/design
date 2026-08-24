@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-24T03:14:37.112Z",
+  "ranAt": "2026-08-24T07:17:46.206Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 46,
-      "postId": "2090499687673700642",
-      "confidence": 0.8,
-      "reason": "Dev-account promotional intro about Aomi’s dev-facing onchain tooling fits the pinned ‘what ships here’ brief and is on the dev account.",
-      "url": "https://x.com/aomi_dev/status/2090499687673700642"
+      "number": 29,
+      "postId": "2079225517459591258",
+      "confidence": 0.9,
+      "reason": "The post describes the platform-controlled deploy flow and backend-driven release publishing, which matches the 'one click deploy' dogfooding and repo-as-release claims in the deliverable.",
+      "url": "https://x.com/aomi_labs/status/2079225517459591258"
     }
   ],
   "errors": [],
