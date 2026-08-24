@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-24T10:51:18.698Z",
+  "ranAt": "2026-08-24T14:57:43.420Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 48,
+      "postId": "2090499687673700642",
+      "confidence": 0.8,
+      "reason": "Post (dev account) explicitly references building Claude Code for on-chain agents / 'claude code for onchain' and shows a demo flow; aligns with installing/using a crypto agent inside Claude Code.",
+      "url": "https://x.com/aomi_dev/status/2090499687673700642"
+    }
+  ],
   "errors": [],
   "ok": true
 }
