@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-24T18:57:28.570Z",
+  "ranAt": "2026-08-24T22:42:06.657Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 46,
-      "postId": "2090499687673700642",
+      "number": 32,
+      "postId": "2088350091199316267",
       "confidence": 0.8,
-      "reason": "Dev account post is an introductory capability/identity statement for the account—matches the pinned intro deliverable's intent and audience.",
-      "url": "https://x.com/aomi_dev/status/2090499687673700642"
+      "reason": "Main account thread titled 'Our Research: The State of Execution Harnesses...' matches the founder POV/market-reframe deliverable about the missing execution layer (same thesis and topic).",
+      "url": "https://x.com/aomi_labs/status/2088350091199316267"
     }
   ],
   "errors": [],
