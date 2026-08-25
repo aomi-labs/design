@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-25T03:10:53.431Z",
+  "ranAt": "2026-08-25T07:06:16.101Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 53,
+      "postId": "2090499687673700642",
+      "confidence": 0.8,
+      "reason": "Dev account post describes a single intent that decomposes into multi-step on‑chain actions (basket decomposition / settle multiple legs in one approval), matching the deliverable’s quote→approve→swap flow.",
+      "url": "https://x.com/aomi_dev/status/2090499687673700642"
+    }
+  ],
   "errors": [],
   "ok": true
 }
