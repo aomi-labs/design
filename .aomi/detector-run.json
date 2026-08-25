@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-25T10:47:34.477Z",
+  "ranAt": "2026-08-25T15:02:03.274Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
@@ -7,11 +7,18 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 29,
-      "postId": "2079228005600104641",
+      "number": 53,
+      "postId": "2090499687673700642",
       "confidence": 0.9,
-      "reason": "Post describes the one-command deploy flow that builds, checks, and publishes apps from source — matches the 'one click deploy' dogfood story.",
-      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+      "reason": "Dev account post describes Aomi decomposing a single intent into multiple operations (basket trade) matching the multi-step quote/approve/swap deliverable.",
+      "url": "https://x.com/aomi_dev/status/2090499687673700642"
+    },
+    {
+      "number": 29,
+      "postId": "2076666912067420300",
+      "confidence": 0.8,
+      "reason": "Company-voice post describing using the one-click deploy flow and the three-command deploy lifecycle aligns with the deliverable about dogfooding the one-click deploy and fixing gaps.",
+      "url": "https://x.com/aomi_labs/status/2076666912067420300"
     }
   ],
   "errors": [],
