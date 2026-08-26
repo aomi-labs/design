@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-25T22:42:58.455Z",
+  "ranAt": "2026-08-26T15:50:50.065Z",
   "candidates": 43,
   "postsFetched": 121,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 53,
+      "postId": "2090499687673700642",
+      "confidence": 0.8,
+      "reason": "Dev-account post demonstrates composing a single user intent into multiple on-chain operations (basket decomposition), matching the multi-step flows deliverable's subject and audience.",
+      "url": "https://x.com/aomi_dev/status/2090499687673700642"
+    }
+  ],
   "errors": [],
   "ok": true
 }
