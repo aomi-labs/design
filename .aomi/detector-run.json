@@ -1,11 +1,26 @@
 {
-  "ranAt": "2026-08-30T00:17:32.940Z",
+  "ranAt": "2026-08-30T08:16:39.261Z",
   "candidates": 43,
   "postsFetched": 123,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 51,
+      "postId": "2084869025272586246",
+      "confidence": 0.8,
+      "reason": "Post explicitly describes using Privy/embedded providers to avoid env-var secrets and explains the account-abstraction trust model, matching the deliverable topic and dev account.",
+      "url": "https://x.com/aomi_dev/status/2084869025272586246"
+    },
+    {
+      "number": 29,
+      "postId": "2079228005600104641",
+      "confidence": 0.9,
+      "reason": "Post explicitly describes the deploy flow that fetches, builds, checks, and publishes releases from source — matches the 'one click deploy' dogfooding deliverable.",
+      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+    }
+  ],
   "errors": [],
   "ok": true
 }
