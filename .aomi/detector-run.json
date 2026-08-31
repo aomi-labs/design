@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-31T08:36:46.454Z",
+  "ranAt": "2026-08-31T17:36:09.596Z",
   "candidates": 43,
   "postsFetched": 123,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 51,
-      "postId": "2084869025272586246",
-      "confidence": 0.8,
-      "reason": "Dev post explicitly references using an embedded provider (@privy_io) to de-risk agentic actions and account-abstraction trust—matches the deployed-app secret/embedded-provider theme.",
-      "url": "https://x.com/aomi_dev/status/2084869025272586246"
+      "number": 50,
+      "postId": "2092869411048972394",
+      "confidence": 0.9,
+      "reason": "Dev account post explicitly lists platform apps/transaction integrations and a production release note matching the deliverable about 'ecosystem data: what is live on the platform.'",
+      "url": "https://x.com/aomi_dev/status/2092869411048972394"
     }
   ],
   "errors": [],
