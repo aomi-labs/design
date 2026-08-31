@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-08-31T17:36:09.596Z",
+  "ranAt": "2026-08-31T22:47:50.934Z",
   "candidates": 43,
   "postsFetched": 123,
   "prePass": 0,
@@ -7,11 +7,11 @@
   "applied": 0,
   "needsConfirm": [
     {
-      "number": 50,
-      "postId": "2092869411048972394",
+      "number": 29,
+      "postId": "2079225517459591258",
       "confidence": 0.9,
-      "reason": "Dev account post explicitly lists platform apps/transaction integrations and a production release note matching the deliverable about 'ecosystem data: what is live on the platform.'",
-      "url": "https://x.com/aomi_dev/status/2092869411048972394"
+      "reason": "The post describes the deploy flow where the platform fetches code and publishes releases — matches 'We dogfooded our one click deploy' (same subject) and account constraint allows either account.",
+      "url": "https://x.com/aomi_labs/status/2079225517459591258"
     }
   ],
   "errors": [],
