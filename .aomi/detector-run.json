@@ -1,11 +1,19 @@
 {
-  "ranAt": "2026-08-31T00:35:17.750Z",
+  "ranAt": "2026-08-31T08:36:46.454Z",
   "candidates": 43,
   "postsFetched": 123,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 51,
+      "postId": "2084869025272586246",
+      "confidence": 0.8,
+      "reason": "Dev post explicitly references using an embedded provider (@privy_io) to de-risk agentic actions and account-abstraction trust—matches the deployed-app secret/embedded-provider theme.",
+      "url": "https://x.com/aomi_dev/status/2084869025272586246"
+    }
+  ],
   "errors": [],
   "ok": true
 }
