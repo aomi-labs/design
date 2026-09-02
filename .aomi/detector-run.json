@@ -1,11 +1,26 @@
 {
-  "ranAt": "2026-09-02T00:10:11.481Z",
+  "ranAt": "2026-09-02T07:04:10.863Z",
   "candidates": 42,
   "postsFetched": 123,
   "prePass": 0,
   "judged": 0,
   "applied": 0,
-  "needsConfirm": [],
+  "needsConfirm": [
+    {
+      "number": 29,
+      "postId": "2079228005600104641",
+      "confidence": 0.85,
+      "reason": "Post describes the deploy flow where the platform fetches, builds, checks, and publishes code — matches the 'one click deploy' dogfooding deliverable (account-agnostic deliverable, same claim).",
+      "url": "https://x.com/aomi_dev/status/2079228005600104641"
+    },
+    {
+      "number": 48,
+      "postId": "2090499687673700642",
+      "confidence": 0.8,
+      "reason": "Post explicitly mentions Claude Code and installing/trading via Aomi (matches 'Install a crypto agent inside Claude Code' on the dev account).",
+      "url": "https://x.com/aomi_dev/status/2090499687673700642"
+    }
+  ],
   "errors": [],
   "ok": true
 }
