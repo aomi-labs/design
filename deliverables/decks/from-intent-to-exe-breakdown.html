@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aomi — EASYCON · from intent to execution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* aomi design tokens — light theme · ink text · sky-blue accent · rosy-pink pop (src/tokens/tokens.css) */
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3; --tint2:#f1f7fc;
+  --rose:#df5d90; --rosetext:#c8527f; --rosetint:#fbe4ef; --roseline:#efa6c5;
+  --ok:#2e9e6b; --oktint:#e4f3ec; --okline:#a8d8c0;
+  --warn:#d9982b; --warntint:#fdf5e7;
+  --bad:#d2495b; --badtint:#fdeef0;
+  --sh-sm:0 1px 2px rgba(13,13,15,.04); --sh-md:0 4px 16px rgba(13,13,15,.06); --sh-lg:0 12px 40px rgba(13,13,15,.10);
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --serif:"PT Serif",ui-serif,Georgia,serif;
+  --wm:"Source Serif 4",ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center}
+
+/* ---------- scaled stage ---------- */
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+/* persistent chrome */
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+/* nav (outside the stage) */
+.navbtn{position:fixed;top:0;bottom:0;width:13%;z-index:55;cursor:pointer;background:transparent;border:0}
+#prev{left:0}#next{right:0}
+#dots{position:fixed;left:0;right:0;bottom:11px;z-index:60;display:flex;gap:9px;justify-content:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line2);cursor:pointer;transition:all .25s var(--ease)}
+.dot.on{background:var(--hl2);width:22px;border-radius:999px}
+#rail{position:fixed;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:70}
+.rdot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s var(--ease);box-shadow:var(--sh-sm)}
+.rdot:hover{border-color:var(--hl);color:var(--hl)}
+.rdot.on{background:var(--hl);border-color:var(--hl);color:#fff;font-weight:700}
+#hint{position:fixed;right:20px;bottom:22px;z-index:60;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;pointer-events:none}
+
+/* ---------- slides ---------- */
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.04;color:var(--ink)}
+.i{color:var(--hl);font-style:normal}
+.r{color:var(--rosetext);font-style:normal}
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}.d4{animation-delay:.42s}.d5{animation-delay:.56s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+
+#hd,.hd{position:absolute;left:92px;top:88px;z-index:10;right:92px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--hl)}
+.lead{font-family:var(--serif);font-weight:700;font-size:33px;line-height:1.05;letter-spacing:-.02em;color:var(--ink);margin-top:11px;text-wrap:balance}
+.dek{font-size:15.5px;line-height:1.55;color:var(--mut);margin-top:12px;max-width:760px}
+.mono{font-family:var(--mono)}
+.lbl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.foot{position:absolute;left:92px;right:92px;bottom:44px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--dim);line-height:1.6}
+.foot b{color:var(--ink2);font-weight:500}
+code,.code{font-family:var(--mono)}
+.k{color:var(--hl);font-weight:700}
+.fn{color:var(--rosetext);font-weight:700}
+
+/* ============ 1 · COVER ============ */
+#s1 .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#s1 .orbit{position:relative;width:200px;height:200px;margin-bottom:4px}
+#s1 .orbit .ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(82,136,194,.45)}
+#s1 .orbit .ring.r2{inset:24px;border-color:rgba(223,93,144,.38)}
+#s1 .r1{animation:spin 26s linear infinite}
+#s1 .r2{animation:spinr 20s linear infinite}
+#s1 .orbit .sat{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--hl2);top:-5px;left:calc(50% - 4.5px);box-shadow:0 1px 6px rgba(82,136,194,.5)}
+#s1 .orbit .sat.b{background:var(--rose);box-shadow:0 1px 6px rgba(223,93,144,.5)}
+#s1 .core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#s1 .core svg{width:84px;height:84px;color:var(--ink);filter:drop-shadow(0 4px 18px rgba(13,13,15,.14))}
+#s1 .ev{font-family:var(--mono);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);margin-bottom:26px}
+#s1 h1{font-size:60px;margin-top:22px}
+#s1 .sub{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--mut);margin-top:22px;line-height:1.7}
+#s1 .who{margin-top:38px;display:flex;align-items:center;gap:14px;font-size:15px;color:var(--ink2)}
+#s1 .who b{font-weight:600;color:var(--ink)}
+#s1 .who .sep{width:1px;height:16px;background:var(--line2)}
+#s1 .who .wmk{font-family:var(--wm);font-weight:600}
+
+/* ============ 2 · ABOUT ============ */
+#s2 .grid{position:absolute;left:92px;right:92px;top:228px;display:grid;grid-template-columns:1.25fr 1fr;gap:44px}
+#s2 .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--ink)}
+#s2 .fact{padding:16px 16px 14px 0;border-bottom:1px solid var(--line)}
+#s2 .fact .v{font-family:var(--serif);font-weight:700;font-size:34px;letter-spacing:-.02em;line-height:1}
+#s2 .fact .k{display:block;margin-top:7px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:400}
+#s2 .trusted{margin-top:22px}
+#s2 .logos{display:grid;grid-template-columns:repeat(3,max-content);gap:14px 44px;margin-top:14px}
+#s2 .lg{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:13px;color:var(--mut);white-space:nowrap}
+#s2 .lg img{width:18px;height:18px;object-fit:contain;filter:grayscale(1);opacity:.65}
+#s2 .backed{margin-top:22px;display:flex;align-items:center;gap:18px}
+#s2 .backed .lg{font-size:12.5px;color:var(--dim)}
+#s2 .backed .lg img{width:15px;height:15px}
+#s2 .install{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:var(--sh-md)}
+#s2 .install .t{font-family:var(--serif);font-weight:700;font-size:19px;margin-top:8px}
+#s2 .install p{font-size:13.5px;color:var(--mut);line-height:1.55;margin-top:8px}
+#s2 .cmd{margin-top:14px;font-family:var(--mono);font-size:13px;background:var(--ink);color:#e4e4e7;border-radius:10px;padding:12px 16px}
+#s2 .cmd i{font-style:normal;color:var(--hlsoft)}
+#s2 .surf{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+#s2 .surf span{font-family:var(--mono);font-size:11px;color:var(--ink2);background:var(--panel2);border-radius:999px;padding:4px 10px}
+#s2 .surf span.on{background:var(--tint);color:var(--hl)}
+
+/* ============ 3 · HARNESS vs CLAUDE ============ */
+#s3 .cols,#s3b .cols{position:absolute;left:92px;right:92px;top:206px;bottom:88px;display:grid;grid-template-columns:1fr 1fr;gap:28px}
+#s3 .col,#s3b .col{display:flex;flex-direction:column;gap:10px;min-height:0}
+#s3 .colh,#s3b .colh{display:flex;align-items:baseline;justify-content:space-between}
+#s3 .colh b,#s3b .colh b{font-family:var(--serif);font-size:18px;font-weight:700}
+#s3 .colh .lbl.bad,#s3b .colh .lbl.bad{color:var(--bad)}
+#s3 .colh .lbl.good,#s3b .colh .lbl.good{color:var(--ok)}
+/* left · terminal transcript */
+.term{flex:1;background:#0f0f12;color:#d4d4d8;border-radius:14px;border:1px solid #27272a;box-shadow:var(--sh-lg);font-family:var(--mono);font-size:11.5px;line-height:1.7;padding:14px 16px;overflow:hidden;position:relative}
+.term .bar{display:flex;gap:6px;margin-bottom:10px}
+.term .bar span{width:8px;height:8px;border-radius:50%;background:#3f3f46}
+.term .u{color:#fff}.term .u::before{content:"› ";color:#7facd6}
+.term .a{color:#a1a1aa}
+.term .cd{color:#cfe1f3;background:#18181b;border-radius:6px;padding:6px 10px;margin:6px 0;white-space:pre}
+.term .cd em{font-style:normal;color:#e77ba6}
+.term .warn{color:#f0c27a}
+.term .flags{position:absolute;left:16px;right:16px;bottom:14px;display:flex;gap:8px;flex-wrap:wrap}
+.term .flag{background:var(--badtint);color:var(--bad);border:1px solid #f0c2c9;border-radius:999px;padding:3px 9px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+#s3 .setup,#s3b .setup{list-style:none;display:flex;flex-direction:column;gap:14px;margin-top:6px}
+#s3 .setup li,#s3b .setup li{position:relative;padding-left:20px;font-size:15px;line-height:1.5;color:var(--mut)}
+#s3 .setup li::before,#s3b .setup li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--hl2)}
+#s3b .setup.ok li::before{content:"✓";width:auto;height:auto;background:none;top:0;left:0;color:var(--ok);font-weight:700}
+#s3 .setup .n,#s3b .setup .n{font-weight:600;color:var(--ink)}
+#s3 .setup .n::after,#s3b .setup .n::after{content:" — ";font-weight:400;color:var(--faint)}
+#s3 .setup .d code,#s3b .setup .d code{font-family:var(--mono);font-size:13px;color:var(--rosetext)}
+#s3 .phases,#s3b .phases{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--ink);padding-top:12px}
+#s3 .ph,#s3b .ph{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--dim);margin-top:6px}
+#s3 .ph:first-child,#s3b .ph:first-child{margin-top:0}
+#s3 .ph b,#s3b .ph b{font-family:var(--serif);font-size:16px;color:var(--ink)}
+#s3 .ph .pn,#s3b .ph .pn{width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;font-family:var(--mono);font-size:10.5px;display:flex;align-items:center;justify-content:center;flex:none}
+#s3 .phases .setup,#s3b .phases .setup{gap:5px;margin:2px 0 0 29px}
+#s3 .phases .setup li,#s3b .phases .setup li{font-size:13px;line-height:1.45;padding-left:14px}
+#s3 .phases .setup li::before,#s3b .phases .setup li::before{width:5px;height:5px;top:8px;background:var(--line2)}
+#s3 .phases .setup code,#s3b .phases .setup code{font-family:var(--mono);font-size:12px;color:var(--rosetext)}
+/* page 4 · agent trace, ported from aomi-widget apps/landing home #om-trace-showcase */
+.otrace [hidden]{display:none!important}
+.otrace{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0}
+.ot-bub{align-self:flex-end;max-width:86%;background:#f4f4f5;border-radius:16px;padding:11px 15px;font-size:13.5px;line-height:1.5;color:#09090b;animation:om-rise .3s ease-out both}
+.ot-cur{display:inline-block;width:2px;height:13px;background:#09090b;margin-left:2px;vertical-align:-2px;animation:om-blink 1s steps(2) infinite}
+.ot-box{border:1px solid #e4e4e7;border-radius:12px;overflow:hidden;background:#fff;animation:om-rise .3s ease-out both;display:flex;flex-direction:column;min-height:0}
+.ot-head{display:flex;align-items:center;gap:10px;background:#fafafa;padding:9px 14px;flex:none}
+.ot-work{font-size:13px;font-weight:500;background:linear-gradient(90deg,#71717a 35%,#09090b 50%,#71717a 65%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:om-shimmer 1.6s linear infinite}
+.ot-box.done .ot-work{animation:none;background:none;color:#71717a}
+.ot-steps{font-family:var(--mono);font-size:11.5px;color:#71717a}
+.ot-view{max-height:268px;overflow-y:auto;border-top:1px solid #e4e4e7;padding:10px 14px 12px}
+.ot-view::-webkit-scrollbar{width:0}
+.ot-note{display:flex;gap:10px;padding:3px 0;animation:om-rise .3s ease-out both}
+.ot-note .b{width:16px;flex:none;display:flex;justify-content:center;padding-top:7px}
+.ot-note .b i{width:4px;height:4px;border-radius:50%;background:#a1a1aa}
+.ot-note span:last-child{flex:1;font-size:12.5px;line-height:1.5;color:#71717a}
+.ot-tool{padding:3px 0;animation:om-rise .3s ease-out both}
+.ot-tool .h{display:flex;align-items:center;gap:10px}
+.ot-tool .ic{width:16px;height:16px;flex:none;display:flex;align-items:center;justify-content:center}
+.ot-tool .spin{width:11px;height:11px;border-radius:50%;border:2px solid #e4e4e7;border-top-color:#5288c2;animation:om-spin .8s linear infinite;display:block}
+.ot-tool .t{font-family:var(--mono);font-size:12.5px;color:#09090b}
+.ot-tool.act .t{font-weight:500;background:linear-gradient(90deg,#71717a 35%,#09090b 50%,#71717a 65%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:om-shimmer 1.6s linear infinite}
+.ot-chips{margin:5px 0 3px 26px;display:flex;flex-wrap:wrap;gap:6px;animation:om-rise .3s ease-out .12s both}
+.ot-chips span{display:inline-flex;align-items:center;gap:6px;background:#f4f4f5;border-radius:999px;padding:3px 9px;font-family:var(--mono);font-size:11px;line-height:1.3;color:#52525b}
+.ot-chips span i{width:5px;height:5px;border-radius:50%;background:#5288c2;flex:none}
+.ot-chips span.more{color:#71717a}
+.ot-sign{display:flex;align-items:center;gap:12px;margin:16px 0 2px 26px;animation:om-rise .3s ease-out both}
+.ot-btn{display:inline-flex;align-items:center;gap:8px;background:#09090b;color:#fff;font-size:13px;font-weight:500;padding:8px 18px;border-radius:999px;transition:transform .12s ease,background .2s ease}
+.ot-btn.pressed{background:#27272a;transform:scale(.94)}
+.ot-btn.signed{background:#e9f6f0;color:#2e9e6b}
+.ot-keys{font-family:var(--mono);font-size:10.5px;color:#a1a1aa}
+@keyframes om-rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes om-shimmer{from{background-position:100% 0}to{background-position:-100% 0}}
+@keyframes om-spin{to{transform:rotate(360deg)}}
+@keyframes om-blink{50%{opacity:0}}
+#s7 .sb{padding:4px 0 0}
+#s7 .sb h3{font-family:var(--serif);font-weight:700;font-size:19px;margin-top:6px;line-height:1.25}
+#s7 .sb h3 .aa{color:var(--hl)}
+#s7 .sb-sub{font-family:var(--mono);font-size:11.5px;color:var(--dim);margin-top:3px}
+#s7 .sb svg{display:block;width:100%;height:auto;margin-top:6px}
+#s7 .sb p{font-size:13px;margin-top:4px}
+.sb-fn{font-family:var(--mono);font-size:15px;font-weight:700;fill:#c8527f}
+.sb-cy{font-family:var(--serif);font-weight:700;font-size:13px;fill:#09090b}
+/* ============ 4.5 · SIGNING (modes + future) ============ */
+#s8 .sg{display:flex;flex-direction:column;gap:22px}
+#s8 .n{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--hl)}
+#s8 h3{font-family:var(--serif);font-weight:700;font-size:19px;margin-top:3px}
+#s8 p{font-size:13px;line-height:1.5;color:var(--mut);margin-top:4px}
+#s8 p b{color:var(--ink);font-weight:600}
+#s8 .sg-top{display:grid;grid-template-columns:1fr 1.1fr;gap:0}
+#s8 .sg-left{display:flex;flex-direction:column;gap:14px;padding-right:36px;border-right:2px solid var(--ink)}
+#s8 .sg-right{padding-left:36px}
+#s8 .aw{display:flex;gap:18px;align-items:center;margin-top:12px}
+#s8 .aw .purse{font-size:52px;line-height:1;flex:none}
+#s8 .aw > div > b{font-family:var(--serif);font-size:18px}
+#s8 .sg-future{display:flex;gap:22px;align-items:center;justify-content:center;padding-top:16px;border-top:1px dashed var(--line2)}
+#s8 .sg-future > div{max-width:700px}
+#s8 .sg-future svg{flex:none}
+#s8 .sg-future code{font-family:var(--mono);font-size:12px;color:var(--ink);background:#fdf8d4;border-radius:5px;padding:1px 5px}
+/* ============ 4.3b · FORK IS CI ============ */
+#s6b .dek code{font-family:var(--mono);font-size:13.5px;color:var(--rosetext)}
+#s6b .ci{position:absolute;left:92px;top:250px;width:1096px;height:380px}
+.ci-model{font-family:var(--serif);font-weight:700;font-size:26px;fill:#09090b}
+.ci-name{font-family:var(--serif);font-weight:700;font-size:17px;fill:#09090b}
+.ci-name.dim{fill:#71717a}
+.ci-sub{font-family:var(--mono);font-size:10px;fill:#71717a;letter-spacing:.02em}
+.ci-pill{font-family:var(--mono);font-size:14px;font-weight:700}
+.ci-lbl{font-family:var(--mono);font-size:16px;fill:#09090b;font-weight:600}
+.ci-lbl.bad{fill:#d2495b;font-weight:700}.ci-lbl.ok{fill:#2e9e6b}.ci-lbl.dim{fill:#71717a;font-weight:500}
+.ci-lbl2{font-family:var(--mono);font-size:12.5px;fill:#52525b}
+#s6b .ci-legend{position:absolute;left:92px;right:92px;bottom:46px;display:grid;grid-template-columns:1fr 1fr;gap:28px;font-size:13.5px;color:var(--mut);border-top:1px solid var(--line);padding-top:12px}
+#s6b .ci-legend b{color:var(--ink);font-weight:600}
+#s6b .sw{display:inline-block;width:26px;vertical-align:middle;margin-right:8px;border-top:2px solid var(--ink)}
+#s6b .sw.dash{border-top:2px dashed var(--faint)}
+/* right · chat portal */
+.bcard{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh-lg);display:flex;flex-direction:column}
+.bbar{height:32px;background:#18181b;display:flex;align-items:center;gap:6px;padding:0 13px;flex:none}
+.bbar .wd{width:8px;height:8px;border-radius:50%;background:#3f3f46}
+.bbar .u{font-family:var(--mono);font-size:11px;color:#b7b3c2;margin-left:auto;letter-spacing:.02em}
+.bbody{padding:14px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.bch{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding-bottom:9px;border-bottom:1px solid var(--panel2)}
+.bch b{color:var(--ink);font-weight:700}
+.bch .keys{color:var(--hl);border:1px solid var(--tintline2);border-radius:999px;padding:3px 9px;letter-spacing:.08em}
+.bch .keys b{color:var(--ok)}
+.bu{align-self:flex-end;max-width:88%;background:var(--panel2);border-radius:11px 11px 3px 11px;padding:9px 13px;font-size:13.5px;line-height:1.45;color:var(--ink)}
+.btr{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:11px;color:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:7px 11px;background:var(--bg2)}
+.btr .lft{display:flex;align-items:center;gap:7px;min-width:0}
+.btr .stat{width:12px;height:12px;flex:none;display:inline-flex;align-items:center;justify-content:center}
+.btr .sp{width:11px;height:11px;border:1.6px solid var(--line2);border-top-color:var(--hl);border-radius:50%;animation:spin .8s linear infinite}
+.btr .ck{display:none;color:var(--ok);font-style:normal;font-size:12px;line-height:1}
+.btr.done .sp{display:none}.btr.done .ck{display:inline}
+.btr .rs{color:var(--dim);white-space:nowrap}
+.btr .fn{font-weight:500}
+.btx{border:1px solid var(--tintline);background:#eef5fb;border-radius:9px;padding:9px 12px;font-family:var(--mono);font-size:11px;line-height:1.75;color:var(--ink2)}
+.btx .bt{color:var(--hl);font-weight:700}
+.btx .sim{color:var(--ok)}
+.brow{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.signbtn{font-family:var(--sans);font-size:13px;font-weight:600;background:var(--ink);color:#fff;border-radius:999px;padding:8px 17px;position:relative;transition:transform .2s var(--ease),background .35s var(--ease),color .35s var(--ease)}
+.signbtn .ring{position:absolute;inset:-1px;border-radius:999px;border:2px solid var(--ok);opacity:0;pointer-events:none}
+.signbtn.press{transform:scale(.93)}
+.signbtn.press .ring{animation:sbring .55s var(--ease)}
+.signbtn.signed{background:var(--oktint);color:var(--ok)}
+@keyframes sbring{0%{opacity:.65;transform:scale(1)}100%{opacity:0;transform:scale(1.3)}}
+.runson{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.runson i{font-style:normal;color:var(--hl)}
+.rev{opacity:0;transform:translateY(9px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.rev.on{opacity:1;transform:none}
+#s3 .def,#s3b .def{position:absolute;left:92px;right:92px;bottom:44px;font-family:var(--serif);font-size:16.5px;color:var(--ink2);text-align:center}
+#s3 .def b,#s3b .def b{color:var(--ink)}
+
+/* ============ 4 · LIFECYCLE RAIL (shared) ============ */
+.lc .hd{top:80px}
+.lc .lead{font-size:29px}
+.rail7{position:absolute;left:92px;right:92px;top:196px;display:grid;grid-template-columns:repeat(7,1fr);gap:0;align-items:start}
+.rail7 .st{position:relative;text-align:center;padding-top:22px}
+.rail7 .st::before{content:"";position:absolute;left:0;right:0;top:7px;border-top:1.5px solid var(--line2)}
+.rail7 .st:first-child::before{left:50%}.rail7 .st:last-child::before{right:50%}
+.rail7 .st .pt{position:absolute;left:calc(50% - 5px);top:2px;width:10px;height:10px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line2);z-index:1}
+.rail7 .st .nm{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.rail7 .st .sub{font-size:11px;color:var(--faint);margin-top:3px}
+.rail7 .st.past .pt{background:var(--ink);border-color:var(--ink)}
+.rail7 .st.past .nm{color:var(--ink2)}.rail7 .st.past .sub{color:var(--dim)}
+.rail7 .st.past::before,.rail7 .st.on::before{border-top-color:var(--ink)}
+.rail7 .st.on .pt{background:var(--hl);border-color:var(--hl);box-shadow:0 0 0 5px var(--tint)}
+.rail7 .st.on .nm{color:var(--hl);font-weight:700}.rail7 .st.on .sub{color:var(--ink)}
+.rail7 .st.on::before{border-top-color:var(--line2)}
+.rail7 .st.past + .st.on::before{border-image:linear-gradient(90deg,var(--ink) 50%,var(--line2) 50%) 1}
+.rail7 .st .who{display:inline-block;margin-top:7px;font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:2px 8px;color:var(--faint);border:1px solid var(--line)}
+.rail7 .st.on .who{color:var(--hl);border-color:var(--tintline);background:var(--tint2)}
+.rail7 .st .who.h{color:var(--rosetext);border-color:var(--roseline);background:var(--rosetint)}
+.rail7 .st .who.w{color:var(--dim)}
+.body{position:absolute;left:92px;right:92px;top:300px;bottom:84px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px;height:100%}
+.three{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;height:100%}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--sh-sm)}
+.card.tint{background:var(--tint2);border-color:var(--tintline2)}
+.card.rose{background:#fdf7fa;border-color:var(--roseline)}
+.card.dark{background:#0f0f12;border-color:#27272a;color:#d4d4d8}
+.card h3{font-family:var(--serif);font-weight:700;font-size:17px;margin-top:6px;line-height:1.25}
+.card p{font-size:13.5px;line-height:1.55;color:var(--mut);margin-top:8px}
+.card p b{color:var(--ink);font-weight:600}
+.card.dark p{color:#a1a1aa}.card.dark p b{color:#fff}
+.arrow{align-self:center;font-family:var(--mono);font-size:22px;color:var(--faint)}
+.take{position:absolute;left:92px;right:92px;bottom:44px;font-family:var(--serif);font-size:16px;color:var(--ink2);border-top:1px solid var(--line);padding-top:12px}
+.take b{color:var(--ink)}
+.take .r{font-weight:700}
+.list{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:7px}
+.list li{font-size:13.5px;line-height:1.5;color:var(--mut);padding-left:16px;position:relative}
+.list li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--hl2)}
+.list li b{color:var(--ink);font-weight:600}
+.list.mono li{font-family:var(--mono);font-size:12px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-family:var(--mono);font-size:12px;margin-top:10px}
+.kv dt{color:var(--dim)}.kv dd{color:var(--ink2)}
+.pre{font-family:var(--mono);font-size:11.5px;line-height:1.7;background:var(--panel2);border-radius:10px;padding:12px 14px;color:var(--ink2);white-space:pre;overflow:hidden;margin-top:10px}
+.pre .c{color:var(--dim)}.pre .s{color:var(--rosetext)}.pre .n{color:var(--hl)}.pre .g{color:var(--ok)}.pre .b{color:var(--bad)}
+.card.dark .pre{background:#18181b;color:#d4d4d8}
+.chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:6px 12px;box-shadow:var(--sh-sm);white-space:nowrap}
+.chip .d{width:7px;height:7px;border-radius:50%;background:var(--hl2)}
+.chip.rose{border-color:var(--roseline);color:var(--rosetext)}.chip.rose .d{background:var(--rose)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+
+/* 4.1 intent */
+#s4 .bub{align-self:flex-start;background:var(--panel2);border-radius:11px 11px 11px 3px;padding:12px 16px;font-size:16px;line-height:1.45;max-width:420px}
+#s4 .think{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.9}
+#s4 .think b{color:var(--ink2);font-weight:500}
+#s4 .think .g{color:var(--ok)}
+#s4 .nb{font-family:var(--serif);font-weight:700;font-size:30px;letter-spacing:-.02em;line-height:1.1;color:var(--ink);margin-top:26px}
+
+/* 4.3 encode loop */
+#s6 .loop{position:absolute;left:92px;right:92px;top:300px;height:244px;display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr);gap:8px}
+#s6 .loop .card{min-width:0;padding:18px 20px;box-shadow:none}
+#s6 .loop .pre{font-size:10.5px;line-height:1.75;padding:0;margin-top:12px;background:transparent;overflow:visible}
+#s6 .loop .card p{font-size:12.5px;margin-top:12px;padding-top:10px;border-top:1px solid #27272a}
+#s6 .own{position:absolute;left:92px;right:92px;top:586px;display:grid;grid-template-columns:1fr 1fr;gap:44px;border-top:1px solid var(--ink);padding-top:14px;font-size:13px}
+#s6 .own .row{display:flex;gap:12px;align-items:baseline}
+#s6 .own h2{font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:-.015em;line-height:1.2;color:var(--ink);margin-top:6px}
+#s6 .own .o{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#b0710f;font-weight:700}
+#s6 .own .v{color:var(--ink2)}
+#s6 .own .v b{color:var(--ink);font-weight:600}
+#s6 .back{position:absolute;left:92px;right:92px;top:554px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--rosetext)}
+#s6 .rail7{top:188px}
+#s6 .rail7 .st .sub{font-size:10.5px}
+#s6 .rail7 .st .who{margin-top:5px}
+
+/* 4.4 coding agent table */
+.cmp{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+.cmp th{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-align:left;padding:0 14px 10px 0;font-weight:500;border-bottom:1px solid var(--ink)}
+.cmp td{padding:13px 14px 13px 0;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2);line-height:1.45}
+.cmp td:first-child{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);width:72px;padding-top:16px}
+.cmp td code{font-family:var(--mono);font-size:12.5px;color:var(--ink);background:var(--panel2);border-radius:5px;padding:2px 6px}
+.cmp td code.fn{color:var(--rosetext);background:var(--rosetint)}
+.cmp tr.hi td{background:linear-gradient(90deg,var(--tint2),transparent)}
+
+/* 4.5 signing modes */
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:4px}
+.mode{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px 14px;box-shadow:var(--sh-sm);position:relative}
+.mode .n{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--hl)}
+.mode h3{font-family:var(--serif);font-weight:700;font-size:20px;margin-top:8px}
+.mode .eq{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:4px}
+.mode p{font-size:13px;line-height:1.5;color:var(--mut);margin-top:8px}
+.mode .via{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.mode .via span{font-family:var(--mono);font-size:10.5px;background:var(--panel2);border-radius:999px;padding:3px 9px;color:var(--ink2)}
+
+/* ============ 5 · CONCLUDE ============ */
+#s10 .stack{position:absolute;left:92px;right:92px;top:214px;display:grid;grid-template-columns:1.1fr 2.2fr 1.1fr;gap:16px;align-items:stretch}
+#s10 .zone{border-radius:16px;padding:20px 22px;min-height:290px;position:relative}
+#s10 .zone .zt{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase}
+#s10 .zone h3{font-family:var(--serif);font-weight:700;font-size:21px;margin-top:8px;line-height:1.2}
+#s10 .zone p{font-size:13.5px;line-height:1.55;color:var(--mut);margin-top:10px}
+#s10 .zone.m{background:var(--panel2);border:1px solid var(--line)}
+#s10 .zone.m .zt{color:var(--dim)}
+#s10 .zone.h{background:linear-gradient(180deg,rgba(82,136,194,.12),rgba(82,136,194,.03));border:1.5px solid var(--hl2)}
+#s10 .zone.h .zt{color:var(--hl)}
+#s10 .zone.w{background:var(--panel2);border:1px solid var(--line)}
+#s10 .zone.w .zt{color:var(--dim)}
+#s10 .stg{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+#s10 .stg span{font-family:var(--mono);font-size:11px;border-radius:999px;padding:5px 11px;background:var(--panel);border:1px solid var(--line2);color:var(--ink2)}
+#s10 .zone.h .stg span{border-color:var(--tintline);color:var(--hl);background:#fff}
+#s10 .gap{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;background:var(--hl);color:#fff;border-radius:999px;padding:4px 12px;white-space:nowrap}
+#s10 .has{margin-top:16px;display:grid;grid-template-columns:auto 1fr;gap:5px 10px;font-size:12.5px}
+#s10 .has i{font-style:normal;color:var(--ok);font-family:var(--mono)}
+#s10 .has i.x{color:var(--faint)}
+#s10 .has span{color:var(--mut)}
+#s10 .big{position:absolute;left:92px;right:92px;bottom:56px;text-align:center;font-family:var(--serif);font-size:24px;color:var(--ink);text-wrap:balance}
+#s10 .big .i{font-weight:700}
+
+/* ============ 6 · SECURITY = TRUST ============ */
+#s11 .two{position:absolute;left:92px;right:92px;top:226px;bottom:96px}
+#s11 .col h3{font-family:var(--serif);font-weight:700;font-size:20px;margin-top:8px}
+#s11 .tier{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+#s11 .row{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);font-size:13px}
+#s11 .row .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+#s11 .row .v{color:var(--ink2)}
+#s11 .row.com .v::after{content:"commodity";float:right;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+#s11 .row.scarce{border-color:var(--roseline);background:#fdf7fa}
+#s11 .row.scarce .l{color:var(--rosetext)}
+#s11 .row.scarce .v::after{content:"scarce";float:right;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--rosetext)}
+#s11 .dist{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+#s11 .dist .d{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+#s11 .dist .d .ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:#fff}
+#s11 .dist .d b{display:block;font-size:14px;color:var(--ink);font-weight:600}
+#s11 .dist .d span{font-size:12.5px;color:var(--mut);line-height:1.45}
+
+/* ============ 7 · CHALLENGES · OPPORTUNITIES · DIRECTION ============ */
+#s12 .three{position:absolute;left:92px;right:92px;top:206px;bottom:118px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+#s12 .col{border-top:2px solid var(--ink);padding-top:14px}
+#s12 .col.o{border-top-color:var(--hl2)}#s12 .col.f{border-top-color:var(--rose)}
+#s12 .col h3{font-family:var(--serif);font-weight:700;font-size:20px;margin-top:6px}
+#s12 .col .list li{font-size:13.2px}
+#s12 .contact{position:absolute;left:92px;right:92px;bottom:44px;display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--line);padding-top:14px}
+#s12 .contact .nm{font-family:var(--serif);font-weight:700;font-size:18px}
+#s12 .contact .h{font-family:var(--mono);font-size:12px;color:var(--mut);margin-top:3px}
+#s12 .contact .h i{font-style:normal;color:var(--hl)}
+#s12 .contact .links{font-family:var(--mono);font-size:12px;color:var(--ink2);text-align:right;line-height:1.8}
+#s12 .contact .links i{font-style:normal;color:var(--dim)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <!-- chrome -->
+  <div class="chrome" id="brand">
+    <svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 0 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+    <b>aomi</b><span class="tag">EASYCON · Seoul · Oct 1 2026</span>
+  </div>
+  <div class="chrome" id="pageno"><i class="cur">01</i> / <span class="tot">12</span></div>
+
+  <!-- ================= 1 · COVER ================= -->
+  <section class="slide active" id="s1" data-title="Cover">
+    <div class="wrap">
+      <div class="ev rise d1">Beyond the chart · Korea Blockchain Week</div>
+      <div class="orbit rise d1">
+        <div class="ring r1"><span class="sat"></span></div>
+        <div class="ring r2"><span class="sat b" style="top:auto;bottom:-4px"></span></div>
+        <div class="core"><svg viewBox="0 0 362 362" fill="currentColor"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 0 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg></div>
+      </div>
+      <h1 class="rise d2">From intent<br>to <span class="i">execution</span>.</h1>
+      <div class="sub rise d3">What happens between “rebalance my ETH”<br>and a settled transaction</div>
+      <div class="who rise d4"><b>Cecilia Zhang</b><span class="sep"></span><span class="wmk">aomi labs</span><span class="sep"></span><span class="mono" style="font-size:13px;color:var(--mut)">the execution harness for onchain finance</span></div>
+    </div>
+  </section>
+
+  <!-- ================= 2 · ABOUT ================= -->
+  <section class="slide" id="s2" data-title="About Aomi Labs">
+    <div class="hd">
+      <h1 class="lead" style="margin-top:0">Execution harness for <span class="i">onchain finance</span>.</h1>
+      <p class="dek">Bring your preferred models and product APIs. Aomi turns intent into policy-checked onchain execution by building and simulating transactions, routing them through your signing controls and verifying the results. Non-custodial and wallet-agnostic.</p>
+    </div>
+    <div class="grid">
+      <div>
+        <div class="facts">
+          <div class="fact"><span class="v">10+</span><span class="k">chains · EVM + SVM</span></div>
+          <div class="fact"><span class="v">33</span><span class="k">protocols integrated</span></div>
+          <div class="fact"><span class="v">0</span><span class="k">keys held</span></div>
+          <div class="fact"><span class="v">1,734</span><span class="k">accounts in production</span></div>
+          <div class="fact"><span class="v">33</span><span class="k">apps live on the runtime</span></div>
+          <div class="fact"><span class="v">34.5k</span><span class="k">SDK downloads · npm</span></div>
+        </div>
+        <div class="trusted">
+          <span class="lbl">Trusted by teams in production</span>
+          <div class="logos"><span class="lg"><img src="data:image/png;base64,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" alt="">Sommelier</span><span class="lg"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjE2IiBoZWlnaHQ9IjIwNCIgdmlld0JveD0iMCAwIDIxNiAyMDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik02MCAwSDE0NEMxODMuNzY0IDAgMjE2IDMyLjIzNTUgMjE2IDcyQzIxNiAxMTEuNzY1IDE4My43NjQgMTQ0IDE0NCAxNDRIOTZDODIuNzQ1MiAxNDQgNzIgMTU0Ljc0NSA3MiAxNjhWMjA0SDBWMTMySDM2QzQ5LjI1NDggMTMyIDYwIDEyMS4yNTUgNjAgMTA4TDYwIDBaIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K" alt="">Para</span><span class="lg"><img src="data:image/png;base64,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" alt="">Khalani</span><span class="lg"><img src="data:image/png;base64,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" alt="">World Markets</span><span class="lg"><img src="data:image/png;base64,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" alt="">Swig</span><span class="lg"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTI3IiBoZWlnaHQ9IjQzNyIgdmlld0JveD0iMCAwIDUyNyA0MzciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik01NS40MjczIDQzN0MyMS4yNjM5IDQzNyAtNC43OTA0NSA0MDYuMjczIDAuOTIwMjg4IDM3Mi41OUw1My43Nzg4IDYwLjgyMjhDNTkuNzMzNSAyNS43MDExIDkwLjE1ODkgMCAxMjUuNzgyIDBDMTU2LjIyMSAwIDE4My41MjkgMTkuMDQzMyAxOTQuMjIxIDQ3LjU0MjlDMjE4LjE5NyAxMTEuNDU3IDMwOS4wNDIgMTExLjU1NyAzMzIuODggNDcuNTkxMkMzNDMuNTE4IDE5LjA0MzggMzcwLjgxOCAwIDQwMS4yODMgMEM0MzYuODY4IDAgNDY3LjI2MiAyNS42NzQxIDQ3My4yMSA2MC43NTlMNTI2LjA4IDM3Mi41OUM1MzEuNzkgNDA2LjI3MyA1MDUuODM1IDQzNyA0NzEuNjcxIDQzN0M0NDQuMzQ2IDQzNyA0MjEuMTAyIDQxNi43NzggNDE3LjA2IDM4OS43NTRDNDA4LjU1NSAzMzIuODk2IDMzMC4zNyAzMjIuNTAyIDMwOC41NzggMzc1LjcwMkwyOTEuOTQ0IDQxNi4zMTFDMjg2LjgxOCA0MjguODI1IDI3NC42MzYgNDM3IDI2MS4xMTIgNDM3QzI0Ny4zNzIgNDM3IDIzNS4wNCA0MjguNTY1IDIzMC4wNiA0MTUuNzU4TDIxNS41MTIgMzc4LjM1MUMxOTUuMDc2IDMyNS44MDQgMTE4LjIyMiAzMzQuMzg3IDEwOS44ODEgMzkwLjE0N0MxMDUuODUzIDQxNy4wNzUgODIuNjU0NSA0MzcgNTUuNDI3MyA0MzdaIiBmaWxsPSIjMDkwOTBiIj48L3BhdGg+Cjwvc3ZnPg==" alt="">Molinar</span></div>
+        </div>
+        <div class="backed"><span class="lbl">Backed by</span><span class="lg"><img src="data:image/png;base64,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" alt="">Anagram</span><span class="lg"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMF83MDFfMzk3MCkiPgo8cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTE5Ny4yMSAxMjEuODA1SDE5Mi41MDhDMTc5LjY0OCAxMjEuODU0IDE2Ny4wMjMgMTI1LjI1IDE1NS44NzQgMTMxLjY1OEMxNDQuNzI1IDEzOC4wNjYgMTM1LjQzNiAxNDcuMjY2IDEyOC45MjEgMTU4LjM1M1YxNTguMzUzQzEyOC44MzEgMTU4LjUwOCAxMjguNzAyIDE1OC42MzggMTI4LjU0NyAxNTguNzI5QzEyOC4zOTIgMTU4LjgyIDEyOC4yMTYgMTU4Ljg3IDEyOC4wMzYgMTU4Ljg3M0MxMjcuODU3IDE1OC44NyAxMjcuNjgxIDE1OC44MiAxMjcuNTI2IDE1OC43MjlDMTI3LjM3MSAxNTguNjM4IDEyNy4yNDIgMTU4LjUwOCAxMjcuMTUyIDE1OC4zNTNWMTU4LjM1M0MxMjAuNjQ0IDE0Ny4yODcgMTExLjM3NCAxMzguMTAxIDEwMC4yNSAxMzEuNjk0Qzg5LjEyNTIgMTI1LjI4NyA3Ni41Mjc0IDEyMS44OCA2My42OTAxIDEyMS44MDVIMTZWMTQ5Ljg5NEg2My43MTA5Qzc2LjU0OTIgMTQ5Ljk3MSA4OS4xNDc3IDE1My4zOCAxMDAuMjcyIDE1OS43ODhDMTExLjM5NyAxNjYuMTk3IDEyMC42NjYgMTc1LjM4NSAxMjcuMTczIDE4Ni40NTNWMTg2LjQ1M0MxMjcuMjYzIDE4Ni42MDggMTI3LjM5MiAxODYuNzM4IDEyNy41NDYgMTg2LjgyOUMxMjcuNzAxIDE4Ni45MjEgMTI3Ljg3NyAxODYuOTcgMTI4LjA1NyAxODYuOTczQzEyOC4yMzcgMTg2Ljk3IDEyOC40MTMgMTg2LjkyMSAxMjguNTY4IDE4Ni44MjlDMTI4LjcyMyAxODYuNzM4IDEyOC44NTIgMTg2LjYwOCAxMjguOTQyIDE4Ni40NTNDMTM1LjQ1NiAxNzUuMzY0IDE0NC43NDQgMTY2LjE2MiAxNTUuODkzIDE1OS43NTJDMTY3LjA0MiAxNTMuMzQyIDE3OS42NjggMTQ5Ljk0NSAxOTIuNTI4IDE0OS44OTRIMjQwVjEyMS44MDVIMTk3LjIxWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTEyNy43MDEgMTE0LjIzMUMxNTQuODI3IDExNC4yMzEgMTc2LjgxNyA5Mi4yNDExIDE3Ni44MTcgNjUuMTE1NEMxNzYuODE3IDM3Ljk4OTcgMTU0LjgyNyAxNiAxMjcuNzAxIDE2QzEwMC41NzYgMTYgNzguNTg1OSAzNy45ODk3IDc4LjU4NTkgNjUuMTE1NEM3OC41ODU5IDkyLjI0MTEgMTAwLjU3NiAxMTQuMjMxIDEyNy43MDEgMTE0LjIzMVoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xOTQuNjMgMTc3LjkzMkgxOTIuNTQ5QzE3OS42OTEgMTc3Ljk3OSAxNjcuMDY2IDE4MS4zNzMgMTU1LjkxNyAxODcuNzc5QzE0NC43NjggMTk0LjE4NSAxMzUuNDc4IDIwMy4zODQgMTI4Ljk2MiAyMTQuNDY5QzEyOC44NzQgMjE0LjYyNyAxMjguNzQ2IDIxNC43NTkgMTI4LjU5MSAyMTQuODUyQzEyOC40MzUgMjE0Ljk0NSAxMjguMjU5IDIxNC45OTYgMTI4LjA3OCAyMTVDMTI3Ljg5NyAyMTQuOTk2IDEyNy43MjEgMjE0Ljk0NSAxMjcuNTY2IDIxNC44NTJDMTI3LjQxIDIxNC43NTkgMTI3LjI4MiAyMTQuNjI3IDEyNy4xOTQgMjE0LjQ2OVYyMTQuNDY5QzEyMC42ODUgMjAzLjQwNSAxMTEuNDE1IDE5NC4yMiAxMDAuMjkgMTg3LjgxNUM4OS4xNjU3IDE4MS40MSA3Ni41NjgyIDE3OC4wMDUgNjMuNzMxNyAxNzcuOTMySDE2VjIwNi4wMjFINjMuNzEwOUM3Ni41NDkyIDIwNi4wOTcgODkuMTQ3NyAyMDkuNTA3IDEwMC4yNzIgMjE1LjkxNUMxMTEuMzk3IDIyMi4zMjQgMTIwLjY2NiAyMzEuNTEyIDEyNy4xNzMgMjQyLjU4VjI0Mi41OEMxMjcuMjYzIDI0Mi43MzUgMTI3LjM5MiAyNDIuODY1IDEyNy41NDYgMjQyLjk1NkMxMjcuNzAxIDI0My4wNDcgMTI3Ljg3NyAyNDMuMDk3IDEyOC4wNTcgMjQzLjFDMTI4LjIzNyAyNDMuMDk3IDEyOC40MTMgMjQzLjA0NyAxMjguNTY4IDI0Mi45NTZDMTI4LjcyMyAyNDIuODY1IDEyOC44NTIgMjQyLjczNSAxMjguOTQyIDI0Mi41OEMxMzUuNDUzIDIzMS40ODkgMTQ0Ljc0MSAyMjIuMjg1IDE1NS44OTEgMjE1Ljg3NUMxNjcuMDQgMjA5LjQ2NSAxNzkuNjY3IDIwNi4wNjkgMTkyLjUyOCAyMDYuMDIxSDI0MFYxNzcuOTMySDE5NC42M1YxNzcuOTMyWiIgZmlsbD0id2hpdGUiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF83MDFfMzk3MCI+CjxyZWN0IHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt="">Nascent</span></div>
+      </div>
+      <div class="install">
+        <span class="lbl">Empower your agents onchain</span>
+        <div class="t">Install Aomi into the agent you already use.</div>
+        <p>Claude Code, Codex, Cursor, OpenCode or Hermes. The harness is reachable over CLI, MCP or plain API calls — the chat embed is one surface among others, not the product.</p>
+        <div class="cmd"><i>›</i> npx skills add aomi-labs/skills</div>
+        <div class="surf"><span class="on">CLI</span><span class="on">MCP</span><span class="on">API</span><span>React embed</span><span>Telegram</span><span>Discord</span><span>Slack</span></div>
+      </div>
+    </div>
+    <div class="foot">Ethereum · Arbitrum One · OP Mainnet · Base · Polygon · Linea · Monad · Robinhood Chain · MegaETH · Solana &nbsp;·&nbsp; Across · CoW · dYdX · GMX · Hyperliquid · Jupiter · LI.FI · Morpho · Polymarket · Yearn · 0x · 1inch …</div>
+  </section>
+
+  <!-- ================= 3 · CLAUDE WITHOUT A HARNESS ================= -->
+  <section class="slide" id="s3" data-title="Claude without a harness">
+    <div class="hd">
+      <div class="eyebrow">What is an execution harness</div>
+      <h1 class="lead">Without a harness, Claude has to <span class="i">assemble the stack first</span>.</h1>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <div class="colh"><b>Claude Code, no harness</b><span class="lbl bad">general agent</span></div>
+        <div class="term">
+          <div class="bar"><span></span><span></span><span></span></div>
+          <div class="u">send 1 ETH to alice.eth on Base</div>
+          <div class="a">I'll write a quick script with viem.</div>
+<div class="cd">import { createWalletClient, http } from "viem"
+const account = privateKeyToAccount(<em>process.env.PRIVATE_KEY</em>)
+const client  = createWalletClient({ chain: base,
+  transport: http(<em>process.env.RPC_URL</em>) })
+await client.sendTransaction({ to: "alice.eth",
+  value: parseEther("1") })</div>
+          <div class="a">Add <span class="warn">PRIVATE_KEY</span> and <span class="warn">RPC_URL</span> to your .env and I'll run it.</div>
+          <div class="u">ok</div>
+          <div class="a">Error: <span class="warn">invalid address "alice.eth"</span>. viem doesn't resolve ENS on Base — let me resolve it on mainnet first…</div>
+          <div class="a" style="margin-top:6px">Sent. Hash 0x9f2c…ab13. Check Basescan to confirm.</div>
+          <div class="flags"><span class="flag">key in the model's env</span><span class="flag">no simulation</span><span class="flag">one-shot · no verify</span><span class="flag">ENS guessed</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="colh"><b>What Claude will do</b></div>
+        <div class="phases">
+          <div class="ph"><span class="pn">1</span><b>Research</b> — figure out what's needed</div>
+          <ul class="setup">
+            <li>Search the docs for the right contract: which router, which version, on which chain</li>
+            <li>Find the deployed address, and check it's the real one, not a clone</li>
+            <li>Read the ABI and source; if it's a proxy, chase the implementation</li>
+            <li>Token details: which USDC on Base, 6 decimals, is an approval needed first</li>
+          </ul>
+          <div class="ph"><span class="pn">2</span><b>Take action</b> — then realise it needs more</div>
+          <ul class="setup">
+            <li><span class="n">Chain RPC</span>public endpoints rate-limit; ask you for an Alchemy key</li>
+            <li><span class="n">Etherscan API</span>another key, or paste the ABI in by hand</li>
+            <li><span class="n">Simulation endpoint</span>an Anvil fork or Tenderly, or skip it and hope</li>
+            <li>A revert comes back as raw bytes: decode it, edit the script, run again</li>
+          </ul>
+          <div class="ph"><span class="pn">3</span><b>Signing</b> — the question nobody wants to answer</div>
+          <ul class="setup">
+            <li>Would you paste your private key into Claude's <code>.env</code>?</li>
+            <li>Is there a policy? Nothing caps the amount except Claude's own judgement</li>
+            <li><code>--dangerously-skip-permissions</code>: one flag, and <code>cast send</code> just runs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="def">An external skill can help with each of these — <b>but it can't skip the steps towards landing a correct transaction.</b></div>
+  </section>
+
+  <!-- ================= 4 · SAME REQUEST THROUGH AOMI ================= -->
+  <section class="slide" id="s3b" data-title="Same request through Aomi">
+    <div class="hd">
+      <div class="eyebrow">What is an execution harness</div>
+      <h1 class="lead">Same model. Same request. <span class="i">Different loop</span> around it.</h1>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <div class="colh"><b>Through Aomi</b><span class="lbl good">harnessed</span></div>
+        <div class="otrace" id="ot">
+          <div class="ot-bub" id="ot-bub" hidden><span id="ot-txt"></span><span class="ot-cur" id="ot-cur"></span></div>
+          <div class="ot-box" id="ot-box" hidden>
+            <div class="ot-head"><span class="ot-work">Working</span><span class="ot-steps" id="ot-steps"></span><span style="flex:1"></span><svg viewBox="0 0 16 16" width="12" height="12"><path d="M4 6l4 4 4-4" fill="none" stroke="#a1a1aa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="ot-view" id="ot-view"><div id="ot-rows"></div><div class="ot-sign" id="ot-sign" hidden><span class="ot-btn" id="ot-btn">⌘ Approve &amp; Sign</span><span class="ot-keys">keys never leave your wallet</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="colh"><b>What Aomi will do</b></div>
+        <div class="phases">
+          <div class="ph"><span class="pn">1</span><b>Research</b> — already there, out of the box</div>
+          <ul class="setup">
+            <li>Loads the skills the intent needs: <code>lido</code>, <code>aave</code>, <code>common_erc20</code></li>
+            <li>Its own node plus a DB of contract code: addresses, ABIs, proxies already resolved</li>
+            <li>Reads live state directly: 10 ETH, nonce 2751, 1 stETH → 0.8059 wstETH</li>
+            <li>Knows Aave takes wstETH, not stETH, and routes through the wrap unprompted</li>
+          </ul>
+          <div class="ph"><span class="pn">2</span><b>Take action</b> — read ⇄ write against a fork</div>
+          <ul class="setup">
+            <li><span class="n">Chain RPC</span>its own node across 10+ chains; no key to ask you for</li>
+            <li><span class="n">Contract code</span><code>get_contract</code> from the DB; no pasting ABIs by hand</li>
+            <li><span class="n">Simulation</span>each leg on a fork of mainnet, then all 6 end to end: all pass</li>
+            <li>A revert comes back decoded, so it reads again and fixes the call</li>
+          </ul>
+          <div class="ph"><span class="pn">3</span><b>Signing</b> — one bundle, your wallet</div>
+          <ul class="setup">
+            <li>6 txs → 1 bundle with account abstraction: stake, approve, wrap, approve, supply, borrow</li>
+            <li>One signature in your existing wallet; keys never leave it</li>
+            <li>Policy lives in the runtime, not the model: manual, auto-approve or bypass</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="def">A harness is the loop around the model: <b>what it can read, what it can write, and what it takes to commit.</b></div>
+  </section>
+
+  <!-- ================= 4.1 · INTENT → PROTOCOL ================= -->
+  <section class="slide lc" id="s4" data-title="Intent → Protocol">
+    <div class="hd"><div class="eyebrow">What actually happens · 1 of 6</div><h1 class="lead">Intent → Protocol. <span class="i">The model already does this well.</span></h1></div>
+    <div class="rail7">
+      <div class="st on"><span class="pt"></span><div class="nm">Intent</div><div class="sub">human wants a thing</div><span class="who">model</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Protocol</div><div class="sub">which venue</div><span class="who">model</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Context</div><div class="sub">ABI · state · balances</div><span class="who h">harness</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Transaction</div><div class="sub">encode · simulate</div><span class="who h">harness</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Execution</div><div class="sub">commit</div><span class="who h">harness</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Signing</div><div class="sub">manual · auto · bypass</div><span class="who w">wallet</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Settlement</div><div class="sub">broadcast · verify</div><span class="who w">chain</span></div>
+    </div>
+    <div class="body"><div class="two">
+      <div style="display:flex;flex-direction:column">
+        <div class="bub">“I have 10 ETH sitting idle. Get me some yield, nothing exotic.”</div>
+        <div class="think">
+          <div><b>decode intent</b> · yield on ETH · low risk · liquid</div>
+          <div><b>candidates</b> · Lido (stETH) · Aave v3 (aWETH) · Morpho (weETH markets)</div>
+          <div><b>unclear?</b> · <span class="g">web_search</span> “current stETH APR vs Aave WETH supply” → pick</div>
+          <div><b>output</b> · Lido, then supply stETH to Aave. Two protocols, three calls.</div>
+        </div>
+        <h2 class="nb">Not the bottleneck.</h2>
+      </div>
+      <div class="card tint">
+        <span class="lbl">Where the intelligence lives</span>
+        <h3>Frontier models decode intent to protocols like an ordinary crypto engineer.</h3>
+        <p>“I want yield” → Aave. “Cheapest route to Arbitrum” → a bridge aggregator. “Hedge this” → a perp venue. The mapping from human goal to protocol is <b>common knowledge</b> now, and where it isn't, the model searches the web the way a researcher would.</p>
+        <p>This step needs <b>no infrastructure</b> from us. It's also where most “AI × crypto” demos stop — and it's the easy part.</p>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ================= 4.2 · PROTOCOL → CONTEXT ================= -->
+  <section class="slide lc" id="s5" data-title="Protocol → Context">
+    <div class="hd"><div class="eyebrow">What actually happens · 2 of 6</div><h1 class="lead">Protocol → Context. <span class="i">Fast readers</span> — this is where the harness starts to win.</h1></div>
+    <div class="rail7">
+      <div class="st past"><span class="pt"></span><div class="nm">Intent</div><div class="sub">human wants a thing</div><span class="who">model</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Protocol</div><div class="sub">which venue</div><span class="who">model</span></div>
+      <div class="st on"><span class="pt"></span><div class="nm">Context</div><div class="sub">ABI · state · balances</div><span class="who h">harness</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Transaction</div><div class="sub">encode · simulate</div><span class="who h">harness</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Execution</div><div class="sub">commit</div><span class="who h">harness</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Signing</div><div class="sub">manual · auto · bypass</div><span class="who w">wallet</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Settlement</div><div class="sub">broadcast · verify</div><span class="who w">chain</span></div>
+    </div>
+    <div class="body"><div class="two">
+      <div class="card">
+        <span class="lbl">The read path · what the model calls</span>
+        <dl class="kv" style="margin-top:14px">
+          <dt><span class="fn">get_contract</span>(addr, chain)</dt><dd>ABI + verified source. DB cache hit → return; miss → Etherscan fetch, store back, <b>resolve the proxy</b> (EIP-1967) so the model sees the implementation, not the shell.</dd>
+          <dt><span class="fn">get_account_info</span>(addr, chain)</dt><dd>balance, nonce, code — one call, one gateway.</dd>
+          <dt><span class="fn">encode_and_call</span>(sig, args, to)</dt><dd>any <b>view</b> function: <code>balanceOf</code>, <code>getReserveData</code>, <code>quoteExactInput</code>. Encoded, <code>eth_call</code>'d on the fork, decoded, unit-formatted.</dd>
+          <dt><span class="fn">format_*</span></dt><dd>raw 32-byte words → “2,400.00 weETH”. The model never divides by 10¹⁸.</dd>
+        </dl>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card tint">
+          <span class="lbl">Why a general agent loses here</span>
+          <h3>Vertical integration turns twelve round-trips into one.</h3>
+          <p>Claude with a browser reads Etherscan HTML, guesses the proxy, pastes an ABI into a script, then runs it. Every hop costs tokens, time and a chance to be wrong. Aomi's readers are <b>cached, chain-aware and pre-decoded</b>, so “what is the current supply APY on Aave for WETH?” is one tool call and ~200 ms.</p>
+        </div>
+        <div class="card">
+          <span class="lbl">Context the model ends up holding</span>
+          <div class="chips"><span class="chip"><span class="d"></span>Aave v3 Pool ABI · impl 0x5faa…</span><span class="chip"><span class="d"></span>WETH supply APY 2.31%</span><span class="chip"><span class="d"></span>wallet: 10.00 ETH · nonce 41</span><span class="chip"><span class="d"></span>stETH allowance → Pool: 0</span><span class="chip"><span class="d"></span>Lido stake rate 1:1.0</span></div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ================= 4.3 · CONTEXT → TRANSACTION ================= -->
+  <section class="slide lc" id="s6" data-title="Context → Transaction">
+    <div class="hd"><div class="eyebrow">What actually happens · 3 of 6</div><h1 class="lead">Context → Transaction. <span class="i">Zero intelligence required</span> — the model names the call, the harness does the bytes.</h1></div>
+    <div class="rail7">
+      <div class="st past"><span class="pt"></span><div class="nm">Intent</div><div class="sub">human wants a thing</div><span class="who">model</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Protocol</div><div class="sub">which venue</div><span class="who">model</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Context</div><div class="sub">ABI · state · balances</div><span class="who h">harness</span></div>
+      <div class="st on"><span class="pt"></span><div class="nm">Transaction</div><div class="sub">encode · simulate</div><span class="who h">harness</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Execution</div><div class="sub">commit</div><span class="who h">harness</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Signing</div><div class="sub">manual · auto · bypass</div><span class="who w">wallet</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Settlement</div><div class="sub">broadcast · verify</div><span class="who w">chain</span></div>
+    </div>
+    <div class="loop">
+      <div class="card">
+        <span class="lbl">model says</span>
+        <div class="pre"><span class="fn">encode_and_call</span> {
+  to: <span class="s">"0x2626…2A5C"</span>, <span class="c">// UniV3 router · Base</span>
+  function_signature:
+    <span class="s">"exactInputSingle((address,address,
+      uint24,address,uint256,uint256,uint160))"</span>,
+  arguments: [<span class="s">"[USDC, WETH, 500, me,
+    2000000000, 0, 0]"</span>],
+  topic: <span class="s">"swap 2,000 USDC → ETH"</span> }</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="card dark">
+        <span class="lbl" style="color:#7facd6">harness does</span>
+        <div class="pre">selector  = keccak256(sig)[:4]   <span class="c">→ 0x04e45aaf</span>
+words     = abi_encode(args)     <span class="c">→ 7 × 32 bytes</span>
+calldata  = 0x04e45aaf&lt;words&gt;
+eth_call(<span class="n">fork of Base @ latest</span>, to, calldata)
+                                 <span class="c">~200 ms</span>
+decode(return) · diff(state)</div>
+        <p style="margin-top:10px">Runs against a <b>fresh fork of live chain state</b>, not a stale RPC. Nothing is sent.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="card">
+        <span class="lbl">model gets back</span>
+        <div class="pre"><span class="g">✓ success</span>  amountOut <span class="n">0.6114 WETH</span>
+  gas 184,210 · block 24,118,902
+  Δ USDC −2,000.00 · Δ WETH +0.6114
+  calldata 0x04e45aaf…  <span class="c">→ stage_tx</span>
+
+<span class="b">✗ revert</span>  <span class="s">"STF"</span> <span class="c">decoded:</span>
+  insufficient USDC allowance
+  <span class="c">→ read allowance · approve first
+  → encode_and_call again</span></div>
+      </div>
+    </div>
+    <div class="back">↩ on revert: go back and <b>read</b> again — state, ABI, source — then write again. The core loop is literally read ⇄ write.</div>
+    <div class="own">
+      <div class="side"><div class="row"><span class="o">Harness owns</span><span class="v">selector · ABI words · <b>eth_call</b> · result decoding · unit formatting</span></div><h2>The model never sees a byte or chain RPC.</h2></div>
+      <div class="side"><div class="row"><span class="o">Model owns</span><span class="v">addresses · function signatures · base-unit amounts</span></div><h2>Performs “what” to call, not “how” to call.</h2></div>
+    </div>
+  </section>
+
+  <!-- ================= 4.3b · THE FORK IS CI ================= -->
+  <section class="slide" id="s6b" data-title="The fork is CI for transactions">
+    <div class="hd">
+      <div class="eyebrow">What actually happens · the loop</div>
+      <h1 class="lead">A chain fork is <span class="i">CI for transactions</span>.</h1>
+      <p class="dek">Inside Aomi, every <code>encode_and_call</code> is an <code>eth_call</code> against a sandboxed fork of live state. A revert comes back to the model as back pressure, the way red tests push back on a coding agent. Only a green run gets committed.</p>
+    </div>
+    <svg class="ci" viewBox="0 0 1096 380" role="img" aria-label="Model sends eth_call to the chain sandbox; revert pushes back to the model, success is committed. Mirrors a coding agent pushing a PR to GitHub CI.">
+      <defs>
+        <marker id="ci-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#09090b"/></marker>
+        <marker id="ci-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#d2495b"/></marker>
+        <marker id="ci-f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#a1a1aa"/></marker>
+      </defs>
+      <!-- model -->
+      <text x="548" y="36" text-anchor="middle" class="ci-model">model</text>
+      
+      <!-- chain sandbox (Aomi) -->
+      <path d="M78 128 V258 A92 20 0 0 0 262 258 V128" fill="#f1f7fc" stroke="#09090b" stroke-width="1.8"/>
+      <ellipse cx="170" cy="128" rx="92" ry="20" fill="#e2eef8" stroke="#09090b" stroke-width="1.8"/>
+      <text x="170" y="198" text-anchor="middle" class="ci-name">Chain sandbox</text>
+      <text x="170" y="220" text-anchor="middle" class="ci-sub">fork of live state · ~200 ms</text>
+
+      <!-- GitHub CI (analogy) -->
+      <path d="M834 128 V258 A92 20 0 0 0 1018 258 V128" fill="none" stroke="#a1a1aa" stroke-width="1.6" stroke-dasharray="7 6"/>
+      <ellipse cx="926" cy="128" rx="92" ry="20" fill="none" stroke="#a1a1aa" stroke-width="1.6" stroke-dasharray="7 6"/>
+      <text x="926" y="198" text-anchor="middle" class="ci-name dim">GitHub CI sandbox</text>
+      <text x="926" y="220" text-anchor="middle" class="ci-sub">the coding-agent version</text>
+
+      <!-- outcome pills -->
+      <rect x="483" y="222" width="130" height="40" rx="12" fill="#fdeef0" stroke="#d2495b" stroke-width="1.5"/>
+      <text x="548" y="247" text-anchor="middle" class="ci-pill" fill="#d2495b">revert</text>
+      <rect x="483" y="282" width="130" height="40" rx="12" fill="#e4f3ec" stroke="#2e9e6b" stroke-width="1.5"/>
+      <text x="548" y="307" text-anchor="middle" class="ci-pill" fill="#2e9e6b">success</text>
+
+      <!-- Aomi loop (solid) -->
+      <path d="M492 70 L280 142" stroke="#09090b" stroke-width="1.8" fill="none" marker-end="url(#ci-a)"/>
+      <text x="372" y="80" text-anchor="middle" class="ci-lbl" transform="rotate(-18 372 80)">eth_call</text>
+      <path d="M280 236 L470 250" stroke="#09090b" stroke-width="1.8" fill="none" marker-end="url(#ci-a)"/>
+      <path d="M470 304 L280 262" stroke="#2e9e6b" stroke-width="1.8" fill="none" marker-end="url(#ci-a)"/>
+      <text x="372" y="312" text-anchor="middle" class="ci-lbl ok">commit_txs</text>
+      <path d="M548 214 V78" stroke="#d2495b" stroke-width="1.8" fill="none" marker-end="url(#ci-r)"/>
+      <text x="562" y="150" class="ci-lbl bad">back pressure</text>
+      <text x="562" y="174" class="ci-lbl2">read state · fix the call · retry</text>
+
+      <!-- coding-agent loop (dashed) -->
+      <path d="M604 70 L816 142" stroke="#a1a1aa" stroke-width="1.6" stroke-dasharray="7 6" fill="none" marker-end="url(#ci-f)"/>
+      <text x="724" y="80" text-anchor="middle" class="ci-lbl dim" transform="rotate(18 724 80)">push PR</text>
+      <path d="M816 236 L626 250" stroke="#a1a1aa" stroke-width="1.6" stroke-dasharray="7 6" fill="none" marker-end="url(#ci-f)"/>
+      <text x="726" y="228" text-anchor="middle" class="ci-lbl dim">tests fail</text>
+      <path d="M626 304 L816 262" stroke="#a1a1aa" stroke-width="1.6" stroke-dasharray="7 6" fill="none" marker-end="url(#ci-f)"/>
+      <text x="726" y="312" text-anchor="middle" class="ci-lbl dim">merge code</text>
+    </svg>
+    <div class="ci-legend">
+      <div><span class="sw solid"></span><b>Aomi</b> — the fork runs the call; the chain only sees what passed</div>
+      <div><span class="sw dash"></span><b>Coding agent</b> — CI runs the code; main only gets what passed</div>
+    </div>
+  </section>
+
+  <!-- ================= 4.4 · TRANSACTION → EXECUTION ================= -->
+  <section class="slide lc" id="s7" data-title="Transaction → Execution">
+    <div class="hd"><div class="eyebrow">What actually happens · 4 of 6</div><h1 class="lead">Transaction → Execution. <span class="i">Read ⇄ write ⇄ commit</span> — the coding-agent mental model.</h1></div>
+    <div class="body" style="top:206px;bottom:100px"><div class="two" style="grid-template-columns:1.2fr 1fr;gap:48px">
+      <div>
+        <table class="cmp">
+          <thead><tr><th></th><th>Coding agent</th><th>Aomi</th></tr></thead>
+          <tbody>
+            <tr><td>read</td><td><code>cat</code> · <code>grep</code> · read the file, the types, the tests</td><td><code class="fn">get_contract</code> · <code class="fn">get_account_info</code> · <code class="fn">encode_and_call</code> on a view</td></tr>
+            <tr><td>write</td><td><code>edit</code> the file · run the tests · read the failure · edit again</td><td><code class="fn">encode_and_call</code> · simulate · read the revert · <code class="fn">stage_tx</code> again</td></tr>
+            <tr><td>batch</td><td>several edits in one working tree</td><td><code class="fn">simulate_batch</code> · approve + deposit + supply as <b>one bundle, one signature</b></td></tr>
+            <tr class="hi"><td>commit</td><td><code>git commit</code> → the diff leaves the sandbox and becomes a PR someone reviews</td><td><code class="fn">commit_txs</code> → the signable transactions leave the runtime and go to <b>the user or their wallet</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="sb">
+          <span class="lbl">Harness performs</span>
+          <h3>Account abstraction · <span class="aa">ERC-4337 / EIP-7702</span></h3>
+          <div class="sb-sub">specifically configured for each chain</div>
+          <svg viewBox="0 0 452 104" role="img" aria-label="simulate_batch wraps three transactions and runs them against the chain sandbox">
+            <defs><marker id="sb-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#09090b"/></marker></defs>
+            <text x="0" y="58" class="sb-fn">simulate_batch(</text>
+            <rect x="150" y="38" width="32" height="28" rx="6" fill="#e4f3ec" stroke="#2e9e6b" stroke-width="1.5"/>
+            <rect x="188" y="38" width="32" height="28" rx="6" fill="#e4f3ec" stroke="#2e9e6b" stroke-width="1.5"/>
+            <rect x="226" y="38" width="32" height="28" rx="6" fill="#e4f3ec" stroke="#2e9e6b" stroke-width="1.5"/>
+            <text x="264" y="58" class="sb-fn">)</text>
+            <path d="M282 52 H326" stroke="#09090b" stroke-width="1.8" fill="none" marker-end="url(#sb-a)"/>
+            <path d="M336 14 V88 A56 12 0 0 0 448 88 V14" fill="#f1f7fc" stroke="#09090b" stroke-width="1.6"/>
+            <ellipse cx="392" cy="14" rx="56" ry="12" fill="#e2eef8" stroke="#09090b" stroke-width="1.6"/>
+            <text x="392" y="52" text-anchor="middle" class="sb-cy">Chain</text>
+            <text x="392" y="69" text-anchor="middle" class="sb-cy">sandbox</text>
+          </svg>
+          <p>approve · wrap · supply as one bundle, run <b>end to end on the fork</b>. One revert sends the whole batch back.</p>
+        </div>
+        <div class="card rose" style="padding:14px 18px">
+          <span class="lbl" style="color:var(--rosetext)">The security-critical boundary</span>
+          <h3><code class="fn" style="font-size:17px">commit_txs</code> is the only door out.</h3>
+          <p style="font-size:13px">Everything before it is rehearsal in a fork. Once the model commits, it is <b>delivering signable transactions</b> to a human or a wallet policy. No other path leads to a chain.</p>
+        </div>
+      </div>
+    </div></div>
+    <div class="take">Coding agents taught everyone the pattern: <b>read, write, then commit through a gate you don't control.</b> Onchain it's the same shape — the gate is the signer.</div>
+  </section>
+
+  <!-- ================= 4.5 · SIGNING ================= -->
+  <section class="slide lc" id="s8" data-title="Signing">
+    <div class="hd"><div class="eyebrow">What actually happens · 5 of 6</div><h1 class="lead">Signing. <span class="i">Where the industry over-invests</span> — it's three modes and a provider.</h1></div>
+    <div class="rail7">
+      <div class="st past"><span class="pt"></span><div class="nm">Intent</div><div class="sub">human wants a thing</div><span class="who">model</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Protocol</div><div class="sub">which venue</div><span class="who">model</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Context</div><div class="sub">ABI · state · balances</div><span class="who h">harness</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Transaction</div><div class="sub">encode · simulate</div><span class="who h">harness</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Execution</div><div class="sub">commit</div><span class="who h">harness</span></div>
+      <div class="st on"><span class="pt"></span><div class="nm">Signing</div><div class="sub">manual · auto · bypass</div><span class="who w">wallet</span></div>
+      <div class="st"><span class="pt"></span><div class="nm">Settlement</div><div class="sub">broadcast · verify</div><span class="who w">chain</span></div>
+    </div>
+    <div class="body sg">
+      <div class="sg-top">
+        <div class="sg-left">
+          <div class="m"><span class="n">Mode 1</span><h3>Manual</h3><p>Every committed transaction goes back to the user's own wallet to sign. Browser wallet, Para, Privy — whatever they already have.</p></div>
+          <div class="m"><span class="n">Mode 2</span><h3>Auto-approve</h3><p>No key on the server. A browser or CLI session signs with a scoped JWT, inside limits the user set. DCA, rebalances, limit orders.</p></div>
+        </div>
+        <div class="sg-right">
+          <span class="n">Mode 3</span><h3>Bypass permission</h3>
+          <div class="aw">
+            <span class="purse" aria-hidden="true">👛</span>
+            <div><b>Agent wallet</b><p>Held by the runtime, stays in a <b>TEE</b>. The model never sees the key; it signs within caps, revocably, with an audit log. For agents that are users themselves.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-future">
+        <svg viewBox="0 0 80 80" width="72" height="72" aria-hidden="true"><path d="M40 6 L74 40 L40 74 L6 40 Z" fill="#fdf1a8" stroke="#09090b" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"/></svg>
+        <div>
+          <span class="n">Future direction</span>
+          <h3>Onchain policy contract</h3>
+          <p>A smart account that says <code>“if this tx touches an OFAC-sanctioned address, revert.”</code> Policy enforced by the chain itself — not by the runtime, not by the model.</p>
+        </div>
+      </div>
+    </div>
+    <div class="take">Signing is <b>necessary and commoditised</b>. The harness's job is to hand it a transaction that deserves to be signed.</div>
+  </section>
+
+  <!-- ================= 4.6 · SETTLEMENT ================= -->
+  <section class="slide lc" id="s9" data-title="Settlement">
+    <div class="hd"><div class="eyebrow">What actually happens · 6 of 6</div><h1 class="lead">Settlement. <span class="i">A normal transaction</span> — plus proof that what you approved is what happened.</h1></div>
+    <div class="rail7">
+      <div class="st past"><span class="pt"></span><div class="nm">Intent</div><div class="sub">human wants a thing</div><span class="who">model</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Protocol</div><div class="sub">which venue</div><span class="who">model</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Context</div><div class="sub">ABI · state · balances</div><span class="who h">harness</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Transaction</div><div class="sub">encode · simulate</div><span class="who h">harness</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Execution</div><div class="sub">commit</div><span class="who h">harness</span></div>
+      <div class="st past"><span class="pt"></span><div class="nm">Signing</div><div class="sub">manual · auto · bypass</div><span class="who w">wallet</span></div>
+      <div class="st on"><span class="pt"></span><div class="nm">Settlement</div><div class="sub">broadcast · verify</div><span class="who w">chain</span></div>
+    </div>
+    <div class="body"><div class="two" style="grid-template-columns:1fr 1.2fr">
+      <div class="card">
+        <span class="lbl">Nothing new here</span>
+        <h3>Once signed, it's a transaction like any other.</h3>
+        <p>Broadcast through the AA bundler or Jito on Solana, wait for inclusion, read the receipt. No special rail, no wrapped asset, no custodian in the middle. If you already trust the chain, you already trust this step.</p>
+        <p>Builders <b>can</b> add enforced rules here — value caps, venue allowlists, cool-downs — so their users feel safe. Useful, but be honest about it: that's policy, not new infrastructure.</p>
+      </div>
+      <div class="card tint">
+        <span class="lbl">The one thing a harness adds</span>
+        <h3>Verify the outcome against the rehearsal.</h3>
+        <ul class="list">
+          <li><b>Expected vs. actual</b> — the simulated state diff the user approved is compared with the post-inclusion state. Same Δ balances, same positions.</li>
+          <li><b>Idempotent</b> — a retry can never double-execute; the staged bundle has one identity.</li>
+          <li><b>Execution record</b> — instruction → policy decision → simulation → authorization → receipt, kept as one evidence chain. That's what a treasury or a fund actually audits.</li>
+        </ul>
+      </div>
+    </div></div>
+    <div class="take">Settlement is <b>the chain's job</b>. Reconciliation — proving intent became outcome — is the harness's last job.</div>
+  </section>
+
+  <!-- ================= 5 · CONCLUDE THE LIFECYCLE ================= -->
+  <section class="slide" id="s10" data-title="The missing piece">
+    <div class="hd">
+      <div class="eyebrow">The lifecycle, whole</div>
+      <h1 class="lead">Models have intent. Wallets have keys. <span class="i">Nobody owned the middle.</span></h1>
+    </div>
+    <div class="stack">
+      <div class="zone m">
+        <span class="zt">Probabilistic</span>
+        <h3>The model</h3>
+        <p>Decodes intent, picks protocols, plans. Any frontier model, yours or ours.</p>
+        <div class="stg"><span>Intent</span><span>Protocol</span></div>
+        <div class="has"><i>✓</i><span>crowded · well funded</span><i>✓</i><span>improving every quarter</span></div>
+      </div>
+      <div class="zone h">
+        <span class="gap">execution harness</span>
+        <span class="zt">Deterministic</span>
+        <h3>Read ⇄ write ⇄ commit, against a fork of the live chain</h3>
+        <p>Cached readers · encode_and_call · fork simulation · batching · <code>commit_txs</code> as the single exit · outcome verification. Accountable for <b>stateful completion</b> across everything on either side.</p>
+        <div class="stg"><span>Context</span><span>Transaction</span><span>Execution</span><span>Reconciliation</span></div>
+        <div class="has"><i class="x">✗</i><span>no standard, no incumbent</span><i>✓</i><span>where reliability, cost and safety are actually decided</span></div>
+      </div>
+      <div class="zone w">
+        <span class="zt">Authority</span>
+        <h3>Wallet &amp; chain</h3>
+        <p>Signs within a policy, settles with finality. Privy, Para, Safe, MetaMask; Base, Solana, Arc.</p>
+        <div class="stg"><span>Signing</span><span>Settlement</span></div>
+        <div class="has"><i>✓</i><span>crowded · over-invested</span><i>✓</i><span>commodity you should buy, not build</span></div>
+      </div>
+    </div>
+    <div class="big">Agents reason in probabilities. Money settles in facts. <span class="i">The harness is the thing that carries one into the other.</span></div>
+  </section>
+
+  <!-- ================= 6 · SECURITY = TRUST / DISTRIBUTION ================= -->
+  <section class="slide" id="s11" data-title="Security is distribution">
+    <div class="hd">
+      <div class="eyebrow">A slightly uncomfortable conclusion</div>
+      <h1 class="lead">Security is really a <span class="i">trust and brand-distribution</span> effort.</h1>
+      <p class="dek">Users don't audit harnesses. They trust the product they're already inside. The technical stack that makes a transaction safe is mostly purchasable; what's scarce is being the layer that trusted brands ship through.</p>
+    </div>
+    <div class="two">
+      <div class="col">
+        <span class="lbl">The security stack, priced</span>
+        <h3>Most of it you can buy.</h3>
+        <div class="tier">
+          <div class="row com"><span class="l">keys</span><span class="v">Privy · Para · Turnkey · MPC / TEE</span></div>
+          <div class="row com"><span class="l">policy</span><span class="v">caps · allowlists · session scope · 2FA escalation</span></div>
+          <div class="row com"><span class="l">screening</span><span class="v">Blockaid · Chainalysis KYT · Tenderly sim</span></div>
+          <div class="row scarce"><span class="l">verified execution</span><span class="v">fork-simulated, server-authoritative calldata that a brand will put its name on</span></div>
+          <div class="row scarce"><span class="l">distribution</span><span class="v">being inside the wallet, the exchange, the agent people already use</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <span class="lbl">How Aomi distributes trust</span>
+        <h3>Ship inside brands users already trust.</h3>
+        <div class="dist">
+          <div class="d"><span class="ic" style="background:var(--rose)">S</span><div><b>Inside the product</b><span>Somm's own frontend, Telegram, Discord, Slack. The user sees Somm; Aomi is the runtime underneath. Same for Para, Khalani, World Markets, Swig, Molinar.</span></div></div>
+          <div class="d"><span class="ic" style="background:var(--ink)">›_</span><div><b>Inside the agent</b><span><code>npx skills add aomi-labs/skills</code> — Claude Code, Codex, Cursor. Developers adopt the harness the way they adopt a linter.</span></div></div>
+          <div class="d"><span class="ic" style="background:var(--hl2)">◎</span><div><b>Inside the ecosystem</b><span>Circle / Arc: USDC, StableFX, CCTP v2 live on Arc Testnet within a day of meeting the team. New chain = configuration, not a rebuild.</span></div></div>
+          <div class="d"><span class="ic" style="background:var(--ok)">0</span><div><b>Structurally non-custodial</b><span>Zero keys held, ever. The easiest trust claim to make is the one you can't break.</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="take" style="bottom:44px">Build the harness once, <b>make it unbreakable in the one dimension you control</b>, then let brands people already trust carry it to users.</div>
+  </section>
+
+  <!-- ================= 7 · CHALLENGES · OPPORTUNITIES · DIRECTION ================= -->
+  <section class="slide" id="s12" data-title="Challenges · opportunities · direction">
+    <div class="hd">
+      <div class="eyebrow">Beyond the chart</div>
+      <h1 class="lead">What's hard, what's open, <span class="i">where this goes</span>.</h1>
+    </div>
+    <div class="three">
+      <div class="col">
+        <span class="lbl">Challenges</span><h3>Still hard</h3>
+        <ul class="list">
+          <li><b>Semantic correctness ≠ a valid transaction.</b> A simulation proves what will happen, not that it's what the user meant. Outcome assertions are young.</li>
+          <li><b>Funding is the bottleneck</b>, not signing. An agent wallet without onramps, gas sponsorship and treasury policy is a demo.</li>
+          <li><b>Reconciliation, disputes, liability</b> are underbuilt across the whole industry. Finality isn't recourse.</li>
+          <li><b>Models are non-deterministic.</b> Same task, different path. Benchmarks must verify chain state, not transcripts.</li>
+        </ul>
+      </div>
+      <div class="col o">
+        <span class="lbl">Opportunities</span><h3>Open right now</h3>
+        <ul class="list">
+          <li><b>Agents as users.</b> A Claude session that signs in, reads, and trades — the harness is its hands. Agent-to-service payments over x402 in USDC.</li>
+          <li><b>Every fintech gets an agent.</b> Trading platforms, asset managers, wallets: keep your strategy, custody and customer; rent the execution lifecycle.</li>
+          <li><b>Institutional treasury on stablecoin rails.</b> 24/7 FX and settlement, governed like a dealing desk — Arc / StableFX is the first concrete instance.</li>
+          <li><b>Korea.</b> Deep retail trading culture, strong exchanges, builders who ship. Execution quality is a differentiator here, not a footnote.</li>
+        </ul>
+      </div>
+      <div class="col f">
+        <span class="lbl">Direction</span><h3>Where we're taking it</h3>
+        <ul class="list">
+          <li><b>Interfaces standardise, execution quality differentiates.</b> Skills, MCP, x402 will converge. Same model, same task, fewer tokens, fewer retries, zero unsafe actions — that's the benchmark (AomiBench).</li>
+          <li><b>One runtime, every surface.</b> CLI, MCP, API, embed, chat apps. The harness is the product; the embed is a surface.</li>
+          <li><b>Read ⇄ write ⇄ commit as the primitive.</b> Bring the coding-agent discipline to money: rehearse in a fork, commit through a gate, verify the outcome.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="contact">
+      <div><div class="nm">Cecilia Zhang · Founder, Aomi Labs</div><div class="h">tg <i>@ceciliaz030</i> · x <i>@ceciliaz030</i> · <i>@aomi_labs</i></div></div>
+      <div class="links">aomi.dev &nbsp;<i>·</i>&nbsp; aomi.dev/docs<br>aomi.dev/research/execution-harnesses-agentic-payments<br>github.com/aomi-labs &nbsp;<i>·</i>&nbsp; <i>npx skills add aomi-labs/skills</i></div>
+    </div>
+  </section>
+
+</div></div>
+
+<button class="navbtn" id="prev" aria-label="previous"></button>
+<button class="navbtn" id="next" aria-label="next"></button>
+<div id="dots"></div>
+<div id="rail"></div>
+<div id="hint">← → to move</div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  function fit(){ stage.style.transform='scale('+Math.min(window.innerWidth/1280, window.innerHeight/720)+')'; }
+  window.addEventListener('resize',fit); fit();
+})();
+
+/* page 4 · trace player — fixture and timing from aomi-widget apps/landing home component-source.js */
+(function(){
+  var MSG="Stake 5 ETH with Lido, then use that staked position as collateral on Aave and borrow 1000 USDC against it";
+  var ITEMS=[
+    {kind:'tool',title:'Activate skills',chips:['lido','aave','common_erc20']},
+    {kind:'tool',title:'Check ETH balance',chips:['Ethereum','10 ETH','nonce 2751']},
+    {kind:'note',text:'Wallet holds 10 ETH — enough for the 5 ETH stake. Reading the wstETH rate to size the wrap and supply legs precisely.'},
+    {kind:'tool',title:'Read wstETH per stETH rate',chips:['1 stETH → 0.8059 wstETH']},
+    {kind:'tool',title:'Simulate Lido stake of 5 ETH',chips:['5 ETH → ~5 stETH','~4.0297 wstETH']},
+    {kind:'note',text:'All context checks pass — borrowing 1000 USDC against ~4.03 wstETH is well within safe LTV. Staging the full 6-step sequence.'},
+    {kind:'tool',title:'Stage stake → wrap → supply → borrow',chips:['Stake 5 ETH with Lido','Approve stETH','Wrap stETH → wstETH','Approve wstETH','Supply to Aave V3','Borrow 1000 USDC']},
+    {kind:'tool',title:'Simulate full 6-tx flow',chips:['all 6 pass','gas 1.04 gwei']},
+    {kind:'tool',title:'Commit batch',chips:['0x5919…d464','success']}
+  ];
+  var CHECK='<svg viewBox="0 0 16 16" width="13" height="13"><path d="M3 8.5l3.5 3.5L13 5" fill="none" stroke="#2e9e6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var $=function(id){return document.getElementById(id)};
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var timers=[], typer=null;
+  function at(ms,fn){ timers.push(setTimeout(fn,ms)); }
+  function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function rowHTML(it,active){
+    if(it.kind==='note') return '<div class="ot-note"><span class="b"><i></i></span><span>'+esc(it.text)+'</span></div>';
+    var chips=it.chips.slice(0,4).map(function(c){return '<span><i></i>'+esc(c)+'</span>'}).join('');
+    if(it.chips.length>4) chips+='<span class="more">+'+(it.chips.length-4)+' more</span>';
+    return '<div class="ot-tool'+(active?' act':'')+'"><div class="h"><span class="ic">'+(active?'<span class="spin"></span>':CHECK)+'</span><span class="t">'+esc(it.title)+'</span></div><div class="ot-chips">'+chips+'</div></div>';
+  }
+  function render(shown,running){
+    var html='', tools=0;
+    for(var i=0;i<shown;i++){ var it=ITEMS[i]; if(it.kind==='tool') tools++; html+=rowHTML(it, running && i===shown-1 && it.kind==='tool'); }
+    $('ot-rows').innerHTML=html;
+    $('ot-steps').textContent=tools? tools+(tools===1?' step':' steps') : '';
+    var v=$('ot-view'); v.scrollTop=v.scrollHeight;
+  }
+  function reset(){
+    timers.forEach(clearTimeout); timers=[]; clearInterval(typer);
+    $('ot-bub').hidden=true; $('ot-box').hidden=true; $('ot-box').classList.remove('done');
+    $('ot-sign').hidden=true; $('ot-btn').className='ot-btn'; $('ot-btn').textContent='⌘ Approve & Sign';
+    $('ot-txt').textContent=''; $('ot-cur').hidden=false; $('ot-rows').innerHTML=''; $('ot-steps').textContent='';
+  }
+  function signed(){ var b=$('ot-btn'); b.className='ot-btn signed'; b.innerHTML=CHECK+'Signed'; }
+  function showAll(){
+    $('ot-bub').hidden=false; $('ot-txt').textContent=MSG; $('ot-cur').hidden=true;
+    $('ot-box').hidden=false; $('ot-box').classList.add('done'); render(ITEMS.length,false);
+    $('ot-sign').hidden=false; signed();
+  }
+  window.playChat=function(){
+    reset(); if(reduce){ showAll(); return; }
+    $('ot-bub').hidden=false;
+    var n=0;
+    at(250,function(){ typer=setInterval(function(){
+      n++; $('ot-txt').textContent=MSG.slice(0,n);
+      if(n>=MSG.length){ clearInterval(typer); $('ot-cur').hidden=true; afterTyping(); }
+    },12); });
+    function afterTyping(){
+      var first=900, gap=640, pre=ITEMS.length-1;
+      at(380,function(){ $('ot-box').hidden=false; });
+      for(var i=0;i<pre;i++) (function(k){ at(first+k*gap,function(){ render(k+1,true); }); })(i);
+      var signAt=first+pre*gap+250;
+      at(signAt,function(){ render(pre,false); $('ot-sign').hidden=false; var v=$('ot-view'); v.scrollTop=v.scrollHeight; });
+      at(signAt+1100,function(){ $('ot-btn').className='ot-btn pressed'; });
+      at(signAt+1300,signed);
+      at(signAt+1900,function(){ render(ITEMS.length,true); });
+      at(signAt+1900+640,function(){ render(ITEMS.length,false); $('ot-box').classList.add('done'); });
+    }
+  };
+})();
+
+/* deck navigation */
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide')), total=slides.length, cur=0;
+  var dotsWrap=document.getElementById('dots'), railWrap=document.getElementById('rail');
+  document.querySelector('#pageno .tot').textContent=(total<10?'0':'')+total;
+  slides.forEach(function(s,i){
+    var d=document.createElement('div'); d.className='dot'+(i===0?' on':''); d.addEventListener('click',function(){go(i)}); dotsWrap.appendChild(d);
+    var r=document.createElement('div'); r.className='rdot'+(i===0?' on':''); r.textContent=i+1; r.title=s.dataset.title||('slide '+(i+1)); r.addEventListener('click',function(){go(i)}); railWrap.appendChild(r);
+  });
+  var dots=[].slice.call(dotsWrap.children), rdots=[].slice.call(railWrap.children);
+  function pad(n){return (n<10?'0':'')+n;}
+  function go(i){
+    if(i<0)i=0; if(i>=total)i=total-1;
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===i); });
+    dots.forEach(function(d,j){ d.classList.toggle('on', j===i); });
+    rdots.forEach(function(r,j){ r.classList.toggle('on', j===i); });
+    cur=i; document.querySelector('#pageno .cur').textContent=pad(i+1); history.replaceState(null,'','#'+(i+1));
+    if(slides[i].id==='s3b') window.playChat && window.playChat();
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); go(cur+1); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+    else if(e.key==='Home'){ go(0); } else if(e.key==='End'){ go(total-1); }
+  });
+  document.getElementById('next').addEventListener('click',function(){go(cur+1)});
+  document.getElementById('prev').addEventListener('click',function(){go(cur-1)});
+  var h=parseInt((location.hash||'').replace('#',''),10); go(isNaN(h)?0:h-1);
+})();
+
+</script>
+</body>
+</html>
