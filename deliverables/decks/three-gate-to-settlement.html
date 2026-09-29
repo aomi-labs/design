@@ -1203,6 +1203,7 @@ var reduce=false; try{ reduce=matchMedia('(prefers-reduced-motion: reduce)').mat
     at(signAt+1300,signed);
     at(signAt+1900,function(){ render(ITEMS.length,true); });
     at(signAt+2540,function(){ render(ITEMS.length,false); $('ot-box').classList.add('done'); });
+    at(signAt+2540+3500,function(){ var sl=document.getElementById('s4'); if(sl && sl.classList.contains('active')) window.playChat(); });
   }
   window.playChat=function(){
     reset(); if(reduce){ showAll(); return; }
