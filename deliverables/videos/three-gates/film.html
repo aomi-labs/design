@@ -1,0 +1,1036 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Three Gates Film</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#09090b;--paper:#fcf7f6;--sky:#5288c2;--sky2:#416cac;--rose:#df5d90;--lilac:#e3d8e6;--muted:#71717a}
+html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:var(--paper)}
+body.fit{transform-origin:0 0}
+#stage,#labels,#hud,#veil,#vig,#flat{position:absolute;inset:0}
+#labels,#hud,#vig,#flat{pointer-events:none}
+canvas{display:block}
+#vig{background:linear-gradient(180deg,rgba(252,247,246,.78) 0,rgba(252,247,246,0) 170px,rgba(252,247,246,0) 640px,rgba(252,247,246,.9) 1080px),radial-gradient(ellipse at 50% 46%,rgba(252,247,246,0) 58%,rgba(228,220,218,.55) 100%)}
+.lbl{position:absolute;left:0;top:0;font:500 17px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);white-space:nowrap;opacity:0}
+.lbl.rose{color:var(--rose)}
+.lbl.sky{color:var(--sky2)}
+.lbl.word{font:400 24px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;color:var(--ink);background:rgba(252,247,246,.86);padding:6px 12px;border:1px solid rgba(9,9,11,.14);border-radius:999px}
+.lbl.big{font:500 22px 'Geist Mono',monospace}
+.lbl.num{font:600 30px 'Geist',sans-serif;letter-spacing:0}
+.lbl.num small{display:block;font:500 14px 'Geist Mono',monospace;letter-spacing:.14em;color:var(--muted);text-align:center;margin-top:2px}
+.lbl.rule{font:500 19px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;background:rgba(252,247,246,.92);padding:5px 12px;border:1.5px solid rgba(9,9,11,.25);border-radius:8px}
+.lbl.rule.bad{color:#fff;background:var(--rose);border-color:var(--rose)}
+.lbl.rule.ok{color:#fff;background:var(--sky);border-color:var(--sky)}
+.lbl.zone{font:600 21px 'Geist Mono',monospace;letter-spacing:.16em;background:rgba(252,247,246,.88);padding:7px 16px;border:1.5px dashed rgba(9,9,11,.45);border-radius:999px}
+.lbl.stag{font:600 20px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:none;color:#fff;background:var(--sky);padding:7px 16px;border-radius:8px}
+.lbl.tag{font:600 18px 'Geist Mono',monospace;color:#fff;background:var(--rose);padding:5px 12px;border-radius:6px}
+.chap{position:absolute;left:96px;top:78px;font:500 20px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:14px;opacity:0}
+.chap i{width:10px;height:10px;border-radius:50%;background:var(--sky)}
+.kick{position:absolute;left:96px;bottom:92px;font:400 54px/1.12 'PT Serif',serif;color:var(--ink);max-width:1300px;opacity:0;letter-spacing:-.01em}
+.kick em{color:var(--sky2);font-style:italic}
+#rail{position:absolute;right:96px;top:70px;display:flex;gap:8px;opacity:0}
+#rail span{font:600 18px 'Geist',sans-serif;width:52px;height:38px;display:grid;place-items:center;border:1.5px solid rgba(9,9,11,.22);border-radius:8px;color:rgba(9,9,11,.4)}
+#rail span.on{border-color:var(--sky);color:#fff;background:var(--sky)}
+#rail span.done{border-color:var(--sky);color:var(--sky2)}
+#title{position:absolute;left:96px;bottom:190px;opacity:0}
+#sub{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);max-width:1600px;text-align:center;font:500 34px/1.3 'Geist',sans-serif;color:#fff;background:rgba(9,9,11,.82);padding:10px 24px;border-radius:10px;opacity:0;white-space:nowrap}
+#title .eyebrow{font:500 20px 'Geist Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+#title h1{margin:0;font:700 128px/0.95 'PT Serif',serif;letter-spacing:-.025em;color:var(--ink)}
+#title p{margin:14px 0 0;font:italic 400 50px 'PT Serif',serif;color:var(--sky2)}
+#veil{background:var(--paper);opacity:0}
+#outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+#outro .lock{display:flex;align-items:center;gap:48px}
+#mark{width:140px;height:140px;overflow:visible;display:block}
+#outro .wm{font:600 140px/1 'Source Serif 4',serif;letter-spacing:-.02em;color:var(--ink)}
+#outro .sub{font:italic 400 44px 'PT Serif',serif;color:var(--ink);margin-top:46px}
+#outro .url{font:500 22px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:30px}
+#outro .wm,#outro .sub,#outro .url{opacity:0}
+/* flat 2D layer */
+#flat{opacity:0}
+#flat .st{fill:none;stroke:#09090b;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+#flat .thin{stroke-width:1.5}
+#flat .sky{stroke:#5288c2}
+#flat .rose{stroke:#df5d90}
+#flat .dash{stroke-dasharray:8 7}
+#flat .lb{font:500 17px 'Geist Mono',monospace;letter-spacing:.14em;fill:#09090b}
+#flat .lb.s{fill:#416cac}
+#flat .lb.r{fill:#df5d90}
+#flat .lb.m{fill:#71717a}
+#flat .lb.sm{font-size:15px}
+#flat .num{font:600 34px 'Geist',sans-serif;fill:#09090b}
+#flat .chip{fill:#fcf7f6;stroke:#09090b;stroke-width:1.5}
+#flat .chip.on{fill:#5288c2;stroke:#5288c2}
+#flat .chip.bad{fill:#df5d90;stroke:#df5d90}
+#flat .ct{font:500 15px 'Geist Mono',monospace;letter-spacing:.08em;fill:#09090b}
+#flat .ct.on,#flat .ct.bad{fill:#fff}
+#flat .h2{font:600 26px 'Geist',sans-serif;fill:#09090b}
+#flat .ttl{font:600 20px 'Geist',sans-serif;fill:#09090b}
+#flat .node{font:500 22px 'Geist Mono',monospace;letter-spacing:.18em;fill:#09090b}
+#flat .pk{font:500 21px 'Geist',sans-serif}
+#flat .badge{font:600 18px 'Geist Mono',monospace;fill:#fff}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="vig"></div>
+<div id="labels"></div>
+<svg id="flat" viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#e4e4e7" stroke-width="1"/></pattern>
+    <radialGradient id="halo"><stop offset="0" stop-color="#5288c2" stop-opacity=".45"/><stop offset=".5" stop-color="#5288c2" stop-opacity=".12"/><stop offset="1" stop-color="#5288c2" stop-opacity="0"/></radialGradient>
+    <marker id="ahInk" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#09090b"/></marker>
+    <marker id="ahSky" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5288c2"/></marker>
+    <marker id="ahGrey" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c4c4cc"/></marker>
+    <marker id="ahRose" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#df5d90"/></marker>
+  </defs>
+  <rect width="1920" height="1080" fill="#fcf7f6"/>
+  <rect width="1920" height="1080" fill="url(#grid)" opacity=".7"/>
+</svg>
+<div id="hud">
+  <div id="title">
+    <div class="eyebrow">Aomi Labs Research</div>
+    <h1>Three gates</h1>
+    <p>from intent to settlement</p>
+  </div>
+  <div id="rail"><span>0.5</span><span>1</span><span>2</span><span>3</span></div>
+</div>
+<div id="veil"></div>
+<div id="outro">
+  <div class="lock">
+    <svg id="mark" viewBox="0 0 362 362">
+      <g id="morph" fill="none">
+        <path id="a1" stroke="#09090b" pathLength="1" stroke-dasharray="1"/>
+        <path id="a2" stroke="#416cac" pathLength="1" stroke-dasharray="1"/>
+        <path id="a3" stroke="#5288c2" pathLength="1" stroke-dasharray="1"/>
+        <circle id="dot" cx="181" cy="181" r="15" fill="#df5d90" stroke="#09090b" stroke-width="0"/>
+      </g>
+      <g id="logo" fill="#09090b" opacity="0"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g>
+    </svg>
+    <div class="wm">aomi</div>
+  </div>
+  <div class="sub">Three gates from intent to settlement</div>
+  <div class="url">aomi.dev/research &nbsp;·&nbsp; @aomi_labs</div>
+</div>
+
+<div id="sub"></div>
+<script src="vo/timeline.js"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const W = 1920, H = 1080, DUR = 79.8, SETTLE_AT = 53.4, SETTLE_LEN = 2.6, DUR_REAL = DUR + SETTLE_LEN;
+const params = new URLSearchParams(location.search);
+
+// ---------- math ----------
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => cl((t - a) / (b - a));
+const lerp = (a, b, x) => a + (b - a) * x;
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eout = x => 1 - Math.pow(1 - x, 3);
+const ein = x => x * x * x;
+const eback = x => { const c1 = 1.70158, c3 = c1 + 1; return x <= 0 ? 0 : 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const win = (t, a, b, f = .4) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+const pulse = (t, a, b) => Math.sin(Math.PI * seg(t, a, b));
+const tiny = s => Math.max(s, 1e-3);
+const deg = THREE.MathUtils.degToRad;
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const R = rng(11);
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+function keyed(keys, t) {
+  if (t <= keys[0][0]) return keys[0][1].slice();
+  for (let i = 0; i < keys.length - 1; i++) {
+    const [a, pa] = keys[i], [b, pb] = keys[i + 1];
+    if (t <= b) { const x = eio(seg(t, a, b)); return pa.map((v, j) => lerp(v, pb[j], x)); }
+  }
+  return keys[keys.length - 1][1].slice();
+}
+
+// ---------- palette ----------
+const C = { arch: 0x9d9da8, track: 0xa1a1aa, soft: 0x8c8a99, sky4: 0x7facd6, ring: 0xb4b4bf, ink: 0x09090b, paper: 0xfcf7f6, sky: 0x5288c2, sky2: 0x416cac, rose: 0xdf5d90, lilac: 0xe3d8e6, lilac4: 0xb9a3c1, pink2: 0xf6cbdd, cool2: 0xe4e4e7, white: 0xffffff };
+const ARCHC = new THREE.Color(C.arch), SOFT = new THREE.Color(C.soft), RINGC = new THREE.Color(C.ring), SKY = new THREE.Color(C.sky), ROSE = new THREE.Color(C.rose), INK = new THREE.Color(C.ink), WHITE = new THREE.Color(C.white);
+
+// ---------- renderer ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('stage').appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(C.paper);
+scene.fog = new THREE.Fog(C.paper, 30, 95);
+const camera = new THREE.PerspectiveCamera(35, W / H, .1, 2000);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xece4e2, 1.25));
+const sun = new THREE.DirectionalLight(0xffffff, 1.7);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 120 });
+sun.shadow.bias = -.0005; sun.shadow.radius = 5;
+scene.add(sun, sun.target);
+
+// ---------- factories ----------
+const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: .55, metalness: 0, ...o });
+const glowM = (color, ei = .35, o = {}) => std(color, { emissive: color, emissiveIntensity: ei, ...o });
+const lineM = (color = C.ink, op = 1) => new THREE.LineBasicMaterial({ color, transparent: true, opacity: op });
+function edged(geo, mat, lcol = C.ink, lop = .9, edgeGeo) {
+  const m = new THREE.Mesh(geo, mat); m.castShadow = true; m.receiveShadow = true;
+  m.add(new THREE.LineSegments(new THREE.EdgesGeometry(edgeGeo || geo, 25), lineM(lcol, lop))); return m;
+}
+function mark(o) { o.traverse(n => { if (n.material) { n.material.transparent = true; n.userData.baseOp = n.material.opacity; } }); return o; }
+function setOp(o, a) { o.visible = a > .002; o.traverse(n => { if (n.material && n.userData.baseOp !== undefined) n.material.opacity = a * n.userData.baseOp; }); }
+function flatRing(r, tube, color, op = 1) { const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 8, 96), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: op })); m.rotation.x = Math.PI / 2; return m; }
+const tileGeo = new RoundedBoxGeometry(1.5, .95, .14, 4, .1);
+// transaction icon: a banknote frame with "$", inked in a darker shade of the card colour
+const ICON_INK = { [C.sky4]: '#1f3a63', [C.rose]: '#6e1c3d', [C.white]: '#09090b', [C.lilac]: '#4a3d55' };
+const iconGeo = new THREE.PlaneGeometry(1.5, .95), iconCache = new Map();
+function drawIcon(cv, ink) {
+  const g = cv.getContext('2d'); g.clearRect(0, 0, 600, 380); g.strokeStyle = g.fillStyle = ink; g.lineWidth = 15; g.lineCap = 'round';
+  g.beginPath(); g.roundRect(95, 72, 410, 236, 22); g.stroke();
+  g.font = "600 150px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('$', 300, 200);
+  g.beginPath(); g.moveTo(410, 118); g.lineTo(460, 118); g.moveTo(140, 262); g.lineTo(190, 262); g.stroke();
+}
+function iconTex(color) {
+  if (!iconCache.has(color)) { const cv = document.createElement('canvas'); cv.width = 600; cv.height = 380; const ink = ICON_INK[color] || '#09090b'; drawIcon(cv, ink);
+    const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 4; iconCache.set(color, { cv, tx, ink }); }
+  return iconCache.get(color).tx;
+}
+function makeTile(color, ei = .25, lines = true) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(tileGeo, glowM(color, ei)); body.castShadow = true; g.add(body); g.userData.body = body;
+  if (lines) [.075, -.075].forEach((z, k) => { const pl = new THREE.Mesh(iconGeo, new THREE.MeshBasicMaterial({ map: iconTex(color), transparent: true, depthWrite: false })); pl.position.z = z; pl.rotation.y = k ? Math.PI : 0; g.add(pl); });
+  if (color === 0xffffff) body.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.5, .95, .14)), lineM(C.ink, .5)));
+  return g;
+}
+function glowTexture(rgb) {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, `rgba(${rgb},.5)`); gr.addColorStop(.5, `rgba(${rgb},.14)`); gr.addColorStop(1, `rgba(${rgb},0)`);
+  g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+  const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; return tx;
+}
+
+// ---------- world: floor, grid, route ----------
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.ShadowMaterial({ opacity: .09 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const grid = new THREE.GridHelper(1200, 600, C.cool2, C.cool2);
+grid.position.set(0, .002, -120); grid.material.transparent = true; grid.material.opacity = .6; scene.add(grid);
+const routeGeo = new THREE.PlaneGeometry(.1, 1); routeGeo.rotateX(-Math.PI / 2); routeGeo.translate(0, .012, -.5);
+const route = new THREE.Mesh(routeGeo, new THREE.MeshBasicMaterial({ color: C.track })); route.position.z = 1; scene.add(route);
+
+// ---------- arches (gates 0.5, 1, 2, 3) ----------
+const ARCH_Z = [-96, -121, -152, -180];
+const arches = ARCH_Z.map(z => {
+  const g = new THREE.Group(), mat = std(C.arch, { emissive: C.sky, emissiveIntensity: 0, roughness: .45 });
+  const a = new THREE.Mesh(new THREE.TorusGeometry(3.4, .06, 12, 120, Math.PI), mat); a.castShadow = true; g.add(a);
+  for (const s of [-1, 1]) { const f = new THREE.Mesh(new THREE.BoxGeometry(.55, .12, .55), mat); f.position.set(s * 3.4, .06, 0); f.castShadow = true; g.add(f); }
+  g.position.z = z; scene.add(g); g.userData.mat = mat; return g;
+});
+function archGlow(i, k) { const m = arches[i].userData.mat; m.color.lerpColors(ARCHC, SKY, k); m.emissiveIntensity = k * .55; }
+
+// ---------- hero: intent orb -> transaction tile ----------
+const hero = new THREE.Group(); scene.add(hero);
+const orb = new THREE.Mesh(new THREE.SphereGeometry(.55, 48, 32), glowM(C.sky, .45)); orb.castShadow = true; hero.add(orb);
+const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture('82,136,194'), transparent: true, depthWrite: false })); hero.add(halo);
+const tile = makeTile(C.sky4, .22); hero.add(tile);
+const seal = new THREE.Mesh(new THREE.CylinderGeometry(.13, .13, .035, 32), std(C.ink)); seal.rotation.x = Math.PI / 2; seal.position.set(.6, -.36, .09); tile.add(seal);
+
+// ---------- S1 intent ----------
+const ripples = [0, 1, 2].map(() => { const r = flatRing(.7, .016, C.ink); r.position.set(0, .02, 0); scene.add(r); return r; });
+
+// ---------- harness station (seen in 3D on approach, explained in 2D) ----------
+const tunnel = new THREE.Group(); scene.add(tunnel);
+const rings = [];
+for (let i = 0; i < 5; i++) {
+  const m = new THREE.Mesh(new THREE.TorusGeometry(1.5, .03, 10, 96), std(C.ring, { emissive: C.sky, emissiveIntensity: 0 }));
+  m.castShadow = true;
+  m.userData = { fin: V(0, 1.2, -26 - i * 2), st: V((R() - .5) * 18, 1 + R() * 8, -30 + (R() - .5) * 14), rs: [R() * 6, R() * 6, R() * 6], d: 4.4 + i * .16 };
+  tunnel.add(m); rings.push(m);
+}
+const rails = [];
+for (let k = 0; k < 6; k++) {
+  const a = k / 6 * Math.PI * 2, c = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, 8, 6), std(0xc4c4cc, { transparent: true, opacity: .75 }));
+  const pivot = new THREE.Group(); pivot.position.set(Math.cos(a) * 1.5, 1.2 + Math.sin(a) * 1.5, -26);
+  c.rotation.x = Math.PI / 2; c.position.z = -4; pivot.add(c); tunnel.add(pivot); rails.push(pivot);
+}
+const model = edged(new THREE.IcosahedronGeometry(.55, 0), std(C.lilac, { flatShading: true }), 0x71717a, .6);
+model.position.set(0, 3.95, -30); tunnel.add(model);
+const wire = new THREE.Mesh(new THREE.CylinderGeometry(.014, .014, .7, 6), std(0xa1a1aa)); wire.position.set(0, 3.05, -30); tunnel.add(wire);
+
+// ---------- gate 0.5 station: chain + fork laid along the route ----------
+const forkG = new THREE.Group(); scene.add(forkG);
+const cube = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+const MAIN_Z = [-82.6, -84.4, -86.2, -88.0];
+MAIN_Z.forEach(z => { const b = edged(cube, std(0xffffff)); b.position.set(-1.6, .6, z); forkG.add(b); });
+const slotM = new THREE.LineDashedMaterial({ color: C.ink, dashSize: .14, gapSize: .09, transparent: true, opacity: .55 });
+const mainSlot = new THREE.LineSegments(new THREE.EdgesGeometry(cube), slotM); mainSlot.computeLineDistances(); mainSlot.position.set(-1.6, .6, -89.8); forkG.add(mainSlot);
+const forkBlocks = [-86.2, -88.0].map(z => { const b = mark(edged(cube, std(C.lilac, { opacity: .8 }), C.ink, .7)); b.position.set(-1.6, .6, z); forkG.add(b); return b; });
+const forkSlot = new THREE.LineSegments(new THREE.EdgesGeometry(cube), slotM.clone()); forkSlot.computeLineDistances(); forkSlot.position.set(-1.6, 3.4, -89.8); forkG.add(forkSlot);
+const forkFill = new THREE.Mesh(cube, glowM(C.sky, .35, { transparent: true, opacity: .55 })); forkFill.position.set(-1.6, 3.4, -89.8); forkG.add(forkFill);
+
+// ---------- gate 1 station: signer vault beside the route ----------
+const vault = mark(edged(new RoundedBoxGeometry(1.9, 1.9, 1.9, 4, .14), std(C.lilac, { opacity: .55, depthWrite: false }), C.ink, .8, new THREE.BoxGeometry(1.9, 1.9, 1.9)));
+vault.position.set(-1.6, 1.25, -119.6); scene.add(vault);
+const key = new THREE.Group(); vault.add(key);
+{ const km = glowM(C.sky, .5); const bow = new THREE.Mesh(new THREE.TorusGeometry(.24, .07, 12, 32), km); bow.position.x = -.38; key.add(bow);
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, .78, 12), km); bar.rotation.z = Math.PI / 2; bar.position.x = .17; key.add(bar);
+  [.35, .5].forEach(x => { const tth = new THREE.Mesh(new THREE.BoxGeometry(.08, .18, .08), km); tth.position.set(x, -.1, 0); key.add(tth); }); }
+
+// ---------- gate 2: guard contract + its onchain net ----------
+const g2 = new THREE.Group(); scene.add(g2);
+for (let i = 0; i < 17; i++) {
+  const z = -138 - i * 1.6;
+  if (Math.abs(z + 152) > 1.0) { const b = edged(new THREE.BoxGeometry(.5, .5, .5), std(0xffffff)); b.position.set(0, .25, z); g2.add(b); }
+  if (i) { const c = new THREE.Mesh(new THREE.BoxGeometry(.05, .05, 1.1), std(C.track)); c.position.set(0, .25, z + .8); g2.add(c); }
+}
+const contract = edged(new THREE.BoxGeometry(.95, .95, .95), std(C.soft, { roughness: .45, emissive: C.sky, emissiveIntensity: 0 }), C.lilac4, 1);
+contract.position.set(0, .48, -152); g2.add(contract);
+for (const s of [-1, 1]) [[.55, .26], [.7, .1], [.4, -.06], [.6, -.22]].forEach(([w, y]) => {
+  const l = new THREE.Mesh(new THREE.BoxGeometry(.02, .06, w), new THREE.MeshBasicMaterial({ color: 0xffffff })); l.position.set(s * .485, y, -.32 + w / 2); contract.add(l); });
+const shield = new THREE.Group(); shield.position.z = -152; g2.add(shield);
+shield.add(new THREE.Mesh(new THREE.CircleGeometry(3.3, 64, 0, Math.PI), new THREE.MeshBasicMaterial({ color: C.pink2, transparent: true, opacity: .5, side: THREE.DoubleSide, depthWrite: false })));
+[1.1, 2.2].forEach(r => shield.add(new THREE.Mesh(new THREE.TorusGeometry(r, .016, 6, 96, Math.PI), new THREE.MeshBasicMaterial({ color: C.ink, transparent: true, opacity: .3 }))));
+for (let k = 1; k < 6; k++) { const a = k / 6 * Math.PI, s = new THREE.Mesh(new THREE.BoxGeometry(.02, 3.3, .02), new THREE.MeshBasicMaterial({ color: C.ink, transparent: true, opacity: .18 })); s.position.set(Math.cos(a) * 1.65, Math.sin(a) * 1.65, 0); s.rotation.z = a - Math.PI / 2; shield.add(s); }
+const flag = new THREE.Group(); flag.position.set(1.7, .03, -159); g2.add(flag);
+flag.add(flatRing(.7, .05, C.rose));
+[Math.PI / 4, -Math.PI / 4].forEach(r => { const b = new THREE.Mesh(new THREE.BoxGeometry(.9, .03, .09), new THREE.MeshBasicMaterial({ color: C.rose })); b.rotation.y = r; flag.add(b); });
+const rogue = makeTile(C.rose, .3); rogue.traverse(n => { if (n.material) n.material = n.material.clone(); }); mark(rogue); g2.add(rogue);
+const IMPACT = V(.4, 1.9, -151.9);
+const frags = [];
+for (let i = 0; i < 26; i++) {
+  const m = new THREE.Mesh(new THREE.TetrahedronGeometry(.1 + R() * .14), glowM(C.rose, .25, { transparent: true }));
+  m.castShadow = true;
+  m.userData = { o: V((R() - .5) * 1.4, (R() - .5) * .9, 0), v: V((R() - .5) * 4, 1 + R() * 3.5, 1.2 + R() * 3.2), s: V(R() * 9, R() * 9, R() * 9) };
+  g2.add(m); frags.push(m);
+}
+const ripR = new THREE.Mesh(new THREE.TorusGeometry(1, .035, 8, 96), new THREE.MeshBasicMaterial({ color: C.rose, transparent: true })); g2.add(ripR);
+const ripS = new THREE.Mesh(new THREE.TorusGeometry(1, .035, 8, 96), new THREE.MeshBasicMaterial({ color: C.sky, transparent: true })); g2.add(ripS);
+
+// ---------- gate 3: mempool -> builder packs a block ----------
+const g3 = new THREE.Group(); scene.add(g3);
+const blockG = new THREE.Group(); blockG.position.z = -185; g3.add(blockG);
+const wallM = std(C.lilac, { transparent: true, opacity: .38, depthWrite: false, emissive: C.sky, emissiveIntensity: 0 });
+[[3.8, .08, 2.0, 0, .04, 0], [3.8, 1.4, .05, 0, .7, .975], [3.8, 1.4, .05, 0, .7, -.975], [.05, 1.4, 2.0, 1.875, .7, 0], [.05, 1.4, 2.0, -1.875, .7, 0]]
+  .forEach(([w, h, d, x, y, z]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), wallM); m.position.set(x, y, z); m.receiveShadow = true; blockG.add(m); });
+const boxEdges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.8, 1.4, 2.0)), lineM(C.ink, .9)); boxEdges.position.y = .7; blockG.add(boxEdges);
+const lidPivot = new THREE.Group(); lidPivot.position.set(0, 1.4, -1.0); blockG.add(lidPivot);
+const lid = edged(new THREE.BoxGeometry(3.8, .08, 2.0), std(C.lilac, { transparent: true, opacity: .85 })); lid.position.set(0, .04, 1.0); lidPivot.add(lid);
+const SLOT_X = [-1.5, -.9, -.3, .3, .9, 1.5];
+const beam = new THREE.Mesh(new THREE.BoxGeometry(.05, 1.7, 2.3), glowM(C.sky, .7, { transparent: true, opacity: .5 })); beam.position.y = .85; blockG.add(beam);
+const MP_C = V(0, 4.9, -182.5);
+const poolHaze = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture('185,163,193'), transparent: true, depthWrite: false })); poolHaze.position.copy(MP_C); poolHaze.scale.set(12, 5, 1); g3.add(poolHaze);
+// [home, color, pick time, slot]  — rogue looks ordinary until the builder checks it
+const POOL = [
+  [[-2.9, 5.2, -183.2], 0xffffff, 46.0, 0], [[2.7, 4.3, -181.4], C.lilac, 46.5, 1], [[1.4, 5.7, -183.6], 0xffffff, 47.5, 3],
+  [[3.4, 5.4, -182.2], 0xffffff, 48.0, 4], [[-3.3, 4.2, -181.6], C.lilac, 48.5, 5], [[.6, 4.0, -183.8], C.lilac, 50.9, 4],
+  [[-1.8, 4.0, -184.0], 0xffffff, null], [[2.1, 6.0, -181.0], C.lilac, null], [[-.4, 6.1, -183.0], 0xffffff, null], [[3.9, 4.6, -183.9], C.lilac, null]];
+const ROGUE = 3;
+const pool = POOL.map(([home, col], i) => { const g = makeTile(col, .05); g.traverse(n => { if (n.material) n.material = n.material.clone(); }); mark(g); g3.add(g); return { g, home: V(...home), col: new THREE.Color(col) }; });
+const settled = [];
+for (let k = 1; k <= 5; k++) {
+  const b = new THREE.Group(); b.position.z = -194.6 - k * 2.4; g3.add(b);
+  const body = edged(new THREE.BoxGeometry(3.8, 1.48, 2.0), std(C.lilac, { opacity: .9, transparent: true, emissive: C.sky, emissiveIntensity: 0 }), C.ink, .9); body.position.y = .74; b.add(body);
+  b.userData = { body, edge: body.children[0] }; settled.push(b);
+  if (k < 5) { const c = new THREE.Mesh(new THREE.BoxGeometry(.14, .14, .44), std(C.track)); c.position.set(0, .74, -194.6 - k * 2.4 - 1.2); g3.add(c); }
+}
+const dockLink = new THREE.Mesh(new THREE.BoxGeometry(.14, .14, .44), glowM(C.sky, .5)); dockLink.position.set(0, .74, -195.8); g3.add(dockLink);
+const dockRing = new THREE.Mesh(new THREE.TorusGeometry(1, .04, 8, 96), new THREE.MeshBasicMaterial({ color: C.sky, transparent: true })); dockRing.position.set(0, .74, -194.6); g3.add(dockRing);
+
+// ---------- summary stream ----------
+const FATES = ['P', 'P', 0, 'P', 1, 'P', 2, 'P', 'P', 3, 'P', 1, 'P', 0, 'P', 'P', 2, 'P', 3, 'P', 'P', 1, 'P', 'P', 2, 'P'];
+const STREAM_V = 95, END_Z = -192;
+const tokens = FATES.map((f, i) => {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(.6, 24, 16), glowM(C.ink, 0, { transparent: true }));
+  const burst = new THREE.Mesh(new THREE.TorusGeometry(1, .09, 8, 64), new THREE.MeshBasicMaterial({ color: C.rose, transparent: true }));
+  scene.add(m, burst);
+  const t0 = 54.3 + i * .1, zc = f === 'P' ? END_Z : ARCH_Z[f];
+  return { m, burst, f, t0, tc: t0 + Math.abs(zc) / STREAM_V, zc };
+});
+
+// ---------- identity ----------
+const idG = new THREE.Group(); idG.position.set(0, 2.4, -240); scene.add(idG);
+const core = new THREE.Mesh(new THREE.SphereGeometry(1.0, 48, 32), std(0xbdb6c8, { roughness: .5 })); core.castShadow = true; idG.add(core);
+const coreRing = new THREE.Mesh(new THREE.TorusGeometry(1.45, .035, 10, 128), glowM(C.sky, .5)); coreRing.rotation.x = Math.PI / 2.25; idG.add(coreRing);
+const ID0 = 65.4;
+const SESS = [
+  [.35, 0, C.sky, 65.4, t => .95 - (t - ID0) * .06],
+  [-.55, 2.1, C.sky2, 65.55, t => .72 - (t - ID0) * .08],
+  [1.05, 4.2, C.lilac4, 65.7, t => .42 - (t - ID0) * .175],
+  [.75, 1.2, C.sky, 999, t => 1]];
+const sessions = SESS.map(s => {
+  const g = new THREE.Group(); idG.add(g);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(.36, 32, 20), glowM(s[2], .35, { transparent: true })); ball.castShadow = true; g.add(ball);
+  const bubble = new THREE.Mesh(new THREE.IcosahedronGeometry(.82, 1), new THREE.MeshBasicMaterial({ color: C.ink, wireframe: true, transparent: true, opacity: .28 })); g.add(bubble);
+  const timer = new THREE.Mesh(new THREE.TorusGeometry(.6, .035, 8, 64, Math.PI * 2), new THREE.MeshBasicMaterial({ color: C.sky, transparent: true })); g.add(timer);
+  const link = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V(0, 0, 0), V(0, 0, 0)]), lineM(C.ink, .4)); idG.add(link);
+  mark(g); return { g, bubble, timer, link, s, lastArc: -1 };
+});
+
+// ---------- camera route (3D travel) ----------
+const CK = [
+  [0.0, [7, 3.2, 12], [0, 1.2, 0]],
+  [4.8, [3.8, 2.3, 7.8], [0, 1.3, -1]],
+  [6.0, [9, 3, -24], [0, 1.2, -30]],
+  [12.0, [10, 3.4, -52], [0, 1.6, -58]],
+  [19.0, [10, 3.4, -52], [0, 1.6, -58]],
+  [19.9, [10, 3.4, -52], [0, 1.6, -58]],
+  [20.6, [9, 5, -83], [0, 4.2, -90]],
+  [28.1, [10, 3.4, -94], [0, 1.6, -100]],
+  [28.9, [10, 3.4, -94], [0, 1.6, -100]],
+  [29.7, [9, 3.2, -110], [0, 1.6, -116]],
+  [37.1, [10, 3.4, -120], [0, 1.6, -126]],
+  [37.95, [10, 3.4, -120], [0, 1.6, -126]],
+  [39.2, [9.5, 4.6, -137.5], [0, 1.5, -151]],
+  [44.2, [7.4, 4.0, -141], [0, 1.6, -153]],
+  [45.6, [12, 7.6, -167], [0, 3.1, -184]],
+  [52.6, [9.5, 5.4, -171.5], [0, 1.6, -187]],
+  [54.6, [21, 9.5, -52], [0, 1.2, -126]],
+  [57.6, [23, 8.5, -92], [0, 1.2, -152]],
+  [63.9, [40, 14, -96], [0, 1.5, -104]],
+  [64.3, [40, 14, -96], [0, 1.5, -104]],
+  [65.6, [0, 6.8, -224], [0, 2.4, -240]],
+  [67.4, [-1.5, 8.2, -220.5], [0, 2.4, -240]],
+  [DUR, [-1.5, 8.2, -220.5], [0, 2.4, -240]]];
+const camPos = new THREE.CatmullRomCurve3(CK.map(k => V(...k[1])), false, 'centripetal');
+const camTgt = new THREE.CatmullRomCurve3(CK.map(k => V(...k[2])), false, 'centripetal');
+function rawU(t) { t = cl(t, 0, DUR); for (let i = 0; i < CK.length - 1; i++) if (t <= CK[i + 1][0]) return i + seg(t, CK[i][0], CK[i + 1][0]); return CK.length - 1; }
+function camU(t) { let s = 0; const n = 17; for (let i = 0; i < n; i++) s += rawU(t + (i / (n - 1) - .5) * 1.5); return s / n / (CK.length - 1); }
+// flatten windows: [flatten start, flat, unflatten start, 3D again]
+// [flatten start, flat, unflatten start, 3D again, fixed target (default: the hero), half-height of the flat frame]
+const FLAT = [[5.4, 6.2, 19.0, 19.8], [20.4, 21.2, 28.1, 28.9], [29.6, 30.4, 37.1, 37.9],
+  [57.2, 58.0, 63.9, 64.7, V(0, 1.5, -98), 63], [67.0, 67.8, 999, 1000, V(0, 2.4, -240), 4.8]];
+function flatAt(t) { let best = { k: 0 }; for (const [a, b, c, d, tg, half] of FLAT) { const k = eio(seg(t, a, b)) * (1 - eio(seg(t, c, d))); if (k > best.k) best = { k, tg, half: half || 4.5 }; } return best; }
+// 2D overlay windows: [fade in start, fade out end]
+const FLAT2D = [[6.0, 19.1], [21.0, 28.3], [30.2, 37.3], [57.8, 64.0], [67.6, 999]];
+
+// ---------- hero route ----------
+const HK = [
+  [0, [0, 1.2, 0]], [4.9, [0, 1.2, 0]], [6.1, [0, 1.2, -30]],
+  [11.0, [0, 1.2, -30]], [12.0, [0, 1.6, -58]],
+  [19.8, [0, 1.6, -58]], [21.0, [0, 5.0, -89.8]],
+  [27.0, [0, 5.0, -89.8]], [27.8, [0, 1.6, -100]],
+  [29.0, [0, 1.6, -100]], [30.2, [0, 1.6, -115.5]],
+  [36.0, [0, 1.6, -115.5]], [36.9, [0, 1.6, -126]],
+  [38.0, [0, 1.6, -126]], [39.0, [1.8, 1.6, -145]],
+  [42.4, [1.8, 1.6, -145]], [43.6, [0, 1.6, -156]],
+  [44.2, [0, 1.6, -156]], [45.4, [-.6, 4.6, -181.8]],
+  [47.0, [-.6, 4.6, -181.8]], [47.5, [-.3, .62, -185]],
+  [52.6, [-.3, .62, -185]], [53.4, [-.3, .62, -194.6]]];
+
+// ---------- DOM: 3D labels, chapters, kickers ----------
+const labels = [];
+function label(html, cls, pos, a, b, real = false) { const el = document.createElement('div'); el.className = 'lbl ' + (cls || ''); el.innerHTML = html; document.getElementById('labels').appendChild(el); const L = { el, pos, a, b, real }; labels.push(L); return L; }
+const WORDS = ['rebalance my ETH', 'swap 500 USDC', 'stake 2 ETH', 'pay the invoice', 'bridge to Base'];
+const wordLabels = WORDS.map((w, i) => label(w, 'word', V(), .8 + i * .15, 4.1 + i * .12));
+label('guard contract', '', V(1.6, .35, -152.5), 38.8, 45.0);
+const RULES = ['to ∉ blocklist', 'amount ≤ cap', 'asset ∈ allowlist'];
+const ruleLabels = RULES.map((r, i) => label(r, 'rule', V([-1.5, -1.9, -2.2][i], [2.55, 1.85, 1.15][i], -152), 39.7 + i * .15, 45.0));
+label('revert', 'tag', V(.4, 2.95, -152), 41.25, 42.6);
+label('flagged', 'rose', V(2.9, .9, -159), 39.4, 44.2);
+label('mempool', 'zone', V(-4.3, 5.9, -182.5), 45.0, 51.6);
+label('builder', 'zone', V(-3.0, 1.9, -185), 45.8, 52.4);
+label('✓ settled · block 21,048,392', 'stag', V(0, 2.55, -194.6), 54.3, 56.2, true);
+label('settled chain', 'zone', V(0, 2.2, -203.8), 53.6, 56.2, true);
+label('assertion failed', 'tag', V(.9, 2.35, -185), 49.5, 51.0);
+['0.5', '1', '2', '3'].forEach((n, i) => label(`${n}<small>${['runtime', 'signing', 'onchain', 'builder'][i]}</small>`, 'num', V(0, 5.2, ARCH_Z[i]), 55.0, 57.5));
+label('intent', 'big', V(0, 3.2, 0), 55.2, 57.5);
+label('settlement', 'big', V(4.6, .4, -201), 55.4, 57.5);
+label('identity', '', V(0, .75, -240), 65.6, 67.3);
+const sessLabel = label('session', 'sky', V(), 66.0, 67.3);
+
+const CHAPTERS = [['The intent', 0.3, 6.0], ['The execution harness', 6.3, 12.3], ['Why financial agents need gates', 12.5, 18.9], ['Gate 0.5 · Simulation while building', 19.4, 28.4], ['Gate 1 · Offchain signing policy', 28.6, 37.4],
+  ['Gate 2 · Onchain guard contract', 37.6, 45.4], ['Gate 3 · Block builder', 45.6, 53.4], ['All three gates together', 53.6, 57.7], ['Which gate stops which risk', 57.9, 63.9], ['Beyond DeFi · Identity and sessions', 64.4, 74.2]];
+const KICKS = []; // spoken lines are subtitled instead
+const hud = document.getElementById('hud');
+const chapEls = CHAPTERS.map(([txt]) => { const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `<i></i>${txt}`; hud.appendChild(d); return d; });
+const kickEls = KICKS.map(([txt]) => { const d = document.createElement('div'); d.className = 'kick'; d.innerHTML = txt; hud.appendChild(d); return d; });
+const settleChap = document.createElement('div'); settleChap.className = 'chap'; settleChap.innerHTML = '<i></i>Settlement'; hud.appendChild(settleChap);
+const settleKick = document.createElement('div'); settleKick.className = 'kick'; settleKick.innerHTML = 'Signed, packed, <em>settled</em>.'; hud.appendChild(settleKick);
+const railEl = document.getElementById('rail'), railSpans = [...railEl.children];
+const titleEl = document.getElementById('title'), veil = document.getElementById('veil'), outro = document.getElementById('outro');
+const markEl = document.getElementById('mark'), morphEl = document.getElementById('morph'), logoEl = document.getElementById('logo');
+const wmEl = outro.querySelector('.wm'), subEl = outro.querySelector('.sub'), urlEl = outro.querySelector('.url');
+const arcEls = ['a1', 'a2', 'a3'].map(id => document.getElementById(id)), dot = document.getElementById('dot');
+// arc in the logo's 362-unit space, centred on the big ring; angles in degrees, clockwise (SVG y-down)
+const arcD = (r, a0, a1) => { const p = a => `${(181 + r * Math.cos(deg(a))).toFixed(2)} ${(181 + r * Math.sin(deg(a))).toFixed(2)}`; return `M${p(a0)} A${r.toFixed(2)} ${r.toFixed(2)} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${p(a1)}`; };
+
+// ---------- 2D flat layer ----------
+const svg = document.getElementById('flat');
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent = svg) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
+function txt(str, x, y, cls, parent, anchor = 'middle') { const e = el('text', { x, y, class: cls, 'text-anchor': anchor }, parent); e.textContent = str; return e; }
+const tf = (e, x, y, s = 1, r = 0) => e.setAttribute('transform', `translate(${x} ${y}) rotate(${r}) scale(${tiny(s)})`);
+const op = (e, o) => e.setAttribute('opacity', cl(o).toFixed(3));
+function drawable(tag, attrs, parent, arrow) { const e = el(tag, { ...attrs, pathLength: 1, 'stroke-dasharray': 1, 'stroke-dashoffset': 1 }, parent); e.userData = { arrow }; return e; }
+function draw(e, x) { e.setAttribute('stroke-dashoffset', (1 - cl(x)).toFixed(4)); if (e.userData.arrow) e.setAttribute('marker-end', x >= .98 ? `url(#${e.userData.arrow})` : ''); }
+function chip(parent, x, y, w, labelTxt) {
+  const g = el('g', {}, parent); tf(g, x, y);
+  const r = el('rect', { x: -w / 2, y: -20, width: w, height: 40, rx: 20, class: 'chip' }, g);
+  const tx = txt(labelTxt, 0, 5.5, 'ct', g);
+  return { g, x, y, set(s) { r.setAttribute('class', 'chip ' + s); tx.setAttribute('class', 'ct ' + s); } };
+}
+function keyIcon(parent, color) {
+  const g = el('g', {}, parent);
+  el('circle', { cx: -26, cy: 0, r: 17, fill: 'none', stroke: color, 'stroke-width': 7 }, g);
+  el('path', { d: 'M-9 0H34M22 0V14M32 0V11', fill: 'none', stroke: color, 'stroke-width': 7, 'stroke-linecap': 'round' }, g);
+  return g;
+}
+const checkPath = 'M-11 0L-3 8L12 -10', crossPath = 'M-10 -10L10 10M10 -10L-10 10';
+const layer = el('g');
+// hero card + orb (shared across 2D scenes; sized to match the 3D tile in the flat camera)
+const heroLayer = el('g');
+const orbF = el('g', {}, heroLayer);
+el('circle', { r: 200, fill: 'url(#halo)' }, orbF); el('circle', { r: 66, fill: '#5288c2' }, orbF);
+const cardF = el('g', {}, heroLayer);
+const cardInner = el('g', {}, cardF);
+const cardBody = el('rect', { x: -90, y: -57, width: 180, height: 114, rx: 12, fill: '#7facd6' }, cardInner);
+const cardIcon = el('g', { fill: 'none', stroke: '#1f3a63', 'stroke-width': 4.5, 'stroke-linecap': 'round' }, cardInner);
+el('rect', { x: -61.5, y: -35.4, width: 123, height: 70.8, rx: 7 }, cardIcon); el('path', { d: 'M33 -21.6H48M-48 21.6H-33' }, cardIcon);
+const cardDollar = el('text', { x: 0, y: 16, 'text-anchor': 'middle', fill: '#1f3a63', style: "font:600 45px 'Geist',sans-serif" }, cardInner); cardDollar.textContent = '$';
+const cardSeal = el('circle', { cx: 72, cy: 43, r: 15, fill: '#09090b' }, cardF);
+
+const fits = []; // text-measured layout, run once fonts are ready
+function pillBox(parent, label, x, cy, fill, color, font, h = 34, stroke = 'none', dash = '') {
+  const g = el('g', {}, parent);
+  const r = el('rect', { x, y: cy - h / 2, height: h, rx: h / 2, fill, stroke, 'stroke-width': 2, 'stroke-dasharray': dash }, g);
+  const tx = el('text', { x: x + h * .42, y: cy + h * .19, fill: color, style: `font:${font}` }, g); tx.textContent = label;
+  return { g, r, tx, pad: h * .42, place(nx) { r.setAttribute('x', nx); tx.setAttribute('x', nx + this.pad); }, fit() { const w = tx.getComputedTextLength() + this.pad * 2; r.setAttribute('width', w); return w; } };
+}
+
+// -- scene H: harness --
+const gH = el('g', {}, layer);
+const hFrame = drawable('rect', { x: 700, y: 300, width: 520, height: 470, rx: 22, class: 'st' }, gH);
+const hFrameL = txt('HARNESS', 700, 284, 'lb', gH, 'start');
+const hModel = el('g', {}, gH);
+{ const pts = [...Array(6)].map((_, k) => { const a = deg(30 + k * 60); return [Math.cos(a) * 52, Math.sin(a) * 52]; });
+  el('polygon', { points: pts.map(p => p.join(',')).join(' '), fill: '#e3d8e6', stroke: '#09090b', 'stroke-width': 2 }, hModel);
+  [0, 2, 4].forEach(k => el('line', { x1: 0, y1: 0, x2: pts[k][0], y2: pts[k][1], stroke: '#09090b', 'stroke-width': 1.5 }, hModel)); }
+const hModelL = txt('MODEL', 1028, 436, 'lb', gH, 'start');
+const hCall = drawable('line', { x1: 960, y1: 488, x2: 960, y2: 606, class: 'st sky' }, gH, 'ahSky');
+const hCallL = txt('TYPED CALL', 976, 556, 'lb s sm', gH, 'start');
+const hChips = ['READ', 'STAGE', 'SIMULATE', 'COMMIT'].map((s, i) => chip(gH, 795 + i * 110, 640, 100, s));
+const hPacket = el('circle', { r: 7, fill: '#5288c2' }, gH);
+const hExit = drawable('line', { x1: 1222, y1: 540, x2: 1372, y2: 540, class: 'st thin' }, gH, 'ahInk');
+
+// -- scene R: risk — coding agent vs financial agent, same pipeline, different checks
+const R_X = [520, 925, 1330, 1735];
+const gR = el('g', {}, layer);
+function lane(parent, y, labels, strong) {
+  const g = el('g', {}, parent), ink = strong ? '#09090b' : '#a1a1aa', edge = strong ? '#09090b' : '#d4d4d8';
+  const arrows = [0, 1, 2].map(i => drawable('line', { x1: R_X[i] + 113, y1: y, x2: R_X[i + 1] - 118, y2: y, stroke: strong ? '#09090b' : '#c4c4cc', 'stroke-width': strong ? 2.5 : 2, fill: 'none' }, g, strong ? 'ahInk' : 'ahGrey'));
+  const pills = labels.map((l, i) => { const p = el('g', {}, g); tf(p, R_X[i], y);
+    el('rect', { x: -113, y: -37, width: 226, height: 74, rx: 37, fill: '#fcf7f6', stroke: edge, 'stroke-width': strong ? 2.5 : 2 }, p);
+    const tx = txt(l, 0, 8, 'node', p); tx.setAttribute('fill', ink); return p; });
+  return { g, arrows, pills, y };
+}
+const rCodeL = el('text', { x: 70, y: 310, fill: '#71717a', style: "font:600 30px 'Geist',sans-serif" }, gR); rCodeL.textContent = 'Coding agent';
+const rCodeLane = lane(gR, 300, ['INTENT', 'BUILD', 'COMMIT', 'DEPLOY'], false);
+const rCodeSub = el('text', { x: 410, y: 376, fill: '#71717a', style: "font:400 20px 'Geist',sans-serif" }, gR); rCodeSub.textContent = 'review · CI · merge: checked before it ships';
+const rFinL = el('g', {}, gR);
+[['Financial agent', 560, "font:600 32px 'Geist',sans-serif", '#09090b'], ["A signature isn't a review, and", 602, "font:400 19px 'Geist',sans-serif", '#71717a'], ["settlement can't be undone.", 630, "font:400 19px 'Geist',sans-serif", '#71717a']]
+  .forEach(([t, y, st, f]) => { const e = el('text', { x: 70, y, fill: f, style: st }, rFinL); e.textContent = t; });
+const rFinLane = lane(gR, 560, ['INTENT', 'BUILD', 'SIGN', 'SETTLE'], true);
+const RPK = { attack: ['#fbe4ef', '#df5d90'], mistake: ['#fbf1dc', '#a8801f'] };
+// [label, x, y, kind, appears at]
+const R_RISKS = [['forged instruction', 722, 468, 'attack', 15.0], ['wrong decimals', 925, 662, 'mistake', 15.4], ['stale route', 925, 728, 'mistake', 15.5], ['swapped payload', 1127, 468, 'attack', 15.08], ['sandwich', 1532, 468, 'attack', 15.16]];
+const rRisks = R_RISKS.map(([l, x, y, k, a]) => { const g = el('g', {}, gR); const p = pillBox(g, l, 0, 0, RPK[k][0], RPK[k][1], "500 23px 'Geist',sans-serif", 48); return { g, p, x, y, a, w: 0 }; });
+fits.push(() => rRisks.forEach(r => { r.w = r.p.fit(); r.p.place(-r.w / 2); }));
+const rDrop = drawable('line', { x1: 1735, y1: 598, x2: 1735, y2: 690, class: 'st' }, gR);
+const rBox = el('g', {}, gR);
+el('rect', { x: 1475, y: 690, width: 400, height: 120, rx: 14, fill: '#fff', stroke: '#09090b', 'stroke-width': 2.5 }, rBox);
+{ const a = el('text', { x: 1506, y: 740, fill: '#09090b', style: "font:600 29px 'Geist',sans-serif" }, rBox); a.textContent = 'Valid onchain.';
+  const b = el('text', { x: 1506, y: 782, fill: '#df5d90', style: "font:600 29px 'Geist',sans-serif" }, rBox); b.textContent = 'Wrong for the user.'; }
+const rLegend = el('g', {}, gR);
+const rLg1 = pillBox(rLegend, 'attack', 70, 905, RPK.attack[0], RPK.attack[1], "500 21px 'Geist',sans-serif", 40);
+const rLg1t = el('text', { y: 912, fill: '#71717a', style: "font:400 21px 'Geist',sans-serif" }, rLegend); rLg1t.textContent = 'someone corrupts the input or the tx';
+const rLg2 = pillBox(rLegend, 'mistake', 0, 905, RPK.mistake[0], RPK.mistake[1], "500 21px 'Geist',sans-serif", 40);
+const rLg2t = el('text', { y: 912, fill: '#71717a', style: "font:400 21px 'Geist',sans-serif" }, rLegend); rLg2t.textContent = 'the agent builds it wrong, no attacker needed';
+fits.push(() => { let x = 70 + rLg1.fit() + 16; rLg1t.setAttribute('x', x); x += rLg1t.getComputedTextLength() + 60; rLg2.place(x); x += rLg2.fit() + 16; rLg2t.setAttribute('x', x); });
+
+// -- scene B: gate 0.5 (fork = CI) --
+const gB = el('g', {}, layer);
+const bChain = [360, 470, 580, 690, 800].map(x => { const g = el('g', {}, gB); el('rect', { x: -42, y: -42, width: 84, height: 84, rx: 6, fill: '#fff', stroke: '#09090b', 'stroke-width': 2 }, g); return { g, x }; });
+const bLinks = [0, 1, 2, 3].map(i => el('line', { x1: 360 + i * 110 + 42, y1: 780, x2: 360 + i * 110 + 68, y2: 780, stroke: '#09090b', 'stroke-width': 2 }, gB));
+const bSlot = el('rect', { x: 868, y: 738, width: 84, height: 84, rx: 6, class: 'st thin dash', opacity: .5 }, gB);
+const bChainL = txt('CHAIN', 300, 786, 'lb', gB, 'end');
+const bFork = el('g', {}, gB); el('rect', { x: -42, y: -42, width: 84, height: 84, rx: 6, fill: '#e3d8e6', stroke: '#09090b', 'stroke-width': 2 }, bFork);
+const bForkLink = el('line', { x1: 800, y1: 736, x2: 800, y2: 604, class: 'st thin sky dash' }, gB);
+const bForkSlot = el('rect', { x: 868, y: 518, width: 84, height: 84, rx: 6, class: 'st thin dash' }, gB);
+const bForkFill = el('rect', { x: 868, y: 518, width: 84, height: 84, rx: 6, fill: '#5288c2', 'fill-opacity': .55 }, gB);
+const bForkFlash = el('rect', { x: 860, y: 510, width: 100, height: 100, rx: 10, fill: 'none', stroke: '#df5d90', 'stroke-width': 4 }, gB);
+const bForkL = txt('FORK OF LIVE CHAIN', 740, 566, 'lb s', gB, 'end');
+const bRevert = txt('REVERT', 1010, 478, 'lb r', gB, 'start');
+const bLoop = el('g', {}, gB);
+const bLoopP = el('path', { d: (() => { const r = 112, a0 = deg(-60), a1 = deg(230); return `M${Math.cos(a0) * r} ${Math.sin(a0) * r} A${r} ${r} 0 1 1 ${Math.cos(a1) * r} ${Math.sin(a1) * r}`; })(), fill: 'none', 'stroke-width': 4, 'stroke-linecap': 'round', 'marker-end': 'url(#ahRose)' }, bLoop);
+const bRetry = txt('ERROR → MODEL FIXES → RETRY', 1046, 250, 'lb', gB, 'start');
+const bOk = el('g', {}, gB); tf(bOk, 1022, 470); el('path', { d: checkPath, fill: 'none', stroke: '#5288c2', 'stroke-width': 5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, bOk); txt('PASS', 26, 7, 'lb s', bOk, 'start');
+const bArch = drawable('path', { d: 'M970 800 A290 290 0 0 1 1550 800', fill: 'none', 'stroke-width': 7, 'stroke-linecap': 'round' }, gB);
+const bArchL = txt('0.5', 1260, 488, 'num', gB);
+const bCommitL = txt('COMMIT', 1260, 760, 'lb m', gB);
+
+// -- scene C: gate 1 (signing as a request to a separate module) --
+const gC = el('g', {}, layer);
+const cAgent = drawable('rect', { x: 150, y: 250, width: 560, height: 580, rx: 24, class: 'st thin' }, gC);
+const cAgentL = txt('AGENT', 182, 298, 'lb', gC, 'start');
+const cSigner = drawable('rect', { x: 1210, y: 250, width: 560, height: 580, rx: 24, class: 'st' }, gC);
+const cSignerIn = drawable('rect', { x: 1222, y: 262, width: 536, height: 556, rx: 16, class: 'st thin sky' }, gC);
+const cSignerL = txt('WALLET MODULE · SECURE ENCLAVE', 1242, 298, 'lb', gC, 'start');
+const cBoundary = el('line', { x1: 960, y1: 230, x2: 960, y2: 850, stroke: '#09090b', 'stroke-opacity': .3, 'stroke-width': 1.5, 'stroke-dasharray': '6 8' }, gC);
+const cNoKey = el('g', {}, gC); tf(cNoKey, 430, 700); keyIcon(cNoKey, '#a1a1aa'); el('line', { x1: -52, y1: 26, x2: 52, y2: -26, stroke: '#a1a1aa', 'stroke-width': 5, 'stroke-linecap': 'round' }, cNoKey);
+const cNoKeyL = txt('NO KEY', 430, 770, 'lb m', gC);
+const cKey = el('g', {}, gC); const cKeyIn = keyIcon(cKey, '#5288c2');
+const cKeyL = txt('KEY NEVER LEAVES', 1490, 412, 'lb m sm', gC);
+const cPolicyL = txt('POLICY', 1290, 482, 'lb m', gC, 'start');
+const cRows = ['SPEND LIMIT', 'ALLOWED CONTRACT', 'RECIPIENT'].map((s, i) => {
+  const g = el('g', {}, gC); tf(g, 1290, 528 + i * 54);
+  const box = el('rect', { x: 0, y: -14, width: 28, height: 28, rx: 5, fill: '#fff', stroke: '#09090b', 'stroke-width': 1.5 }, g);
+  const ck = el('path', { d: 'M7 0L12 6L22 -6', fill: 'none', stroke: '#fff', 'stroke-width': 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
+  txt(s, 44, 6, 'lb', g, 'start'); return { g, box, ck };
+});
+const cOut = [['SIGN', 1310, 100], ['DENY', 1440, 100], ['ASK USER', 1600, 140]].map(([s, x, w]) => chip(gC, x, 746, w, s));
+const cReq = drawable('line', { x1: 714, y1: 500, x2: 1204, y2: 500, class: 'st' }, gC, 'ahInk');
+const cReqL = txt('SIGN REQUEST', 960, 480, 'lb', gC);
+const cMini = el('g', {}, gC); el('rect', { x: -30, y: -19, width: 60, height: 38, rx: 5, fill: '#7facd6' }, cMini);
+el('rect', { x: -20.5, y: -11.8, width: 41, height: 23.6, rx: 3, fill: 'none', stroke: '#1f3a63', 'stroke-width': 2 }, cMini);
+{ const d = el('text', { x: 0, y: 6, 'text-anchor': 'middle', fill: '#1f3a63', style: "font:600 16px 'Geist',sans-serif" }, cMini); d.textContent = '$'; }
+const cSig = drawable('line', { x1: 1204, y1: 596, x2: 714, y2: 596, class: 'st sky' }, gC, 'ahSky');
+const cSigL = txt('SIGNATURE', 960, 628, 'lb s', gC);
+const cSealT = el('circle', { r: 14, fill: '#09090b' }, gC);
+
+// -- scene S: risks resolved — each risk lands at the gate that can see it
+const S0 = 58.1, S_GT = [1.7, 2.4, 3.1, 3.8], S_GX = [930, 1330, 1700, 1790];
+const gS = el('g', {}, layer);
+const sLine = drawable('line', { x1: 230, y1: 440, x2: 1850, y2: 440, class: 'st' }, gS);
+const sEnd = el('circle', { cx: 1858, cy: 440, r: 9, fill: '#09090b' }, gS);
+const sEndL = txt('onchain', 1858, 488, 'ttl', gS);
+const S_NODES = [['INTENT', 330], ['BUILD', 730], ['SIGN', 1130], ['SETTLE', 1530]];
+const sNodes = S_NODES.map(([lbl]) => { const g = el('g', {}, gS); el('rect', { x: -100, y: -33, width: 200, height: 66, rx: 33, fill: '#fcf7f6', stroke: '#09090b', 'stroke-width': 2.5 }, g); txt(lbl, 0, 8, 'node', g); return g; });
+const sGates = ['0.5', '1', '2', '3'].map((n, i) => { const g = el('g', {}, gS); const bar = el('rect', { x: -6.5, y: -56, width: 13, height: 112, rx: 6.5, fill: '#09090b' }, g);
+  const w = i ? 38 : 56; el('rect', { x: -w / 2, y: 70, width: w, height: 34, rx: 17, fill: '#09090b' }, g); txt(n, 0, 93, 'badge', g); return { g, bar }; });
+const sCards = [['0.5', 'Runtime'], ['1', 'Signing policy'], ['2', 'Onchain guard'], ['3', 'Builder']].map(([n, title], i) => {
+  const x = 61 + i * 456, y = 640, g = el('g', {}, gS);
+  el('rect', { x, y, width: 430, height: 236, rx: 18, fill: '#fff', stroke: '#e4e4e7', 'stroke-width': 2 }, g);
+  const w = n.length > 1 ? 56 : 38; el('rect', { x: x + 26, y: y + 32, width: w, height: 34, rx: 17, fill: '#09090b' }, g); txt(n, x + 26 + w / 2, y + 55, 'badge', g);
+  txt(title, x + 26 + w + 14, y + 58, 'h2', g, 'start'); return { g, x, y };
+});
+const PK = { pink: ['none', '#df5d90', '#df5d90', '7 6'], amber: ['none', '#c9a24a', '#a8801f', '7 6'], green: ['#e3f4ea', 'none', '#2e8b57', ''], amberS: ['#fbf1dc', 'none', '#a8801f', ''] };
+const riskPill = (parent, label, kind) => { const [fill, stroke, color, dash] = PK[kind]; const p = pillBox(parent, label, 0, 0, fill, color, "500 21px 'Geist',sans-serif", 44, stroke, dash); return p; };
+// [risk, x, y, look, card, row, resolved label, resolved look, gate]
+const S_RISKS = [
+  ['forged instruction', 520, 335, 'pink', 1, 1, '~ forged instruction · partly', 'amberS', 1],
+  ['swapped payload', 930, 335, 'pink', 1, 0, '✓ swapped payload', 'green', 1],
+  ['sandwich', 1350, 335, 'pink', 3, 0, '✓ sandwich', 'green', 3],
+  ['policy breach (OFAC)', 1570, 335, 'pink', 2, 0, '✓ policy breach (OFAC)', 'green', 2],
+  ['wrong decimals', 730, 545, 'amber', 0, 0, '✓ wrong decimals', 'green', 0],
+  ['stale route', 730, 597, 'amber', 0, 1, '✓ stale route', 'green', 0]];
+const sRisks = S_RISKS.map(([a, x, y, k, card, row, b, k2, gate]) => { const g = el('g', {}, gS); return { g, A: riskPill(g, a, k), B: riskPill(g, b, k2), x, y, card, row, gate, wa: 0, wb: 0 }; });
+fits.push(() => sRisks.forEach(r => { r.wa = r.A.fit(); r.A.place(-r.wa / 2); r.wb = r.B.fit(); r.B.place(-r.wb / 2); }));
+const sBottom = el('g', {}, gS);
+const sBad = el('text', { x: 70, y: 930, fill: '#71717a', style: "font:500 26px 'Geist',sans-serif" }, sBottom); sBad.textContent = 'Valid onchain. Wrong for the user.';
+const sStrike = el('line', { x1: 66, y1: 921, x2: 470, y2: 921, stroke: '#df5d90', 'stroke-width': 3 }, sBottom);
+const sArrow = txt('→', 0, 975, 'ttl', sBottom, 'start');
+const sGood = el('text', { y: 931, fill: '#2e8b57', style: "font:700 30px 'Geist',sans-serif" }, sBottom); sGood.textContent = 'Only what passes every gate settles.';
+fits.push(() => { const a = sBad.getComputedTextLength(); sStrike.setAttribute('x2', 74 + a); sArrow.setAttribute('x', 98 + a); sGood.setAttribute('x', 136 + a); });
+
+// -- scene I: canonical identity + sessioned, capped authority
+const I0 = 67.9, I_ROWS = [325, 505, 685];
+const gI = el('g', {}, layer);
+const iId = el('g', {}, gI);
+el('rect', { x: -190, y: -115, width: 380, height: 230, rx: 18, fill: '#09090b' }, iId);
+[['CANONICAL IDENTITY', -62, "font:500 16px 'Geist Mono',monospace;letter-spacing:.2em", '#7facd6'], ['The user', -6, "font:400 40px 'PT Serif',serif", '#fff'],
+ ['KYC · main address 0x71c…9aE', 36, "font:400 17px 'Geist Mono',monospace", '#d4d4d8']].forEach(([s, y, st, f]) => { const e = el('text', { x: -164, y, fill: f, style: st }, iId); e.textContent = s; });
+el('rect', { x: -164, y: 56, width: 112, height: 36, rx: 18, fill: 'none', stroke: '#a1a1aa', 'stroke-width': 1.5 }, iId);
+{ const e = el('text', { x: -108, y: 80, 'text-anchor': 'middle', fill: '#fff', style: "font:500 18px 'Geist',sans-serif" }, iId); e.textContent = 'persists'; }
+const iArrows = I_ROWS.map((y, i) => drawable('path', { d: `M490 ${470 + i * 45} C565 ${470 + i * 45} 565 ${y} 630 ${y}`, class: 'st sky' }, gI, 'ahSky'));
+const iAuth = el('text', { x: 452, y: 386, 'text-anchor': 'middle', fill: '#416cac', style: "font:500 20px 'Geist',sans-serif" }, gI); iAuth.textContent = 'authorizes';
+const I_SESS = [['session 1', 'Trading agent', ['swap only', '≤ $5k / day'], '24h left', .34], ['session 2', 'Payroll agent', ['allowlisted payees', '≤ $50k / month'], '30d left', .64], ['session 3', 'Research agent', ['read-only', 'no transfers'], '7d left', .94]];
+const iSess = I_SESS.map(([tag, title, chips, left, frac], i) => {
+  const x = 640, y = 250 + i * 180, g = el('g', {}, gI);
+  el('rect', { x, y, width: 480, height: 150, rx: 16, fill: '#fff', stroke: '#aecbe8', 'stroke-width': 2 }, g);
+  const tagP = pillBox(g, tag, x + 24, y + 40, '#e2eef8', '#416cac', "500 17px 'Geist Mono',monospace");
+  const tt = el('text', { y: y + 48, fill: '#09090b', style: "font:600 24px 'Geist',sans-serif" }, g); tt.textContent = title;
+  const cps = chips.map(c => pillBox(g, c, x + 24, y + 86, '#f4f4f5', '#09090b', "400 17px 'Geist Mono',monospace"));
+  el('rect', { x: x + 24, y: y + 118, width: 340, height: 7, rx: 3.5, fill: '#e4e4e7' }, g);
+  const bar = el('rect', { x: x + 24, y: y + 118, width: 0, height: 7, rx: 3.5, fill: '#5288c2' }, g);
+  const lt = el('text', { x: x + 456, y: y + 127, 'text-anchor': 'end', fill: '#71717a', style: "font:400 17px 'Geist Mono',monospace" }, g); lt.textContent = left;
+  return { g, x, tagP, tt, cps, bar, frac };
+});
+fits.push(() => iSess.forEach(s => { const tw = s.tagP.fit(); s.tt.setAttribute('x', s.x + 24 + tw + 14); let cx = s.x + 24; s.cps.forEach(c => { c.place(cx); cx += c.fit() + 10; }); }));
+const iBar = el('rect', { x: 1184, y: 250, width: 12, height: 510, rx: 6, fill: '#09090b' }, gI);
+const iBarL = el('g', {}, gI);
+{ const a = el('text', { x: 1190, y: 800, 'text-anchor': 'middle', fill: '#09090b', style: "font:600 18px 'Geist Mono',monospace;letter-spacing:.14em" }, iBarL); a.textContent = 'SESSION CHECKS';
+  const b = el('text', { x: 1190, y: 828, 'text-anchor': 'middle', fill: '#71717a', style: "font:400 17px 'Geist',sans-serif" }, iBarL); b.textContent = 'scope · cap · time window'; }
+const iInfra = el('g', {}, gI);
+el('rect', { x: 1290, y: 215, width: 520, height: 560, rx: 20, fill: '#eaf2fb', stroke: '#aecbe8', 'stroke-width': 2 }, iInfra);
+{ const a = el('text', { x: 1314, y: 250, fill: '#416cac', style: "font:500 15px 'Geist Mono',monospace;letter-spacing:.16em" }, iInfra); a.textContent = 'YOUR INFRASTRUCTURE'; }
+const iTargets = [['Onchain', 'smart account · signing policy · guard'], ['Bank', 'payment rails · payee allowlists · limits'], ['Exchange', 'sub-accounts · scoped API keys · withdrawal caps']].map(([a, b], i) => {
+  const y = I_ROWS[i] - 50, g = el('g', {}, iInfra);
+  const r = el('rect', { x: 1312, y, width: 476, height: 100, rx: 12, fill: '#fff', stroke: '#e4e4e7', 'stroke-width': 2.5 }, g);
+  const t1 = el('text', { x: 1334, y: y + 42, fill: '#09090b', style: "font:600 24px 'Geist',sans-serif" }, g); t1.textContent = a;
+  const t2 = el('text', { x: 1334, y: y + 74, fill: '#71717a', style: "font:400 17px 'Geist',sans-serif" }, g); t2.textContent = b; return r;
+});
+const iReq = I_ROWS.map((y, i) => { const ok = i < 2, line = el('line', { x1: 1124, y1: y, x2: ok ? 1306 : 1176, y2: y, stroke: '#a1a1aa', 'stroke-width': 2, 'stroke-dasharray': '7 6' }, gI);
+  const col = ok ? '#2e9b62' : '#df5d90'; return { y, ok, line, dot: el('circle', { r: 11, fill: col }, gI), halo: el('circle', { r: 11, fill: 'none', stroke: col, 'stroke-width': 3 }, gI) }; });
+const iX = el('path', { d: crossPath, fill: 'none', stroke: '#df5d90', 'stroke-width': 5, 'stroke-linecap': 'round' }, gI);
+const iStrip = el('g', {}, gI);
+const iStripR = drawable('rect', { x: 110, y: 838, width: 1700, height: 112, rx: 18, class: 'st' }, iStrip);
+const iF1 = pillBox(iStrip, 'Canonical identity (KYC)', 140, 894, '#09090b', '#fff', "600 24px 'Geist',sans-serif", 52);
+const iF2 = el('text', { y: 903, fill: '#71717a', style: "font:500 28px 'Geist',sans-serif" }, iStrip); iF2.textContent = '+';
+const iF3 = pillBox(iStrip, '[ session wallet 1, 2, 3 … ]', 0, 894, '#e2eef8', '#416cac', "600 24px 'Geist',sans-serif", 52);
+const iF4 = el('text', { y: 903, fill: '#71717a', style: "font:400 25px 'Geist Mono',monospace" }, iStrip); iF4.textContent = 'with scoped authority ≈';
+const iF5 = el('text', { y: 906, fill: '#09090b', style: "font:700 36px 'PT Serif',serif" }, iStrip); iF5.textContent = 'OAuth for money';
+const iFs = [iF1.g, iF2, iF3.g, iF4, iF5];
+fits.push(() => { let x = 140 + iF1.fit() + 18; iF2.setAttribute('x', x); x += 34; iF3.place(x); x += iF3.fit() + 20; iF4.setAttribute('x', x); x += iF4.getComputedTextLength() + 18; iF5.setAttribute('x', x); });
+
+layer.appendChild(heroLayer); // hero on top of every 2D scene
+
+const ORB_K = [[6.0, [960, 540, 1]], [6.4, [960, 540, 1]], [7.2, [420, 540, .66]], [8.2, [420, 540, .66]], [8.8, [960, 430, 0]]];
+const CARD_K = [
+  [10.6, [1125, 640, .3]], [11.3, [1480, 540, 1]], [12.2, [1480, 540, 1]], [12.8, [722, 560, .42]], [13.4, [722, 560, .42]], [14.0, [1127, 560, .42]],
+  [14.4, [1127, 560, .42]], [15.0, [1530, 560, .42]], [15.4, [1530, 560, .42]], [15.9, [1735, 560, .5]], [18.2, [1735, 560, .5]], [18.21, [960, 540, 1]],
+  [21.3, [960, 540, 1]], [22.0, [910, 330, .8]], [22.9, [910, 330, .8]], [23.2, [910, 472, .8]], [23.8, [910, 330, .8]], [24.6, [910, 330, .8]], [24.9, [910, 472, .8]],
+  [25.6, [910, 472, .8]], [26.0, [1060, 640, .8]], [26.6, [1460, 640, .8]], [27.4, [1460, 640, .8]], [27.9, [960, 540, 1]],
+  [30.5, [960, 540, 1]], [31.2, [430, 470, 1]], [36.3, [430, 470, 1]], [36.9, [960, 540, 1]]];
+
+function seek2D(t) {
+  const o2 = FLAT2D.reduce((o, [a, b]) => Math.max(o, win(t, a, b, .3)), 0);
+  svg.style.opacity = o2.toFixed(3); svg.style.display = o2 > 0 ? '' : 'none';
+  if (o2 <= 0) return;
+  // hero orb / card
+  { const [x, y, s] = keyed(ORB_K, t); tf(orbF, x, y, s); op(orbF, t < 8.8 ? 1 : 0); }
+  { const [x, y, s] = keyed(CARD_K, t); tf(cardF, x, y, s);
+    const vis = t < 10.6 ? 0 : t < 18.2 ? seg(t, 10.6, 10.8) : t < 18.4 ? 0 : t < 19.2 ? seg(t, 18.4, 18.7) : t < 37.4 ? 1 : 0; op(cardF, vis);
+    const bad = (t > 16.2 && t < 18.3) || (t > 23.2 && t < 24.3);
+    cardBody.setAttribute('fill', bad ? '#df5d90' : '#7facd6');
+    cardIcon.setAttribute('stroke', bad ? '#6e1c3d' : '#1f3a63'); cardDollar.setAttribute('fill', bad ? '#6e1c3d' : '#1f3a63');
+    const ed = seg(t, 24.0, 24.4) * (t < 28.3 ? 1 : 0); // the fix: card flips over, rewritten
+    cardInner.setAttribute('transform', `scale(${tiny(Math.abs(Math.cos(Math.PI * ed)))} 1)`);
+    const sealS = t > 14.8 && t < 18.3 ? eback(seg(t, 14.8, 15.1)) : t > 35.2 ? eback(seg(t, 35.2, 35.5)) : 0;
+    cardSeal.setAttribute('r', 15 * sealS); }
+
+  // H — harness
+  op(gH, t < 12.2 ? 1 : 1 - seg(t, 12.2, 12.6)); gH.style.display = t < 12.7 ? '' : 'none';
+  if (t < 12.7) {
+    draw(hFrame, seg(t, 6.7, 7.7)); op(hFrameL, seg(t, 7.3, 7.7));
+    tf(hModel, 960, 430, eback(seg(t, 7.2, 7.7)) * (1 + .18 * pulse(t, 8.6, 9.2)), t * 12); op(hModelL, seg(t, 7.6, 8.0));
+    draw(hCall, seg(t, 8.9, 9.3)); op(hCallL, seg(t, 9.1, 9.4));
+    hChips.forEach((c, i) => { tf(c.g, c.x, c.y, eback(seg(t, 7.6 + i * .12, 8.0 + i * .12))); c.set(t > 9.4 + i * .38 ? 'on' : ''); });
+    const px = seg(t, 9.4, 10.6); tf(hPacket, lerp(795, 1125, px), 606); op(hPacket, px > 0 && px < 1 ? 1 : 0);
+    draw(hExit, seg(t, 10.6, 11.0));
+  }
+  // R — risk
+  op(gR, win(t, 12.3, 18.5, .35)); gR.style.display = t > 12.2 && t < 18.6 ? '' : 'none';
+  if (t > 12.2 && t < 18.6) {
+    op(rCodeL, seg(t, 12.4, 12.8)); op(rFinL, seg(t, 12.5, 12.9));
+    [[rCodeLane, 12.4], [rFinLane, 12.55]].forEach(([L, a]) => { L.pills.forEach((p, i) => tf(p, R_X[i], L.y, eback(seg(t, a + i * .1, a + .35 + i * .1)))); L.arrows.forEach((ar, i) => draw(ar, seg(t, a + .2 + i * .1, a + .5 + i * .1))); });
+    op(rCodeSub, seg(t, 12.9, 13.3));
+    rRisks.forEach(r => { tf(r.g, r.x, r.y, eback(seg(t, r.a, r.a + .35))); op(r.g, seg(t, r.a, r.a + .1)); });
+    draw(rDrop, seg(t, 16.3, 16.6)); op(rBox, seg(t, 16.5, 16.8)); rBox.setAttribute('transform', `translate(0 ${((1 - eout(seg(t, 16.5, 17.0))) * 16).toFixed(2)})`);
+    op(rLegend, seg(t, 17.0, 17.4));
+  }
+  // B — gate 0.5
+  op(gB, win(t, 21.1, 28.1, .3)); gB.style.display = t > 21 && t < 28.2 ? '' : 'none';
+  if (t > 21 && t < 28.2) {
+    bChain.forEach((b, i) => { const x = eout(seg(t, 21.5 + i * .08, 21.9 + i * .08)); tf(b.g, b.x, 780 + 24 * (1 - x)); op(b.g, x); });
+    bLinks.forEach(l => op(l, seg(t, 21.9, 22.2))); op(bSlot, .5 * seg(t, 21.9, 22.2)); op(bChainL, seg(t, 21.8, 22.1));
+    { const x = eout(seg(t, 22.2, 22.8)); tf(bFork, 800, lerp(780, 560, x)); op(bFork, seg(t, 22.2, 22.35)); }
+    op(bForkLink, seg(t, 22.7, 23.0)); op(bForkSlot, seg(t, 22.7, 23.0)); op(bForkL, seg(t, 22.8, 23.1));
+    op(bForkFill, seg(t, 24.9, 25.2)); op(bForkFlash, pulse(t, 23.2, 23.8));
+    op(bRevert, win(t, 23.2, 24.3, .15));
+    { const vis = win(t, 23.2, 24.9, .2); op(bLoop, vis); tf(bLoop, 910, 330, 1, -(t - 23.2) * 220); bLoopP.setAttribute('stroke', t < 24.0 ? '#df5d90' : '#5288c2'); bLoopP.setAttribute('marker-end', t < 24.0 ? 'url(#ahRose)' : 'url(#ahSky)'); }
+    op(bRetry, win(t, 23.5, 24.9, .2));
+    op(bOk, win(t, 24.9, 26.4, .2)); tf(bOk, 1022, 470, eback(seg(t, 24.9, 25.2)));
+    draw(bArch, seg(t, 21.7, 22.6)); const lit = Math.max(pulse(t, 26.0, 27.0), t > 26.3 ? .6 : 0); bArch.setAttribute('stroke', lit > .3 ? '#5288c2' : '#09090b');
+    op(bArchL, seg(t, 22.3, 22.6)); op(bCommitL, win(t, 25.7, 27.4, .2));
+  }
+  // C — gate 1
+  op(gC, win(t, 30.3, 37.2, .3)); gC.style.display = t > 30.2 && t < 37.3 ? '' : 'none';
+  if (t > 30.2 && t < 37.3) {
+    draw(cAgent, seg(t, 30.8, 31.5)); draw(cSigner, seg(t, 30.9, 31.6)); draw(cSignerIn, seg(t, 31.1, 31.8));
+    op(cAgentL, seg(t, 31.2, 31.5)); op(cSignerL, seg(t, 31.3, 31.6)); op(cBoundary, seg(t, 31.0, 31.4));
+    op(cNoKey, seg(t, 31.4, 31.8)); op(cNoKeyL, seg(t, 31.5, 31.9));
+    tf(cKey, 1490, 360, (1 + .2 * pulse(t, 34.0, 34.6)) * eback(seg(t, 31.4, 31.8))); op(cKeyL, seg(t, 31.6, 32.0));
+    op(cPolicyL, seg(t, 31.5, 31.9));
+    cRows.forEach((r, i) => { op(r.g, seg(t, 31.6 + i * .1, 31.9 + i * .1)); const on = t > 32.9 + i * .4; r.box.setAttribute('fill', on ? '#5288c2' : '#fff'); r.box.setAttribute('stroke', on ? '#5288c2' : '#09090b'); op(r.ck, on ? 1 : 0); });
+    cOut.forEach((c, i) => { tf(c.g, c.x, 746, eback(seg(t, 31.7 + i * .1, 32.0 + i * .1))); c.set(t > 34.1 && i === 0 ? 'on' : ''); });
+    draw(cReq, seg(t, 31.8, 32.3)); op(cReqL, seg(t, 32.0, 32.3));
+    { const x = eio(seg(t, 32.1, 32.8)); tf(cMini, lerp(740, 1170, x), 500 - 0); op(cMini, win(t, 32.1, 33.0, .15)); }
+    draw(cSig, seg(t, 34.3, 34.7)); op(cSigL, seg(t, 34.5, 34.8));
+    { const x = eio(seg(t, 34.5, 35.2)); cSealT.setAttribute('cx', lerp(1196, 502, x)); cSealT.setAttribute('cy', lerp(596, 513, x)); op(cSealT, t > 34.5 && t < 35.22 ? 1 : 0); }
+  }
+  // S — risks resolved
+  op(gS, win(t, 57.9, 63.9, .3)); gS.style.display = t > 57.8 && t < 64.0 ? '' : 'none';
+  if (t > 57.8 && t < 64.0) {
+    const u = t - S0;
+    draw(sLine, seg(u, 0, .6)); op(sEnd, seg(u, .5, .7)); op(sEndL, seg(u, .5, .8));
+    sNodes.forEach((g, i) => tf(g, S_NODES[i][1], 440, eback(seg(u, .1 + i * .1, .45 + i * .1))));
+    sGates.forEach((G, i) => { G.g.setAttribute('transform', `translate(${S_GX[i]} 440) scale(1 ${tiny(eout(seg(u, .3 + i * .08, .7 + i * .08))).toFixed(3)})`);
+      G.bar.setAttribute('fill', pulse(u, S_GT[i] - .1, S_GT[i] + .8) > .25 ? '#5288c2' : '#09090b'); });
+    sCards.forEach((c, i) => { op(c.g, seg(u, 1.0 + i * .08, 1.4 + i * .08)); c.g.setAttribute('transform', `translate(0 ${((1 - eout(seg(u, 1.0 + i * .08, 1.5 + i * .08))) * 24).toFixed(2)})`); });
+    sRisks.forEach((r, i) => {
+      const g0 = S_GT[r.gate] + (r.row ? .14 : 0), x = eio(seg(u, g0, g0 + .6)), mx = seg(u, g0 + .2, g0 + .45);
+      const ex = sCards[r.card].x + 26 + r.wb / 2, ey = sCards[r.card].y + 120 + r.row * 56;
+      tf(r.g, lerp(r.x, ex, x), lerp(r.y, ey, x), eback(seg(u, .5 + i * .08, .8 + i * .08)));
+      op(r.A.g, 1 - mx); op(r.B.g, mx);
+    });
+    op(sBad, seg(u, 4.5, 4.8)); op(sStrike, seg(u, 4.8, 5.0)); op(sArrow, seg(u, 4.9, 5.1)); op(sGood, seg(u, 5.0, 5.3));
+  }
+  // I — identity and sessions
+  op(gI, seg(t, 67.6, 67.9)); gI.style.display = t > 67.5 ? '' : 'none';
+  if (t > 67.5) {
+    const u = t - I0;
+    { const x = eio(seg(u, 0, .8)); tf(iId, lerp(960, 300, x), lerp(540, 515, x), lerp(.4, 1, x)); }
+    iArrows.forEach((a, i) => draw(a, seg(u, .6 + i * .15, 1.1 + i * .15))); op(iAuth, seg(u, 1.0, 1.3));
+    iSess.forEach((s, i) => { const a = .8 + i * .15; op(s.g, seg(u, a, a + .3)); s.g.setAttribute('transform', `translate(${((1 - eout(seg(u, a, a + .5))) * -30).toFixed(2)} 0)`);
+      s.bar.setAttribute('width', (340 * Math.max(0, s.frac - .012 * Math.max(0, u - 2.2)) * eout(seg(u, 1.4, 2.2))).toFixed(2)); });
+    { const x = eout(seg(u, 2.0, 2.6)); iBar.setAttribute('height', 510 * x); iBar.setAttribute('y', 505 - 255 * x); op(iBarL, seg(u, 2.3, 2.7)); }
+    op(iInfra, seg(u, 2.2, 2.7)); iInfra.setAttribute('transform', `translate(${((1 - eout(seg(u, 2.2, 2.9))) * 40).toFixed(2)} 0)`);
+    iReq.forEach((r, i) => {
+      const a = 3.0 + i * .4, x = eio(seg(u, a, a + .6)), endX = r.ok ? 1296 : 1166;
+      op(r.line, seg(u, a - .3, a));
+      r.dot.setAttribute('cx', lerp(1130, endX, x)); r.dot.setAttribute('cy', r.y); op(r.dot, seg(u, a - .1, a) * (r.ok ? 1 - seg(u, a + .6, a + .9) : 1));
+      const hx = seg(u, a + .6, a + 1.3); r.halo.setAttribute('cx', endX); r.halo.setAttribute('cy', r.y); r.halo.setAttribute('r', 11 + hx * 26); op(r.halo, hx > 0 && hx < 1 ? 1 - hx : 0);
+      if (r.ok) iTargets[i].setAttribute('stroke', pulse(u, a + .5, a + 1.4) > .2 ? '#2e9b62' : '#e4e4e7');
+    });
+    tf(iX, 1166, I_ROWS[2] - 40, eback(seg(u, 4.4, 4.7))); op(iX, u > 4.4 ? 1 : 0);
+    draw(iStripR, seg(u, 4.6, 5.3)); iFs.forEach((f, i) => op(f, seg(u, 4.9 + i * .15, 5.2 + i * .15)));
+  }
+}
+
+// ---------- seek(t): the whole film is a pure function of time ----------
+const tmp = V(0, 0, 0);
+function seek(tr) {
+  // the settlement beat is inserted at SETTLE_AT: the rest of the film holds while it plays
+  const t = tr < SETTLE_AT ? tr : tr < SETTLE_AT + SETTLE_LEN ? SETTLE_AT : tr - SETTLE_LEN;
+  const blockZ = lerp(-185, -194.6, eio(seg(tr, 53.0, 54.2)));
+  // hero position first (the flat camera frames it)
+  const hp = keyed(HK, t);
+  const bob = t < 47.0 ? .06 * Math.sin(t * 2.2) : 0;
+  hero.position.set(hp[0], hp[1] + bob, hp[2]);
+  if (tr > 47.5) hero.position.z = blockZ;
+
+  // camera: 3D route, dolly-zoomed into a flat side view at the 2D stops
+  const u = camU(t), cp = camPos.getPoint(u), ct = camTgt.getPoint(u), fl = flatAt(t), k = fl.k;
+  let fov = 35, extra = 0;
+  if (k > 0) {
+    const hv = fl.tg ? fl.tg.clone() : V(hp[0], hp[1], hp[2]), tg = ct.clone().lerp(hv, k);
+    const d0 = cp.clone().sub(ct), dist0 = d0.length(); d0.normalize();
+    const dir = d0.lerp(V(Math.cos(.07), Math.sin(.07), 0), k).normalize();
+    fov = 35 * Math.pow((fl.half > 10 ? 12 : 5) / 35, k);
+    const half = lerp(dist0 * Math.tan(deg(17.5)), fl.half, k), dist = half / Math.tan(deg(fov / 2));
+    camera.position.copy(tg).add(dir.multiplyScalar(dist)); camera.fov = fov; camera.near = Math.max(.1, dist * .08 * k); camera.updateProjectionMatrix(); camera.lookAt(tg);
+    extra = Math.max(0, dist - 14);
+  } else {
+    const sK = eio(seg(tr, 52.4, 53.4)) * (1 - eio(seg(tr, 56.0, 57.2)));
+    cp.lerp(V(9.5, 3.9, -188.5), sK); ct.lerp(V(0, .9, -199), sK);
+    camera.position.copy(cp); camera.fov = 35; camera.near = .1; camera.updateProjectionMatrix(); camera.lookAt(ct);
+  }
+  camera.updateMatrixWorld();
+  const tgt = k > 0 ? (fl.tg || hero.position) : ct;
+  const far = eio(seg(t, 53.4, 54.8) * (1 - seg(t, 63.9, 65.4)));
+  scene.fog.near = lerp(30, 70, far) + extra; scene.fog.far = lerp(95, 300, far) + extra;
+  grid.material.opacity = .6 * (1 - far * .8);
+  sun.position.copy(tgt).add(V(14, 30, 12)); sun.target.position.copy(tgt); sun.castShadow = far < .02;
+
+  // hero look
+  const absorb = [0, 1, 2, 3, 4].reduce((s, i) => s + pulse(t, 3.9 + i * .12, 4.5 + i * .12), 0);
+  const os = eback(seg(t, .3, 1.3)) * (1 - eio(seg(t, 9.2, 10.0))) * (1 + .12 * Math.min(absorb, 1.5));
+  orb.scale.setScalar(tiny(os)); orb.visible = os > .002;
+  orb.material.emissiveIntensity = .45 + .4 * Math.min(absorb, 1);
+  halo.scale.setScalar(tiny(os) * 3.4); halo.material.opacity = cl(os);
+  const ts = eback(seg(t, 9.4, 10.2)); tile.scale.setScalar(tiny(ts)); tile.visible = ts > .002;
+  const yawB = Math.atan2(camera.position.x - hp[0], camera.position.z - hp[2]);
+  const yaw = t > 47.0 ? lerp(yawB, Math.PI / 2, eio(seg(t, 47.0, 47.5))) : yawB;
+  tile.rotation.set(t < 47.0 && k < .5 ? .08 * Math.sin(t * 1.3) : 0, yaw, 0);
+  seal.scale.setScalar(tiny(eback(seg(t, 35.2, 35.5)))); seal.visible = t > 35.2;
+
+  // route
+  let L = t < 5.6 ? 6 * eout(seg(t, 4.2, 5.6)) : -hp[2] + 7;
+  L = lerp(L, 205, eio(seg(t, 53.4, 54.8)));
+  L = lerp(L, 236, eio(seg(t, 63.9, 65.4)));
+  route.scale.z = tiny(L);
+
+  // intent: ripples + words
+  ripples.forEach((r, i) => { const x = seg(t, .6 + i * .5, 2.6 + i * .5); r.scale.setScalar(1 + x * 4.5); r.material.opacity = x > 0 && x < 1 ? (1 - x) * .45 : 0; r.visible = r.material.opacity > 0; });
+  wordLabels.forEach((L, i) => {
+    const a = i / 5 * Math.PI * 2 + t * .35, rad = 2.9 * (1 - eio(seg(t, 3.0 + i * .12, 4.1 + i * .12)));
+    L.pos.set(Math.cos(a) * rad, 1.2 + Math.sin(i * 1.9) * .95 * rad / 2.9, Math.sin(a) * rad);
+  });
+
+  // harness station
+  tunnel.visible = t > 4.3;
+  rings.forEach(m => {
+    const { fin, st, rs, d } = m.userData, x = eout(seg(t, d, d + 1.2));
+    m.position.lerpVectors(st, fin, x); m.rotation.set(rs[0] * (1 - x), rs[1] * (1 - x), rs[2] * (1 - x));
+    m.scale.setScalar(tiny(seg(t, d, d + .3)));
+    const after = t > 12 ? .3 : cl(1 - Math.abs(hp[2] - fin.z) / 2) * .8;
+    m.material.color.lerpColors(RINGC, SKY, after); m.material.emissiveIntensity = after * .6;
+  });
+  rails.forEach(p => p.scale.z = tiny(eout(seg(t, 5.0, 5.9))));
+  model.scale.setScalar(tiny(eback(seg(t, 5.2, 5.8)))); model.rotation.set(t * .3, t * .6, 0);
+  wire.scale.y = tiny(seg(t, 5.6, 6.0));
+
+  // gate 0.5 station
+  forkG.visible = t > 19 && t < 61;
+  forkBlocks.forEach((b, i) => { b.position.y = lerp(.6, 3.4, eout(seg(t, 20.0 + i * .2, 20.9 + i * .2))); setOp(b, seg(t, 20.0 + i * .2, 20.3 + i * .2)); });
+  forkFill.visible = t > 24.9; forkFill.scale.setScalar(tiny(eback(seg(t, 24.9, 25.3))));
+  if (t > 19) archGlow(0, t > 26.3 ? .3 : 0);
+
+  // gate 1 station
+  vault.visible = t > 28; vault.scale.setScalar(tiny(eback(seg(t, 29.2, 29.9)))); key.rotation.set(.3, t * .8, 0);
+  if (t > 28) archGlow(1, t > 36.5 ? .3 : 0);
+
+  // gate 2: contract raises its net; rules evaluated on it
+  g2.visible = t > 37 && t < 61;
+  contract.material.emissiveIntensity = .5 * pulse(t, 38.8, 39.6) + .4 * pulse(t, 41.1, 41.7);
+  shield.scale.setScalar(tiny(eout(seg(t, 39.0, 39.9))));
+  flag.scale.setScalar(tiny(eback(seg(t, 39.4, 39.9))) * (1 + .08 * Math.sin(t * 6)));
+  { const x = ein(seg(t, 40.2, 41.2)); rogue.position.lerpVectors(V(-6.5, 1.6, -143), IMPACT, x);
+    rogue.rotation.set(0, Math.atan2(camera.position.x - rogue.position.x, camera.position.z - rogue.position.z), 0);
+    setOp(rogue, t > 40.2 && t < 41.22 ? seg(t, 40.2, 40.4) : 0); }
+  frags.forEach(m => { const d = t - 41.2, { o, v, s } = m.userData; m.visible = d > 0 && d < 1.6;
+    if (m.visible) { m.position.set(IMPACT.x + o.x + v.x * d, Math.max(.1, IMPACT.y + o.y + v.y * d - 4.9 * d * d), IMPACT.z + o.z + v.z * d); m.rotation.set(s.x * d, s.y * d, s.z * d); m.material.opacity = 1 - seg(d, 1.0, 1.6); } });
+  [[ripR, 41.2, IMPACT], [ripS, 43.05, V(.6, 1.6, -152)]].forEach(([m, a, p]) => { const x = seg(t, a, a + .9); m.visible = x > 0 && x < 1; m.position.copy(p); m.scale.setScalar(.2 + eout(x) * 2.4); m.material.opacity = 1 - x; });
+  ruleLabels.forEach((L, i) => {
+    const bad = i === 0 && t > 41.2 && t < 42.4, ok = t > [43.0, 42.85, 42.7][i];
+    const cls = 'lbl rule' + (bad ? ' bad' : ok ? ' ok' : ''), html = (bad ? '✗ ' : ok ? '✓ ' : '') + RULES[i];
+    if (L.el.className !== cls) { L.el.className = cls; L.el.textContent = html; }
+  });
+  if (t > 37) archGlow(2, Math.max(pulse(t, 42.9, 44.1), t > 43.3 ? .3 : 0));
+
+  // gate 3: mempool -> builder packs, checks, removes, seals
+  g3.visible = t > 43.5 && t < 61;
+  blockG.position.z = blockZ;
+  { const dk = 54.2; dockLink.scale.setScalar(tiny(eback(seg(tr, dk, dk + .35)))); dockLink.visible = tr > dk;
+    const rx = seg(tr, dk, dk + .9); dockRing.visible = rx > 0 && rx < 1; dockRing.scale.setScalar(1 + rx * 2.6); dockRing.material.opacity = 1 - rx;
+    settled.forEach((b, i) => { const kk = pulse(tr, dk + .1 + i * .13, dk + .6 + i * .13); b.userData.edge.material.color.lerpColors(INK, SKY, kk); b.userData.body.material.emissiveIntensity = kk * .45; }); }
+  poolHaze.material.opacity = .95 * win(t, 44.6, 52.8, .6);
+  pool.forEach((p, i) => {
+    const [, , tp, slot] = POOL[i];
+    const bobbed = p.home.clone().add(V(Math.sin(t * .9 + i) * .15, Math.sin(t * 1.3 + i * 2) * .12, 0));
+    let pos = bobbed, yaw = Math.atan2(camera.position.x - bobbed.x, camera.position.z - bobbed.z) + .25 * Math.sin(t + i), fade = seg(t, 44.6 + i * .06, 45.1 + i * .06);
+    if (tp !== null && t > tp) { const x = eio(seg(t, tp, tp + .5)); const sw = V(SLOT_X[slot], .62, blockG.position.z);
+      const from = p.home.clone().add(V(Math.sin(tp * .9 + i) * .15, Math.sin(tp * 1.3 + i * 2) * .12, 0));
+      pos = from.lerp(sw, x); yaw = lerp(yaw, Math.PI / 2, x); }
+    if (i === ROGUE) {
+      const e = eio(seg(t, 50.0, 50.9)); if (e > 0) pos = V(lerp(SLOT_X[4], 2.8, e), lerp(.62, 5.6, e), blockG.position.z + lerp(0, .6, e));
+      const red = seg(t, 49.45, 49.6); p.g.userData.body.material.color.lerpColors(p.col, ROSE, red); p.g.userData.body.material.emissive.lerpColors(INK, ROSE, red);
+      p.g.userData.body.material.emissiveIntensity = .35 * red + 1.0 * pulse(t, 49.45, 49.9);
+      fade *= 1 - seg(t, 50.5, 51.0);
+    }
+    if (tp === null) fade *= 1 - seg(t, 52.0, 52.8);
+    p.g.position.copy(pos); p.g.rotation.set(0, yaw, i === ROGUE ? 2.4 * eio(seg(t, 50.0, 50.9)) : 0); p.g.scale.setScalar(.85); setOp(p.g, fade);
+  });
+  { const x = seg(t, 49.0, 49.8); beam.visible = x > 0 && x < 1; beam.position.x = lerp(-2.1, 2.1, eio(x)); beam.material.opacity = .55 * pulse(t, 49.0, 49.8); }
+  lidPivot.rotation.x = lerp(-1.85, 0, eio(seg(t, 51.5, 52.1)));
+  { const kk = Math.max(pulse(t, 52.1, 52.8), pulse(tr, 54.1, 54.8)); boxEdges.material.color.lerpColors(INK, SKY, kk); wallM.emissiveIntensity = kk * .5; }
+  if (t > 43.5) archGlow(3, Math.max(pulse(t, 52.0, 53.0), t > 52.4 ? .3 : 0));
+
+  // summary stream
+  const glowSum = [0, 0, 0, 0];
+  tokens.forEach(kt => {
+    const { m, burst, f, t0, tc, zc } = kt; const d = t - t0;
+    m.visible = d > 0 && t < 58.6; burst.visible = false; if (!m.visible) return;
+    m.position.set(0, 1.4, Math.max(-STREAM_V * d, zc));
+    if (t > tc) { const e = t - tc;
+      if (f === 'P') { m.material.color.copy(SKY); m.material.emissive.copy(SKY); m.material.emissiveIntensity = .4; m.material.opacity = 1 - seg(e, .2, .7); }
+      else { m.material.color.copy(ROSE); m.material.emissive.copy(ROSE); m.material.emissiveIntensity = .4; m.position.y = 1.4 - 1.2 * ein(seg(e, 0, .7)); m.material.opacity = 1 - seg(e, .4, .8);
+        glowSum[f] += Math.exp(-e * 3); const bx = seg(e, 0, .8); burst.visible = bx < 1; burst.position.set(0, 1.6, zc); burst.scale.setScalar(1 + bx * 3.5); burst.material.opacity = 1 - bx; } }
+    else { m.material.color.copy(SOFT); m.material.emissive.copy(INK); m.material.emissiveIntensity = 0; m.material.opacity = seg(d, 0, .15); }
+  });
+  if (t > 53.6 && t < 58.4) glowSum.forEach((g, i) => archGlow(i, Math.min(1, .3 + g)));
+
+  // identity
+  idG.visible = t > 63.9;
+  core.scale.setScalar(tiny(eback(seg(t, 65.2, 65.8))));
+  coreRing.scale.setScalar(tiny(eout(seg(t, 65.3, 66.0)))); coreRing.rotation.z = t * .4;
+  let sessAnchor = null;
+  sessions.forEach((S, i) => {
+    const [tilt, ph, , sp, life] = S.s; const f = cl(life(t));
+    const r = 3.4 * eout(seg(t, sp, sp + 1)), th = ph + .55 * (t - ID0);
+    const p = V(r * Math.cos(th), -r * Math.sin(th) * Math.sin(tilt), r * Math.sin(th) * Math.cos(tilt));
+    S.g.position.copy(p);
+    const dead = 0, o = seg(t, sp, sp + .3) * (1 - dead);
+    setOp(S.g, o); S.bubble.scale.setScalar(1 + dead * .9);
+    const q = Math.round(Math.max(.02, f) * Math.PI * 2 * 40) / 40;
+    if (q !== S.lastArc) { S.timer.geometry.dispose(); S.timer.geometry = new THREE.TorusGeometry(.6, .035, 8, 64, q); S.lastArc = q; }
+    S.timer.material.color.copy(f < .25 ? ROSE : SKY); S.timer.lookAt(camera.position);
+    const pos = S.link.geometry.attributes.position; pos.setXYZ(1, p.x, p.y, p.z); pos.needsUpdate = true; S.link.material.opacity = .4 * o; S.link.visible = o > 0;
+    if (i === 0) sessAnchor = p;
+  });
+  if (sessAnchor) sessLabel.pos.copy(sessAnchor).add(idG.position).add(V(0, 1.15, 0));
+
+  // DOM labels (3D-anchored)
+  labels.forEach(L => {
+    const o = win(L.real ? tr : t, L.a, L.b, .35);
+    if (o <= 0) { L.el.style.opacity = 0; return; }
+    tmp.copy(L.pos).project(camera);
+    if (tmp.z > 1) { L.el.style.opacity = 0; return; }
+    L.el.style.opacity = o; L.el.style.transform = `translate(${(tmp.x + 1) / 2 * W}px,${(1 - tmp.y) / 2 * H}px) translate(-50%,-50%)`;
+  });
+  CHAPTERS.forEach(([, a, b], i) => { chapEls[i].style.opacity = win(t, a, b, .35); });
+  KICKS.forEach(([, a, b], i) => { const o = win(t, a, b, .45); kickEls[i].style.opacity = o; kickEls[i].style.transform = `translateY(${(1 - eout(seg(t, a, a + .7))) * 22}px)`; });
+  titleEl.style.opacity = win(t, 1.4, 5.2, .5); titleEl.style.transform = `translateY(${(1 - eout(seg(t, 1.4, 2.2))) * 24}px)`;
+  railEl.style.opacity = win(t, 19.4, 63.9, .4);
+  const cur = t < 28.5 ? 0 : t < 37.5 ? 1 : t < 45.5 ? 2 : t < 53.5 ? 3 : 4;
+  railSpans.forEach((s, i) => { s.className = cur === 4 ? 'on' : i === cur ? 'on' : i < cur ? 'done' : ''; });
+
+  seek2D(t);
+  settleChap.style.opacity = win(tr, 53.5, 56.3, .35);
+  settleKick.style.opacity = 0;
+
+  // outro
+  veil.style.opacity = eio(seg(t, 74.2, 75.3)); outro.style.opacity = seg(t, 74.6, 74.9);
+  { // three gates -> the Aomi mark: outer arc swings into the big ring, the intent dot opens into the small ring
+    const m = eio(seg(t, 76.4, 77.4)), sw = lerp(6.5, 51.7, m);
+    [[155.14, '#09090b'], [103, '#416cac'], [52, '#5288c2']].forEach(([r0], i) => {
+      const a = arcEls[i], r = i === 0 ? r0 : lerp(r0, 1, m);
+      a.setAttribute('d', i === 0 ? arcD(r, lerp(180, 4, m), lerp(360, 266, m)) : arcD(r, 180, 360));
+      a.setAttribute('stroke-width', i === 0 ? sw : 6.5); a.setAttribute('stroke-dashoffset', (1 - eio(seg(t, 74.9 + i * .2, 75.8 + i * .2))).toFixed(4));
+      a.setAttribute('opacity', i === 0 ? 1 : 1 - m);
+    });
+    const rise = eio(seg(t, 75.6, 76.4));
+    dot.setAttribute('cx', lerp(181, 267.765, m)); dot.setAttribute('cy', lerp(lerp(181, 26, rise), 94.235, m));
+    dot.setAttribute('r', lerp(15, 74.12, m)); dot.setAttribute('stroke-width', lerp(0, 40.2, m)); dot.setAttribute('fill-opacity', 1 - m);
+    dot.setAttribute('opacity', seg(t, 75.55, 75.7));
+    logoEl.setAttribute('opacity', seg(t, 77.3, 77.5)); morphEl.setAttribute('opacity', 1 - seg(t, 77.35, 77.55));
+    const lk = eio(seg(t, 77.5, 78.2)), shift = (wmEl.offsetWidth + 48) / 2 * (1 - lk);
+    markEl.style.transform = `translateX(${shift}px) scale(${lerp(1.5, 1, m)})`;
+    wmEl.style.opacity = seg(t, 77.6, 78.2); wmEl.style.transform = `translateX(${(1 - eout(seg(t, 77.6, 78.3))) * -18}px)`;
+    [[subEl, 78.1], [urlEl, 78.4]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
+  }
+
+  renderer.render(scene, camera);
+}
+
+// narrated film: VO_TL maps narrated time to the original film clock (piecewise linear) and carries subtitle cues
+const TL = window.VO_TL || null, captionEl = document.getElementById('sub');
+function oldTime(T) {
+  if (!TL) return T; const A = TL.anchors;
+  if (T <= A[0][0]) return A[0][1];
+  for (let i = 0; i < A.length - 1; i++) { const [n0, o0] = A[i], [n1, o1] = A[i + 1]; if (T <= n1) return o0 + (o1 - o0) * (T - n0) / (n1 - n0); }
+  return A[A.length - 1][1];
+}
+function seekFilm(T) {
+  seek(oldTime(T));
+  const c = TL && TL.cues.find(q => T >= q.s && T < q.e);
+  captionEl.textContent = c ? c.text : ''; captionEl.style.opacity = c ? Math.min(seg(T, c.s, c.s + .1), 1 - seg(T, c.e - .1, c.e)) : 0;
+}
+window.seek = seek; window.seekFilm = seekFilm; window.DUR = TL ? TL.dur : DUR_REAL;
+// shared seek contract (skills/slide-to-video, skills/make-aomi-video)
+window.__AOMI_VIDEO__ = { duration: window.DUR, seek: seekFilm, play() {}, pause() {} };
+await document.fonts.ready;
+fits.forEach(f => f());
+iconCache.forEach(v => { drawIcon(v.cv, v.ink); v.tx.needsUpdate = true; });
+seekFilm(+(params.get('t') || 0));
+window.__ready = true; window.__AOMI_VIDEO_READY__ = true;
+if (!params.has('render') && !params.has('t')) {
+  document.body.classList.add('fit');
+  const fit = () => { const s = Math.min(innerWidth / W, innerHeight / H); document.body.style.transform = `scale(${s})`; };
+  fit(); addEventListener('resize', fit);
+  const t0 = performance.now(); const loop = () => { seekFilm(((performance.now() - t0) / 1000) % window.DUR); requestAnimationFrame(loop); }; loop();
+}
+</script>
+</body>
+</html>

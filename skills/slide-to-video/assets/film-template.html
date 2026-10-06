@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Slide Film</title>
+<!--
+  Slide-to-video starter. One self-contained film:
+    · a 3D world (three.js) the camera flies through — one station per slide
+    · flatten windows that dolly-zoom the camera to a side-on telephoto view, then crossfade
+      into an SVG diagram (the "2D moment") drawn in the same place and scale
+    · a time warp (vo/timeline.js) that stretches the film to the voice-over, plus burned-in subtitles
+  The whole frame is a pure function of time: seek(t). Replace the example scenes; keep the machinery.
+  Read skills/slide-to-video/references/visual-grammar.md before designing scenes.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* tokens: keep in step with src/tokens/tokens.css (lilac is retired — use cool greys) */
+:root{--ink:#09090b;--paper:#fcf7f6;--sky:#5288c2;--sky2:#416cac;--sky4:#7facd6;--rose:#df5d90;--g200:#e4e4e7;--g400:#a1a1aa;--muted:#71717a}
+html,body{margin:0;background:var(--paper)}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--paper)}
+body.fit #stage{transform-origin:0 0}
+#gl,#labels,#hud,#veil,#vig,#flat{position:absolute;inset:0}
+#labels,#hud,#vig,#flat,#sub{pointer-events:none}
+canvas{display:block}
+#vig{background:linear-gradient(180deg,rgba(252,247,246,.78) 0,rgba(252,247,246,0) 170px,rgba(252,247,246,0) 700px,rgba(252,247,246,.85) 1080px)}
+.lbl{position:absolute;left:0;top:0;font:500 17px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);white-space:nowrap;opacity:0}
+.lbl.sky{color:var(--sky2)} .lbl.rose{color:var(--rose)}
+.lbl.zone{font:600 21px 'Geist Mono',monospace;letter-spacing:.16em;background:rgba(252,247,246,.88);padding:7px 16px;border:1.5px dashed rgba(9,9,11,.45);border-radius:999px}
+.lbl.rule{font:500 19px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;background:rgba(252,247,246,.92);padding:5px 12px;border:1.5px solid rgba(9,9,11,.25);border-radius:8px}
+.lbl.rule.ok{color:#fff;background:var(--sky);border-color:var(--sky)}
+.chap{position:absolute;left:96px;top:78px;font:500 20px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:14px;opacity:0}
+.chap i{width:10px;height:10px;border-radius:50%;background:var(--sky)}
+#title{position:absolute;left:96px;bottom:190px;opacity:0}
+#title .eyebrow{font:500 20px 'Geist Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+#title h1{margin:0;font:700 120px/0.95 'PT Serif',serif;letter-spacing:-.025em;color:var(--ink)}
+#title p{margin:14px 0 0;font:italic 400 48px 'PT Serif',serif;color:var(--sky2)}
+#veil{background:var(--paper);opacity:0}
+#outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+#outro .lock{display:flex;align-items:center;gap:48px}
+#mark{width:140px;height:140px;overflow:visible;display:block}
+#outro .wm{font:600 140px/1 'Source Serif 4',serif;letter-spacing:-.02em;color:var(--ink);opacity:0}
+#outro .sub{font:italic 400 44px 'PT Serif',serif;color:var(--ink);margin-top:46px;opacity:0}
+#outro .url{font:500 22px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:30px;opacity:0}
+#sub{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);max-width:1600px;text-align:center;font:500 34px/1.3 'Geist',sans-serif;color:#fff;background:rgba(9,9,11,.82);padding:10px 24px;border-radius:10px;opacity:0;white-space:nowrap}
+/* 2D layer */
+#flat{opacity:0}
+#flat .st{fill:none;stroke:#09090b;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+#flat .thin{stroke-width:1.5} #flat .sky{stroke:#5288c2} #flat .rose{stroke:#df5d90}
+#flat .lb{font:500 17px 'Geist Mono',monospace;letter-spacing:.14em;fill:#09090b}
+#flat .lb.s{fill:#416cac} #flat .lb.m{fill:#71717a}
+#flat .node{font:500 22px 'Geist Mono',monospace;letter-spacing:.18em;fill:#09090b}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="gl"></div>
+  <div id="vig"></div>
+  <div id="labels"></div>
+  <svg id="flat" viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#e4e4e7" stroke-width="1"/></pattern>
+      <radialGradient id="halo"><stop offset="0" stop-color="#5288c2" stop-opacity=".45"/><stop offset=".5" stop-color="#5288c2" stop-opacity=".12"/><stop offset="1" stop-color="#5288c2" stop-opacity="0"/></radialGradient>
+      <marker id="ahInk" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#09090b"/></marker>
+      <marker id="ahSky" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5288c2"/></marker>
+    </defs>
+    <rect width="1920" height="1080" fill="#fcf7f6"/>
+    <rect width="1920" height="1080" fill="url(#grid)" opacity=".7"/>
+  </svg>
+  <div id="hud">
+    <div id="title"><div class="eyebrow">Aomi Labs Research</div><h1>Deck title</h1><p>one-line promise</p></div>
+  </div>
+  <div id="veil"></div>
+  <div id="outro">
+    <div class="lock">
+      <svg id="mark" viewBox="0 0 362 362">
+        <g id="morph" fill="none">
+          <path id="a1" stroke="#09090b" pathLength="1" stroke-dasharray="1"/>
+          <path id="a2" stroke="#416cac" pathLength="1" stroke-dasharray="1"/>
+          <path id="a3" stroke="#5288c2" pathLength="1" stroke-dasharray="1"/>
+          <circle id="dot" cx="181" cy="181" r="15" fill="#df5d90" stroke="#09090b" stroke-width="0"/>
+        </g>
+        <!-- paths copied from assets/logo/aomi-mark.svg — re-copy if the mark changes -->
+        <g id="logo" fill="#09090b" opacity="0"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g>
+      </svg>
+      <div class="wm">aomi</div>
+    </div>
+    <div class="sub">Deck title, one line</div>
+    <div class="url">aomi.dev/research &nbsp;·&nbsp; @aomi_labs</div>
+  </div>
+  <div id="sub"></div>
+</div>
+<script src="vo/timeline.js" onerror="void 0"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+// ---------- timeline (seconds on the silent "original" clock; the voice-over warps it later) ----------
+const W = 1920, H = 1080, DUR = 22;
+
+// ---------- math ----------
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => cl((t - a) / (b - a));
+const lerp = (a, b, x) => a + (b - a) * x;
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eout = x => 1 - Math.pow(1 - x, 3);
+const eback = x => { const c1 = 1.70158, c3 = c1 + 1; return x <= 0 ? 0 : 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const win = (t, a, b, f = .4) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+const pulse = (t, a, b) => Math.sin(Math.PI * seg(t, a, b));
+const tiny = s => Math.max(s, 1e-3);
+const deg = THREE.MathUtils.degToRad;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+// keyframed path: [[t, [x, y, z]], ...] eased between keys; repeat a key to hold
+function keyed(keys, t) {
+  if (t <= keys[0][0]) return keys[0][1].slice();
+  for (let i = 0; i < keys.length - 1; i++) { const [a, pa] = keys[i], [b, pb] = keys[i + 1]; if (t <= b) { const x = eio(seg(t, a, b)); return pa.map((v, j) => lerp(v, pb[j], x)); } }
+  return keys[keys.length - 1][1].slice();
+}
+
+// ---------- palette (3D structure is grey, never black; sky = passed, rose = failed) ----------
+const C = { paper: 0xfcf7f6, ink: 0x09090b, sky: 0x5288c2, sky4: 0x7facd6, rose: 0xdf5d90, arch: 0x9d9da8, track: 0xa1a1aa, block: 0xe4e4e7, fill: 0xd4d4d8, white: 0xffffff, cool2: 0xe4e4e7 };
+const SKY = new THREE.Color(C.sky), ARCHC = new THREE.Color(C.arch);
+
+// ---------- renderer ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('gl').appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(C.paper); scene.fog = new THREE.Fog(C.paper, 30, 95);
+const camera = new THREE.PerspectiveCamera(35, W / H, .1, 2000);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xece4e2, 1.25));
+const sun = new THREE.DirectionalLight(0xffffff, 1.7); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 120 }); sun.shadow.bias = -.0005; sun.shadow.radius = 5;
+scene.add(sun, sun.target);
+
+// ---------- factories ----------
+const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: .55, metalness: 0, ...o });
+const glowM = (color, ei = .35, o = {}) => std(color, { emissive: color, emissiveIntensity: ei, ...o });
+const lineM = (color = C.ink, op = 1) => new THREE.LineBasicMaterial({ color, transparent: true, opacity: op });
+function edged(geo, mat, lcol = C.ink, lop = .8) { const m = new THREE.Mesh(geo, mat); m.castShadow = m.receiveShadow = true; m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), lineM(lcol, lop))); return m; }
+function mark(o) { o.traverse(n => { if (n.material) { n.material.transparent = true; n.userData.baseOp = n.material.opacity; } }); return o; }
+function setOp(o, a) { o.visible = a > .002; o.traverse(n => { if (n.material && n.userData.baseOp !== undefined) n.material.opacity = a * n.userData.baseOp; }); }
+function glowTexture(rgb) {
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, `rgba(${rgb},.5)`); gr.addColorStop(.5, `rgba(${rgb},.14)`); gr.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+  const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; return tx;
+}
+// the domain object as a card with an icon (here the "$" banknote used for transactions)
+const ICON_INK = { [C.sky4]: '#1f3a63', [C.rose]: '#6e1c3d', [C.white]: '#09090b' };
+const iconGeo = new THREE.PlaneGeometry(1.5, .95), iconCache = new Map(), tileGeo = new RoundedBoxGeometry(1.5, .95, .14, 4, .1);
+function drawIcon(cv, ink) {
+  const g = cv.getContext('2d'); g.clearRect(0, 0, 600, 380); g.strokeStyle = g.fillStyle = ink; g.lineWidth = 15; g.lineCap = 'round';
+  g.beginPath(); g.roundRect(95, 72, 410, 236, 22); g.stroke(); g.font = "600 150px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('$', 300, 200);
+  g.beginPath(); g.moveTo(410, 118); g.lineTo(460, 118); g.moveTo(140, 262); g.lineTo(190, 262); g.stroke();
+}
+function iconTex(color) {
+  if (!iconCache.has(color)) { const cv = document.createElement('canvas'); cv.width = 600; cv.height = 380; const ink = ICON_INK[color] || '#09090b'; drawIcon(cv, ink);
+    const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace; iconCache.set(color, { cv, tx, ink }); }
+  return iconCache.get(color).tx;
+}
+function makeCard(color, ei = .22) {
+  const g = new THREE.Group(), body = new THREE.Mesh(tileGeo, glowM(color, ei)); body.castShadow = true; g.add(body); g.userData.body = body;
+  [.075, -.075].forEach((z, k) => { const pl = new THREE.Mesh(iconGeo, new THREE.MeshBasicMaterial({ map: iconTex(color), transparent: true, depthWrite: false })); pl.position.z = z; pl.rotation.y = k ? Math.PI : 0; g.add(pl); });
+  return g;
+}
+function makeArch(z) {
+  const g = new THREE.Group(), mat = std(C.arch, { emissive: C.sky, emissiveIntensity: 0, roughness: .45 });
+  g.add(new THREE.Mesh(new THREE.TorusGeometry(3.4, .06, 12, 120, Math.PI), mat));
+  for (const s of [-1, 1]) { const f = new THREE.Mesh(new THREE.BoxGeometry(.55, .12, .55), mat); f.position.set(s * 3.4, .06, 0); g.add(f); }
+  g.traverse(n => { if (n.isMesh) n.castShadow = true; }); g.position.z = z; scene.add(g);
+  g.userData.glow = k => { mat.color.lerpColors(ARCHC, SKY, k); mat.emissiveIntensity = k * .55; }; return g;
+}
+
+// ---------- world ----------
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.ShadowMaterial({ opacity: .09 })); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const grid = new THREE.GridHelper(1200, 600, C.cool2, C.cool2); grid.position.set(0, .002, -120); grid.material.transparent = true; grid.material.opacity = .6; scene.add(grid);
+const routeGeo = new THREE.PlaneGeometry(.1, 1); routeGeo.rotateX(-Math.PI / 2); routeGeo.translate(0, .012, -.5);
+const route = new THREE.Mesh(routeGeo, new THREE.MeshBasicMaterial({ color: C.track })); route.position.z = 1; scene.add(route);
+
+// ---------- hero: the one object that carries the story (intent orb → card) ----------
+const hero = new THREE.Group(); scene.add(hero);
+const orb = new THREE.Mesh(new THREE.SphereGeometry(.55, 48, 32), glowM(C.sky, .45)); orb.castShadow = true; hero.add(orb);
+const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture('82,136,194'), transparent: true, depthWrite: false })); hero.add(halo);
+const card = makeCard(C.sky4); hero.add(card);
+
+// ---------- example 3D station: a gate whose rule net checks the card (slide 3) ----------
+const gate = makeArch(-40);
+const net = new THREE.Group(); net.position.z = -40; scene.add(net);
+net.add(new THREE.Mesh(new THREE.CircleGeometry(3.3, 64, 0, Math.PI), new THREE.MeshBasicMaterial({ color: 0xcfe1f3, transparent: true, opacity: .5, side: THREE.DoubleSide, depthWrite: false })));
+[1.1, 2.2].forEach(r => net.add(new THREE.Mesh(new THREE.TorusGeometry(r, .016, 6, 96, Math.PI), new THREE.MeshBasicMaterial({ color: C.ink, transparent: true, opacity: .25 }))));
+const source = edged(new THREE.BoxGeometry(.95, .95, .95), std(0x8c8a99, { emissive: C.sky, emissiveIntensity: 0 }), 0xb4b4bf, 1); source.position.set(0, .48, -40); scene.add(source);
+
+// ---------- camera: one continuous flight; flatten windows turn stations into 2D ----------
+const CK = [ // [t, camera position, look target] — hold by repeating a key
+  [0, [7, 3.2, 12], [0, 1.2, 0]],
+  [3.6, [3.8, 2.3, 7.8], [0, 1.3, -1]],
+  [4.6, [9, 3.4, -6], [0, 1.6, -12]],
+  [11.0, [9, 3.4, -6], [0, 1.6, -12]],
+  [12.6, [9.5, 4.6, -27], [0, 1.5, -40]],
+  [17.0, [7.4, 4.0, -30], [0, 1.6, -41]],
+  [DUR, [7.4, 4.0, -30], [0, 1.6, -41]]];
+const camPos = new THREE.CatmullRomCurve3(CK.map(k => V(...k[1])), false, 'centripetal');
+const camTgt = new THREE.CatmullRomCurve3(CK.map(k => V(...k[2])), false, 'centripetal');
+const rawU = t => { t = cl(t, 0, DUR); for (let i = 0; i < CK.length - 1; i++) if (t <= CK[i + 1][0]) return i + seg(t, CK[i][0], CK[i + 1][0]); return CK.length - 1; };
+const camU = t => { let s = 0; for (let i = 0; i < 17; i++) s += rawU(t + (i / 16 - .5) * 1.5); return s / 17 / (CK.length - 1); }; // smoothed so speed never jumps
+// [flatten start, flat, unflatten start, 3D again, fixed target (default: the hero), half-height of the flat frame]
+const FLAT = [[3.8, 4.6, 11.0, 11.8]];
+const FLAT2D = [[4.4, 11.2]]; // SVG overlay windows (fade in starts just before "flat", fades out as unflatten begins)
+function flatAt(t) { let best = { k: 0 }; for (const [a, b, c, d, tg, half] of FLAT) { const k = eio(seg(t, a, b)) * (1 - eio(seg(t, c, d))); if (k > best.k) best = { k, tg, half: half || 4.5 }; } return best; }
+
+// ---------- hero route ----------
+const HK = [[0, [0, 1.2, 0]], [3.6, [0, 1.2, 0]], [4.6, [0, 1.6, -12]], [11.4, [0, 1.6, -12]], [12.8, [1.8, 1.6, -34]], [14.4, [1.8, 1.6, -34]], [15.6, [0, 1.6, -46]]];
+
+// ---------- DOM labels anchored to 3D points ----------
+const labels = [];
+function label(html, cls, pos, a, b) { const el = document.createElement('div'); el.className = 'lbl ' + (cls || ''); el.innerHTML = html; document.getElementById('labels').appendChild(el); const L = { el, pos, a, b }; labels.push(L); return L; }
+label('source contract', '', V(1.6, .35, -40.5), 12.6, 17);
+const ruleL = label('amount ≤ cap', 'rule', V(-1.6, 2.2, -40), 13.2, 17);
+const CHAPTERS = [['The intent', .3, 3.8], ['Slide 2 · a 2D explanation', 4.6, 11.2], ['Slide 3 · a 3D mechanism', 11.6, 17.2]];
+const hud = document.getElementById('hud');
+const chapEls = CHAPTERS.map(([txt]) => { const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `<i></i>${txt}`; hud.appendChild(d); return d; });
+
+// ---------- 2D layer helpers ----------
+const svg = document.getElementById('flat'), NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent = svg) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
+function txt(str, x, y, cls, parent, anchor = 'middle') { const e = el('text', { x, y, class: cls, 'text-anchor': anchor }, parent); e.textContent = str; return e; }
+const tf = (e, x, y, s = 1, r = 0) => e.setAttribute('transform', `translate(${x} ${y}) rotate(${r}) scale(${tiny(s)})`);
+const op = (e, o) => e.setAttribute('opacity', cl(o).toFixed(3));
+// draw-on strokes: pathLength=1 + dashoffset. Never give these a CSS dash class — CSS beats the attribute.
+function drawable(tag, attrs, parent, arrow) { const e = el(tag, { ...attrs, pathLength: 1, 'stroke-dasharray': 1, 'stroke-dashoffset': 1 }, parent); e.userData = { arrow }; return e; }
+function draw(e, x) { e.setAttribute('stroke-dashoffset', (1 - cl(x)).toFixed(4)); if (e.userData.arrow) e.setAttribute('marker-end', x >= .98 ? `url(#${e.userData.arrow})` : ''); }
+const fits = []; // text-measured layout, run once fonts are ready
+function pillBox(parent, labelText, x, cy, fill, color, font, h = 34, stroke = 'none') {
+  const g = el('g', {}, parent), r = el('rect', { x, y: cy - h / 2, height: h, rx: h / 2, fill, stroke, 'stroke-width': 2 }, g);
+  const t = el('text', { x: x + h * .42, y: cy + h * .19, fill: color, style: `font:${font}` }, g); t.textContent = labelText;
+  return { g, r, t, pad: h * .42, place(nx) { r.setAttribute('x', nx); t.setAttribute('x', nx + this.pad); }, fit() { const w = t.getComputedTextLength() + this.pad * 2; r.setAttribute('width', w); return w; } };
+}
+const layer = el('g');
+// the hero, drawn in 2D at the size the flat camera shows it (half-height 4.5 units ⇒ 120 px per unit)
+const heroLayer = el('g');
+const orbF = el('g', {}, heroLayer); el('circle', { r: 200, fill: 'url(#halo)' }, orbF); el('circle', { r: 66, fill: '#5288c2' }, orbF);
+const cardF = el('g', {}, heroLayer);
+el('rect', { x: -90, y: -57, width: 180, height: 114, rx: 12, fill: '#7facd6' }, cardF);
+{ const ic = el('g', { fill: 'none', stroke: '#1f3a63', 'stroke-width': 4.5, 'stroke-linecap': 'round' }, cardF); el('rect', { x: -61.5, y: -35.4, width: 123, height: 70.8, rx: 7 }, ic); el('path', { d: 'M33 -21.6H48M-48 21.6H-33' }, ic);
+  const d = el('text', { x: 0, y: 16, 'text-anchor': 'middle', fill: '#1f3a63', style: "font:600 45px 'Geist',sans-serif" }, cardF); d.textContent = '$'; }
+
+// -- example 2D scene (slide 2): the card walks a pipeline and passes a check, built up step by step --
+const S2_X = [420, 820, 1220, 1620];
+const g2 = el('g', {}, layer);
+const s2Line = drawable('line', { x1: 300, y1: 560, x2: 1740, y2: 560, class: 'st thin' }, g2);
+const s2Nodes = ['INTENT', 'BUILD', 'CHECK', 'SETTLE'].map(n => { const g = el('g', {}, g2); el('rect', { x: -110, y: -36, width: 220, height: 72, rx: 36, fill: '#fcf7f6', stroke: '#09090b', 'stroke-width': 2.5 }, g); txt(n, 0, 8, 'node', g); return g; });
+const s2Tag = pillBox(g2, '✓ passes the check', 0, 440, '#e2eef8', '#416cac', "500 22px 'Geist',sans-serif", 46);
+fits.push(() => { const w = s2Tag.fit(); s2Tag.place(1220 - w / 2); });
+layer.appendChild(heroLayer); // hero on top of every 2D scene
+const ORB_K = [[4.4, [960, 540, 1]], [5.0, [960, 540, 1]], [5.6, [420, 450, .6]], [6.2, [420, 450, 0]]];
+const CARD_K = [[6.0, [420, 450, .5]], [6.6, [420, 450, .5]], [7.6, [820, 450, .5]], [8.6, [1220, 450, .5]], [9.6, [1620, 450, .5]], [10.6, [960, 540, 1]]];
+
+function seek2D(t) {
+  const o2 = FLAT2D.reduce((o, [a, b]) => Math.max(o, win(t, a, b, .3)), 0);
+  svg.style.opacity = o2.toFixed(3); svg.style.display = o2 > 0 ? '' : 'none'; // style, not attribute: #flat's CSS opacity would win
+  if (o2 <= 0) return;
+  { const [x, y, s] = keyed(ORB_K, t); tf(orbF, x, y, s); op(orbF, t < 6.2 ? 1 : 0); }
+  { const [x, y, s] = keyed(CARD_K, t); tf(cardF, x, y, s); op(cardF, seg(t, 6.0, 6.2)); }
+  draw(s2Line, seg(t, 4.8, 5.6));
+  s2Nodes.forEach((g, i) => tf(g, S2_X[i], 560, eback(seg(t, 5.0 + i * .12, 5.4 + i * .12))));
+  op(s2Tag.g, seg(t, 8.6, 8.9));
+}
+
+// ---------- outro: brand shapes become the real logo, then the lockup ----------
+const veil = document.getElementById('veil'), outro = document.getElementById('outro'), markEl = document.getElementById('mark'), morphEl = document.getElementById('morph'), logoEl = document.getElementById('logo');
+const wmEl = outro.querySelector('.wm'), osubEl = outro.querySelector('.sub'), urlEl = outro.querySelector('.url');
+const arcEls = ['a1', 'a2', 'a3'].map(id => document.getElementById(id)), dot = document.getElementById('dot');
+const arcD = (r, a0, a1) => { const p = a => `${(181 + r * Math.cos(deg(a))).toFixed(2)} ${(181 + r * Math.sin(deg(a))).toFixed(2)}`; return `M${p(a0)} A${r.toFixed(2)} ${r.toFixed(2)} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${p(a1)}`; };
+const O = 17.2; // outro start
+function seekOutro(t) {
+  veil.style.opacity = eio(seg(t, O, O + 1.1)); outro.style.opacity = seg(t, O + .4, O + .7);
+  const m = eio(seg(t, O + 2.2, O + 3.2));
+  [155.14, 103, 52].forEach((r0, i) => { const a = arcEls[i], r = i === 0 ? r0 : lerp(r0, 1, m);
+    a.setAttribute('d', i === 0 ? arcD(r, lerp(180, 4, m), lerp(360, 266, m)) : arcD(r, 180, 360)); a.setAttribute('stroke-width', i === 0 ? lerp(6.5, 51.7, m) : 6.5);
+    a.setAttribute('stroke-dashoffset', (1 - eio(seg(t, O + .7 + i * .2, O + 1.6 + i * .2))).toFixed(4)); a.setAttribute('opacity', i === 0 ? 1 : 1 - m); });
+  const rise = eio(seg(t, O + 1.4, O + 2.2));
+  dot.setAttribute('cx', lerp(181, 267.765, m)); dot.setAttribute('cy', lerp(lerp(181, 26, rise), 94.235, m));
+  dot.setAttribute('r', lerp(15, 74.12, m)); dot.setAttribute('stroke-width', lerp(0, 40.2, m)); dot.setAttribute('fill-opacity', 1 - m); dot.setAttribute('opacity', seg(t, O + 1.35, O + 1.5));
+  logoEl.setAttribute('opacity', seg(t, O + 3.1, O + 3.3)); morphEl.setAttribute('opacity', 1 - seg(t, O + 3.15, O + 3.35));
+  const lk = eio(seg(t, O + 3.3, O + 4.0)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(1.5, 1, m)})`;
+  wmEl.style.opacity = seg(t, O + 3.4, O + 4.0); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 3.4, O + 4.1))) * -18}px)`;
+  [[osubEl, O + 3.9], [urlEl, O + 4.2]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
+}
+
+// ---------- seek(t): the whole film as a pure function of the original clock ----------
+const tmp = V(0, 0, 0);
+function seek(t) {
+  const hp = keyed(HK, t);
+  hero.position.set(hp[0], hp[1] + .06 * Math.sin(t * 2.2), hp[2]);
+
+  // camera: CR route, dolly-zoomed to a side-on telephoto while flat (framing stays constant through the zoom)
+  const u = camU(t), cp = camPos.getPoint(u), ct = camTgt.getPoint(u), fl = flatAt(t), k = fl.k;
+  let extra = 0;
+  if (k > 0) {
+    const tg = ct.clone().lerp(fl.tg ? fl.tg.clone() : V(hp[0], hp[1], hp[2]), k);
+    const d0 = cp.clone().sub(ct), dist0 = d0.length(); d0.normalize();
+    const dir = d0.lerp(V(Math.cos(.07), Math.sin(.07), 0), k).normalize();
+    const fov = 35 * Math.pow((fl.half > 10 ? 12 : 5) / 35, k), half = lerp(dist0 * Math.tan(deg(17.5)), fl.half, k), dist = half / Math.tan(deg(fov / 2));
+    camera.position.copy(tg).add(dir.multiplyScalar(dist)); camera.fov = fov; camera.near = Math.max(.1, dist * .08 * k); camera.lookAt(tg); extra = Math.max(0, dist - 14);
+  } else { camera.position.copy(cp); camera.fov = 35; camera.near = .1; camera.lookAt(ct); }
+  camera.updateProjectionMatrix(); camera.updateMatrixWorld(); // labels project with THIS frame's camera
+  scene.fog.near = 30 + extra; scene.fog.far = 95 + extra;
+  const tgt = k > 0 ? hero.position : ct; sun.position.copy(tgt).add(V(14, 30, 12)); sun.target.position.copy(tgt);
+
+  // hero look: orb grows in, becomes the card during the 2D scene (hidden), card faces the camera
+  const os = eback(seg(t, .3, 1.3)) * (1 - eio(seg(t, 6.0, 6.4))); orb.scale.setScalar(tiny(os)); orb.visible = os > .002; halo.scale.setScalar(tiny(os) * 3.4); halo.material.opacity = cl(os);
+  const cs = eback(seg(t, 6.2, 6.6)); card.scale.setScalar(tiny(cs)); card.visible = cs > .002;
+  card.rotation.set(0, Math.atan2(camera.position.x - hp[0], camera.position.z - hp[2]), 0);
+  route.scale.z = tiny(t < 4.2 ? 6 * eout(seg(t, 3.0, 4.2)) : -hp[2] + 7);
+
+  // example 3D station: the net grows out of the contract that enforces it; the rule ticks as the card passes
+  source.material.emissiveIntensity = .5 * pulse(t, 12.4, 13.2);
+  net.scale.setScalar(tiny(eout(seg(t, 12.6, 13.4))));
+  const ok = t > 15.0; if (ruleL.el.classList.contains('ok') !== ok) { ruleL.el.classList.toggle('ok', ok); ruleL.el.textContent = (ok ? '✓ ' : '') + 'amount ≤ cap'; }
+  gate.userData.glow(Math.max(pulse(t, 14.9, 15.9), t > 15.3 ? .3 : 0));
+
+  labels.forEach(L => { const o = win(t, L.a, L.b, .35); if (o <= 0) { L.el.style.opacity = 0; return; }
+    tmp.copy(L.pos).project(camera); if (tmp.z > 1) { L.el.style.opacity = 0; return; }
+    L.el.style.opacity = o; L.el.style.transform = `translate(${(tmp.x + 1) / 2 * W}px,${(1 - tmp.y) / 2 * H}px) translate(-50%,-50%)`; });
+  CHAPTERS.forEach(([, a, b], i) => { chapEls[i].style.opacity = win(t, a, b, .35); });
+  const title = document.getElementById('title'); title.style.opacity = win(t, 1.2, 3.6, .5);
+
+  seek2D(t); seekOutro(t);
+  renderer.render(scene, camera);
+}
+
+// ---------- narrated clock → original clock (vo/timeline.js from build-timeline.mjs), subtitles ----------
+const TL = window.VO_TL || null, captionEl = document.getElementById('sub');
+function oldTime(T) {
+  if (!TL) return T; const A = TL.anchors; if (T <= A[0][0]) return A[0][1];
+  for (let i = 0; i < A.length - 1; i++) { const [n0, o0] = A[i], [n1, o1] = A[i + 1]; if (T <= n1) return o0 + (o1 - o0) * (T - n0) / (n1 - n0); }
+  return A[A.length - 1][1];
+}
+function seekFilm(T) {
+  seek(oldTime(T));
+  const c = TL && TL.cues.find(q => T >= q.s && T < q.e);
+  captionEl.textContent = c ? c.text : ''; captionEl.style.opacity = c ? Math.min(seg(T, c.s, c.s + .1), 1 - seg(T, c.e - .1, c.e)) : 0;
+}
+
+// ---------- playback contract (shared with skills/make-aomi-video) ----------
+const params = new URLSearchParams(location.search);
+let playing = false, t0 = 0, from = 0;
+window.__AOMI_VIDEO__ = {
+  duration: TL ? TL.dur : DUR,
+  seek: seekFilm,
+  play() { playing = true; t0 = performance.now(); const loop = () => { if (!playing) return; seekFilm((from + (performance.now() - t0) / 1000) % this.duration); requestAnimationFrame(loop); }; loop(); },
+  pause() { playing = false; },
+};
+await document.fonts.ready;
+fits.forEach(f => f());
+iconCache.forEach(v => { drawIcon(v.cv, v.ink); v.tx.needsUpdate = true; }); // icon text needs the web font
+seekFilm(+(params.get('t') || 0));
+window.__AOMI_VIDEO_READY__ = true;
+if (!params.has('render') && !params.has('t')) {
+  document.body.classList.add('fit');
+  const fit = () => { document.getElementById('stage').style.transform = `scale(${Math.min(innerWidth / W, innerHeight / H)})`; };
+  fit(); addEventListener('resize', fit); window.__AOMI_VIDEO__.play();
+}
+</script>
+</body>
+</html>
