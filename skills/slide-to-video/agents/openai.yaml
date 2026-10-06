@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slide to Video"
+  short_description: "Turn a deck into a narrated 2D/3D explainer film with subtitles"
+  default_prompt: "Turn this deck into a narrated explainer video."

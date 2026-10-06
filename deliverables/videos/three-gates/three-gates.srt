@@ -1,0 +1,295 @@
+1
+00:00:00,600 --> 00:00:04,020
+Say you ask an AI agent to swap 500 USDC.
+
+2
+00:00:04,060 --> 00:00:05,320
+That request is an intent.
+
+3
+00:00:05,360 --> 00:00:07,340
+Before it can safely settle onchain,
+
+4
+00:00:07,380 --> 00:00:10,301
+it has to pass three security gates in our system.
+
+5
+00:00:10,341 --> 00:00:11,863
+Let's walk through them.
+
+6
+00:00:12,913 --> 00:00:15,938
+First, the model doesn't touch the chain directly.
+
+7
+00:00:15,978 --> 00:00:18,620
+It works inside an execution harness.
+
+8
+00:00:18,660 --> 00:00:20,628
+The model makes one typed call,
+
+9
+00:00:20,668 --> 00:00:22,149
+and the harness does the rest:
+
+10
+00:00:22,189 --> 00:00:25,041
+it reads chain state, stages the transaction,
+
+11
+00:00:25,081 --> 00:00:27,381
+simulates it, and commits it.
+
+12
+00:00:28,281 --> 00:00:30,006
+Why do we need gates at all?
+
+13
+00:00:30,046 --> 00:00:33,570
+A financial agent works a lot like a coding agent:
+
+14
+00:00:33,610 --> 00:00:36,658
+it takes an intent, builds something, and ships it.
+
+15
+00:00:36,698 --> 00:00:39,584
+But code is reviewed and tested before it deploys,
+
+16
+00:00:39,624 --> 00:00:42,196
+while a transaction is only signed.
+
+17
+00:00:42,236 --> 00:00:45,830
+Along the way it can be attacked, or simply built wrong.
+
+18
+00:00:45,870 --> 00:00:48,071
+And once it settles, it's final,
+
+19
+00:00:48,111 --> 00:00:52,037
+even when it's valid onchain but wrong for the user.
+
+20
+00:00:56,087 --> 00:00:58,624
+At the build step, we simulate the transaction
+
+21
+00:00:58,664 --> 00:01:01,794
+against a fork of the live chain, again and again.
+
+22
+00:01:01,834 --> 00:01:04,987
+When a simulation fails, the error goes back to the model,
+
+23
+00:01:05,027 --> 00:01:07,935
+which fixes the transaction and tries again.
+
+24
+00:01:07,975 --> 00:01:10,315
+Only a transaction that passes is committed.
+
+25
+00:01:10,355 --> 00:01:13,880
+We call this gate 0.5, because it runs inside the harness,
+
+26
+00:01:13,920 --> 00:01:16,313
+while the agent is still building.
+
+27
+00:01:19,564 --> 00:01:21,567
+Once the agent has built the transaction,
+
+28
+00:01:21,607 --> 00:01:25,248
+it still can't sign it, because it never holds the key.
+
+29
+00:01:25,288 --> 00:01:27,872
+Instead, it sends a signing request to a separate
+
+30
+00:01:27,912 --> 00:01:30,798
+wallet module running in a secure enclave.
+
+31
+00:01:30,838 --> 00:01:34,048
+That module checks the request against the user's policy,
+
+32
+00:01:34,088 --> 00:01:35,163
+such as spending limits,
+
+33
+00:01:35,203 --> 00:01:38,716
+allowed contracts and recipients, and only then signs.
+
+34
+00:01:38,756 --> 00:01:40,255
+This is gate one.
+
+35
+00:01:42,605 --> 00:01:44,643
+Gate two runs onchain.
+
+36
+00:01:44,683 --> 00:01:47,244
+A guard contract on the user's account checks
+
+37
+00:01:47,284 --> 00:01:50,646
+every transaction against rules the user has set,
+
+38
+00:01:50,686 --> 00:01:53,943
+like a sanctions blocklist or a spending cap.
+
+39
+00:01:53,983 --> 00:01:57,460
+If a transaction breaks a rule, the contract reverts it,
+
+40
+00:01:57,500 --> 00:01:59,627
+even if the signer approved it.
+
+41
+00:02:00,477 --> 00:02:03,131
+Finally, the signed transaction waits in the
+
+42
+00:02:03,171 --> 00:02:06,110
+mempool until a block builder picks it up.
+
+43
+00:02:06,363 --> 00:02:08,169
+As the builder packs the block,
+
+44
+00:02:08,209 --> 00:02:10,085
+it checks each transaction against
+
+45
+00:02:10,125 --> 00:02:11,768
+the protocol's assertions.
+
+46
+00:02:11,808 --> 00:02:12,709
+If one fails,
+
+47
+00:02:12,749 --> 00:02:15,426
+the builder removes it before the block is sealed.
+
+48
+00:02:15,466 --> 00:02:17,406
+This is the last gate.
+
+49
+00:02:18,056 --> 00:02:19,966
+Only then is the block added to the chain,
+
+50
+00:02:20,006 --> 00:02:22,168
+and the transaction is settled.
+
+51
+00:02:23,618 --> 00:02:25,157
+Each gate sees something different,
+
+52
+00:02:25,197 --> 00:02:27,776
+so no single gate can catch everything.
+
+53
+00:02:28,626 --> 00:02:30,629
+Put together, every risk is stopped
+
+54
+00:02:30,669 --> 00:02:32,441
+at the checkpoint that can see it.
+
+55
+00:02:32,481 --> 00:02:36,016
+Simulation catches wrong decimals and stale routes.
+
+56
+00:02:36,056 --> 00:02:38,733
+The signing policy catches a swapped payload,
+
+57
+00:02:38,773 --> 00:02:40,916
+and partly a forged instruction.
+
+58
+00:02:40,956 --> 00:02:43,505
+The onchain guard blocks a policy breach,
+
+59
+00:02:43,545 --> 00:02:45,224
+like a sanctioned recipient.
+
+60
+00:02:45,264 --> 00:02:47,685
+And the builder drops a sandwich attack.
+
+61
+00:02:47,725 --> 00:02:51,221
+Only a transaction that passes every gate settles.
+
+62
+00:02:52,471 --> 00:02:55,241
+This idea goes beyond our own implementation.
+
+63
+00:02:55,281 --> 00:02:57,837
+It applies to any financial workflow.
+
+64
+00:02:58,337 --> 00:03:01,478
+The human's identity is canonical and persistent;
+
+65
+00:03:01,518 --> 00:03:03,765
+it's the account that holds the real money.
+
+66
+00:03:03,805 --> 00:03:06,029
+From it, the user authorizes sessions,
+
+67
+00:03:06,069 --> 00:03:09,593
+which let agents act only on approved resources.
+
+68
+00:03:09,633 --> 00:03:13,100
+Each session's authority is scoped, capped, and expires.
+
+69
+00:03:13,140 --> 00:03:14,876
+The same checks work onchain,
+
+70
+00:03:14,916 --> 00:03:17,512
+at a bank, or on an exchange.
+
+71
+00:03:17,552 --> 00:03:20,421
+You can think of it as OAuth for money.
+
+72
+00:03:23,371 --> 00:03:25,142
+That's how Aomi takes an agent's
+
+73
+00:03:25,182 --> 00:03:27,244
+transaction from intent to settlement.
+
+74
+00:03:27,284 --> 00:03:30,641
+You can read the full research at aomi.dev.
