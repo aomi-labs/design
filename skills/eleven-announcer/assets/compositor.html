@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Walkthrough</title>
+<!--
+  Eleven-announcer compositor. Turns rec/ (the recorded walkthrough) + timeline.js (compose.mjs) into
+  the branded video: title card → the app in a browser window with zooms, step chips and subtitles → Aomi outro.
+  The frame is a pure function of time (seek is async only because it waits for the screenshot to decode).
+  Exposes window.__AOMI_VIDEO__, so skills/slide-to-video/scripts/render.mjs renders it.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#09090b;--paper:#fcf7f6;--sky:#5288c2;--sky2:#416cac;--rose:#df5d90;--g100:#f4f4f5;--g200:#e4e4e7;--muted:#71717a}
+html,body{margin:0;background:var(--paper)}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--paper);
+  background-image:linear-gradient(#e4e4e7 1px,transparent 1px),linear-gradient(90deg,#e4e4e7 1px,transparent 1px);background-size:60px 60px;background-position:-1px -1px}
+#stage::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(252,247,246,.55),rgba(252,247,246,.92) 75%)}
+body.fit #stage{transform-origin:0 0}
+#intro{position:absolute;left:160px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;opacity:0}
+#intro .eyebrow{font:500 22px 'Geist Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--sky2);margin-bottom:22px;display:flex;align-items:center;gap:14px}
+#intro .eyebrow i{width:11px;height:11px;border-radius:50%;background:var(--sky)}
+#intro h1{margin:0;font:700 104px/1 'PT Serif',serif;letter-spacing:-.025em;color:var(--ink);max-width:1500px}
+#intro p{margin:22px 0 0;font:400 36px/1.35 'Geist',sans-serif;color:var(--muted);max-width:1300px}
+#win{position:absolute;left:160px;width:1600px;border-radius:14px;background:#fff;border:1px solid var(--g200);box-shadow:0 30px 80px -30px rgba(9,9,11,.28),0 2px 6px rgba(9,9,11,.06);overflow:hidden;opacity:0}
+#bar{height:46px;display:flex;align-items:center;gap:16px;padding:0 18px;border-bottom:1px solid var(--g200);background:#fff}
+#bar .dots{display:flex;gap:8px}#bar .dots b{width:12px;height:12px;border-radius:50%;background:var(--g200)}
+#chip{font:600 16px 'Geist',sans-serif;color:var(--ink);white-space:nowrap}#chip span{font:500 15px 'Geist Mono',monospace;color:var(--sky2);margin-right:8px}
+#url{margin-left:auto;margin-right:auto;font:400 15px 'Geist Mono',monospace;color:var(--muted);background:var(--g100);padding:6px 16px;border-radius:999px;max-width:700px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#view{position:relative;overflow:hidden;background:#fff}
+#shot{position:absolute;left:0;top:0;transform-origin:0 0;display:block}
+#sub{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);max-width:1600px;text-align:center;font:500 34px/1.3 'Geist',sans-serif;color:#fff;background:rgba(9,9,11,.82);padding:10px 24px;border-radius:10px;opacity:0;white-space:nowrap;z-index:5}
+#veil{position:absolute;inset:0;background:var(--paper);opacity:0}
+#outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+#outro .lock{display:flex;align-items:center;gap:44px}
+#outro svg{width:128px;height:128px}
+#outro .wm{font:600 128px/1 'Source Serif 4',serif;letter-spacing:-.02em;color:var(--ink)}
+#outro .t{font:italic 400 42px 'PT Serif',serif;color:var(--ink);margin-top:44px}
+#outro .l{font:500 22px 'Geist Mono',monospace;letter-spacing:.12em;color:var(--muted);margin-top:26px}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="intro"><div class="eyebrow"><i></i><span id="eyebrow">Shipped</span></div><h1 id="title"></h1><p id="subtitle"></p></div>
+  <div id="win"><div id="bar"><div class="dots"><b></b><b></b><b></b></div><div id="chip"></div><div id="url"></div></div><div id="view"><img id="shot" alt=""></div></div>
+  <div id="sub"></div>
+  <div id="veil"></div>
+  <div id="outro">
+    <div class="lock">
+      <!-- paths copied from assets/logo/aomi-mark.svg — re-copy if the mark changes -->
+      <svg viewBox="0 0 362 362" fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></svg>
+      <div class="wm">aomi</div>
+    </div>
+    <div class="t" id="otitle"></div>
+    <div class="l" id="olink"></div>
+  </div>
+</div>
+<script src="timeline.js"></script>
+<script>
+(async () => {
+  const E = window.EA, $ = id => document.getElementById(id);
+  const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x)), seg = (t, a, b) => cl((t - a) / (b - a)), lerp = (a, b, x) => a + (b - a) * x;
+  const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2, eout = x => 1 - Math.pow(1 - x, 3);
+  const { w: VW, h: VH } = E.viewport, CW = 1600, CH = Math.round(CW * VH / VW), D = CW / VW, BAR = 46;
+  const win = $('win'), view = $('view'), shot = $('shot'), top = Math.round((1080 - CH - BAR) / 2) - 6;
+  win.style.top = top + 'px'; view.style.height = CH + 'px'; shot.style.width = CW + 'px'; shot.style.height = CH + 'px';
+  $('eyebrow').textContent = E.meta.eyebrow || 'Shipped'; $('title').textContent = E.meta.title || ''; $('subtitle').textContent = E.meta.subtitle || '';
+  $('otitle').textContent = E.meta.title || ''; $('olink').textContent = E.meta.link || 'aomi.dev';
+  const interp = (keys, T) => { if (T <= keys[0][0]) return keys[0].slice(1); for (let i = 0; i < keys.length - 1; i++) { const a = keys[i], b = keys[i + 1]; if (T <= b[0]) return a.slice(1).map((v, j) => lerp(v, b[j + 1], (b[0] > a[0] ? (T - a[0]) / (b[0] - a[0]) : 1))); } return keys.at(-1).slice(1); };
+  const ease = (keys, T) => { if (T <= keys[0][0]) return keys[0].slice(1); for (let i = 0; i < keys.length - 1; i++) { const a = keys[i], b = keys[i + 1]; if (T <= b[0]) { const x = eio(b[0] > a[0] ? (T - a[0]) / (b[0] - a[0]) : 1); return a.slice(1).map((v, j) => lerp(v, b[j + 1], x)); } } return keys.at(-1).slice(1); };
+  const frameAt = t => { let lo = 0, hi = E.frames.length - 1; if (t <= E.frames[0].t) return E.frames[0].f; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (E.frames[m].t <= t) lo = m; else hi = m - 1; } return E.frames[lo].f; };
+  const host = u => { try { const x = new URL(u); return x.host + x.pathname.replace(/\/$/, ''); } catch { return u || ''; } };
+  const O = E.dur - E.outro;
+
+  async function seek(T) {
+    $('intro').style.opacity = Math.min(seg(T, .15, .7), 1 - seg(T, E.intro - .9, E.intro - .35));
+    $('intro').style.transform = `translateY(${(1 - eout(seg(T, .15, .9))) * 18}px)`;
+    win.style.opacity = seg(T, E.intro - .75, E.intro - .15); win.style.transform = `translateY(${(1 - eout(seg(T, E.intro - .75, E.intro))) * 40}px)`;
+    const [recT] = interp(E.map, T), f = frameAt(recT);
+    if (shot.dataset.f !== f) { shot.dataset.f = f; shot.src = 'rec/' + f; await shot.decode().catch(() => {}); }
+    const [cx, cy, s] = ease(E.zooms, T);
+    shot.style.transform = `translate(${(CW / 2 - cx * D * s).toFixed(2)}px,${(CH / 2 - cy * D * s).toFixed(2)}px) scale(${s.toFixed(4)})`;
+    const st = E.steps.find(x => T >= x.T0 && T < x.T1) || (T < E.intro ? E.steps[0] : E.steps.at(-1));
+    const chip = `<span>${String(E.steps.indexOf(st) + 1).padStart(2, '0')}</span>${st.title || ''}`;
+    if ($('chip').innerHTML !== chip) $('chip').innerHTML = chip; $('url').textContent = host(st.url);
+    const c = E.cues.find(q => T >= q.s && T < q.e); $('sub').textContent = c ? c.text : ''; $('sub').style.opacity = c ? Math.min(seg(T, c.s, c.s + .1), 1 - seg(T, c.e - .1, c.e)) : 0;
+    $('veil').style.opacity = eio(seg(T, O, O + .9)); $('outro').style.opacity = seg(T, O + .5, O + .9);
+    document.querySelector('#outro .lock').style.transform = `scale(${lerp(.92, 1, eout(seg(T, O + .5, O + 1.4)))})`;
+    [['otitle', O + 1.2], ['olink', O + 1.6]].forEach(([id, a]) => { $(id).style.opacity = seg(T, a, a + .6); $(id).style.transform = `translateY(${(1 - eout(seg(T, a, a + .8))) * 16}px)`; });
+  }
+
+  const params = new URLSearchParams(location.search);
+  let playing = false;
+  window.__AOMI_VIDEO__ = { duration: E.dur, seek,
+    play() { playing = true; const t0 = performance.now(); const loop = async () => { if (!playing) return; await seek(((performance.now() - t0) / 1000) % E.dur); requestAnimationFrame(loop); }; loop(); },
+    pause() { playing = false; } };
+  await document.fonts.ready;
+  await seek(+(params.get('t') || 0));
+  window.__AOMI_VIDEO_READY__ = true;
+  if (!params.has('render') && !params.has('t')) {
+    document.body.classList.add('fit');
+    const fit = () => { $('stage').style.transform = `scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`; };
+    fit(); addEventListener('resize', fit); window.__AOMI_VIDEO__.play();
+  }
+})();
+</script>
+</body>
+</html>
