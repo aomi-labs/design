@@ -1,0 +1,79 @@
+1
+00:00:03,800 --> 00:00:06,414
+Aomi works across EVM and Solana without
+
+2
+00:00:06,454 --> 00:00:09,781
+making the user switch networks between steps.
+
+3
+00:00:11,800 --> 00:00:14,805
+This single request combines a Base lending position,
+
+4
+00:00:14,845 --> 00:00:18,352
+a bridge to Arbitrum, and a Solana liquid-staking route.
+
+5
+00:00:19,800 --> 00:00:23,285
+Aomi activates five protocol skills, checks both wallets,
+
+6
+00:00:23,325 --> 00:00:26,715
+and builds each leg on the chain where it belongs.
+
+7
+00:00:27,800 --> 00:00:29,990
+On Base, an ordered four-transaction
+
+8
+00:00:30,030 --> 00:00:31,497
+simulation supplies four
+
+9
+00:00:31,537 --> 00:00:33,607
+USDC to Aave and routes another
+
+10
+00:00:33,647 --> 00:00:35,925
+four through Across to Arbitrum.
+
+11
+00:00:36,525 --> 00:00:41,696
+The bridge quote returns 3.99215 USDC on Arbitrum.
+
+12
+00:00:41,736 --> 00:00:43,304
+Delivery is not claimed;
+
+13
+00:00:43,344 --> 00:00:47,360
+the quote and source-chain calls are what were simulated.
+
+14
+00:00:47,960 --> 00:00:52,406
+On Solana, account creation and a 0.05 SOL Marinade
+
+15
+00:00:52,446 --> 00:00:55,765
+stake pass together in one atomic simulation.
+
+16
+00:00:56,365 --> 00:00:59,782
+The Kamino leg is withheld because the simulator cannot
+
+17
+00:00:59,822 --> 00:01:03,423
+validate spending newly minted mSOL in that same batch.
+
+18
+00:01:03,463 --> 00:01:05,973
+Every transaction remains unsigned.
+
+19
+00:01:06,573 --> 00:01:08,720
+One orchestration layer, multiple chains,
+
+20
+00:01:08,760 --> 00:01:11,765
+and simulation as the gate before wallet authority.

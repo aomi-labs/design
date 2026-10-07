@@ -1,0 +1,213 @@
+{
+ "dur": 78.773,
+ "vo": [
+  {
+   "id": 1,
+   "file": "vo/step01.mp3",
+   "start": 3.75,
+   "dur": 5.781
+  },
+  {
+   "id": 2,
+   "file": "vo/step02.mp3",
+   "start": 11.75,
+   "dur": 6.352
+  },
+  {
+   "id": 3,
+   "file": "vo/step03.mp3",
+   "start": 19.75,
+   "dur": 6.715
+  },
+  {
+   "id": 4,
+   "file": "vo/step04.mp3",
+   "start": 27.75,
+   "dur": 7.925
+  },
+  {
+   "id": 5,
+   "file": "vo/step05.mp3",
+   "start": 36.475,
+   "dur": 10.635
+  },
+  {
+   "id": 6,
+   "file": "vo/step06.mp3",
+   "start": 47.91,
+   "dur": 7.605
+  },
+  {
+   "id": 7,
+   "file": "vo/step07.mp3",
+   "start": 56.315,
+   "dur": 9.408
+  },
+  {
+   "id": 8,
+   "file": "vo/step08.mp3",
+   "start": 66.523,
+   "dur": 4.992
+  }
+ ],
+ "cues": [
+  {
+   "s": 3.8,
+   "e": 6.414,
+   "text": "Aomi works across EVM and Solana without"
+  },
+  {
+   "s": 6.454,
+   "e": 9.781,
+   "text": "making the user switch networks between steps."
+  },
+  {
+   "s": 11.8,
+   "e": 14.805,
+   "text": "This single request combines a Base lending position,"
+  },
+  {
+   "s": 14.845,
+   "e": 18.352,
+   "text": "a bridge to Arbitrum, and a Solana liquid-staking route."
+  },
+  {
+   "s": 19.8,
+   "e": 23.285,
+   "text": "Aomi activates five protocol skills, checks both wallets,"
+  },
+  {
+   "s": 23.325,
+   "e": 26.715,
+   "text": "and builds each leg on the chain where it belongs."
+  },
+  {
+   "s": 27.8,
+   "e": 29.99,
+   "text": "On Base, an ordered four-transaction"
+  },
+  {
+   "s": 30.03,
+   "e": 31.497,
+   "text": "simulation supplies four"
+  },
+  {
+   "s": 31.537,
+   "e": 33.607,
+   "text": "USDC to Aave and routes another"
+  },
+  {
+   "s": 33.647,
+   "e": 35.925,
+   "text": "four through Across to Arbitrum."
+  },
+  {
+   "s": 36.525,
+   "e": 41.696,
+   "text": "The bridge quote returns 3.99215 USDC on Arbitrum."
+  },
+  {
+   "s": 41.736,
+   "e": 43.304,
+   "text": "Delivery is not claimed;"
+  },
+  {
+   "s": 43.344,
+   "e": 47.36,
+   "text": "the quote and source-chain calls are what were simulated."
+  },
+  {
+   "s": 47.96,
+   "e": 52.406,
+   "text": "On Solana, account creation and a 0.05 SOL Marinade"
+  },
+  {
+   "s": 52.446,
+   "e": 55.765,
+   "text": "stake pass together in one atomic simulation."
+  },
+  {
+   "s": 56.365,
+   "e": 59.782,
+   "text": "The Kamino leg is withheld because the simulator cannot"
+  },
+  {
+   "s": 59.822,
+   "e": 63.423,
+   "text": "validate spending newly minted mSOL in that same batch."
+  },
+  {
+   "s": 63.463,
+   "e": 65.973,
+   "text": "Every transaction remains unsigned."
+  },
+  {
+   "s": 66.573,
+   "e": 68.72,
+   "text": "One orchestration layer, multiple chains,"
+  },
+  {
+   "s": 68.76,
+   "e": 71.765,
+   "text": "and simulation as the gate before wallet authority."
+  }
+ ],
+ "steps": [
+  {
+   "id": 1,
+   "title": "Every network, no switching",
+   "url": "https://chat-staging.aomi.dev/",
+   "T0": 3.4,
+   "T1": 11.4
+  },
+  {
+   "id": 2,
+   "title": "One multi-chain request",
+   "url": "https://chat-staging.aomi.dev/",
+   "T0": 11.4,
+   "T1": 19.4
+  },
+  {
+   "id": 3,
+   "title": "Activate the protocol stack",
+   "url": "https://chat-staging.aomi.dev/",
+   "T0": 19.4,
+   "T1": 27.4
+  },
+  {
+   "id": 4,
+   "title": "Simulate Base and Arbitrum",
+   "url": "https://chat-staging.aomi.dev/",
+   "T0": 27.4,
+   "T1": 36.125
+  },
+  {
+   "id": 5,
+   "title": "Keep the bridge claim precise",
+   "url": "https://chat-staging.aomi.dev/",
+   "T0": 36.125,
+   "T1": 47.56
+  },
+  {
+   "id": 6,
+   "title": "Simulate the Solana leg",
+   "url": "https://chat-staging.aomi.dev/",
+   "T0": 47.56,
+   "T1": 55.965
+  },
+  {
+   "id": 7,
+   "title": "Stop at the evidence boundary",
+   "url": "https://chat-staging.aomi.dev/",
+   "T0": 55.965,
+   "T1": 66.173
+  },
+  {
+   "id": 8,
+   "title": "Simulation before authority",
+   "url": "https://chat-staging.aomi.dev/",
+   "T0": 66.173,
+   "T1": 74.173
+  }
+ ]
+}
