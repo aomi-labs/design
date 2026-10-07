@@ -1,7 +1,7 @@
 export const META = {
   title: 'Money legos across chains',
   subtitle: 'Base to Arbitrum plus Solana, orchestrated from one request.',
-  eyebrow: 'Aomi staging · Multi-chain orchestration',
+  eyebrow: 'Aomi Labs staging · Multi-chain orchestration',
   link: 'chat-staging.aomi.dev',
   viewport: { width: 1920, height: 1080 },
   intro: 3.4,
