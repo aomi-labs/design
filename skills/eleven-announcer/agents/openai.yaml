@@ -1,0 +1,4 @@
+interface:
+  display_name: "Eleven Announcer"
+  short_description: "Record a narrated walkthrough of a shipped feature with the team voice"
+  default_prompt: "Record a narrated walkthrough video of the feature we just shipped."
