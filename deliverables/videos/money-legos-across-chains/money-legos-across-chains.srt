@@ -7,73 +7,73 @@ Aomi works across EVM and Solana without
 making the user switch networks between steps.
 
 3
-00:00:11,800 --> 00:00:14,805
+00:00:12,118 --> 00:00:15,123
 This single request combines a Base lending position,
 
 4
-00:00:14,845 --> 00:00:18,352
+00:00:15,163 --> 00:00:18,670
 a bridge to Arbitrum, and a Solana liquid-staking route.
 
 5
-00:00:19,800 --> 00:00:23,285
+00:00:19,270 --> 00:00:22,755
 Aomi activates five protocol skills, checks both wallets,
 
 6
-00:00:23,325 --> 00:00:26,715
+00:00:22,795 --> 00:00:26,185
 and builds each leg on the chain where it belongs.
 
 7
-00:00:27,800 --> 00:00:29,990
+00:00:27,537 --> 00:00:29,727
 On Base, an ordered four-transaction
 
 8
-00:00:30,030 --> 00:00:31,497
+00:00:29,767 --> 00:00:31,234
 simulation supplies four
 
 9
-00:00:31,537 --> 00:00:33,607
+00:00:31,274 --> 00:00:33,344
 USDC to Aave and routes another
 
 10
-00:00:33,647 --> 00:00:35,925
+00:00:33,384 --> 00:00:35,662
 four through Across to Arbitrum.
 
 11
-00:00:36,525 --> 00:00:41,696
-The bridge quote returns 3.99215 USDC on Arbitrum.
+00:00:36,262 --> 00:00:41,651
+The bridge quote returns 3.992124 USDC on Arbitrum.
 
 12
-00:00:41,736 --> 00:00:43,304
+00:00:41,691 --> 00:00:43,248
 Delivery is not claimed;
 
 13
-00:00:43,344 --> 00:00:47,360
+00:00:43,288 --> 00:00:47,278
 the quote and source-chain calls are what were simulated.
 
 14
-00:00:47,960 --> 00:00:52,406
+00:00:47,878 --> 00:00:52,325
 On Solana, account creation and a 0.05 SOL Marinade
 
 15
-00:00:52,446 --> 00:00:55,765
+00:00:52,365 --> 00:00:55,684
 stake pass together in one atomic simulation.
 
 16
-00:00:56,365 --> 00:00:59,782
+00:00:56,284 --> 00:00:59,700
 The Kamino leg is withheld because the simulator cannot
 
 17
-00:00:59,822 --> 00:01:03,423
+00:00:59,740 --> 00:01:03,342
 validate spending newly minted mSOL in that same batch.
 
 18
-00:01:03,463 --> 00:01:05,973
+00:01:03,382 --> 00:01:05,892
 Every transaction remains unsigned.
 
 19
-00:01:06,573 --> 00:01:08,720
+00:01:06,492 --> 00:01:08,638
 One orchestration layer, multiple chains,
 
 20
-00:01:08,760 --> 00:01:11,765
+00:01:08,678 --> 00:01:11,684
 and simulation as the gate before wallet authority.

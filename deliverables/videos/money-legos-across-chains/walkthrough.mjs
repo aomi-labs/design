@@ -10,7 +10,7 @@ export const META = {
 
 export const DISPLAY = [
   ['zero-point-zero-five', '0.05'],
-  ['three-point-nine-nine-two-one-five', '3.99215'],
+  ['three-point-nine-nine-two-one-two-four', '3.992124'],
   ['U-S-D-C', 'USDC'],
   ['M-S-O-L', 'mSOL'],
 ];
@@ -47,7 +47,7 @@ export const STEPS = [
   {
     id: 5,
     title: 'Keep the bridge claim precise',
-    say: 'The bridge quote returns three-point-nine-nine-two-one-five U-S-D-C on Arbitrum. Delivery is not claimed; the quote and source-chain calls are what were simulated.',
+    say: 'The bridge quote returns three-point-nine-nine-two-one-two-four U-S-D-C on Arbitrum. Delivery is not claimed; the quote and source-chain calls are what were simulated.',
     do: [],
     maxZoom: 1.35,
   },
