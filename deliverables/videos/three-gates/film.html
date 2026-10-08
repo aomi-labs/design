@@ -6,24 +6,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#09090b;--paper:#fcf7f6;--sky:#5288c2;--sky2:#416cac;--rose:#df5d90;--lilac:#e3d8e6;--muted:#71717a}
+:root{--ink:#09090b;--paper:#ffffff;--sky:#5288c2;--sky2:#416cac;--rose:#df5d90;--lilac:#e3d8e6;--muted:#71717a}
 html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:var(--paper)}
 body.fit{transform-origin:0 0}
 #stage,#labels,#hud,#veil,#vig,#flat{position:absolute;inset:0}
 #labels,#hud,#vig,#flat{pointer-events:none}
 canvas{display:block}
-#vig{background:linear-gradient(180deg,rgba(252,247,246,.78) 0,rgba(252,247,246,0) 170px,rgba(252,247,246,0) 640px,rgba(252,247,246,.9) 1080px),radial-gradient(ellipse at 50% 46%,rgba(252,247,246,0) 58%,rgba(228,220,218,.55) 100%)}
+#vig{background:linear-gradient(180deg,rgba(255,255,255,.78) 0,rgba(255,255,255,0) 170px,rgba(255,255,255,0) 640px,rgba(255,255,255,.9) 1080px),radial-gradient(ellipse at 50% 48%,rgba(255,255,255,0) 52%,rgba(255,255,255,.96) 100%)}
 .lbl{position:absolute;left:0;top:0;font:500 17px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);white-space:nowrap;opacity:0}
 .lbl.rose{color:var(--rose)}
 .lbl.sky{color:var(--sky2)}
-.lbl.word{font:400 24px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;color:var(--ink);background:rgba(252,247,246,.86);padding:6px 12px;border:1px solid rgba(9,9,11,.14);border-radius:999px}
+.lbl.word{font:400 24px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;color:var(--ink);background:rgba(255,255,255,.86);padding:6px 12px;border:1px solid rgba(9,9,11,.14);border-radius:999px}
 .lbl.big{font:500 22px 'Geist Mono',monospace}
 .lbl.num{font:600 30px 'Geist',sans-serif;letter-spacing:0}
 .lbl.num small{display:block;font:500 14px 'Geist Mono',monospace;letter-spacing:.14em;color:var(--muted);text-align:center;margin-top:2px}
-.lbl.rule{font:500 19px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;background:rgba(252,247,246,.92);padding:5px 12px;border:1.5px solid rgba(9,9,11,.25);border-radius:8px}
+.lbl.rule{font:500 19px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;background:rgba(255,255,255,.92);padding:5px 12px;border:1.5px solid rgba(9,9,11,.25);border-radius:8px}
 .lbl.rule.bad{color:#fff;background:var(--rose);border-color:var(--rose)}
 .lbl.rule.ok{color:#fff;background:var(--sky);border-color:var(--sky)}
-.lbl.zone{font:600 21px 'Geist Mono',monospace;letter-spacing:.16em;background:rgba(252,247,246,.88);padding:7px 16px;border:1.5px dashed rgba(9,9,11,.45);border-radius:999px}
+.lbl.zone{font:600 21px 'Geist Mono',monospace;letter-spacing:.16em;background:rgba(255,255,255,.88);padding:7px 16px;border:1.5px dashed rgba(9,9,11,.45);border-radius:999px}
 .lbl.stag{font:600 20px 'Geist Mono',monospace;letter-spacing:.06em;text-transform:none;color:#fff;background:var(--sky);padding:7px 16px;border-radius:8px}
 .lbl.tag{font:600 18px 'Geist Mono',monospace;color:#fff;background:var(--rose);padding:5px 12px;border-radius:6px}
 .chap{position:absolute;left:96px;top:78px;font:500 20px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:14px;opacity:0}
@@ -60,7 +60,7 @@ canvas{display:block}
 #flat .lb.m{fill:#71717a}
 #flat .lb.sm{font-size:15px}
 #flat .num{font:600 34px 'Geist',sans-serif;fill:#09090b}
-#flat .chip{fill:#fcf7f6;stroke:#09090b;stroke-width:1.5}
+#flat .chip{fill:#ffffff;stroke:#09090b;stroke-width:1.5}
 #flat .chip.on{fill:#5288c2;stroke:#5288c2}
 #flat .chip.bad{fill:#df5d90;stroke:#df5d90}
 #flat .ct{font:500 15px 'Geist Mono',monospace;letter-spacing:.08em;fill:#09090b}
@@ -85,8 +85,8 @@ canvas{display:block}
     <marker id="ahGrey" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c4c4cc"/></marker>
     <marker id="ahRose" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#df5d90"/></marker>
   </defs>
-  <rect width="1920" height="1080" fill="#fcf7f6"/>
-  <rect width="1920" height="1080" fill="url(#grid)" opacity=".7"/>
+  <rect width="1920" height="1080" fill="#ffffff"/>
+
 </svg>
 <div id="hud">
   <div id="title">
@@ -151,7 +151,7 @@ function keyed(keys, t) {
 }
 
 // ---------- palette ----------
-const C = { arch: 0x9d9da8, track: 0xa1a1aa, soft: 0x8c8a99, sky4: 0x7facd6, ring: 0xb4b4bf, ink: 0x09090b, paper: 0xfcf7f6, sky: 0x5288c2, sky2: 0x416cac, rose: 0xdf5d90, lilac: 0xe3d8e6, lilac4: 0xb9a3c1, pink2: 0xf6cbdd, cool2: 0xe4e4e7, white: 0xffffff };
+const C = { arch: 0x9d9da8, track: 0xa1a1aa, soft: 0x8c8a99, sky4: 0x7facd6, ring: 0xb4b4bf, ink: 0x09090b, paper: 0xffffff, sky: 0x5288c2, sky2: 0x416cac, rose: 0xdf5d90, lilac: 0xe3d8e6, lilac4: 0xb9a3c1, pink2: 0xf6cbdd, cool2: 0xe4e4e7, white: 0xffffff };
 const ARCHC = new THREE.Color(C.arch), SOFT = new THREE.Color(C.soft), RINGC = new THREE.Color(C.ring), SKY = new THREE.Color(C.sky), ROSE = new THREE.Color(C.rose), INK = new THREE.Color(C.ink), WHITE = new THREE.Color(C.white);
 
 // ---------- renderer ----------
@@ -520,7 +520,7 @@ function lane(parent, y, labels, strong) {
   const g = el('g', {}, parent), ink = strong ? '#09090b' : '#a1a1aa', edge = strong ? '#09090b' : '#d4d4d8';
   const arrows = [0, 1, 2].map(i => drawable('line', { x1: R_X[i] + 113, y1: y, x2: R_X[i + 1] - 118, y2: y, stroke: strong ? '#09090b' : '#c4c4cc', 'stroke-width': strong ? 2.5 : 2, fill: 'none' }, g, strong ? 'ahInk' : 'ahGrey'));
   const pills = labels.map((l, i) => { const p = el('g', {}, g); tf(p, R_X[i], y);
-    el('rect', { x: -113, y: -37, width: 226, height: 74, rx: 37, fill: '#fcf7f6', stroke: edge, 'stroke-width': strong ? 2.5 : 2 }, p);
+    el('rect', { x: -113, y: -37, width: 226, height: 74, rx: 37, fill: '#ffffff', stroke: edge, 'stroke-width': strong ? 2.5 : 2 }, p);
     const tx = txt(l, 0, 8, 'node', p); tx.setAttribute('fill', ink); return p; });
   return { g, arrows, pills, y };
 }
@@ -605,7 +605,7 @@ const sLine = drawable('line', { x1: 230, y1: 440, x2: 1850, y2: 440, class: 'st
 const sEnd = el('circle', { cx: 1858, cy: 440, r: 9, fill: '#09090b' }, gS);
 const sEndL = txt('onchain', 1858, 488, 'ttl', gS);
 const S_NODES = [['INTENT', 330], ['BUILD', 730], ['SIGN', 1130], ['SETTLE', 1530]];
-const sNodes = S_NODES.map(([lbl]) => { const g = el('g', {}, gS); el('rect', { x: -100, y: -33, width: 200, height: 66, rx: 33, fill: '#fcf7f6', stroke: '#09090b', 'stroke-width': 2.5 }, g); txt(lbl, 0, 8, 'node', g); return g; });
+const sNodes = S_NODES.map(([lbl]) => { const g = el('g', {}, gS); el('rect', { x: -100, y: -33, width: 200, height: 66, rx: 33, fill: '#ffffff', stroke: '#09090b', 'stroke-width': 2.5 }, g); txt(lbl, 0, 8, 'node', g); return g; });
 const sGates = ['0.5', '1', '2', '3'].map((n, i) => { const g = el('g', {}, gS); const bar = el('rect', { x: -6.5, y: -56, width: 13, height: 112, rx: 6.5, fill: '#09090b' }, g);
   const w = i ? 38 : 56; el('rect', { x: -w / 2, y: 70, width: w, height: 34, rx: 17, fill: '#09090b' }, g); txt(n, 0, 93, 'badge', g); return { g, bar }; });
 const sCards = [['0.5', 'Runtime'], ['1', 'Signing policy'], ['2', 'Onchain guard'], ['3', 'Builder']].map(([n, title], i) => {
