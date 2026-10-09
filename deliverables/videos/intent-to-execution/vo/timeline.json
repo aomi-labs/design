@@ -1,5 +1,5 @@
 {
- "dur": 215.104,
+ "dur": 222.583,
  "anchors": [
   [
    0,
@@ -34,327 +34,327 @@
    11.8
   ],
   [
-   13.511,
+   13.535,
    12.4
   ],
   [
-   17.644,
+   17.714,
    15.2
   ],
   [
-   18.898,
+   19.107,
    17.4
   ],
   [
-   20.361,
+   20.57,
    18.8
   ],
   [
-   22.66,
+   22.973,
    20.8
   ],
   [
-   24.948,
+   25.028,
    23.6
   ],
   [
-   32.529,
+   32.633,
    27.7
   ],
   [
-   35.385,
+   35.71,
    30.6
   ],
   [
-   44.685,
+   45.555,
    32.6
   ],
   [
-   45.5,
+   46.382,
    32.9
   ],
   [
-   46.2,
+   47.082,
    33.6
   ],
   [
-   49.555,
+   50.437,
    36.3
   ],
   [
-   51.657,
+   52.539,
    40
   ],
   [
-   53.178,
+   54.06,
    42.5
   ],
   [
-   54.907,
+   55.789,
    46.3
   ],
   [
-   57.822,
+   58.704,
    49.6
   ],
   [
-   61.818,
+   62.7,
    50.8
   ],
   [
-   62.218,
+   63.1,
    51.2
   ],
   [
-   63.751,
+   64.633,
    51.9
   ],
   [
-   64.819,
+   65.701,
    52.7
   ],
   [
-   65.829,
+   66.711,
    53.5
   ],
   [
-   79.11,
+   79.992,
    54.7
   ],
   [
-   79.973,
+   80.855,
    55
   ],
   [
-   80.173,
+   81.055,
    55.2
   ],
   [
-   81.09,
+   81.972,
    55.9
   ],
   [
-   83.006,
+   83.888,
    56.3
   ],
   [
-   83.644,
+   84.526,
    56.6
   ],
   [
-   84.736,
+   85.618,
    56.9
   ],
   [
-   85.804,
+   86.686,
    57.4
   ],
   [
-   88.764,
+   89.646,
    58.3
   ],
   [
-   90.125,
+   91.007,
    61.6
   ],
   [
-   90.725,
+   91.607,
    62.2
   ],
   [
-   91.271,
+   92.222,
    62.4
   ],
   [
-   101.058,
+   101.232,
    64.9
   ],
   [
-   103.055,
+   104.505,
    67
   ],
   [
-   105.554,
+   107.318,
    69.8
   ],
   [
-   105.954,
+   107.718,
    70.2
   ],
   [
-   109.147,
+   111.398,
    70.6
   ],
   [
-   110.61,
+   113.244,
    71.6
   ],
   [
-   114.592,
+   117.784,
    72
   ],
   [
-   117.889,
+   121.72,
    73.6
   ],
   [
-   120.432,
+   124.506,
    74.9
   ],
   [
-   121.061,
+   125.426,
    75.4
   ],
   [
-   124.661,
+   129.026,
    79
   ],
   [
-   125.288,
+   129.653,
    79.9
   ],
   [
-   127.865,
+   132.23,
    81.7
   ],
   [
-   130.202,
+   134.567,
    83.6
   ],
   [
-   132.002,
+   136.367,
    85.4
   ],
   [
-   133.372,
+   137.737,
    86.1
   ],
   [
-   135.578,
+   139.943,
    87.6
   ],
   [
-   138.515,
+   142.88,
    88.2
   ],
   [
-   141.116,
+   145.481,
    89.5
   ],
   [
-   142.869,
+   147.234,
    90.3
   ],
   [
-   149.06,
+   153.425,
    96
   ],
   [
-   153.86,
+   158.225,
    100.8
   ],
   [
-   155.683,
+   160.048,
    103.5
   ],
   [
-   159.491,
+   163.856,
    104
   ],
   [
-   161.325,
+   165.69,
    104.3
   ],
   [
-   164.413,
+   168.778,
    104.8
   ],
   [
-   167.528,
+   171.893,
    105.6
   ],
   [
-   167.928,
-   106
+   172.993,
+   106.7
   ],
   [
-   168.45,
+   173.283,
    107
   ],
   [
-   173.431,
+   178.926,
    107.8
   ],
   [
-   174.766,
+   180.69,
    108.1
   ],
   [
-   176.241,
+   182.13,
    108.4
   ],
   [
-   179.689,
+   186.472,
    109.3
   ],
   [
-   182.943,
+   189.865,
    113
   ],
   [
-   185.343,
+   192.265,
    115.4
   ],
   [
-   186.376,
+   193.298,
    116.7
   ],
   [
-   189.139,
+   196.061,
    117.4
   ],
   [
-   192.834,
+   199.756,
    118.8
   ],
   [
-   195.834,
+   202.756,
    121.8
   ],
   [
-   196.867,
+   203.789,
    122.4
   ],
   [
-   197.796,
+   204.718,
    123
   ],
   [
-   200.074,
+   206.996,
    125.6
   ],
   [
-   200.874,
+   207.796,
    126.4
   ],
   [
-   201.083,
+   208.005,
    126.6
   ],
   [
-   203.753,
+   210.896,
    127.2
   ],
   [
-   206.284,
+   213.694,
    127.9
   ],
   [
-   207.204,
+   214.683,
    128.6
   ],
   [
-   215.104,
+   222.583,
    135
   ]
  ],
@@ -376,357 +376,357 @@
   },
   {
    "s": 13.163,
-   "e": 16.049,
+   "e": 16.072,
    "text": "On the left is Claude Code with no harness."
   },
   {
-   "s": 16.089,
-   "e": 19.543,
+   "s": 16.112,
+   "e": 19.776,
    "text": "It has to go find the contract addresses, fetch the ABIs,"
   },
   {
-   "s": 19.583,
-   "e": 23.177,
+   "s": 19.816,
+   "e": 23.293,
    "text": "ask you for an RPC endpoint, and write its own script."
   },
   {
-   "s": 23.217,
+   "s": 23.333,
    "e": 25.871,
    "text": "Then it hits a revert, error 27,"
   },
   {
    "s": 25.911,
-   "e": 31.514,
+   "e": 31.153,
    "text": "because Aave actually takes wstETH, not stETH."
   },
   {
-   "s": 31.554,
-   "e": 35.043,
+   "s": 31.193,
+   "e": 35.379,
    "text": "And then it asks for your private key in a .env file."
   },
   {
-   "s": 35.083,
-   "e": 38.062,
+   "s": 35.419,
+   "e": 38.433,
    "text": "On the right it's the same model, through Aomi."
   },
   {
-   "s": 38.102,
-   "e": 40.489,
+   "s": 38.473,
+   "e": 41.022,
    "text": "It reads the wrap rate, simulates the stake,"
   },
   {
-   "s": 40.529,
-   "e": 41.754,
+   "s": 41.062,
+   "e": 42.288,
    "text": "checks the loan-to-value,"
   },
   {
-   "s": 41.794,
-   "e": 45.65,
+   "s": 42.328,
+   "e": 46.532,
    "text": "and all six steps pass on a fork as one bundle."
   },
   {
-   "s": 46.2,
-   "e": 49.376,
+   "s": 47.082,
+   "e": 50.258,
    "text": "On Solana it's the same story with different failures:"
   },
   {
-   "s": 49.416,
-   "e": 51.129,
+   "s": 50.298,
+   "e": 52.011,
    "text": "a rate-limited RPC,"
   },
   {
-   "s": 51.169,
-   "e": 53.904,
+   "s": 52.051,
+   "e": 54.786,
    "text": "a missing token account, Kamino's refresh rule,"
   },
   {
-   "s": 53.944,
-   "e": 55.994,
+   "s": 54.826,
+   "e": 56.876,
    "text": "and the transaction size limit."
   },
   {
-   "s": 56.034,
-   "e": 58.141,
+   "s": 56.916,
+   "e": 59.023,
    "text": "Aomi simulates it all in Lite"
   },
   {
-   "s": 58.181,
-   "e": 61.968,
+   "s": 59.063,
+   "e": 62.85,
    "text": "S V M and sends one transaction."
   },
   {
-   "s": 62.218,
-   "e": 64.372,
+   "s": 63.1,
+   "e": 65.254,
    "text": "The point of having a harness is performance,"
   },
   {
-   "s": 64.412,
-   "e": 66.659,
+   "s": 65.294,
+   "e": 67.541,
    "text": "token efficiency, and security."
   },
   {
-   "s": 66.699,
-   "e": 69.225,
+   "s": 67.581,
+   "e": 70.107,
    "text": "A lot of people argue frontier models"
   },
   {
-   "s": 69.265,
-   "e": 71.257,
+   "s": 70.147,
+   "e": 72.139,
    "text": "can transact without any harness,"
   },
   {
-   "s": 71.297,
-   "e": 72.418,
+   "s": 72.179,
+   "e": 73.3,
    "text": "and they kind of can."
   },
   {
-   "s": 72.458,
-   "e": 75.32,
+   "s": 73.34,
+   "e": 76.202,
    "text": "But a harness makes them work better,"
   },
   {
-   "s": 75.36,
-   "e": 76.957,
+   "s": 76.242,
+   "e": 77.839,
    "text": "so if you want to productionize"
   },
   {
-   "s": 76.997,
-   "e": 78.769,
+   "s": 77.879,
+   "e": 79.651,
    "text": "an agentic financial workflow,"
   },
   {
-   "s": 78.809,
-   "e": 80.122,
+   "s": 79.691,
+   "e": 81.004,
    "text": "it's a no-brainer."
   },
   {
-   "s": 80.173,
-   "e": 82.455,
+   "s": 81.055,
+   "e": 83.337,
    "text": "The harness is the loop around the model:"
   },
   {
-   "s": 82.495,
-   "e": 84.696,
+   "s": 83.377,
+   "e": 85.578,
    "text": "it gets the context, builds the call,"
   },
   {
-   "s": 84.736,
-   "e": 87.575,
+   "s": 85.618,
+   "e": 88.457,
    "text": "simulates it, then commits, and if anything fails,"
   },
   {
-   "s": 87.615,
-   "e": 90.275,
+   "s": 88.497,
+   "e": 91.157,
    "text": "it goes back and reads again."
   },
   {
-   "s": 90.725,
-   "e": 93.135,
+   "s": 91.607,
+   "e": 94.179,
    "text": "First, context instantiation."
   },
   {
-   "s": 93.175,
-   "e": 96.508,
+   "s": 94.219,
+   "e": 97.233,
    "text": "Reading chain state and wallet state is deterministic,"
   },
   {
-   "s": 97.11,
-   "e": 98.847,
+   "s": 97.273,
+   "e": 98.893,
    "text": "so it doesn't need intelligence."
   },
   {
-   "s": 98.887,
-   "e": 101.807,
+   "s": 98.933,
+   "e": 101.656,
    "text": "It can basically be shrunk to a software function,"
   },
   {
-   "s": 101.847,
-   "e": 103.398,
+   "s": 101.696,
+   "e": 104.907,
    "text": "so what took Claude a dozen"
   },
   {
-   "s": 103.438,
-   "e": 105.704,
+   "s": 104.947,
+   "e": 107.468,
    "text": "calls is one call for the model."
   },
   {
-   "s": 105.954,
-   "e": 107.818,
+   "s": 107.718,
+   "e": 109.791,
    "text": "Then transaction construction."
   },
   {
-   "s": 107.858,
-   "e": 109.629,
+   "s": 109.831,
+   "e": 111.962,
    "text": "The model just says what to call."
   },
   {
-   "s": 109.669,
-   "e": 110.895,
+   "s": 112.002,
+   "e": 113.576,
    "text": "The harness builds the bytes,"
   },
   {
-   "s": 110.935,
-   "e": 113.495,
+   "s": 113.616,
+   "e": 116.525,
    "text": "and its protocol skills already know the rules,"
   },
   {
-   "s": 113.535,
-   "e": 115.887,
+   "s": 116.565,
+   "e": 119.636,
    "text": "like Aave wanting wstETH,"
   },
   {
-   "s": 115.927,
-   "e": 118.546,
+   "s": 119.676,
+   "e": 122.469,
    "text": "or Kamino needing a reserve refresh."
   },
   {
-   "s": 118.586,
-   "e": 121.211,
+   "s": 122.509,
+   "e": 125.576,
    "text": "Those are the things Claude had to learn by failing."
   },
   {
-   "s": 124.661,
-   "e": 126.641,
+   "s": 129.026,
+   "e": 131.006,
    "text": "Those same failures still happen here,"
   },
   {
-   "s": 126.681,
-   "e": 130.352,
+   "s": 131.046,
+   "e": 134.717,
    "text": "but they happen on a fork, before anything is sent."
   },
   {
-   "s": 132.002,
-   "e": 135.201,
+   "s": 136.367,
+   "e": 139.566,
    "text": "Every call runs against a fork of live state first."
   },
   {
-   "s": 135.241,
-   "e": 136.049,
+   "s": 139.606,
+   "e": 140.414,
    "text": "When it reverts,"
   },
   {
-   "s": 136.089,
-   "e": 138.893,
+   "s": 140.454,
+   "e": 143.258,
    "text": "the error comes back to the model as back pressure,"
   },
   {
-   "s": 138.933,
-   "e": 141.505,
+   "s": 143.298,
+   "e": 145.87,
    "text": "and only a green run gets committed."
   },
   {
-   "s": 141.545,
-   "e": 144.663,
+   "s": 145.91,
+   "e": 149.028,
    "text": "It's the same idea as CI for coding agents:"
   },
   {
-   "s": 144.703,
-   "e": 146.811,
+   "s": 149.068,
+   "e": 151.176,
    "text": "tests push back when something breaks,"
   },
   {
-   "s": 146.851,
-   "e": 149.209,
+   "s": 151.216,
+   "e": 153.574,
    "text": "so the model writes good code."
   },
   {
-   "s": 153.86,
-   "e": 155.178,
+   "s": 158.225,
+   "e": 159.543,
    "text": "Once everything passes,"
   },
   {
-   "s": 155.218,
-   "e": 158.534,
+   "s": 159.583,
+   "e": 162.899,
    "text": "Aomi compresses the sequence into one transaction:"
   },
   {
-   "s": 158.574,
-   "e": 160.983,
+   "s": 162.939,
+   "e": 165.348,
    "text": "a smart wallet bundle on Ethereum,"
   },
   {
-   "s": 161.023,
-   "e": 163.747,
+   "s": 165.388,
+   "e": 168.112,
    "text": "one versioned transaction on Solana."
   },
   {
-   "s": 163.787,
-   "e": 165.72,
+   "s": 168.152,
+   "e": 170.085,
    "text": "That saves gas and settlement time,"
   },
   {
-   "s": 165.76,
-   "e": 167.678,
+   "s": 170.125,
+   "e": 172.043,
    "text": "and the model does less."
   },
   {
-   "s": 167.928,
-   "e": 170.152,
+   "s": 172.993,
+   "e": 175.24,
    "text": "And the key never goes to the model."
   },
   {
-   "s": 170.192,
-   "e": 173.031,
+   "s": 175.28,
+   "e": 178.549,
    "text": "Commit hands your wallet a signable transaction,"
   },
   {
-   "s": 173.071,
-   "e": 173.879,
+   "s": 178.589,
+   "e": 179.629,
    "text": "and you sign it,"
   },
   {
-   "s": 173.919,
-   "e": 176.595,
+   "s": 179.669,
+   "e": 182.508,
    "text": "or a scoped session or an agent wallet"
   },
   {
-   "s": 176.635,
-   "e": 178.627,
+   "s": 182.548,
+   "e": 184.907,
    "text": "signs within the limits you set."
   },
   {
-   "s": 178.667,
-   "e": 183.093,
+   "s": 185.16,
+   "e": 190.014,
    "text": "On Solana, a Swig role enforces those limits onchain."
   },
   {
-   "s": 185.343,
-   "e": 188.484,
+   "s": 192.265,
+   "e": 195.406,
    "text": "Then the chain settles it like any other transaction,"
   },
   {
-   "s": 188.524,
-   "e": 190.504,
+   "s": 195.446,
+   "e": 197.426,
    "text": "and Aomi checks the result against"
   },
   {
-   "s": 190.544,
-   "e": 192.984,
+   "s": 197.466,
+   "e": 199.906,
    "text": "the simulation you approved."
   },
   {
-   "s": 195.834,
-   "e": 198.36,
+   "s": 202.756,
+   "e": 205.282,
    "text": "Performance, token efficiency, and security."
   },
   {
-   "s": 198.4,
-   "e": 200.224,
+   "s": 205.322,
+   "e": 207.146,
    "text": "That's what the harness adds."
   },
   {
-   "s": 200.874,
-   "e": 202.68,
+   "s": 207.796,
+   "e": 209.672,
    "text": "The model interprets the intent,"
   },
   {
-   "s": 202.72,
-   "e": 204.038,
+   "s": 209.712,
+   "e": 211.332,
    "text": "your wallet holds the key,"
   },
   {
-   "s": 204.078,
-   "e": 207.354,
+   "s": 211.372,
+   "e": 214.833,
    "text": "and Aomi facilitates everything in between."
   }
  ],
@@ -741,79 +741,79 @@
    "id": 2,
    "file": "vo/line02.mp3",
    "start": 13.163,
-   "dur": 32.136
+   "dur": 33.019
   },
   {
    "id": 3,
    "file": "vo/line03.mp3",
-   "start": 46.2,
+   "start": 47.082,
    "dur": 15.418
   },
   {
    "id": 4,
    "file": "vo/line04.mp3",
-   "start": 62.218,
+   "start": 63.1,
    "dur": 17.554
   },
   {
    "id": 5,
    "file": "vo/line05.mp3",
-   "start": 80.173,
+   "start": 81.055,
    "dur": 9.752
   },
   {
    "id": 6,
    "file": "vo/line06.mp3",
-   "start": 90.725,
-   "dur": 14.629
+   "start": 91.607,
+   "dur": 15.511
   },
   {
    "id": 7,
    "file": "vo/line07.mp3",
-   "start": 105.954,
-   "dur": 14.907
+   "start": 107.718,
+   "dur": 17.508
   },
   {
    "id": 8,
    "file": "vo/line08.mp3",
-   "start": 124.661,
+   "start": 129.026,
    "dur": 5.341
   },
   {
    "id": 9,
    "file": "vo/line09.mp3",
-   "start": 132.002,
+   "start": 136.367,
    "dur": 16.858
   },
   {
    "id": 10,
    "file": "vo/line10.mp3",
-   "start": 153.86,
+   "start": 158.225,
    "dur": 13.468
   },
   {
    "id": 11,
    "file": "vo/line11.mp3",
-   "start": 167.928,
-   "dur": 14.814
+   "start": 172.993,
+   "dur": 16.672
   },
   {
    "id": 12,
    "file": "vo/line12.mp3",
-   "start": 185.343,
+   "start": 192.265,
    "dur": 7.291
   },
   {
    "id": 14,
    "file": "vo/line14.mp3",
-   "start": 195.834,
+   "start": 202.756,
    "dur": 4.04
   },
   {
    "id": 15,
    "file": "vo/line15.mp3",
-   "start": 200.874,
-   "dur": 6.13
+   "start": 207.796,
+   "dur": 6.687
   }
  ]
 }

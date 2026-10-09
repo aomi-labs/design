@@ -40,7 +40,7 @@ export const LINES = [
   { id: 10, start: 100.8, end: 105.6,
     text: 'Once everything passes, Aomi compresses the sequence into one transaction: a smart wallet bundle on Ethereum, one versioned transaction on Solana. That saves gas and settlement time, and the model does less.',
     anchors: [['compresses', 1, 103.5], ['bundle', 1, 104.0], ['versioned', 1, 104.3], ['gas', 1, 104.8]] },
-  { id: 11, start: 106.0, end: 113.0,
+  { id: 11, start: 106.7, end: 113.0,
     text: "And the key never goes to the model. Commit hands your wallet a signable transaction, and you sign it, or a scoped session or an agent wallet signs within the limits you set. On Solana, a Swig role enforces those limits onchain.",
     anchors: [['key', 1, 107.0], ['sign', 1, 107.8], ['session', 1, 108.1], ['wallet', 2, 108.4], ['Swig', 1, 109.3]] },
   { id: 12, start: 115.4, end: 118.8,

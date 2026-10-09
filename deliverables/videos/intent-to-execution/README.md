@@ -1,6 +1,6 @@
 # From intent to execution: narrated explainer
 
-A 3:35 narrated film of the execution half of the EasyCon (EVM) and Breakpoint (Solana) decks
+A 3:43 narrated film of the execution half of the EasyCon (EVM) and Breakpoint (Solana) decks
 (`scrum.aomi.dev/from-intent-to-exe-breakdown`, `…-solana`). A person asks an AI for a DeFi action on
 Ethereum and on Solana; the same model runs it as Claude Code in a terminal with no harness, and as
 Claude through Aomi, side by side. Each detour in the terminal drops a rose "capability defect" pill
