@@ -196,7 +196,7 @@ const RUN = {
 //   0.0  F1-2 3D   a person asks an AI, on Ethereum and on Solana; each message becomes an orb, then a card
 //  11.4  F3-4 2D   Ethereum: Claude alone | Claude through Aomi — logs side by side; defects drop into the rail
 //  33.0  F5   2D   Solana: the same
-//  51.0  F6   2D   the score
+//  51.0  F6   2D   why a harness: performance · token efficiency · security
 //  55.0  F7   2D   the harness loop: the Aomi log lines slot into read → write → rehearse → commit
 //  62.0  F8   2D   read                      (fixes: keys, contract DB, ABI/IDL)
 //  70.0  F9   2D   write                     (fix: protocol rules)
@@ -204,11 +204,11 @@ const RUN = {
 //  85.0  F10b 2D   a chain fork is CI for transactions — two loops running (fixes: simulation, raw errors)
 //  97.4  F10c 3D   both cards pass
 // 101.0  F11-12 2D one unit, one exit, then your wallet  (fix: key in .env)
-// 114.6  F13  3D   settle
-// 121.2  F14  2D   reconcile                 (fix: verification)
-// 128.0  F15  2D   the score again → the lifecycle, whole
-// 134.0  outro
-const W = 1920, H = 1080, DUR = 140, O = 134;
+// 114.6  F13  3D   settle, and the result is checked   (fix: verification)
+// 121.2  F14  2D   the three points again: the fixed pills sort under them
+// 126.2  F15  2D   who does what
+// 129.0  outro
+const W = 1920, H = 1080, DUR = 135, O = 129;
 
 // ---------- math ----------
 const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
@@ -364,9 +364,10 @@ label('Ethereum', 'zone', V(-LX, 2.75, CHZ - 4), 114.8, 120.4);
 label('Solana', 'zone g', V(LX, 2.75, CHZ - 4), 115.0, 120.4);
 label('block 24,118,902 ✓', 'rule ok', above('eth'), 117.1, 120.4);
 label('slot 312,884,102 ✓', 'rule okg', below('sol'), 117.3, 120.4);
-const CHAPTERS = [['The request', .3, 10.4], ['Ethereum · same model, same prompt', 11.6, 32.8], ['Solana · same model, same prompt', 33.2, 50.8], ['The score', 51.2, 54.8],
+label('✓ matches the simulation you approved', 'sky', V(0, 3.3, CHZ - 1), 117.4, 120.4);
+const CHAPTERS = [['The request', .3, 10.4], ['Ethereum · same model, same prompt', 11.6, 32.8], ['Solana · same model, same prompt', 33.2, 50.8], ['Why a harness', 51.2, 54.8],
   ['What a harness is', 55.2, 61.8], ['Step 1 · Context instantiation', 62.2, 69.8], ['Step 2 · Transaction construction', 70.2, 76.4], ['Step 3 · Simulation', 77.6, 100.2], ['Step 4 · Account abstraction', 101.2, 107.0],
-  ['Step 5 · Signing', 107.2, 113.6], ['Step 6 · Settlement', 114.8, 120.4], ['Step 7 · Reconciliation', 121.4, 127.8], ['The score', 128.2, 131.0], ['Who does what', 131.2, 134.0]];
+  ['Step 5 · Signing', 107.2, 113.6], ['Step 6 · Settlement', 114.8, 120.4], ['Performance · token efficiency · security', 121.4, 126.0], ['Who does what', 126.4, 129.0]];
 const hud = document.getElementById('hud');
 const chapEls = CHAPTERS.map(([txt]) => { const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `<i></i>${txt}`; hud.appendChild(d); return d; });
 
@@ -383,8 +384,11 @@ function seekChat(t) {
 // ---------- the defect rail: dropped from the lines of Claude's own log; each turns sky at its fix ----------
 const DEFECTS = [ // [defect, fix, fixed at]
   ['guessed addresses', '✓ contract DB', 65.6], ['asks for keys', '✓ own nodes', 65.0], ['ABI / IDL by hand', '✓ ABIs + IDLs', 66.2], ['skips protocol rules', '✓ protocol skills', 74.6],
-  ['no simulation', '✓ fork · LiteSVM', 86.4], ['raw errors', '✓ decoded errors', 88.3], ['key in .env', '✓ key in wallet', 106.8], ['no verification', '✓ verified outcome', 124.6]];
+  ['no simulation', '✓ fork · LiteSVM', 86.4], ['raw errors', '✓ decoded errors', 88.3], ['key in .env', '✓ key in wallet', 106.8], ['no verification', '✓ verified outcome', 117.3]];
 const RAIL_Y = 934;
+// the three points the harness delivers; at the end each fixed pill files under one of them
+const POINTS = [['Performance', 415], ['Token efficiency', 960], ['Security', 1505]];
+const SORT = { col: [0, 0, 1, 1, 2, 1, 2, 2], at: [121.8, 122.4, 123.0], out: [125.8, 126.3] }; // pill → column; column land times
 const railCap = document.getElementById('railcap');
 const pills = DEFECTS.map(([bad, good, fix]) => { const e = document.createElement('div'); e.className = 'dp'; document.getElementById('rail').appendChild(e); return { e, bad, good, fix, w: 0, rail: [0, 0], spawn: null }; });
 function layoutRail() {
@@ -394,14 +398,18 @@ function layoutRail() {
 }
 function seekRail(t) {
   let first = Infinity;
-  pills.forEach(p => {
+  pills.forEach((p, i) => {
     const sp = p.spawn; if (!sp) return; first = Math.min(first, sp.t);
     const o = seg(t, sp.t, sp.t + .2); p.e.style.opacity = o; if (o <= 0) return;
     const ok = t >= p.fix; if (p.state !== ok) { p.state = ok; p.e.classList.toggle('ok', ok); p.e.textContent = ok ? p.good : p.bad; }
     const [x0, y0] = sp.pos(), m = eio(seg(t, sp.t + .35, sp.t + 1.2)), s = lerp(1.25, 1, m) * (1 + .14 * pulse(t, p.fix, p.fix + .45)), arc = Math.sin(Math.PI * m) * -60;
-    p.e.style.transform = `translate(${lerp(x0, p.rail[0], m)}px,${lerp(y0, p.rail[1], m) + arc}px) translate(-50%,-50%) scale(${s})`;
+    let x = lerp(x0, p.rail[0], m), y = lerp(y0, p.rail[1], m) + arc, sc = s;
+    const c = SORT.col[i], k = SORT.col.slice(0, i).filter(v => v === c).length, q = eio(seg(t, SORT.at[c] - .5, SORT.at[c]));
+    if (q > 0) { x = lerp(x, POINTS[c][1], q); y = lerp(y, 520 + k * 62, q) - Math.sin(Math.PI * q) * 80; sc = lerp(sc, 1.45, q); }
+    p.e.style.opacity = o * (1 - seg(t, ...SORT.out));
+    p.e.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%) scale(${sc})`;
   });
-  railCap.style.opacity = seg(t, first + .8, first + 1.3) * .9;
+  railCap.style.opacity = seg(t, first + .8, first + 1.3) * .9 * (1 - seg(t, 121.0, 121.6));
   const done = pills.filter(p => t >= p.fix).length;
   railCap.textContent = done ? `capability defects · ${done} of ${pills.length} fixed` : 'capability defects in Claude’s log';
   railCap.style.transform = `translate(${960 - railCap.offsetWidth / 2}px, ${RAIL_Y - 48}px)`;
@@ -541,21 +549,21 @@ const COUNTS = {};
   COUNTS[k] = [left.totals(), right.totals()];
 });
 
-// -- F6 / F15a: the score -----------------------------------------------------------------------------
-function scoreboard(a, b) {
-  const g = scn(a, b);
-  heading(g, a + .2, 'Same model, same request', 'Claude Code on its own versus Claude through Aomi, counted from the two sessions.');
-  const cols = ['tool calls', 'questions to you', 'simulations', 'signatures', 'goal'], CX = [920, 1120, 1320, 1500, 1690];
-  const hd = rv(g, a + .4); cols.forEach((c, i) => T(hd, c.toUpperCase(), CX[i], 290, F.lab, MUTED, 'middle', .12)); el('path', { d: 'M180 310H1780', stroke: INK, 'stroke-width': 1.5 }, hd);
-  [['evm', 'Ethereum'], ['sol', 'Solana']].forEach(([k, chain], ci) => [0, 1].forEach(w => {
-    const y = 372 + ci * 170 + w * 64, p = rv(g, a + .7 + ci * .5 + w * .25, 0, 8), n = COUNTS[k][w], sky = w === 1, ACC = k === 'sol' ? GRN2 : SKY2;
-    T(p, `${chain} · ${sky ? 'Claude through Aomi' : 'Claude alone'}`, 200, y, F.ui, sky ? ACC : INK);
-    [n.c, n.a, n.s, n.g].forEach((v, i) => T(p, String(v), CX[i], y, "600 28px 'Geist Mono',monospace", sky ? ACC : i === 1 || i === 2 ? ROSEC : INK, 'middle'));
-    T(p, RUN[k].goal[w], CX[4], y, "500 17px 'Geist Mono',monospace", sky ? ACC : ROSEC, 'middle');
-    el('path', { d: `M180 ${y + 26}H1780`, stroke: '#e4e4e7', 'stroke-width': 1.5 }, p);
-  }));
+// -- F6: why a harness — performance, token efficiency, security, quoted off the two panes ---------------
+function pointsCard(g, a, withLines) { // the three columns; used here and again at the end
+  POINTS.forEach(([name, cx], i) => { const p = rv(g, a + .6 + i * .8), x = cx - 250;
+    B(p, x, 300, 500, 470, { rx: 22, fill: '#f1f7fc', stroke: SKYC, sw: 2.5 }); T(p, name, cx, 362, "700 34px 'PT Serif',serif", INK, 'middle');
+    el('path', { d: `M${x + 40} 392H${x + 460}`, stroke: '#c9d9ea', 'stroke-width': 1.5 }, p);
+    (withLines ? withLines[i] : []).forEach((s_, j) => { const q = rv(g, a + .9 + i * .8 + j * .2, 0, 6); T(q, s_, cx, 450 + j * 58, j < 2 && i === 0 ? "600 26px 'Geist Mono',monospace" : F.ui, j < 2 && i === 0 ? SKY2 : INK, 'middle'); }); });
 }
-scoreboard(51.0, 55.2);
+{
+  const g = scn(51.0, 55.4), e = COUNTS.evm, so = COUNTS.sol;
+  heading(g, 51.2, 'Why a harness: performance, token efficiency, security', 'Frontier models can transact without one. A harness makes them work better, which is what production needs.');
+  pointsCard(g, 51.2, [
+    [`${e[0].c} → ${e[1].c} tool calls`, `${e[0].g} → ${e[1].g} signatures`, 'one bundle, one transaction', `Solana: ${so[0].c} → ${so[1].c} calls`],
+    ['no explorer scraping', 'no ABIs or IDLs typed by hand', 'no relearning rules by failing'],
+    ['simulated before anything is sent', 'no private key in .env', 'result checked after settlement']]);
+}
 
 // -- F7: the harness loop; the Aomi log lines slot into it ---------------------------------------------
 const FLY = [];
@@ -697,39 +705,25 @@ const BUNDLES = [];
   T(sw, 'caps · program allowlist · expiry', 1326, 780, F.ui); T(sw, 'enforced onchain by the Swig program', 1326, 808, F.uiS, MUTED);
 }
 
-// -- F14: reconcile — rehearsed vs actual, and one record -----------------------------------------------
+// -- F14: the three points again — the fixed pills file under them (see SORT in the rail) ----------------
 {
-  const g = scn(121.2, 128.2);
-  heading(g, 121.4, 'Reconciliation', 'After settlement, Aomi checks the onchain result against the simulation you approved, and keeps one record from instruction to receipt.');
-  const hd = rv(g, 121.8); T(hd, 'SIMULATED', 1180, 280, F.lab, MUTED, 'end', .16); T(hd, 'ACTUAL ONCHAIN', 1500, 280, F.lab, MUTED, 'end', .16);
-  el('path', { d: 'M180 300H1740', stroke: INK, 'stroke-width': 1.5 }, hd);
-  [['Ethereum · wstETH supplied on Aave', '+4.0297'], ['Ethereum · USDC borrowed', '+1,000.00'], ['Solana · mSOL supplied on Kamino', '+41.065'], ['Solana · USDC borrowed', '+1,000.00']].forEach(([l, v], i) => {
-    const y = 352 + i * 62, a = 122.3 + i * .5, p = rv(g, a, 0, 8); T(p, l, 200, y, F.ui); T(p, v, 1180, y, F.val, INK, 'end'); el('path', { d: `M180 ${y + 24}H1740`, stroke: '#e4e4e7', 'stroke-width': 1.5 }, p);
-    T(rv(g, a + .25, 0, 6), v, 1500, y, F.val, i > 1 ? GRN2 : SKY2, 'end');
-    const ck = rv(g, a + .45, 0, 0); el('circle', { cx: 1600, cy: y - 7, r: 17, fill: i > 1 ? GRN : SKYC }, ck); T(ck, '✓', 1600, y, "700 20px 'Geist',sans-serif", '#fff', 'middle');
-  });
-  callback(rv(g, 124.2, 0, 6), '“Done. Check Etherscan to confirm the position.”', 200, 608);
-  T(rv(g, 124.9), 'ONE EXECUTION RECORD', 200, 676, F.lab, MUTED, 'start', .16);
-  const rec = ['instruction', 'policy decision', 'simulation', 'authorization', 'receipt'].map((s, i) => chip(rv(g, 125.1 + i * .28, 0, 8), s, 200, 724, i === 4 ? 'skyS' : 'sky', { font: F.mono, h: 44 }));
-  const recArrows = rec.slice(1).map((c, i) => el('path', { d: 'M0 0', stroke: '#a1a1aa', 'stroke-width': 2, 'marker-end': 'url(#ahGrey)' }, rv(g, 125.25 + i * .28)));
-  chipRow(rec, 200, 44, () => rec.slice(1).forEach((c, i) => recArrows[i].setAttribute('d', `M${rec[i].x + rec[i].w + 8} 724H${c.x - 10}`)));
-  T(rv(g, 126.6), 'This is what a treasury or a fund actually audits.', 200, 812, F.quote, MUTED);
+  const g = scn(121.2, 126.4);
+  heading(g, 121.4, 'Performance, token efficiency, security', 'Every defect the harness fixed lands under one of the three.');
+  pointsCard(g, 121.0);
 }
-
-// -- F15: the score again, then the lifecycle, whole ----------------------------------------------------
-scoreboard(128.0, 131.2);
+// -- F15: who does what ----------------------------------------------------------------------------------
 {
-  const g = scn(131.0, 300);
-  heading(g, 131.2, 'The model interprets intent. The wallet holds the key.', 'Aomi, the harness, facilitates everything in between: reading state, building and simulating the transaction, and checking the result.');
-  [[190, 'PROBABILISTIC', 'The model', ['interprets the intent', 'picks the protocols', 'any frontier model'], 'intent', 131.5, 0],
-   [735, 'DETERMINISTIC', 'Aomi harness', ['reads chain + wallet state', 'builds, simulates, bundles', 'checks the outcome'], 'in the middle', 131.8, 1],
-   [1280, 'AUTHORITY', 'Your wallet', ['holds the key', 'signs within your policy', 'settles onchain'], 'the key', 132.1, 0]].forEach(([x, k, n, lines, tag, a, hi]) => {
+  const g = scn(126.2, 300);
+  heading(g, 126.4, 'The model interprets intent. The wallet holds the key.', 'Aomi, the harness, facilitates everything in between: reading state, building and simulating the transaction, and checking the result.');
+  [[190, 'PROBABILISTIC', 'The model', ['interprets the intent', 'picks the protocols', 'any frontier model'], 'intent', 126.6, 0],
+   [735, 'DETERMINISTIC', 'Aomi harness', ['reads chain + wallet state', 'builds, simulates, bundles', 'checks the outcome'], 'in the middle', 126.9, 1],
+   [1280, 'AUTHORITY', 'Your wallet', ['holds the key', 'signs within your policy', 'settles onchain'], 'the key', 127.2, 0]].forEach(([x, k, n, lines, tag, a, hi]) => {
     const p = rv(g, a); B(p, x, 270, 450, 470, { rx: 22, fill: hi ? '#f1f7fc' : '#ffffff', stroke: hi ? SKYC : INK, sw: hi ? 3 : 2 });
     T(p, k, x + 34, 316, F.lab, hi ? SKY2 : MUTED, 'start', .16); T(p, n, x + 34, 366, F.uiB, INK);
     lines.forEach((s_, i) => T(p, s_, x + 34, 440 + i * 52, F.ui, INK));
     chip(p, tag, x + 34, 680, hi ? 'skyS' : 'grey', { font: F.mono });
   });
-  arrow(g, 'M648 505H728', 132.4, 'ink'); arrow(g, 'M1192 505H1272', 132.6, 'ink');
+  arrow(g, 'M648 505H728', 127.5, 'ink'); arrow(g, 'M1192 505H1272', 127.7, 'ink');
 }
 
 // -- hero cards in 2D: same spot and scale as the flattened 3D cards (120 px per unit) ------------------

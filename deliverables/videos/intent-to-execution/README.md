@@ -1,12 +1,13 @@
 # From intent to execution: narrated explainer
 
-A 3:57 narrated film of the execution half of the EasyCon (EVM) and Breakpoint (Solana) decks
+A 3:35 narrated film of the execution half of the EasyCon (EVM) and Breakpoint (Solana) decks
 (`scrum.aomi.dev/from-intent-to-exe-breakdown`, `…-solana`). A person asks an AI for a DeFi action on
 Ethereum and on Solana; the same model runs it as Claude Code in a terminal with no harness, and as
 Claude through Aomi, side by side. Each detour in the terminal drops a rose "capability defect" pill
-into a rail, and each pill turns sky at the harness step that fixes it: context instantiation,
-transaction construction, simulation (three-gates slide 6, back pressure), account abstraction,
-signing, settlement and reconciliation. Solana is green throughout; EVM is sky.
+into a rail. The punchline (performance, token efficiency, security) comes right after the comparison,
+then each pill turns sky at the harness step that fixes it: context instantiation, transaction
+construction, simulation (three-gates slide 6, back pressure), account abstraction, signing and
+settlement. At the end the fixed pills sort under the three points. Solana is green; EVM is sky.
 
 The Claude Code terminal session is a reconstruction that shows what an agent without a harness has to
 do; the narration does not present it as a recorded log. The Aomi column is the trace from the landing page.

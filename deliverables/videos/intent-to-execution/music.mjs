@@ -8,26 +8,26 @@
 //   node music.mjs out.wav
 import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 
-const FILM_DUR = 140;                                   // DUR in film.html
+const FILM_DUR = 135;                                   // DUR in film.html
 const CHORDS = [                                        // [start, end, chord (MIDI), bass (MIDI)] — changes on scene boundaries
   [0, 11.4, [53, 60, 64, 69], 41],                      // F1-2 the request          Fmaj7(add9 colour)
   [11.4, 33.0, [50, 57, 60, 65], 38],                   // F3-4 Ethereum, side by side  Dm9 — the problem
   [33.0, 51.0, [46, 53, 57, 62], 34],                   // F5   Solana, side by side    Bbmaj7
-  [51.0, 55.0, [48, 55, 60, 64], 36],                   // F6   the score             C
+  [51.0, 55.0, [48, 55, 60, 64], 36],                   // F6   why a harness         C
   [55.0, 62.0, [45, 53, 57, 60], 33],                   // F7   the loop              F/A
   [62.0, 70.0, [43, 50, 53, 58], 31],                   // F8   read                  Gm7
   [70.0, 77.4, [46, 53, 57, 60], 34],                   // F9   write                 Bbmaj9
   [77.4, 97.4, [50, 53, 57, 62], 38],                   // F10  rehearse + CI loops   Dm
   [97.4, 114.6, [46, 53, 57, 60], 34],                  // F11-12 commit + sign       Bbmaj9
   [114.6, 121.2, [48, 55, 57, 64], 36],                 // F13  settle                C6
-  [121.2, 128.0, [45, 52, 55, 60], 33],                 // F14  reconcile             Am7
-  [128.0, 134.0, [46, 53, 58, 62], 34],                 // F15  the whole             Bb
-  [134.0, 140.0, [53, 57, 60, 64, 67], 41]];            // outro                     Fmaj9
+  [121.2, 126.2, [48, 55, 60, 64], 36],                 // F14  the three points      C
+  [126.2, 129.0, [46, 53, 58, 62], 34],                 // F15  who does what         Bb
+  [129.0, 135.0, [53, 57, 60, 64, 67], 41]];            // outro                     Fmaj9
 const BEAT = 60 / 112;
-const PLUCK = [11.4, 132.6];                            // 16th-note pluck between these times
-const HATS = [[11.4, 51.0], [62.0, 77.4], [101.0, 114.6], [121.2, 128.0]]; // off-beat hats through the logs and the harness steps
+const PLUCK = [11.4, 127.6];                            // 16th-note pluck between these times
+const HATS = [[11.4, 51.0], [62.0, 77.4], [101.0, 114.6]]; // off-beat hats through the logs and the harness steps
 const KICK = [77.4, 97.0];                              // kick under the sandbox and the CI loops
-const CHIMES = [[65.0, 81], [65.6, 84], [66.2, 86], [74.6, 88], [86.4, 81], [88.3, 84], [89.0, 88], [98.6, 86], [106.8, 86], [116.8, 81], [117.1, 88], [124.6, 89], [137.2, 89]];
+const CHIMES = [[65.0, 81], [65.6, 84], [66.2, 86], [74.6, 88], [86.4, 81], [88.3, 84], [89.0, 88], [98.6, 86], [106.8, 86], [116.8, 81], [117.3, 88], [121.8, 81], [122.4, 84], [123.0, 88], [132.2, 89]];
 const THUDS = [23.5, 43.9, 79.8, 87.6];                 // Claude's revert · ReserveStale · the sandbox catches both · the CI loop fails
 
 // ---- original clock → narrated clock ----
