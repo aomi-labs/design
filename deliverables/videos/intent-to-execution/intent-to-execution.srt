@@ -1,0 +1,295 @@
+1
+00:00:00,500 --> 00:00:02,840
+Here's a pretty normal DeFi request:
+
+2
+00:00:02,880 --> 00:00:07,113
+stake ETH with Lido and borrow USDC against it on Aave.
+
+3
+00:00:07,153 --> 00:00:11,113
+And the same on Solana, with Marinade and Kamino.
+
+4
+00:00:13,163 --> 00:00:16,072
+On the left is Claude Code with no harness.
+
+5
+00:00:16,112 --> 00:00:19,776
+It has to go find the contract addresses, fetch the ABIs,
+
+6
+00:00:19,816 --> 00:00:23,293
+ask you for an RPC endpoint, and write its own script.
+
+7
+00:00:23,333 --> 00:00:25,871
+Then it hits a revert, error 27,
+
+8
+00:00:25,911 --> 00:00:31,153
+because Aave actually takes wstETH, not stETH.
+
+9
+00:00:31,193 --> 00:00:35,379
+And then it asks for your private key in a .env file.
+
+10
+00:00:35,419 --> 00:00:38,433
+On the right it's the same model, through Aomi.
+
+11
+00:00:38,473 --> 00:00:41,022
+It reads the wrap rate, simulates the stake,
+
+12
+00:00:41,062 --> 00:00:42,288
+checks the loan-to-value,
+
+13
+00:00:42,328 --> 00:00:46,532
+and all six steps pass on a fork as one bundle.
+
+14
+00:00:47,082 --> 00:00:50,258
+On Solana it's the same story with different failures:
+
+15
+00:00:50,298 --> 00:00:52,011
+a rate-limited RPC,
+
+16
+00:00:52,051 --> 00:00:54,786
+a missing token account, Kamino's refresh rule,
+
+17
+00:00:54,826 --> 00:00:56,876
+and the transaction size limit.
+
+18
+00:00:56,916 --> 00:00:59,023
+Aomi simulates it all in Lite
+
+19
+00:00:59,063 --> 00:01:02,850
+S V M and sends one transaction.
+
+20
+00:01:03,100 --> 00:01:05,254
+The point of having a harness is performance,
+
+21
+00:01:05,294 --> 00:01:07,541
+token efficiency, and security.
+
+22
+00:01:07,581 --> 00:01:10,107
+A lot of people argue frontier models
+
+23
+00:01:10,147 --> 00:01:12,139
+can transact without any harness,
+
+24
+00:01:12,179 --> 00:01:13,300
+and they kind of can.
+
+25
+00:01:13,340 --> 00:01:16,202
+But a harness makes them work better,
+
+26
+00:01:16,242 --> 00:01:17,839
+so if you want to productionize
+
+27
+00:01:17,879 --> 00:01:19,651
+an agentic financial workflow,
+
+28
+00:01:19,691 --> 00:01:21,004
+it's a no-brainer.
+
+29
+00:01:21,055 --> 00:01:23,337
+The harness is the loop around the model:
+
+30
+00:01:23,377 --> 00:01:25,578
+it gets the context, builds the call,
+
+31
+00:01:25,618 --> 00:01:28,457
+simulates it, then commits, and if anything fails,
+
+32
+00:01:28,497 --> 00:01:31,157
+it goes back and reads again.
+
+33
+00:01:31,607 --> 00:01:34,179
+First, context instantiation.
+
+34
+00:01:34,219 --> 00:01:37,233
+Reading chain state and wallet state is deterministic,
+
+35
+00:01:37,273 --> 00:01:38,893
+so it doesn't need intelligence.
+
+36
+00:01:38,933 --> 00:01:41,656
+It can basically be shrunk to a software function,
+
+37
+00:01:41,696 --> 00:01:44,907
+so what took Claude a dozen
+
+38
+00:01:44,947 --> 00:01:47,468
+calls is one call for the model.
+
+39
+00:01:47,718 --> 00:01:49,791
+Then transaction construction.
+
+40
+00:01:49,831 --> 00:01:51,962
+The model just says what to call.
+
+41
+00:01:52,002 --> 00:01:53,576
+The harness builds the bytes,
+
+42
+00:01:53,616 --> 00:01:56,525
+and its protocol skills already know the rules,
+
+43
+00:01:56,565 --> 00:01:59,636
+like Aave wanting wstETH,
+
+44
+00:01:59,676 --> 00:02:02,469
+or Kamino needing a reserve refresh.
+
+45
+00:02:02,509 --> 00:02:05,576
+Those are the things Claude had to learn by failing.
+
+46
+00:02:09,026 --> 00:02:11,006
+Those same failures still happen here,
+
+47
+00:02:11,046 --> 00:02:14,717
+but they happen on a fork, before anything is sent.
+
+48
+00:02:16,367 --> 00:02:19,566
+Every call runs against a fork of live state first.
+
+49
+00:02:19,606 --> 00:02:20,414
+When it reverts,
+
+50
+00:02:20,454 --> 00:02:23,258
+the error comes back to the model as back pressure,
+
+51
+00:02:23,298 --> 00:02:25,870
+and only a green run gets committed.
+
+52
+00:02:25,910 --> 00:02:29,028
+It's the same idea as CI for coding agents:
+
+53
+00:02:29,068 --> 00:02:31,176
+tests push back when something breaks,
+
+54
+00:02:31,216 --> 00:02:33,574
+so the model writes good code.
+
+55
+00:02:38,225 --> 00:02:39,543
+Once everything passes,
+
+56
+00:02:39,583 --> 00:02:42,899
+Aomi compresses the sequence into one transaction:
+
+57
+00:02:42,939 --> 00:02:45,348
+a smart wallet bundle on Ethereum,
+
+58
+00:02:45,388 --> 00:02:48,112
+one versioned transaction on Solana.
+
+59
+00:02:48,152 --> 00:02:50,085
+That saves gas and settlement time,
+
+60
+00:02:50,125 --> 00:02:52,043
+and the model does less.
+
+61
+00:02:52,993 --> 00:02:55,240
+And the key never goes to the model.
+
+62
+00:02:55,280 --> 00:02:58,549
+Commit hands your wallet a signable transaction,
+
+63
+00:02:58,589 --> 00:02:59,629
+and you sign it,
+
+64
+00:02:59,669 --> 00:03:02,508
+or a scoped session or an agent wallet
+
+65
+00:03:02,548 --> 00:03:04,907
+signs within the limits you set.
+
+66
+00:03:05,160 --> 00:03:10,014
+On Solana, a Swig role enforces those limits onchain.
+
+67
+00:03:12,265 --> 00:03:15,406
+Then the chain settles it like any other transaction,
+
+68
+00:03:15,446 --> 00:03:17,426
+and Aomi checks the result against
+
+69
+00:03:17,466 --> 00:03:19,906
+the simulation you approved.
+
+70
+00:03:22,756 --> 00:03:25,282
+Performance, token efficiency, and security.
+
+71
+00:03:25,322 --> 00:03:27,146
+That's what the harness adds.
+
+72
+00:03:27,796 --> 00:03:29,672
+The model interprets the intent,
+
+73
+00:03:29,712 --> 00:03:31,332
+your wallet holds the key,
+
+74
+00:03:31,372 --> 00:03:34,833
+and Aomi facilitates everything in between.
