@@ -97,6 +97,7 @@ canvas{display:block}
   </div>
   <div id="sub"></div>
 </div>
+<script src="cut.js" onerror="void 0"></script>
 <script src="vo/timeline.js" onerror="void 0"></script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
@@ -829,13 +830,16 @@ function seek(t) {
 
 // ---------- narrated clock → film clock, subtitles ----------
 const TL = window.VO_TL || null, captionEl = document.getElementById('sub');
+// an edit list (cut.js, e.g. the X cut) plays kept ranges of the film back to back with hard cuts
+const CUT = window.CUT || null, CUT_DUR = CUT ? CUT.reduce((s_, [a, b]) => s_ + b - a, 0) : DUR;
+const cutTime = x => { if (!CUT) return x; for (const [a, b] of CUT) { if (x <= b - a) return a + x; x -= b - a; } return CUT.at(-1)[1]; };
 function oldTime(T) {
   if (!TL) return T; const A = TL.anchors; if (T <= A[0][0]) return A[0][1];
   for (let i = 0; i < A.length - 1; i++) { const [n0, o0] = A[i], [n1, o1] = A[i + 1]; if (T <= n1) return o0 + (o1 - o0) * (T - n0) / (n1 - n0); }
   return A[A.length - 1][1];
 }
 function seekFilm(T) {
-  seek(oldTime(T));
+  seek(cutTime(oldTime(T)));
   const c = TL && TL.cues.find(q => T >= q.s && T < q.e);
   captionEl.textContent = c ? c.text : ''; captionEl.style.opacity = c ? Math.min(seg(T, c.s, c.s + .1), 1 - seg(T, c.e - .1, c.e)) : 0;
 }
@@ -844,7 +848,7 @@ function seekFilm(T) {
 const params = new URLSearchParams(location.search);
 let playing = false, t0 = 0, from = 0;
 window.__AOMI_VIDEO__ = {
-  duration: TL ? TL.dur : DUR,
+  duration: TL ? TL.dur : CUT_DUR,
   seek: seekFilm,
   play() { playing = true; t0 = performance.now(); const loop = () => { if (!playing) return; seekFilm((from + (performance.now() - t0) / 1000) % this.duration); requestAnimationFrame(loop); }; loop(); },
   pause() { playing = false; },

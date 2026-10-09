@@ -7,6 +7,7 @@
 //
 //   node music.mjs out.wav
 import { writeFileSync, readFileSync, existsSync } from 'node:fs';
+import path from 'node:path';
 
 const FILM_DUR = 135;                                   // DUR in film.html
 const CHORDS = [                                        // [start, end, chord (MIDI), bass (MIDI)] — changes on scene boundaries
@@ -31,13 +32,19 @@ const CHIMES = [[65.0, 81], [65.6, 84], [66.2, 86], [74.6, 88], [86.4, 81], [88.
 const THUDS = [23.5, 43.9, 79.8, 87.6];                 // Claude's revert · ReserveStale · the sandbox catches both · the CI loop fails
 
 // ---- original clock → narrated clock ----
-const tlPath = new URL('./vo/timeline.json', import.meta.url);
+// paths resolve against the production folder finish.mjs runs this in, so a cut (e.g. ../intent-to-execution-x) can symlink this file
+const tlPath = path.join(process.cwd(), 'vo/timeline.json'), cutPath = path.join(process.cwd(), 'cut.js');
+// optional edit list: kept [start, end] ranges of the original film clock, played back to back
+const CUT = existsSync(cutPath) ? JSON.parse(readFileSync(cutPath, 'utf8').match(/\[[\s\S]*\]/)[0]) : null;
+const inCut = t => !CUT || CUT.some(([a, b]) => t >= a && t <= b);
+const E = old => { if (!CUT) return old; let acc = 0; for (const [a, b] of CUT) { if (old < a) return acc; if (old <= b) return acc + old - a; acc += b - a; } return acc; };
 const TL = existsSync(tlPath) ? JSON.parse(readFileSync(tlPath, 'utf8')) : null;
-const N = old => { if (!TL) return old; const A = TL.anchors; if (old <= A[0][1]) return old;
+const N = o => N1(E(o));
+const N1 = old => { if (!TL) return old; const A = TL.anchors; if (old <= A[0][1]) return old;
   for (let i = 0; i < A.length - 1; i++) { const [n0, o0] = A[i], [n1, o1] = A[i + 1]; if (old <= o1) return o1 === o0 ? n0 : n0 + (n1 - n0) * (old - o0) / (o1 - o0); }
   return A.at(-1)[0] + (old - A.at(-1)[1]); };
 
-const SR = 44100, DUR = TL ? TL.dur : FILM_DUR, NS = Math.round(SR * DUR);
+const SR = 44100, DUR = TL ? TL.dur : CUT ? E(1e9) : FILM_DUR, NS = Math.round(SR * DUR);
 const L = new Float32Array(NS), R = new Float32Array(NS);
 const mtof = m => 440 * Math.pow(2, (m - 69) / 12), cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const smooth = x => { x = cl(x); return x * x * (3 - 2 * x); };
@@ -79,8 +86,8 @@ for (const [a, b] of HATS) for (let t = N(a) + BEAT / 2; t < N(b); t += BEAT) {
 for (let t = N(KICK[0]); t < N(KICK[1]); t += BEAT) { const amp = .28 * smooth((t - N(KICK[0])) / 2.5) * (1 - smooth((t - N(KICK[1]) + 1.5) / 1.5));
   add(t, .34, x => Math.sin(2 * Math.PI * (48 + 70 * Math.exp(-x / .035)) * x) * Math.exp(-x / .13) * amp); }
 // chimes: bell partials, one per fix
-CHIMES.forEach(([t, m]) => { const f = mtof(m); add(N(t), 2.6, x => (Math.sin(2 * Math.PI * f * x) + .45 * Math.sin(2 * Math.PI * f * 2.4 * x) * Math.exp(-x / .3) + .2 * Math.sin(2 * Math.PI * f * 5.95 * x) * Math.exp(-x / .1)) * Math.exp(-x / .8) * Math.min(1, x / .002) * .06, .58); });
-THUDS.forEach(t => { let lp = 0; add(N(t), .7, x => { lp += .07 * ((rnd() * 2 - 1) - lp); return (Math.sin(2 * Math.PI * (55 + 45 * Math.exp(-x / .05)) * x) * .5 + lp * 1.5) * Math.exp(-x / .17) * .3; }); });
+CHIMES.filter(([t]) => inCut(t)).forEach(([t, m]) => { const f = mtof(m); add(N(t), 2.6, x => (Math.sin(2 * Math.PI * f * x) + .45 * Math.sin(2 * Math.PI * f * 2.4 * x) * Math.exp(-x / .3) + .2 * Math.sin(2 * Math.PI * f * 5.95 * x) * Math.exp(-x / .1)) * Math.exp(-x / .8) * Math.min(1, x / .002) * .06, .58); });
+THUDS.filter(inCut).forEach(t => { let lp = 0; add(N(t), .7, x => { lp += .07 * ((rnd() * 2 - 1) - lp); return (Math.sin(2 * Math.PI * (55 + 45 * Math.exp(-x / .05)) * x) * .5 + lp * 1.5) * Math.exp(-x / .17) * .3; }); });
 
 const reverb = (x, off) => { // gentle low-pass + Schroeder reverb, a little wider than the template's
   const combs = [1687, 1601, 2053, 1422].map(d => ({ b: new Float32Array(d + off), i: 0, s: 0 })), aps = [347, 113].map(d => ({ b: new Float32Array(d + off), i: 0 }));
