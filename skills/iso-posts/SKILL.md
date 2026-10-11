@@ -1,6 +1,6 @@
 ---
 name: iso-posts
-description: Turn a Mermaid diagram (architecture, flowchart, sequence) into a cute isometric "cube" banner for X or LinkedIn, in Aomi's style. A one-line serif headline, one mono line, and a small three.js scene of icon cubes on platforms, glass sandboxes, pipes and trees, with the aomi labs lockup. Use this whenever someone wants to post, share or announce something that already exists as a Mermaid diagram, architecture sketch or flow, or asks for a "banner", "post image", "social graphic", "X image", "cover image" or "something postable" from a diagram, PR, doc or idea. Also use it for one-off hand-built iso scenes in the same style, and for re-exporting or tweaking existing iso posts, even if they don't say "isometric" or "Mermaid". For narrated videos use slide-to-video; for chain-verified demo videos use demo-director.
+description: Turn a Mermaid diagram (architecture, flowchart, sequence) into a cute isometric "cube" banner for X or LinkedIn, in Aomi's style. A one-line serif headline, one mono line, and a small three.js scene of icon cubes on platforms, glass sandboxes, pipes and trees, with the Aomi mark. Use this whenever someone wants to post, share or announce something that already exists as a Mermaid diagram, architecture sketch or flow, or asks for a "banner", "post image", "social graphic", "X image", "cover image" or "something postable" from a diagram, PR, doc or idea. Also use it for one-off hand-built iso scenes in the same style, and for re-exporting or tweaking existing iso posts, even if they don't say "isometric" or "Mermaid". For narrated videos use slide-to-video; for chain-verified demo videos use demo-director.
 ---
 
 # Iso posts: Mermaid → postable cube banner
@@ -60,7 +60,7 @@ Playwright: the script uses `playwright-core` from the project or next to the sc
 - **Wires are plumbing, not spaghetti.** Straight runs and right angles read as a system; curves and diagonals read as a mess. If a scene still looks tangled, cut edges before anything else.
 - **Nothing small.** On a phone an X image is about 600px wide, a third of the canvas, so labels under about 24px vanish. The template's sizes are already safe; don't shrink them to fit more in.
 - **Colour means something.** Sky is ours, EVM or passed; green is Solana; rose is a failure. A rose cube that isn't a failure confuses the story.
-- **The lockup reads "aomi labs"** (top-right, with the mark; the headline stays left). Keep it.
+- **The Aomi mark sits alone in the top-right**, with no "aomi labs" wordmark; the headline stays left. Keep it.
 - **White background, faint iso grid, cool grey structure.** Don't add dark backgrounds or gradients; the style is light and clean.
 - **Claims must be true.** Numbers on tags ("9 → 5 calls") need a source. If they come from a demo or reconstruction, say so in the post copy, not on the image.
 

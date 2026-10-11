@@ -18,7 +18,7 @@ html,body{margin:0;background:#fff}
 #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#fff}
 #gl,#ov{position:absolute;inset:0} #ov{pointer-events:none}
 .logo{position:absolute;right:66px;top:50px;display:flex;align-items:center;gap:14px}
-.logo svg{width:58px;height:58px} .logo span{font:600 54px/1 'Source Serif 4',serif;letter-spacing:-.01em;color:var(--ink)}
+.logo svg{width:72px;height:72px}
 h1{position:absolute;left:58px;top:132px;margin:0;white-space:nowrap;font:700 112px/.95 'PT Serif',serif;letter-spacing:-.035em;color:var(--ink)}
 .sub{position:absolute;left:66px;font:500 34px 'Geist Mono',monospace;color:var(--navy)}
 .foot{position:absolute;left:0;right:0;bottom:44px;text-align:center;font:500 30px 'Geist Mono',monospace;color:var(--navy)}
@@ -34,7 +34,7 @@ h1{position:absolute;left:58px;top:132px;margin:0;white-space:nowrap;font:700 11
 </head>
 <body>
 <div id="stage"><div id="gl"></div><div id="ov">
-  <div class="logo"><svg viewBox="0 0 362 362"><g fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g></svg><span>aomi labs</span></div>
+  <div class="logo"><svg viewBox="0 0 362 362"><g fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g></svg></div>
   <h1></h1><div class="sub"></div><div class="foot"></div>
 </div></div>
 <script src="posts.js" onerror="void 0"></script> <!-- window.POST_SPECS from mermaid-to-spec.mjs; optional -->
@@ -269,6 +269,8 @@ function build(spec) {
   const topMax = Math.max(...spec.nodes.map(n => top[n.id])), y0 = S + topMax, pairs = new Map();
   spec.edges.forEach(e => { if (!byId[e.from] || !byId[e.to]) return; const key = [e.from, e.to].sort().join('\u0000'), had = pairs.get(key);
     if (!had) pairs.set(key, { ...e }); else { if (e.style === 'fail') had.style = 'fail'; else if (had.style === 'dotted' && e.style !== 'dotted') Object.assign(had, { ...e, style: e.style }); had.label = had.label || e.label; } });
+  // a face-to-face wire runs level: at the middle of the height both bodies share, so it never slopes
+  const level = (A, B) => { const lo = Math.max(B0(A), B0(B)), hi = Math.min(B0(A) + top[A.id], B0(B) + top[B.id]); return hi > lo ? (lo + hi) / 2 : B0(A) + mid[A.id]; };
   let lane = 0;
   [...pairs.values()].forEach(e => {
     const A = byId[e.from], B = byId[e.to], a = at0(A), b = at0(B), fail = e.style === 'fail', dashed = e.style === 'dotted', c = fail ? C.rose : dashed ? 0x7facd6 : C.pipe;
@@ -278,10 +280,10 @@ function build(spec) {
     const packed = P[A.id] && P[B.id], face = (n, ax, d) => off(at0(n).add(ax.clone().multiplyScalar(d * (half[n.id] + .02))), 0, B0(n) + mid[n.id], 0);
     if (packed && Math.abs(A.row - B.row) + Math.abs(A.col - B.col) === 1 && !fail && !e.back) { // grid neighbours in the world
       const ax = A.row === B.row ? V(0, 0, -1) : V(1, 0, 0), d = A.row === B.row ? Math.sign(B.col - A.col) : Math.sign(B.row - A.row);
-      wire([face(A, ax, d), face(B, ax, -d)], { c, dashed }); return; }
+      const y = level(A, B); wire([V(face(A, ax, d).x, y, face(A, ax, d).z), V(face(B, ax, -d).x, y, face(B, ax, -d).z)], { c, dashed }); return; }
     if (P[A.id] || P[B.id]) { const h = y0 + .5 + (lane++) * .3 + (fail || e.back ? .4 : 0); // anything touching the world: rise, run along x then z, drop
       wire([up(a, A), V(a.x, h, a.z), V(b.x, h, a.z), V(b.x, h, b.z), up(b, B)], { c, dashed }); return; }
-    if (A.k === B.k && Math.abs(B.r - A.r) === 1) { const d = Math.sign(B.r - A.r); wire([side(A, d), side(B, -d)], { c, dashed });
+    if (A.k === B.k && Math.abs(B.r - A.r) === 1) { const d = Math.sign(B.r - A.r), y = level(A, B); wire([V(side(A, d).x, y, side(A, d).z), V(side(B, -d).x, y, side(B, -d).z)], { c, dashed });
       if (spec.edgeLabels && e.label) tag(off(a.clone().lerp(b, .5), 0, S + mid[A.id] + .9, 0), e.label, fail ? 'rose' : 'sky'); return; }
     const h = y0 + .9 + (lane++) * .55 + (fail || e.back ? .4 : 0), pts = [up(a, A), up(a, A, h)];
     if (B.k !== A.k) pts.push(pts.at(-1).clone().add(DK.clone().multiplyScalar((B.k - A.k) * GZ)));
@@ -330,7 +332,8 @@ pins.map(([e]) => e).sort((a, b) => b.getBoundingClientRect().top - a.getBoundin
 // a label that had to move far from its node gets a thin leader line down to the node
 const lead = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); lead.setAttribute('width', W); lead.setAttribute('height', H); lead.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0'; ov.prepend(lead);
 pins.forEach(([e]) => { const k = e.dataset.body; if (k === undefined || !e.dataset.moved) return; const r = e.getBoundingClientRect(), b = bodyRects[k], tx = (b.left + b.right) / 2, ty = b.top + 4;
-  const cx = Math.max(r.left + 10, Math.min(r.right - 10, tx)), cy = ty > r.bottom ? r.bottom : r.top; if (Math.hypot(cx - tx, cy - ty) < 70) return;
+  if (r.left < b.right && r.right > b.left) return; // still sits over its node: no leader needed
+  const cx = Math.max(r.left + 10, Math.min(r.right - 10, tx)), cy = ty > r.bottom ? r.bottom : r.top;
   lead.insertAdjacentHTML('beforeend', `<line x1="${cx}" y1="${cy}" x2="${tx}" y2="${ty}" stroke="#7facd6" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/><circle cx="${tx}" cy="${ty}" r="5" fill="#7facd6"/>`); });
 window.__READY__ = true;
 </script>
