@@ -629,7 +629,7 @@ fits.push(() => sRisks.forEach(r => { r.wa = r.A.fit(); r.A.place(-r.wa / 2); r.
 const sBottom = el('g', {}, gS);
 const sBad = el('text', { x: 70, y: 930, fill: '#71717a', style: "font:500 26px 'Geist',sans-serif" }, sBottom); sBad.textContent = 'Valid onchain. Wrong for the user.';
 const sStrike = el('line', { x1: 66, y1: 921, x2: 470, y2: 921, stroke: '#df5d90', 'stroke-width': 3 }, sBottom);
-const sArrow = txt('→', 0, 975, 'ttl', sBottom, 'start');
+const sArrow = txt('→', 0, 930, 'ttl', sBottom, 'start');
 const sGood = el('text', { y: 931, fill: '#2e8b57', style: "font:700 30px 'Geist',sans-serif" }, sBottom); sGood.textContent = 'Only what passes every gate settles.';
 fits.push(() => { const a = sBad.getComputedTextLength(); sStrike.setAttribute('x2', 74 + a); sArrow.setAttribute('x', 98 + a); sGood.setAttribute('x', 136 + a); });
 
