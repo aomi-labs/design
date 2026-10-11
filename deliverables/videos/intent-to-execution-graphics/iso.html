@@ -17,7 +17,7 @@ html,body{margin:0;background:#fff}
 #gl,#ov{position:absolute;inset:0} #ov{pointer-events:none}
 .logo{position:absolute;left:66px;top:50px;display:flex;align-items:center;gap:14px}
 .logo svg{width:58px;height:58px} .logo span{font:600 54px/1 'Source Serif 4',serif;letter-spacing:-.01em;color:var(--ink)}
-h1{position:absolute;left:58px;top:132px;margin:0;font:700 118px/.9 'PT Serif',serif;letter-spacing:-.035em;color:var(--ink)}
+h1{position:absolute;left:58px;top:132px;margin:0;white-space:nowrap;font:700 112px/.95 'PT Serif',serif;letter-spacing:-.035em;color:var(--ink)}
 .sub{position:absolute;left:66px;font:500 34px 'Geist Mono',monospace;color:var(--navy)}
 .foot{position:absolute;left:0;right:0;bottom:44px;text-align:center;font:500 30px 'Geist Mono',monospace;color:var(--navy)}
 .tag{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font:600 30px 'Geist Mono',monospace;background:#fff;border:2.5px solid var(--navy);color:var(--navy);border-radius:14px;padding:10px 20px;box-shadow:0 10px 24px rgba(31,58,99,.08)}
@@ -128,7 +128,7 @@ function copy(h1, sub, foot) { document.querySelector('h1').innerHTML = h1; cons
 const S = .62; // slab height: things stand on top of it
 const POSTS = {
   1() { // same model, same prompt: no harness vs. the Aomi harness
-    copy('Same model,<br>same prompt.', 'Claude Code alone vs. Claude through Aomi', 'The harness is the difference.');
+    copy('Same model, same prompt.', 'Claude Code alone vs. Claude through Aomi', 'The harness is the difference.');
     const L = at(-6.6, -4.4), R = at(6.4, -3.9);
     slab(L, 7, 5.4, 'NO HARNESS');
     cube(off(L, -2.2, S, -1.4), { s: 1.3, c: C.term, icon: 'term' });
@@ -146,7 +146,7 @@ const POSTS = {
     tag(off(R, 0, 4.4, 0), '<b>5</b> calls · <b>1</b> signature', 'sky');
   },
   2() { // why a harness: three pillars on three plinths, in a row across the frame
-    copy('Why a<br>harness.', 'Performance · token efficiency · security', 'Frontier models can transact alone. With a harness they work better.');
+    copy('Why a harness.', 'Performance · token efficiency · security', 'Frontier models can transact alone. With a harness they work better.');
     [[-4.4, 'PERFORMANCE', 'bolt', C.sky, '9 → 5', 'calls', 'sky'], [1.9, 'TOKENS', 'coins', C.grn, '12 → 1', 'reads', 'grn'], [8.2, 'SECURITY', 'shield', C.sky, '0 → 2', 'simulations', 'sky']].forEach(([sx, lab, ic, c, n, u, k], i) => {
       const P = at(sx, -4.3); slab(P, 3.6, 3.6, lab); cube(off(P, 0, S, 0), { s: 1.9, c, icon: ic });
       tag(off(P, 0, 4.4, 0), `<b style="font-size:44px">${n}</b> ${u}`, k);
@@ -154,7 +154,7 @@ const POSTS = {
     tree(at(-9.5, -5.2), 1.1);
   },
   3() { // a dozen calls, one function
-    copy('A dozen calls,<br>one function.', 'Chain and wallet state, read deterministically', 'What Claude searched for, Aomi already knows.');
+    copy('A dozen calls, one function.', 'Chain and wallet state, read deterministically', 'What Claude searched for, Aomi already knows.');
     const Sc = at(-8.2, -4.6), G = at(-.4, -4.1), K = at(7.6, -4.3);
     const pts = [[-2.4, -1.6], [-1.4, -2.5], [-.3, -1.9], [-2.7, -.3], [-1.7, .3], [-.6, -.7], [.4, .5], [-2.4, 1.5], [-1.3, 2.0], [-.2, 1.6], [.9, -1.5], [1.1, 2.1]];
     pts.forEach(([x, z], i) => cube(off(Sc, x, 0, z), { s: .5, c: C.grey, icon: i % 3 ? 'search' : 'doc', ink: '#5b6b82', y: (i % 4) * .22 }));
@@ -169,7 +169,7 @@ const POSTS = {
     tree(off(K, 1.7, S, -1.4), .9); tree(off(G, 1.5, S, 1.4), .7);
   },
   4() { // fail on a fork, not onchain
-    copy('Fail on a fork,<br>not onchain.', 'Reverts go back to the model. Only green runs commit.', 'Same idea as CI for coding agents.');
+    copy('Fail on a fork, not onchain.', 'Reverts go back to the model. Only green runs commit.', 'Same idea as CI for coding agents.');
     const M = at(-10.2, -3.9), F = at(-1.6, -3.7), K = at(8.9, -3.2);
     slab(M, 2.6, 2.6, 'MODEL'); cube(off(M, 0, S, 0), { s: 1.4, c: C.white, icon: 'spark', ink: '#1f3a63' });
     slab(F, 7.6, 5.0, 'FORK OF LIVE STATE'); glass(off(F, 0, S, 0), 7.0, 2.3, 4.4);
@@ -185,7 +185,7 @@ const POSTS = {
     receipt(off(K, 1.2, 4.0, -.4), false); tree(off(K, 1.5, S, 1.3), .9);
   },
   5() { // six steps, one signature
-    copy('Six steps,<br>one signature.', 'Account abstraction compresses the flow', 'The key stays in your wallet.');
+    copy('Six steps, one signature.', 'Account abstraction compresses the flow', 'The key stays in your wallet.');
     const E = at(-.9, -1.9), Sl = at(-3.6, -3.45), Wt = at(8.6, -3.3);
     slab(E, 8.6, 2.2, 'ETHEREUM', { lw: 3.6, lx: -2.4 }); slab(Sl, 8.6, 2.2, 'SOLANA', { ink: '#23805a', lw: 3.6, lx: -2.4 });
     pipe(off(E, -4.0, S + .35, 0), off(E, 4.0, S + .35, 0)); pipe(off(Sl, -4.0, S + .35, 0), off(Sl, 4.0, S + .35, 0), { c: 0xa8dcc0 });
