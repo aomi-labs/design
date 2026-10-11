@@ -1,0 +1,11 @@
+sequenceDiagram
+  participant A as Agent
+  participant H as Aomi harness
+  participant W as Wallet
+  participant C as Chain
+  A->>H: stage swap
+  H->>H: simulate on fork
+  H->>W: signable tx
+  W-->>H: signature
+  H->>C: broadcast
+  C-->>A: receipt

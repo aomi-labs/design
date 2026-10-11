@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Aomi Iso Posts</title>
+<!--
+  Isometric social posts (skills/iso-posts). One HTML file renders N posts at 1920×1080: ?n=1…N.
+  Each post = the aomi logo, a ONE-LINE serif headline, one mono subline, a short mono footer,
+  and a small three.js iso scene built from the kit below. Edit only the POSTS object.
+  Palette meaning: sky = EVM / ours / passed, green = Solana / second chain, rose = failed / risk.
+  Render: node skills/iso-posts/scripts/render.mjs <this file> <outdir> name1 name2 …
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#09090b;--navy:#1f3a63;--sky:#5288c2;--rose:#df5d90;--grn:#2e9e6b}
+html,body{margin:0;background:#fff}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#fff}
+#gl,#ov{position:absolute;inset:0} #ov{pointer-events:none}
+.logo{position:absolute;left:66px;top:50px;display:flex;align-items:center;gap:14px}
+.logo svg{width:58px;height:58px} .logo span{font:600 54px/1 'Source Serif 4',serif;letter-spacing:-.01em;color:var(--ink)}
+h1{position:absolute;left:58px;top:132px;margin:0;white-space:nowrap;font:700 112px/.95 'PT Serif',serif;letter-spacing:-.035em;color:var(--ink)}
+.sub{position:absolute;left:66px;font:500 34px 'Geist Mono',monospace;color:var(--navy)}
+.foot{position:absolute;left:0;right:0;bottom:44px;text-align:center;font:500 30px 'Geist Mono',monospace;color:var(--navy)}
+.tag{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font:600 30px 'Geist Mono',monospace;background:#fff;border:2.5px solid var(--navy);color:var(--navy);border-radius:14px;padding:10px 20px;box-shadow:0 10px 24px rgba(31,58,99,.08)}
+.tag.rose{border-color:var(--rose);color:var(--rose)} .tag.sky{border-color:var(--sky);color:var(--sky)} .tag.grn{border-color:var(--grn);color:var(--grn)}
+.tag b{font-weight:700}
+.receipt{position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:168px;background:#fff;border:2.5px solid #9db6d8;border-radius:12px;padding:16px 18px 18px}
+.receipt i{display:block;font:600 18px 'Geist Mono',monospace;color:var(--navy);font-style:normal;margin-bottom:12px}
+.receipt u{display:block;height:6px;border-radius:3px;background:#7facd6;margin:9px 0;text-decoration:none}
+.receipt s{position:absolute;right:14px;bottom:14px;width:46px;height:46px;border-radius:50%;background:var(--grn);text-decoration:none;display:grid;place-items:center;color:#fff;font:700 28px 'Geist',sans-serif}
+.receipt.bad{border-color:var(--rose)} .receipt.bad u{background:#f2b3cb} .receipt.bad s{background:var(--rose)}
+</style>
+</head>
+<body>
+<div id="stage"><div id="gl"></div><div id="ov">
+  <div class="logo"><svg viewBox="0 0 362 362"><g fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g></svg><span>aomi labs</span></div>
+  <h1></h1><div class="sub"></div><div class="foot"></div>
+</div></div>
+<script src="posts.js" onerror="void 0"></script> <!-- window.POST_SPECS from mermaid-to-spec.mjs; optional -->
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+const W = 1920, H = 1080, N = +(new URLSearchParams(location.search).get('n') || 1);
+await document.fonts.ready;
+
+// ---------- iso stage: orthographic camera looking down (1,1,1) ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(1); renderer.setSize(W, H);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; document.getElementById('gl').appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xffffff);
+const FH = 15, cam = new THREE.OrthographicCamera(-FH * W / H / 2, FH * W / H / 2, FH / 2, -FH / 2, .1, 600);
+cam.position.set(60, 60, 60); cam.lookAt(0, 0, 0); cam.updateMatrixWorld();
+scene.add(new THREE.HemisphereLight(0xffffff, 0xe6eef8, 1.35));
+const sun = new THREE.DirectionalLight(0xffffff, 1.5); sun.position.set(18, 40, 10); sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096);
+Object.assign(sun.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 1, far: 140 }); sun.shadow.radius = 6; sun.shadow.bias = -.0004; scene.add(sun);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.ShadowMaterial({ opacity: .07 })); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const grid = new THREE.GridHelper(200, 200, 0xdfe7f2, 0xdfe7f2); grid.material.transparent = true; grid.material.opacity = .75; grid.position.y = .001; scene.add(grid);
+// ground point that lands at screen coords (sx, sy) in world units from the centre (sx right, sy up)
+const at = (sx, sy) => { const a = sx * Math.SQRT2, b = -sy * Math.sqrt(6); return new THREE.Vector3((a + b) / 2, 0, (b - a) / 2); };
+
+// ---------- kit ----------
+const C = { sky: 0x5288c2, skyL: 0x7facd6, rose: 0xdf5d90, grn: 0x2e9e6b, grnL: 0x6cc39a, slab: 0xf6f9fe, edge: 0xb3c8e4, pipe: 0xa9c6ea, white: 0xf3f7fc, term: 0x1c1c21, grey: 0xc9d3e0 };
+const std = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .5, metalness: 0, ...o });
+const edges = (geo, c = C.edge, op = 1) => new THREE.LineSegments(new THREE.EdgesGeometry(geo, 20), new THREE.LineBasicMaterial({ color: c, transparent: true, opacity: op }));
+function canvasTex(w, h, draw) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+const ICONS = {
+  doc: g => { g.beginPath(); g.moveTo(70, 40); g.lineTo(160, 40); g.lineTo(196, 76); g.lineTo(196, 216); g.lineTo(70, 216); g.closePath(); g.stroke(); [100, 132, 164].forEach(y => { g.beginPath(); g.moveTo(98, y); g.lineTo(168, y); g.stroke(); }); },
+  swap: g => { g.beginPath(); g.moveTo(52, 96); g.lineTo(200, 96); g.moveTo(166, 62); g.lineTo(200, 96); g.lineTo(166, 130); g.moveTo(204, 164); g.lineTo(56, 164); g.moveTo(90, 130); g.lineTo(56, 164); g.lineTo(90, 198); g.stroke(); },
+  chart: g => { [[64, 150], [114, 110], [164, 60]].forEach(([x, y]) => { g.fillRect(x, y, 34, 206 - y); }); },
+  key: g => { g.beginPath(); g.arc(88, 128, 40, 0, 7); g.stroke(); g.beginPath(); g.moveTo(128, 128); g.lineTo(214, 128); g.moveTo(190, 128); g.lineTo(190, 162); g.moveTo(214, 128); g.lineTo(214, 154); g.stroke(); },
+  shield: g => { g.beginPath(); g.moveTo(128, 34); g.lineTo(206, 64); g.lineTo(200, 140); g.quadraticCurveTo(190, 196, 128, 226); g.quadraticCurveTo(66, 196, 56, 140); g.lineTo(50, 64); g.closePath(); g.stroke(); g.beginPath(); g.moveTo(92, 130); g.lineTo(118, 156); g.lineTo(166, 104); g.stroke(); },
+  bolt: g => { g.beginPath(); g.moveTo(146, 30); g.lineTo(70, 142); g.lineTo(124, 142); g.lineTo(108, 226); g.lineTo(188, 108); g.lineTo(134, 108); g.closePath(); g.fill(); },
+  coins: g => { [170, 130, 90].forEach(y => { g.beginPath(); g.ellipse(128, y, 72, 24, 0, 0, 7); g.stroke(); }); g.beginPath(); g.moveTo(56, 90); g.lineTo(56, 170); g.moveTo(200, 90); g.lineTo(200, 170); g.stroke(); },
+  term: g => { g.beginPath(); g.moveTo(60, 88); g.lineTo(112, 128); g.lineTo(60, 168); g.moveTo(128, 178); g.lineTo(196, 178); g.stroke(); },
+  x: g => { g.beginPath(); g.moveTo(78, 78); g.lineTo(178, 178); g.moveTo(178, 78); g.lineTo(78, 178); g.stroke(); },
+  check: g => { g.beginPath(); g.moveTo(66, 132); g.lineTo(110, 176); g.lineTo(194, 88); g.stroke(); },
+  spark: g => { g.beginPath(); g.moveTo(128, 34); g.quadraticCurveTo(138, 118, 222, 128); g.quadraticCurveTo(138, 138, 128, 222); g.quadraticCurveTo(118, 138, 34, 128); g.quadraticCurveTo(118, 118, 128, 34); g.fill(); },
+  search: g => { g.beginPath(); g.arc(112, 112, 56, 0, 7); g.stroke(); g.beginPath(); g.moveTo(152, 152); g.lineTo(208, 208); g.stroke(); },
+  wallet: g => { g.beginPath(); g.roundRect(44, 70, 168, 126, 16); g.stroke(); g.beginPath(); g.roundRect(142, 112, 70, 44, 10); g.stroke(); g.beginPath(); g.arc(168, 134, 7, 0, 7); g.fill(); },
+  dollar: g => { g.beginPath(); g.arc(128, 128, 84, 0, 7); g.stroke(); g.font = "700 120px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('$', 128, 134); },
+  eth: g => { g.font = "700 76px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ETH', 128, 132); },
+  user: g => { g.beginPath(); g.arc(128, 92, 40, 0, 7); g.stroke(); g.beginPath(); g.moveTo(54, 214); g.quadraticCurveTo(60, 148, 128, 146); g.quadraticCurveTo(196, 148, 202, 214); g.stroke(); },
+  db: g => { g.beginPath(); g.ellipse(128, 66, 72, 24, 0, 0, 7); g.stroke(); g.beginPath(); g.moveTo(56, 66); g.lineTo(56, 190); g.ellipse(128, 190, 72, 24, 0, Math.PI, 0, true); g.lineTo(200, 66); g.stroke(); g.beginPath(); g.ellipse(128, 128, 72, 24, 0, 0, Math.PI); g.stroke(); },
+  sol: g => { g.font = "700 76px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('SOL', 128, 132); },
+};
+const iconCache = {};
+const iconTex = (name, ink) => iconCache[name + ink] ||= canvasTex(256, 256, g => { g.strokeStyle = g.fillStyle = ink; g.lineWidth = 18; g.lineCap = g.lineJoin = 'round'; ICONS[name](g); });
+function cube(p, { s = 1, c = C.sky, icon, ink = '#ffffff', y = 0 } = {}) { // a soft rounded cube with a line icon on its two visible faces
+  const g = new THREE.Group(), m = new THREE.Mesh(new RoundedBoxGeometry(s, s, s, 5, s * .13), std(c, { roughness: .42 })); m.castShadow = m.receiveShadow = true; g.add(m);
+  if (icon) [[0, 0, s / 2 + .002, 0], [s / 2 + .002, 0, 0, Math.PI / 2], [0, s / 2 + .002, 0, null]].forEach(([x, yy, z, ry]) => {
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(s * .66, s * .66), new THREE.MeshBasicMaterial({ map: iconTex(icon, ink), transparent: true, depthWrite: false }));
+    pl.position.set(x, yy, z); if (ry === null) pl.rotation.x = -Math.PI / 2; else pl.rotation.y = ry; if (ry === null) return; g.add(pl); });
+  g.position.copy(p).add(new THREE.Vector3(0, s / 2 + y, 0)); scene.add(g); return g;
+}
+function slab(p, w, d, label, { h = .62, c = C.slab, ink = '#1f3a63', lw = w, lx = 0 } = {}) { // lw/lx: a shorter label, shifted along the edge // a platform with its label on the front edge
+  const geo = new RoundedBoxGeometry(w, h, d, 3, .06), m = new THREE.Mesh(geo, std(c, { roughness: .6 })); m.receiveShadow = m.castShadow = true; m.add(edges(geo, C.edge, .9));
+  m.position.copy(p).add(new THREE.Vector3(0, h / 2, 0)); scene.add(m);
+  if (label) { const tw = Math.round(lw * 110), tex = canvasTex(tw, 80, (g) => { g.fillStyle = ink; g.textBaseline = 'middle'; g.textAlign = 'center'; g.letterSpacing = '5px'; let fs = 46; do { g.font = `600 ${fs}px 'Geist Mono'`; fs -= 2; } while (fs > 20 && g.measureText(label).width > tw * .84); g.fillText(label, tw / 2, 42); }); // shrink long labels to fit the edge
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(lw, Math.min(h * .96, lw * 80 / tw)), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })); pl.position.set(lx, 0, d / 2 + .003); m.add(pl); }
+  return m;
+}
+function glass(p, w, h, d, { c = 0xcfe0f5, e = 0x8fb0d8 } = {}) {
+  const geo = new THREE.BoxGeometry(w, h, d); geo.translate(0, h / 2, 0);
+  const m = new THREE.Mesh(geo, std(c, { transparent: true, opacity: .14, depthWrite: false })); m.add(edges(geo, e, .95)); m.position.copy(p); scene.add(m); return m;
+}
+function pipe(a, b, { r = .13, c = C.pipe } = {}) { const d = b.clone().sub(a), m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, d.length(), 20), std(c, { roughness: .35, emissive: c, emissiveIntensity: .12 }));
+  m.position.copy(a).add(b).multiplyScalar(.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); m.castShadow = true; scene.add(m); return m; }
+function tube(pts, { r = .12, c = C.pipe } = {}) { const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 64, r, 16), std(c, { roughness: .35, emissive: c, emissiveIntensity: .15 })); m.castShadow = true; scene.add(m); return m; }
+function dotted(a, b, c = 0x9db6d8) { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), new THREE.LineDashedMaterial({ color: c, dashSize: .18, gapSize: .14 })); l.computeLineDistances(); scene.add(l); return l; }
+function tree(p, s = 1) { const g = new THREE.Group(); const t = new THREE.Mesh(new THREE.CylinderGeometry(.05 * s, .07 * s, .55 * s, 8), std(0x8a6a4b)); t.position.y = .27 * s; g.add(t);
+  [[0, .78, 0, .3], [.14, .62, .08, .22], [-.12, .64, -.06, .2]].forEach(([x, y, z, r]) => { const b = new THREE.Mesh(new THREE.SphereGeometry(r * s, 20, 14), std(0x3f9e6a, { roughness: .7 })); b.position.set(x * s, y * s, z * s); b.castShadow = true; g.add(b); });
+  g.position.copy(p); scene.add(g); return g; }
+function arch(p, w = 2.2, h = 2.4, d = .7, rot = 0) { // a pale arch, the gate
+  const s = new THREE.Shape(); s.moveTo(-w / 2, 0); s.lineTo(w / 2, 0); s.lineTo(w / 2, h); s.lineTo(-w / 2, h); s.closePath();
+  const hole = new THREE.Path(), r = w * .27; hole.moveTo(-r, 0); hole.lineTo(-r, h * .5); hole.absarc(0, h * .5, r, Math.PI, 0, true); hole.lineTo(r, 0); hole.closePath(); s.holes.push(hole);
+  const geo = new THREE.ExtrudeGeometry(s, { depth: d, bevelEnabled: false }); geo.translate(0, 0, -d / 2);
+  const m = new THREE.Mesh(geo, std(0xedf3fb, { roughness: .6 })); m.add(edges(geo, C.edge, .9)); m.castShadow = m.receiveShadow = true; m.position.copy(p); m.rotation.y = rot; scene.add(m); return m; }
+function block(p, w, h, d, c = 0xeef3fa) { const geo = new THREE.BoxGeometry(w, h, d); geo.translate(0, h / 2, 0); const m = new THREE.Mesh(geo, std(c, { roughness: .6 })); m.add(edges(geo, C.edge, .8)); m.castShadow = m.receiveShadow = true; m.position.copy(p); scene.add(m); return m; }
+function coin(p, c = C.rose, y = 0) { const g = new THREE.Group(); const body = new THREE.Mesh(new THREE.CylinderGeometry(.48, .48, .16, 40), std(c, { roughness: .4 })); body.rotation.z = Math.PI / 2; body.rotation.y = Math.PI / 4; body.castShadow = true; g.add(body);
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(.78, .78), new THREE.MeshBasicMaterial({ map: iconTex('dollar', '#ffffff'), transparent: true })); face.rotation.y = Math.PI / 4; face.position.set(.06, 0, .06); g.add(face);
+  g.position.copy(p).add(new THREE.Vector3(0, .6 + y, 0)); scene.add(g); return g; }
+const V = (x, y, z) => new THREE.Vector3(x, y, z), off = (p, x, y, z) => p.clone().add(V(x, y, z));
+// HTML tags pinned to 3D points
+const ov = document.getElementById('ov'), pins = [];
+function tag(p, html, cls = '') { const e = document.createElement('div'); e.className = 'tag ' + cls; e.innerHTML = html; ov.appendChild(e); pins.push([e, p]); }
+function receipt(p, bad) { const e = document.createElement('div'); e.className = 'receipt' + (bad ? ' bad' : ''); e.innerHTML = `<i>TX RECEIPT</i><u></u><u style="width:80%"></u><u style="width:55%"></u><u style="width:35%"></u><s>${bad ? '✕' : '✓'}</s>`; ov.appendChild(e); pins.push([e, p]); }
+function copy(h1, sub, foot) { document.querySelector('h1').innerHTML = h1; const s = document.querySelector('.sub'); s.textContent = sub; s.style.top = (132 + 106 * h1.split('<br>').length + 26) + 'px'; document.querySelector('.foot').textContent = foot || ''; }
+
+// ---------- the five posts ----------
+const S = .62; // slab height: things that stand on a slab start at y = S
+// ---------- posts: one function per post. Place things by screen position with at(sx, sy):
+// sx ∈ about −13…13 (left → right), sy ∈ about −7.5…7.5 (bottom → top). Keep scenes below sy ≈ 0
+// on the left half (the headline lives there) and above sy ≈ −6.5 (the footer lives there).
+const POSTS = {
+  1() { // pattern: a row of three plinths, one idea each, with a big number tag
+    copy('Why a harness.', 'Performance · token efficiency · security', 'Frontier models can transact alone. With a harness they work better.');
+    [[-4.4, 'PERFORMANCE', 'bolt', C.sky, '9 → 5', 'calls', 'sky'], [1.9, 'TOKENS', 'coins', C.grn, '12 → 1', 'reads', 'grn'], [8.2, 'SECURITY', 'shield', C.sky, '0 → 2', 'simulations', 'sky']].forEach(([sx, lab, ic, c, n, u, k], i) => {
+      const P = at(sx, -4.3); slab(P, 3.6, 3.6, lab); cube(off(P, 0, S, 0), { s: 1.9, c, icon: ic });
+      tag(off(P, 0, 4.4, 0), `<b style="font-size:44px">${n}</b> ${u}`, k);
+      tree(off(P, 1.35, S, 1.35), .7 + (i % 2) * .2); });
+    tree(at(-9.5, -5.2), 1.1);
+  },
+  2() { // pattern: a flow — lanes of small cubes pass a gate, merge into one cube, pipe into a destination
+    copy('Six steps, one signature.', 'Account abstraction compresses the flow', 'The key stays in your wallet.');
+    const E = at(-.9, -1.9), Sl = at(-3.6, -3.45), Wt = at(8.6, -3.3);
+    slab(E, 8.6, 2.2, 'ETHEREUM', { lw: 3.6, lx: -2.4 }); slab(Sl, 8.6, 2.2, 'SOLANA', { ink: '#23805a', lw: 3.6, lx: -2.4 });
+    pipe(off(E, -4.0, S + .35, 0), off(E, 4.0, S + .35, 0)); pipe(off(Sl, -4.0, S + .35, 0), off(Sl, 4.0, S + .35, 0), { c: 0xa8dcc0 });
+    [-3.6, -2.85, -2.1, -1.35, -.6, .15].forEach(x => cube(off(E, x, S, 0), { s: .58, c: C.skyL }));
+    [-3.6, -2.85, -2.1, -1.35, -.6].forEach(x => cube(off(Sl, x, S, 0), { s: .58, c: C.grnL }));
+    arch(off(E, 1.5, S, 0), 1.8, 2.1, .5, Math.PI / 2); arch(off(Sl, 1.5, S, 0), 1.8, 2.1, .5, Math.PI / 2);
+    cube(off(E, 3.1, S, 0), { s: 1.3, c: C.sky, icon: 'check' }); cube(off(Sl, 3.1, S, 0), { s: 1.3, c: C.grn, icon: 'check' });
+    slab(Wt, 4.2, 4.2, 'YOUR WALLET'); cube(off(Wt, 0, S, 0), { s: 1.8, c: C.white, icon: 'key', ink: '#1f3a63' });
+    tube([off(E, 3.8, S + .7, 0), off(E, 5.6, S + .9, 0), off(Wt, -2.2, S + 1.0, -.2), off(Wt, -.9, S + .9, -.1)]);
+    tube([off(Sl, 3.8, S + .7, 0), off(Sl, 6.4, S + .9, 0), off(Wt, -1.6, S + .8, 1.3), off(Wt, -.6, S + .8, .6)], { c: 0xa8dcc0 });
+    tag(off(E, -2.0, 2.6, -.4), '<b>6</b> transactions', 'sky'); tag(off(Wt, 0, 4.0, 0), '<b>1</b> signature', 'sky');
+    tree(off(Wt, 1.5, S, 1.5), .9); tree(off(Wt, -1.5, S, -1.5), .7);
+  },
+};
+// ---------- posts built from a spec (mermaid-to-spec.mjs → posts.js) ----------
+// A spec lays nodes on an iso grid: column r runs along world x, row k along world z. Subgraphs become
+// labelled platforms (glass: true adds a sandbox box), lone nodes get a small plinth, edges become pipes
+// (same row), arcs (skipping rows or looping back), rose arcs (fail) or dotted lines (dotted).
+// Optional per-node fields: s (cube size), tagY (raise its label), label: '' (no label). Spec: labels:false hides all node labels.
+const COL = { sky: C.sky, grn: C.grn, rose: C.rose, white: C.white }, TAGCLS = { sky: 'sky', grn: 'grn', rose: 'rose', white: '' };
+function build(spec) {
+  copy(spec.headline, spec.sub, spec.foot);
+  // columns run left → right across the banner (world (1,0,−1)), rows stack downward (world (1,0,1)); cubes stay isometric.
+  // Every node stands on its own plinth; a group's label goes on its first member's plinth, and glass groups get a sandbox box per member.
+  const seq = spec.kind === 'sequence', GX = 4.4, GZ = 3.2, R2 = Math.SQRT1_2;
+  const at0 = n => V((n.r * GX + n.k * GZ) * R2, 0, (-n.r * GX + n.k * GZ) * R2), byId = Object.fromEntries(spec.nodes.map(n => [n.id, n]));
+  const groups = Object.fromEntries((spec.groups || []).map(g => [g.id, g])), labelled = new Set();
+  [...spec.nodes].sort((a, b) => a.r - b.r).forEach(n => {
+    const g = groups[n.group], first = g && !labelled.has(g.id), s = n.s || 1.25, w = Math.max(2.3, s + 1.0); if (first) labelled.add(g.id);
+    slab(at0(n), w, w, first ? (g.label || '').toUpperCase() : '', /sol(ana)?|svm/i.test(g?.label || '') ? { ink: '#23805a' } : {});
+    if (g?.glass) glass(off(at0(n), 0, S, 0), w - .3, s + 1.0, w - .3);
+    if (g && spec.trees !== false && first) tree(off(at0(n), w / 2 - .35, S, w / 2 - .35), .75);
+  });
+  spec.nodes.forEach(n => { const s = n.s || 1.25; cube(off(at0(n), 0, S, 0), { s, c: COL[n.color] || C.sky, icon: n.icon, ink: n.color === 'white' ? '#1f3a63' : '#ffffff' });
+    if (spec.labels !== false && n.label) tag(off(at0(n), 0, S + s + 1.0 + (n.tagY ?? (n.r % 2) * 1.2), 0), n.label, TAGCLS[n.color] ?? 'sky'); });
+  const yc = S + .62;
+  spec.edges.forEach((e, i) => {
+    const A = byId[e.from], B = byId[e.to]; if (!A || !B) return; const a = at0(A), b = at0(B), fail = e.style === 'fail', c = fail ? C.rose : C.pipe;
+    if (seq && A === B) { tube([off(a, .2, yc + .5, .5), off(a, .9, yc + 1.4, .9), off(a, 0, yc + 1.9, 0), off(a, -.2, yc + .7, -.4)], { c, r: .08 }); if (spec.edgeLabels) tag(off(a, .8, yc + 2.6, .8), e.label, fail ? 'rose' : 'sky'); return; } // a message to itself: a small loop
+    if (seq) { const h = yc + 1.4 + i * .55, m = a.clone().lerp(b, .5);
+      if (e.style === 'dotted') { dotted(off(a, 0, h, 0), off(b, 0, h, 0), 0x7facd6); dotted(off(a, 0, yc, 0), off(a, 0, h, 0), 0x9db6d8); dotted(off(b, 0, yc, 0), off(b, 0, h, 0), 0x9db6d8); }
+      else tube([off(a, 0, yc + .5, 0), off(a, 0, h, 0), off(m, 0, h + .25, 0), off(b, 0, h, 0), off(b, 0, yc + .5, 0)], { c, r: .09 });
+      if (spec.edgeLabels) tag(off(m, 0, h + .7, 0), e.label, fail ? 'rose' : 'sky'); return; }
+    if (e.style === 'dotted') { dotted(off(a, 0, yc, 0), off(b, 0, yc, 0)); return; }
+    if (A.k === B.k && !e.back && !fail && Math.abs(A.r - B.r) === 1) { pipe(off(a, 0, yc, 0), off(b, 0, yc, 0), { c }); if (spec.edgeLabels && e.label) tag(off(a.clone().lerp(b, .5), 0, yc + .9, 0), e.label, 'sky'); return; }
+    const lift = e.back || fail ? 2.4 : 1.1, m = a.clone().lerp(b, .5);
+    tube([off(a, 0, yc + .3, 0), off(a.clone().lerp(b, .2), 0, yc + lift * .8, 0), off(m, 0, yc + lift, 0), off(a.clone().lerp(b, .8), 0, yc + lift * .8, 0), off(b, 0, yc + .3, 0)], { c, r: fail ? .1 : .12 });
+    if (spec.edgeLabels && e.label) tag(off(m, 0, yc + lift + .7, 0), e.label, fail ? 'rose' : 'sky');
+  });
+  fit();
+}
+// zoom and pan the camera so the whole scene (and its tags) sits in the space below the headline
+function fit(area = { x0: -12.4, x1: 12.4, y0: -6.3, y1: 2.6 }) {
+  cam.zoom = 1; cam.updateProjectionMatrix(); cam.updateMatrixWorld();
+  const hw = FH * W / H / 2, hh = FH / 2, box = new THREE.Box3(), v = new THREE.Vector3(); let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  const take = p => { v.copy(p).project(cam); x0 = Math.min(x0, v.x * hw); x1 = Math.max(x1, v.x * hw); y0 = Math.min(y0, v.y * hh); y1 = Math.max(y1, v.y * hh); };
+  scene.traverse(o => { if ((o.isMesh || o.isLine) && o !== floor && o !== grid && o.parent === scene) { box.setFromObject(o); [0, 1].forEach(i => [0, 1].forEach(j => [0, 1].forEach(k => take(V([box.min.x, box.max.x][i], [box.min.y, box.max.y][j], [box.min.z, box.max.z][k]))))); } });
+  pins.forEach(([, p]) => take(p));
+  y1 += .6; // room for the tag pills above their anchor points
+  const z = Math.min((area.x1 - area.x0) / (x1 - x0), (area.y1 - area.y0) / (y1 - y0), 2.2);
+  cam.zoom = z; cam.updateProjectionMatrix();
+  const dx = (x0 + x1) / 2 - (area.x0 + area.x1) / 2 / z, dy = (y0 + y1) / 2 - (area.y0 + area.y1) / 2 / z;
+  cam.position.add(V(1, 0, -1).normalize().multiplyScalar(dx)).add(V(-1, 2, -1).normalize().multiplyScalar(dy)); cam.updateMatrixWorld();
+}
+const SPECS = window.POST_SPECS || [];
+if (SPECS[N - 1]) build(SPECS[N - 1]); else POSTS[N]();
+renderer.render(scene, cam);
+const tmp = new THREE.Vector3();
+pins.forEach(([e, p]) => { tmp.copy(p).project(cam); e.style.left = ((tmp.x + 1) / 2 * W) + 'px'; e.style.top = ((1 - tmp.y) / 2 * H) + 'px'; });
+// nudge colliding tags apart: the later (lower) one moves down-right, a few passes until nothing overlaps
+for (let pass = 0; pass < 12; pass++) { let moved = false; const els = pins.map(([e]) => e);
+  els.forEach((a, i) => els.slice(i + 1).forEach(b => { const A = a.getBoundingClientRect(), Bb = b.getBoundingClientRect();
+    if (A.left < Bb.right + 6 && Bb.left < A.right + 6 && A.top < Bb.bottom + 6 && Bb.top < A.bottom + 6) { const lo = A.top > Bb.top ? a : b, d = Math.min(A.bottom, Bb.bottom) - Math.max(A.top, Bb.top) + 10;
+      lo.style.top = (parseFloat(lo.style.top) + d) + 'px'; moved = true; } }));
+  if (!moved) break; }
+window.__READY__ = true;
+</script>
+</body>
+</html>
