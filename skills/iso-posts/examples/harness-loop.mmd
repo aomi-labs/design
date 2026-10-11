@@ -1,0 +1,13 @@
+flowchart LR
+  U((User intent)) --> M[Model]
+  subgraph H [Aomi harness]
+    C[Read context] --> B[Build tx]
+  end
+  M --> C
+  subgraph F [Fork sandbox]
+    S[Simulate]
+  end
+  B --> S
+  S -- revert --> M
+  S --> W[Wallet signs]
+  W --> X[(Chain settles)]
