@@ -17,7 +17,7 @@ cp skills/iso-posts/assets/iso-template.html deliverables/posts/<slug>/posts.htm
 node skills/iso-posts/scripts/mermaid-to-spec.mjs diagram1.mmd [diagram2.mmd …] > deliverables/posts/<slug>/posts.js
 ```
 
-Each diagram becomes one post (`?n=1`, `?n=2`, …). The converter understands `flowchart`/`graph` (shapes, edge labels, `&`, subgraphs, `class`) and `sequenceDiagram` (participants, actors, messages). It lays nodes out left to right across the banner (rows stack downward, and chains of 8+ fold into a snake), and guesses each node's shape, icon and colour from its words. Not everything is a cube: a user is a little person, an intent or prompt is a speech bubble (a user with intent is a person with a bubble), a wallet is a wallet, a chain or network is a stack of blocks, a db or state store is a cylinder, and a receipt or proof is a card. Everything else is an icon cube (sign or key → key, model or agent → sparkle, revert or fail → rose ✕, Solana → green, …). A Mermaid diagram pasted into chat works too: save it to a `.mmd` file first.
+Each diagram becomes one post (`?n=1`, `?n=2`, …). The converter understands `flowchart`/`graph` (shapes, edge labels, `&`, subgraphs, `class`) and `sequenceDiagram` (participants, actors, messages). It lays nodes out left to right across the banner (rows stack downward, and chains of 8+ fold into a snake), and guesses each node's shape, icon and colour from its words. Not everything is a cube: a user is a little person standing on the ground (no plinth), an intent or prompt is a speech bubble (a user with intent is a person with a bubble), a wallet is a wallet, a chain or network is a stack of blocks, a db or state store is a cylinder, and a receipt or proof is a card. Everything else is an icon cube (sign or key → key, model or agent → sparkle, revert or fail → rose ✕, Solana → green, …). A Mermaid diagram pasted into chat works too: save it to a `.mmd` file first.
 
 ## 2. Edit the spec
 
@@ -47,7 +47,7 @@ This writes `post-1-name1.png`, … and checks each post for:
 - a headline that wraps or runs off the edge
 - tags or receipts overlapping the headline, subline, footer, each other, or the canvas edge
 
-The template already nudges colliding tags apart. If the check still fails, shorten labels, drop a node, or raise one label with `tagY`.
+The template places each label at the nearest spot that clears every object, other labels and the copy, and draws a thin dotted leader when a label had to move away from its node; a label never covers the drawing. If the check still fails, shorten labels, drop a node, or raise one label with `tagY`.
 
 **Then look at every PNG.** The check catches collisions, not meaning. Ask whether a stranger scrolling past gets the point from the headline plus the shape of the scene in two seconds. If not, cut more.
 
@@ -60,7 +60,7 @@ Playwright: the script uses `playwright-core` from the project or next to the sc
 - **Wires are plumbing, not spaghetti.** Straight runs and right angles read as a system; curves and diagonals read as a mess. If a scene still looks tangled, cut edges before anything else.
 - **Nothing small.** On a phone an X image is about 600px wide, a third of the canvas, so labels under about 24px vanish. The template's sizes are already safe; don't shrink them to fit more in.
 - **Colour means something.** Sky is ours, EVM or passed; green is Solana; rose is a failure. A rose cube that isn't a failure confuses the story.
-- **The lockup reads "aomi labs"** (top-left, with the mark). Keep it.
+- **The lockup reads "aomi labs"** (top-right, with the mark; the headline stays left). Keep it.
 - **White background, faint iso grid, cool grey structure.** Don't add dark backgrounds or gradients; the style is light and clean.
 - **Claims must be true.** Numbers on tags ("9 → 5 calls") need a source. If they come from a demo or reconstruction, say so in the post copy, not on the image.
 
