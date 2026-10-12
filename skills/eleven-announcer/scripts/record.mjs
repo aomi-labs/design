@@ -39,7 +39,7 @@ const CURSOR = `(() => { if (window.top !== window) return;
   document.addEventListener('DOMContentLoaded', mk); mk(); })();`;
 
 const browser = await loadChromium().launch({ headless: !headed, executablePath: browserPath(headed ? 'headed' : 'headless') });
-const context = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: DSF, colorScheme: META.colorScheme || 'light',
+const context = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: DSF, colorScheme: META.colorScheme || 'light', reducedMotion: META.reducedMotion || 'no-preference',
   storageState: state && fs.existsSync(state) ? state : undefined });
 await context.addInitScript(CURSOR);
 const page = await context.newPage();
@@ -50,7 +50,8 @@ cdp.on('Page.screencastFrame', async ({ data, metadata, sessionId }) => {
   fs.writeFileSync(path.join(out, f), Buffer.from(data, 'base64')); frames.push({ f, t: metadata.timestamp });
   try { await cdp.send('Page.screencastFrameAck', { sessionId }); } catch {}
 });
-const cast = () => cdp.send('Page.startScreencast', { format: 'jpeg', quality: 88, maxWidth: Math.round(VW * DSF), maxHeight: Math.round(VH * DSF), everyNthFrame: 1 });
+// Restarting a live screencast throws on current Chromium, so stop it first.
+const cast = async () => { await cdp.send('Page.stopScreencast').catch(() => {}); return cdp.send('Page.startScreencast', { format: 'jpeg', quality: 88, maxWidth: Math.round(VW * DSF), maxHeight: Math.round(VH * DSF), everyNthFrame: 1 }); };
 await cast();
 
 const now = () => Date.now() / 1000, wait = s => page.waitForTimeout(s * 1000);
