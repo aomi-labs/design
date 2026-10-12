@@ -35,7 +35,7 @@ export const STEPS = [
   // ---- the builder's world --------------------------------------------------------------
   { id: 1, title: 'Your Arc Studio project',
     say: "You built this in Arc Studio: a lending pool, its collateral token, an A M M, and the price oracle that reads it. It's in your projects like anything else.",
-    do: [['goto', STUDIO], ['wait', 2], ['focus', 'text=Arc Lending Protocol Manager >> nth=0']] },
+    do: [['goto', STUDIO], ['waitFor', 'text=RECENTS', 90], ['waitFor', 'text=Arc Lending Protocol Manager', 90], ['wait', 1.5], ['focus', 'text=Arc Lending Protocol Manager >> nth=0']] },
   { id: 2, title: 'Open Aomi Fuzz',
     say: "Aomi Fuzz connects to your Arc Studio account. No setup and no handlers to write: it reads what you already built.",
     do: [['goto', FUZZ], ['wait', 1.5], ['focus', 'text=apps in your Arc Studio account'], ['click', 'a[href="/apps/e715072f-f9fb-416c-a85e-28acf20bf623"]'], ['waitFor', 'text=FUZZ TARGETS', 60], ['wait', .8]] },
