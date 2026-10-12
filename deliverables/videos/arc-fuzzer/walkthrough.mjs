@@ -41,7 +41,7 @@ export const STEPS = [
     do: [['click', tab('All events')], ['wait', .6], ['click', '[data-testid=ledger] summary:has-text("sim_replay_traces") >> nth=0'], ['wait', 2]] },
   { id: 7, title: 'The conversation',
     say: "The chat shows what the agent was told: the world is already seeded, so it never deploys or edits code itself.",
-    do: [['click', tab('Chat')], ['wait', 3]] },
+    do: [['click', tab('Chat')], ['wait', .8], ['focus', 'text=The harness already seeded'], ['wait', 2]] },
   { id: 8, title: 'The finding', voAt: 'end', hold: 2,
     say: "Then it lands. The agent buys W gold to pump the spot price, deposits it, and borrows far more than the collateral is worth. The app cuts the trace to three calls and reproduces it twice.",
     do: [['click', tab('Tools')], ['waitFor', '[data-testid=verified-finding]', 60], ['focus', '[data-testid=verified-finding]']] },
