@@ -38,12 +38,25 @@ const CURSOR = `(() => { if (window.top !== window) return;
     r.animate([{ transform: 'translate(' + x + 'px,' + y + 'px) scale(.3)', opacity: .95 }, { transform: 'translate(' + x + 'px,' + y + 'px) scale(1.5)', opacity: 0 }], { duration: 560, easing: 'ease-out' }); };
   document.addEventListener('DOMContentLoaded', mk); mk(); })();`;
 
-const browser = await loadChromium().launch({ headless: !headed, executablePath: browserPath(headed ? 'headed' : 'headless') });
-const context = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: DSF, colorScheme: META.colorScheme || 'light', reducedMotion: META.reducedMotion || 'no-preference',
-  storageState: state && fs.existsSync(state) ? state : undefined });
-await context.addInitScript(CURSOR);
-const page = await context.newPage();
+// META.cdp (e.g. 'http://localhost:9222') records a fresh tab inside an already running Chrome,
+// so the page sees that profile's sessions and wallet. Start Chrome with --remote-debugging-port=9222.
+// Otherwise a Playwright browser is launched with the saved login session for the first host.
+let browser, context, page, attached = Boolean(META.cdp);
+if (attached) {
+  browser = await loadChromium().connectOverCDP(META.cdp);
+  context = browser.contexts()[0] || await browser.newContext();
+  page = await context.newPage();
+  await page.addInitScript(CURSOR);
+} else {
+  browser = await loadChromium().launch({ headless: !headed, executablePath: browserPath(headed ? 'headed' : 'headless') });
+  context = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: DSF, colorScheme: META.colorScheme || 'light', reducedMotion: META.reducedMotion || 'no-preference',
+    storageState: state && fs.existsSync(state) ? state : undefined });
+  await context.addInitScript(CURSOR);
+  page = await context.newPage();
+}
 const cdp = await context.newCDPSession(page);
+// An attached tab keeps its window; emulate the recording viewport and scale on it.
+if (attached) await cdp.send('Emulation.setDeviceMetricsOverride', { width: VW, height: VH, deviceScaleFactor: DSF, mobile: false });
 const frames = []; let n = 0;
 cdp.on('Page.screencastFrame', async ({ data, metadata, sessionId }) => {
   const f = `frames/${String(n++).padStart(6, '0')}.jpg`;
@@ -86,7 +99,8 @@ for (const st of STEPS) {
   rec.t1 = now(); rec.url = page.url(); steps.push(rec);
   console.log(`step ${st.id} recorded · ${(rec.t1 - rec.t0).toFixed(1)}s`);
 }
-await cdp.send('Page.stopScreencast').catch(() => {}); await wait(.3); await browser.close();
+await cdp.send('Page.stopScreencast').catch(() => {}); await wait(.3);
+if (attached) { await page.close().catch(() => {}); await browser.close(); } else await browser.close();
 
 const base = Math.min(frames[0]?.t ?? steps[0].t0, steps[0].t0), r3 = v => +(v - base).toFixed(3);
 fs.writeFileSync(path.join(out, 'record.json'), JSON.stringify({
