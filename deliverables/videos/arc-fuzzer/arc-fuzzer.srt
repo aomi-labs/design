@@ -1,0 +1,119 @@
+1
+00:00:03,750 --> 00:00:06,392
+Here's a small lending protocol: a pool,
+
+2
+00:00:06,432 --> 00:00:11,036
+a collateral token, an A M M, and a price oracle.
+
+3
+00:00:11,076 --> 00:00:13,230
+Lenders supply USDC,
+
+4
+00:00:13,270 --> 00:00:16,825
+and borrowers post WGLD as collateral.
+
+5
+00:00:17,275 --> 00:00:19,603
+The pool values that collateral through the oracle,
+
+6
+00:00:19,643 --> 00:00:23,330
+and the oracle just reads the A M M's spot price.
+
+7
+00:00:23,370 --> 00:00:26,959
+A bug like that only shows up across contracts.
+
+8
+00:00:27,409 --> 00:00:28,437
+We start a campaign.
+
+9
+00:00:28,477 --> 00:00:31,026
+The harness has already seeded the whole deployed
+
+10
+00:00:31,066 --> 00:00:33,975
+protocol into the agent's simulation world,
+
+11
+00:00:34,015 --> 00:00:37,790
+with code, storage, and balances at their real addresses.
+
+12
+00:00:38,240 --> 00:00:40,034
+The agent reads the source,
+
+13
+00:00:40,074 --> 00:00:42,798
+writes a threat model, and starts a campaign:
+
+14
+00:00:42,838 --> 00:00:45,410
+actors, actions in attack order,
+
+15
+00:00:45,450 --> 00:00:48,110
+and the properties that must hold.
+
+16
+00:00:48,561 --> 00:00:50,181
+Each round, the app hands the
+
+17
+00:00:50,221 --> 00:00:52,085
+agent a batch of call sequences.
+
+18
+00:00:52,125 --> 00:00:54,001
+It replays them in the simulation,
+
+19
+00:00:54,041 --> 00:00:57,224
+and every property is checked against the results.
+
+20
+00:00:57,674 --> 00:01:00,862
+Under the tool calls, every runtime event is kept:
+
+21
+00:01:00,902 --> 00:01:03,764
+statuses, balance changes, probe outputs.
+
+22
+00:01:03,804 --> 00:01:06,197
+Any result can be audited.
+
+23
+00:01:06,647 --> 00:01:08,766
+The chat shows what the agent was told:
+
+24
+00:01:08,806 --> 00:01:10,369
+the world is already seeded,
+
+25
+00:01:10,409 --> 00:01:13,684
+so it never deploys or edits code itself.
+
+26
+00:01:15,643 --> 00:01:17,943
+Then it lands.
+
+27
+00:01:18,197 --> 00:01:21,501
+The agent buys WGLD to pump the spot price, deposits it,
+
+28
+00:01:21,541 --> 00:01:24,694
+and borrows far more than the collateral is worth.
+
+29
+00:01:24,734 --> 00:01:26,702
+The app cuts the trace to three
+
+30
+00:01:26,742 --> 00:01:29,600
+calls and reproduces it twice.

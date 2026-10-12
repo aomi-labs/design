@@ -1,0 +1,263 @@
+{
+ "dur": 94.3,
+ "vo": [
+  {
+   "id": 1,
+   "file": "vo/step01.mp3",
+   "start": 3.75,
+   "dur": 12.725
+  },
+  {
+   "id": 2,
+   "file": "vo/step02.mp3",
+   "start": 17.275,
+   "dur": 9.334
+  },
+  {
+   "id": 3,
+   "file": "vo/step03.mp3",
+   "start": 27.409,
+   "dur": 10.031
+  },
+  {
+   "id": 4,
+   "file": "vo/step04.mp3",
+   "start": 38.24,
+   "dur": 9.52
+  },
+  {
+   "id": 5,
+   "file": "vo/step05.mp3",
+   "start": 48.561,
+   "dur": 8.313
+  },
+  {
+   "id": 6,
+   "file": "vo/step06.mp3",
+   "start": 57.674,
+   "dur": 8.173
+  },
+  {
+   "id": 7,
+   "file": "vo/step07.mp3",
+   "start": 66.647,
+   "dur": 6.687
+  },
+  {
+   "id": 8,
+   "file": "vo/step08.mp3",
+   "start": 75.643,
+   "dur": 13.607
+  }
+ ],
+ "cues": [
+  {
+   "s": 3.75,
+   "e": 6.392,
+   "text": "Here's a small lending protocol: a pool,"
+  },
+  {
+   "s": 6.432,
+   "e": 11.036,
+   "text": "a collateral token, an A M M, and a price oracle."
+  },
+  {
+   "s": 11.076,
+   "e": 13.23,
+   "text": "Lenders supply USDC,"
+  },
+  {
+   "s": 13.27,
+   "e": 16.825,
+   "text": "and borrowers post WGLD as collateral."
+  },
+  {
+   "s": 17.275,
+   "e": 19.603,
+   "text": "The pool values that collateral through the oracle,"
+  },
+  {
+   "s": 19.643,
+   "e": 23.33,
+   "text": "and the oracle just reads the A M M's spot price."
+  },
+  {
+   "s": 23.37,
+   "e": 26.959,
+   "text": "A bug like that only shows up across contracts."
+  },
+  {
+   "s": 27.409,
+   "e": 28.437,
+   "text": "We start a campaign."
+  },
+  {
+   "s": 28.477,
+   "e": 31.026,
+   "text": "The harness has already seeded the whole deployed"
+  },
+  {
+   "s": 31.066,
+   "e": 33.975,
+   "text": "protocol into the agent's simulation world,"
+  },
+  {
+   "s": 34.015,
+   "e": 37.79,
+   "text": "with code, storage, and balances at their real addresses."
+  },
+  {
+   "s": 38.24,
+   "e": 40.034,
+   "text": "The agent reads the source,"
+  },
+  {
+   "s": 40.074,
+   "e": 42.798,
+   "text": "writes a threat model, and starts a campaign:"
+  },
+  {
+   "s": 42.838,
+   "e": 45.41,
+   "text": "actors, actions in attack order,"
+  },
+  {
+   "s": 45.45,
+   "e": 48.11,
+   "text": "and the properties that must hold."
+  },
+  {
+   "s": 48.561,
+   "e": 50.181,
+   "text": "Each round, the app hands the"
+  },
+  {
+   "s": 50.221,
+   "e": 52.085,
+   "text": "agent a batch of call sequences."
+  },
+  {
+   "s": 52.125,
+   "e": 54.001,
+   "text": "It replays them in the simulation,"
+  },
+  {
+   "s": 54.041,
+   "e": 57.224,
+   "text": "and every property is checked against the results."
+  },
+  {
+   "s": 57.674,
+   "e": 60.862,
+   "text": "Under the tool calls, every runtime event is kept:"
+  },
+  {
+   "s": 60.902,
+   "e": 63.764,
+   "text": "statuses, balance changes, probe outputs."
+  },
+  {
+   "s": 63.804,
+   "e": 66.197,
+   "text": "Any result can be audited."
+  },
+  {
+   "s": 66.647,
+   "e": 68.766,
+   "text": "The chat shows what the agent was told:"
+  },
+  {
+   "s": 68.806,
+   "e": 70.369,
+   "text": "the world is already seeded,"
+  },
+  {
+   "s": 70.409,
+   "e": 73.684,
+   "text": "so it never deploys or edits code itself."
+  },
+  {
+   "s": 75.643,
+   "e": 77.943,
+   "text": "Then it lands."
+  },
+  {
+   "s": 78.197,
+   "e": 81.501,
+   "text": "The agent buys WGLD to pump the spot price, deposits it,"
+  },
+  {
+   "s": 81.541,
+   "e": 84.694,
+   "text": "and borrows far more than the collateral is worth."
+  },
+  {
+   "s": 84.734,
+   "e": 86.702,
+   "text": "The app cuts the trace to three"
+  },
+  {
+   "s": 86.742,
+   "e": 89.6,
+   "text": "calls and reproduces it twice."
+  }
+ ],
+ "steps": [
+  {
+   "id": 1,
+   "title": "A lending protocol",
+   "url": "http://localhost:3110/harness/replay",
+   "T0": 3.4,
+   "T1": 16.925
+  },
+  {
+   "id": 2,
+   "title": "The oracle",
+   "url": "http://localhost:3110/harness/replay",
+   "T0": 16.925,
+   "T1": 27.059
+  },
+  {
+   "id": 3,
+   "title": "Seed and run",
+   "url": "http://localhost:3110/harness/replay",
+   "T0": 27.059,
+   "T1": 37.89
+  },
+  {
+   "id": 4,
+   "title": "The agent plans",
+   "url": "http://localhost:3110/harness/replay",
+   "T0": 37.89,
+   "T1": 48.211
+  },
+  {
+   "id": 5,
+   "title": "Fuzz rounds",
+   "url": "http://localhost:3110/harness/replay",
+   "T0": 48.211,
+   "T1": 57.324
+  },
+  {
+   "id": 6,
+   "title": "Every event",
+   "url": "http://localhost:3110/harness/replay",
+   "T0": 57.324,
+   "T1": 66.297
+  },
+  {
+   "id": 7,
+   "title": "The conversation",
+   "url": "http://localhost:3110/harness/replay",
+   "T0": 66.297,
+   "T1": 73.784
+  },
+  {
+   "id": 8,
+   "title": "The finding",
+   "url": "http://localhost:3110/harness/replay",
+   "T0": 73.784,
+   "T1": 89.7
+  }
+ ]
+}
