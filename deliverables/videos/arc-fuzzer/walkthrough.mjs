@@ -38,7 +38,7 @@ export const STEPS = [
     do: [['goto', STUDIO], ['wait', 2], ['focus', 'text=Arc Lending Protocol Manager >> nth=0']] },
   { id: 2, title: 'Open Aomi Fuzz',
     say: "Aomi Fuzz connects to your Arc Studio account. No setup and no handlers to write: it reads what you already built.",
-    do: [['goto', FUZZ], ['wait', 1.5], ['focus', 'text=apps in your Arc Studio account'], ['click', 'a[href="/apps/e715072f-f9fb-416c-a85e-28acf20bf623"]'], ['wait', 1]] },
+    do: [['goto', FUZZ], ['wait', 1.5], ['focus', 'text=apps in your Arc Studio account'], ['click', 'a[href="/apps/e715072f-f9fb-416c-a85e-28acf20bf623"]'], ['waitFor', 'text=FUZZ TARGETS', 60], ['wait', .8]] },
   { id: 3, title: 'It found your deployment',
     say: "It found the contracts, and the one you deployed to Arc testnet, with the three it's wired to. That matters: this bug doesn't live in any one of them.",
     do: [['waitFor', 'text=Fuzzing your live deployment', 60], ['focus', 'text=The fork also holds']] },
