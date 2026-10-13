@@ -49,7 +49,7 @@ export const STEPS = [
   // ---- the mechanism ------------------------------------------------------------------------
   { id: 5, title: 'The attack surface', voAt: 'end',
     say: "We run it. First the attack surface: every writable function, by every kind of actor, in any order. At three calls deep that's a hundred and seventy-five thousand ordered sequences. Nobody checks that by hand.",
-    do: [['click', '[data-testid=run-aomi-fuzz]'], ['waitFor', 'details[data-tool-name="arc_map_attack_surface"]', 120], ['click', toolRow('arc_map_attack_surface')], ['wait', 2]] },
+    do: [['waitFor', '[data-testid=run-aomi-fuzz]', 120], ['click', '[data-testid=run-aomi-fuzz]'], ['waitFor', 'details[data-tool-name="arc_map_attack_surface"]', 120], ['click', toolRow('arc_map_attack_surface')], ['wait', 2]] },
   { id: 6, title: 'The agent proposes', speed: 4,
     say: "The agent proposes: a threat model, the roles, the rules that must hold, and its own attack path in order. It never decides whether something is a bug.",
     do: [['waitFor', 'details[data-tool-name="arc_fuzz_start"]', 600], ['click', toolRow('arc_fuzz_start')], ['wait', 2.5]] },
