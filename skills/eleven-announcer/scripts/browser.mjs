@@ -23,7 +23,11 @@ export function loadChromium() {
 // such targets instead: the recorder only needs pages.
 function tolerateExtensionTargets(req, name) {
   let CRBrowser;
-  try { ({ CRBrowser } = req(name + '/lib/server/chromium/crBrowser.js')); } catch { return; }
+  try {
+    // an absolute path sidesteps the package's `exports` map, which hides lib/
+    const root = path.dirname(req.resolve(name + '/package.json'));
+    ({ CRBrowser } = req(path.join(root, 'lib/server/chromium/crBrowser.js')));
+  } catch { return; }
   const proto = CRBrowser && CRBrowser.prototype;
   if (!proto || proto.__eaTolerant) return;
   const attach = proto._onAttachedToTarget;
