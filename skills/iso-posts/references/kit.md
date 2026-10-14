@@ -18,8 +18,9 @@
   kind: 'flow' | 'sequence',
   labels: true,          // false hides every node label
   edgeLabels: false,     // true shows edge (or message) labels
-  trees: true,           // false drops the decorative trees
-  nodes: [{ id, label, icon, color, r, k, group, s?, tagY? }],
+  trees: true,           // false drops the decorative scenery
+  world: undefined,      // false: never pack into one bonsai world; 'NAME': always, with that label
+  nodes: [{ id, label, shape, say?, icon, color, r, k, group, s?, tagY? }],
   edges: [{ from, to, label, style: 'pipe' | 'dotted' | 'fail', back? }],
   groups: [{ id, label, glass? }],               // flow only
 }
@@ -29,13 +30,16 @@
   - `r` is the column and `k` the row (fractions are fine).
   - `icon` is one of: `doc swap chart key shield bolt coins term x check spark search wallet dollar eth sol user db`.
   - `color` is one of `sky grn rose white`; white cubes get navy icons and suit actors (user, model, wallet).
-  - `s` is the cube size (default 1.25). `tagY` raises the label in world units.
-- **Edges between nodes:**
-  - Neighbours in the same row become a straight pipe.
-  - Anything else (a skipped column, a different row, `back`, `fail`) becomes an arc; `fail` arcs are rose and higher.
-  - `dotted` is a dashed line.
-- **Sequence specs** put each participant on its own plinth, left to right. Each message is an arc whose height grows with its order; replies (`-->>`) are dotted, and a message to itself is a small loop.
-- **Groups:** every node stands on its own plinth. A group's label goes on the front edge of its first member's plinth, and `glass` puts each member in a sandbox box.
+  - `shape` is one of `cube person bubble wallet stack db card` (default `cube`). `say: true` puts a speech bubble over a person. `icon` applies to cubes and to stacks (`eth`/`sol`).
+  - `s` is the size (cubes default to 1.0 + 0.16 per connection, up to 1.48). `tagY` raises the label in world units.
+- **Edges between nodes** (all straight runs with rounded elbows):
+  - Only one wire is drawn per pair of nodes; a reply or loop-back along the same pair shares it (rose if either is `fail`).
+  - Neighbours (adjacent columns in a row, or adjacent cells in a world) join face to face.
+  - Anything else rises from the top, runs along the axes at its own lane height and drops into the target; `fail`/`back` lanes sit a little higher.
+  - A message to itself is a square loop off the right face. `dotted` is a dashed line.
+- **Sequence specs** put each participant on its own plinth, left to right, wired the same way.
+- **Groups:** each group is one diorama with scenery and its label on the front edge; `glass` covers it in a glass case. Lone nodes stand on plinths.
+- **Worlds:** an intertwined flow without groups (two or more loop-backs, skips or row changes) is packed into a compact grid on one diorama; people stay outside, wires follow the world's axes, and labels sit on the floor in front of each node.
 - **Auto-fit:** after building, the camera zooms and pans so the whole scene and its tags fit below the headline (`fit()` in the template). You don't position anything by hand in spec mode.
 
 ## 2. Coordinates
@@ -50,7 +54,14 @@
 |---|---|
 | `slab(p, w, d, label, { h, ink, lw, lx })` | A platform with its label on the front edge. `lw`/`lx` give a shorter label shifted along the edge, useful when something covers the middle. Long labels shrink to fit. |
 | `glass(p, w, h, d)` | A translucent sandbox box with blue edges |
-| `cube(p, { s, c, icon, ink, y })` | A soft rounded cube with a line icon on its two visible faces |
+| `cube(p, { s, c, icon, ink, y, yaw })` | A soft rounded cube with a line icon on every side; `yaw` tilts it about the vertical |
+| `person(p, { s, c, say })` | A little person; `say` adds a speech bubble |
+| `bubble(p, { s, c })` | A speech bubble (an intent, prompt or message) |
+| `wallet(p, { s })` | A wallet |
+| `stack(p, { s, c, icon })` | Three stacked blocks (a chain); `icon` `eth`/`sol` on the top block |
+| `cylinder(p, { c, s })` | A database cylinder |
+| `card(p, { s })` | A standing receipt card |
+| `wire([points], { c, r, dashed })` | Orthogonal plumbing through the points with rounded elbows (use axis-aligned points) |
 | `pipe(a, b, { r, c })` | A straight pipe |
 | `tube([points], { r, c })` | A smooth curved pipe through the points (arcs, loops) |
 | `dotted(a, b, colour)` | A dashed line |
