@@ -41,7 +41,7 @@ export const STEPS = [
     do: [['goto', FUZZ], ['wait', 1.5], ['focus', 'text=apps in your Arc Studio account'], ['click', 'a[href="/apps/e715072f-f9fb-416c-a85e-28acf20bf623"]'], ['waitFor', 'text=FUZZ TARGETS', 60], ['wait', .8]] },
   { id: 3, title: 'It found your deployment',
     say: "It found the contracts, and the one you deployed to Arc testnet, with the three it's wired to. That matters: this bug doesn't live in any one of them.",
-    do: [['click', 'button:has-text("LendingPool") >> nth=0'], ['waitFor', 'text=LendingPool · 9 writable functions', 60], ['waitFor', 'text=The fork also holds', 60], ['focus', 'text=The fork also holds']] },
+    do: [['click', 'button:has-text("LendingPool") >> nth=0'], ['waitFor', 'text=LendingPool · 9 writable functions', 240], ['waitFor', 'text=The fork also holds', 60], ['focus', 'text=The fork also holds']] },
   { id: 4, title: 'Sign in to Aomi',
     say: "One wallet signature signs you in to Aomi. It never signs a transaction, and nothing is ever sent to the chain.",
     do: [['click', 'text=Sign in to Aomi'], ['waitFor', 'text=Aomi ·', 180], ['focus', 'text=Aomi ·']] },
