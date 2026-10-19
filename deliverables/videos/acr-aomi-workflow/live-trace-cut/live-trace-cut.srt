@@ -1,0 +1,131 @@
+1
+00:00:00,120 --> 00:00:04,237
+ACR stands for Arc Compute Rate. It publishes reference
+
+2
+00:00:04,137 --> 00:00:09,438
+indices for AI inference, GPU compute, and data delivery,
+
+3
+00:00:09,338 --> 00:00:11,644
+with updates recorded on-chain.
+
+4
+00:00:11,520 --> 00:00:15,660
+Deployed on Arc, ACR's PolicyWallet contract holds
+
+5
+00:00:15,560 --> 00:00:20,095
+a business's USDC, enforces spending limits, and links
+
+6
+00:00:19,995 --> 00:00:23,718
+each payment to a verifiable record of the decision behind
+
+7
+00:00:23,618 --> 00:00:24,298
+it.
+
+8
+00:00:23,987 --> 00:00:28,255
+Aomi combines ACR's internal APIs with the ability
+
+9
+00:00:28,155 --> 00:00:31,645
+to read its on-chain contracts and prepare transactions
+
+10
+00:00:31,545 --> 00:00:34,072
+for a connected wallet to authorize.
+
+11
+00:00:33,720 --> 00:00:37,349
+Here, the agent reads the treasury contract on Arc testnet.
+
+12
+00:00:37,249 --> 00:00:40,205
+It checks the owner and pause status, then reads the
+
+13
+00:00:40,105 --> 00:00:43,688
+remaining budget and token balance. The demo bill fits
+
+14
+00:00:43,588 --> 00:00:47,937
+both limits. The API supplies the bill; the contract
+
+15
+00:00:47,837 --> 00:00:49,749
+supplies the spending constraints.
+
+16
+00:00:49,720 --> 00:00:53,071
+The next steps are to prepare the payment, simulate it,
+
+17
+00:00:52,971 --> 00:00:56,693
+and ask the connected owner to authorize it. Then verify
+
+18
+00:00:56,593 --> 00:00:59,805
+the receipt before marking the bill paid. This demo shows
+
+19
+00:00:59,705 --> 00:01:03,217
+real contract reads with synthetic bills and mock U S
+
+20
+00:01:03,117 --> 00:01:06,073
+D C; no payment has been submitted.
+
+21
+00:01:05,987 --> 00:01:09,245
+The workflow's building blocks, tools, API clients,
+
+22
+00:01:09,145 --> 00:01:13,332
+and prompt text, are packaged in a Rust program. Developers
+
+23
+00:01:13,232 --> 00:01:16,582
+can write arbitrary logic and expose it through tools,
+
+24
+00:01:16,482 --> 00:01:19,787
+with skills guiding how the agent uses them.
+
+25
+00:01:19,587 --> 00:01:24,737
+A general-purpose agent framework can call APIs. Aomi
+
+26
+00:01:24,637 --> 00:01:28,429
+also provides cloud-hosted, protocol-agnostic contract
+
+27
+00:01:28,329 --> 00:01:32,168
+access and transaction simulation and execution. The
+
+28
+00:01:32,068 --> 00:01:35,151
+team defines its workflow without having to build that
+
+29
+00:01:35,051 --> 00:01:36,684
+infrastructure itself.
+
+30
+00:01:36,520 --> 00:01:39,894
+The frontend imports Aomi’s widget and points it at the
+
+31
+00:01:39,794 --> 00:01:42,889
+app. The same workflow is now available through chat
+
+32
+00:01:42,789 --> 00:01:45,676
+inside ACR’s existing interface.
+
+33
+00:01:45,653 --> 00:01:48,121
+ACR, powered by Aomi.

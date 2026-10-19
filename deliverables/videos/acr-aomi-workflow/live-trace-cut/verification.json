@@ -1,0 +1,97 @@
+{
+  "duration_s": 107.86666666666666,
+  "canvas": [
+    1920,
+    1080
+  ],
+  "pixel_aspect_ratio": "1:1",
+  "display_aspect_ratio": "16:9",
+  "scaling": "uniform contain, never stretch",
+  "max_scale_rounding_error": 0.00029243712601789706,
+  "logo": "official square Aomi mark rendered white",
+  "live_research_tools": [
+    "acr_pending_payments",
+    "call_contract",
+    "get_balance"
+  ],
+  "treasury_execution": "Real contract reads and pending-payment API demonstrated on isolated Arc testnet with mock USDC and synthetic bill. Simulation and payment not performed.",
+  "github_capture": "Actual Chrome GitHub pages and screen recording",
+  "scenes": [
+    {
+      "id": 1,
+      "start": 0,
+      "duration": 11.4,
+      "title": "What is ACR?"
+    },
+    {
+      "id": 2,
+      "start": 11.4,
+      "duration": 12.466666666666667,
+      "title": "Review the bill"
+    },
+    {
+      "id": 3,
+      "start": 23.866666666666667,
+      "duration": 9.733333333333333,
+      "title": "Read the evidence"
+    },
+    {
+      "id": 4,
+      "start": 33.6,
+      "duration": 16.0,
+      "title": "APIs and contracts"
+    },
+    {
+      "id": 5,
+      "start": 49.6,
+      "duration": 16.266666666666666,
+      "title": "Transaction pipeline"
+    },
+    {
+      "id": 6,
+      "start": 65.86666666666667,
+      "duration": 13.6,
+      "title": "Why this infrastructure matters"
+    },
+    {
+      "id": 7,
+      "start": 79.46666666666667,
+      "duration": 16.933333333333334,
+      "title": "The app implementation"
+    },
+    {
+      "id": 8,
+      "start": 96.4,
+      "duration": 9.133333333333333,
+      "title": "Frontend integration"
+    },
+    {
+      "id": 9,
+      "start": 105.53333333333333,
+      "duration": 2.3333333333333335,
+      "title": "ACR \u00d7 Aomi"
+    }
+  ],
+  "longest_detected_screen_hold_s": 4.466667,
+  "voice_pauses_at_least_one_second": 0,
+  "full_video_decode": "passed",
+  "requested_chat_interval": [
+    32,
+    63
+  ],
+  "actual_chat_interval": [
+    23.8666666667,
+    65.8666666667
+  ],
+  "contract_reads": [
+    "owner()",
+    "paused()",
+    "usdc()",
+    "remaining(bytes32)",
+    "balanceOf(address)"
+  ],
+  "served_blocks": [
+    67971253,
+    67971431
+  ]
+}
