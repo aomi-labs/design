@@ -1,0 +1,17 @@
+{
+  "duration_s": 151.97597833333333,
+  "chat_starts_s": 7.301587,
+  "chat_duration_s": 60.79039133333333,
+  "chat_fraction": 0.4,
+  "source": "Real Chrome UI session; 20 seconds captured at 4 fps, followed by held captures of expanded real tool records and response. No simulated chat.",
+  "tools": [
+    "acr_check_bill",
+    "acr_rate"
+  ],
+  "payment_submitted": false,
+  "encoded_duration_s": 152.066667,
+  "resolution": "1920x1080",
+  "full_decode": "pass",
+  "size_bytes": 8268284,
+  "audio": "AAC, ElevenLabs narration with original vibrant electronic music"
+}
