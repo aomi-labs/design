@@ -10,4 +10,4 @@ The earlier 8.0s and 5.8s voiceover gaps are removed. Voice-only silence detecti
 
 Files: acr-aomi-paced.mp4 (local video), paced-cut.srt (subtitles), walkthrough.mjs (approved narrative), edit.py (renderer), vo/ (voice clips and timing), captures/ (review images), verification.json (format and evidence boundaries).
 
-Final full-video decode passed. Longest detected screen reading hold: 8.13s, down from 16.8s.
+Final full-video decode passed. Longest detected screen reading hold: 5.27s, down from 16.8s.

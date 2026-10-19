@@ -7,7 +7,7 @@
   "pixel_aspect_ratio": "1:1",
   "display_aspect_ratio": "16:9",
   "scaling": "uniform contain, never stretch",
-  "max_scale_rounding_error": 6.66845437996555e-05,
+  "max_scale_rounding_error": 0.00027420576229908455,
   "logo": "official square Aomi mark rendered white",
   "live_research_tools": [
     "acr_check_bill"
@@ -64,7 +64,7 @@
       "title": "ACR \u00d7 Aomi"
     }
   ],
-  "longest_detected_screen_hold_s": 8.133333,
+  "longest_detected_screen_hold_s": 5.266667,
   "voice_pauses_at_least_one_second": 0,
   "full_video_decode": "passed"
 }

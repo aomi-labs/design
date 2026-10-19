@@ -31,13 +31,16 @@ for st in steps:
  cuesall.extend({'s':offset+s,'e':offset+e,'text':x} for s,e,x in cues)
  voices.append({'file':str(audio),'start':offset+.12});scenes.append({'id':n,'start':offset,'duration':length,'title':st['title']})
  out=W/f'scene{n}.mp4';proc=subprocess.Popen(['ffmpeg','-y','-loglevel','error','-f','rawvideo','-pix_fmt','rgb24','-s','1920x1080','-r',str(FPS),'-i','-','-an','-vf','setsar=1','-r','30','-c:v','libx264','-preset','veryfast','-crf','19','-pix_fmt','yuv420p',str(out)],stdin=subprocess.PIPE)
- last=None;base=None
+ last=None;base=None;last_focus=None
  for frame in range(round(length*FPS)):
   t=frame/FPS;src=source(n,t,length)
-  if base is None or src!=last:
+  focus=n==5 and int(t/4)%2==1
+  if base is None or src!=last or focus!=last_focus:
    base=Image.new('RGB',(1920,1080),BG);dr=ImageDraw.Draw(base)
    if src:
-    im=Image.open(src).convert('RGB');fit=ImageOps.contain(im,(1840,920),Image.Resampling.LANCZOS);xy=((1920-fit.width)//2,65+(920-fit.height)//2);base.paste(fit,xy)
+    im=Image.open(src).convert('RGB')
+    if focus:im=im.crop((int(im.width*.22),int(im.height*.17),im.width,int(im.height*.81)))
+    fit=ImageOps.contain(im,(1840,920),Image.Resampling.LANCZOS);xy=((1920-fit.width)//2,65+(920-fit.height)//2);base.paste(fit,xy)
     scalings[str(src)]={'source':im.size,'display':fit.size,'scale_error':abs(fit.width/im.width-fit.height/im.height)}
     label='LIVE CHAT · EDITED CAPTURE' if n in [2,3] else 'GITHUB · IMPLEMENTATION WALKTHROUGH' if n in [4,5,6,7] else 'ACR · ARC COMPUTE RATE'
     dr.text((42,28),label,font=small,fill=(194,210,229),anchor='lm')
@@ -47,7 +50,7 @@ for st in steps:
     dr.text((940,420),'aomi',font=ImageFont.truetype('/System/Library/Fonts/Supplemental/Georgia.ttf',112),fill='white',anchor='lm')
     dr.text((960,580),'ACR × Aomi',font=ImageFont.truetype(FONT,46),fill='white',anchor='mm')
     dr.text((960,655),'arc-compute-rate.vercel.app',font=small,fill=(168,188,210),anchor='mm')
-   last=src
+   last=src;last_focus=focus
   im=base.copy();draw=ImageDraw.Draw(im)
   text=next((x for s,e,x in cues if s<=t<e),'')
   if text:draw.text((960,1030),text,font=font,fill='white',anchor='mm')
