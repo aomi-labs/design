@@ -1,0 +1,328 @@
+{
+ "dur": 128,
+ "vo": [
+  {
+   "id": 1,
+   "file": "vo/step01.mp3",
+   "start": 3.15,
+   "dur": 11.006
+  },
+  {
+   "id": 2,
+   "file": "vo/step02.mp3",
+   "start": 14.956,
+   "dur": 14.257
+  },
+  {
+   "id": 3,
+   "file": "vo/step03.mp3",
+   "start": 30.013,
+   "dur": 16.347
+  },
+  {
+   "id": 4,
+   "file": "vo/step04.mp3",
+   "start": 47.16,
+   "dur": 19.133
+  },
+  {
+   "id": 5,
+   "file": "vo/step05.mp3",
+   "start": 67.093,
+   "dur": 13.978
+  },
+  {
+   "id": 6,
+   "file": "vo/step06.mp3",
+   "start": 81.872,
+   "dur": 13.653
+  },
+  {
+   "id": 7,
+   "file": "vo/step07.mp3",
+   "start": 96.325,
+   "dur": 14.025
+  },
+  {
+   "id": 8,
+   "file": "vo/step08.mp3",
+   "start": 111.15,
+   "dur": 12.399
+  }
+ ],
+ "cues": [
+  {
+   "s": 3.15,
+   "e": 6.047,
+   "text": "ACR is the Arc Compute Rate:"
+  },
+  {
+   "s": 6.087,
+   "e": 8.3,
+   "text": "a reference rate for machine commerce."
+  },
+  {
+   "s": 8.34,
+   "e": 11.005,
+   "text": "It brings compute benchmarks, billing evidence,"
+  },
+  {
+   "s": 11.045,
+   "e": 14.506,
+   "text": "and on-chain infrastructure into one place."
+  },
+  {
+   "s": 14.956,
+   "e": 18.898,
+   "text": "Here are its inference, GPU, and data indices."
+  },
+  {
+   "s": 18.938,
+   "e": 21.789,
+   "text": "Aomi helps users investigate compute bills using"
+  },
+  {
+   "s": 21.829,
+   "e": 25.04,
+   "text": "ACR’s evidence and public price comparisons."
+  },
+  {
+   "s": 25.08,
+   "e": 26.421,
+   "text": "Evidence age matters,"
+  },
+  {
+   "s": 26.461,
+   "e": 29.563,
+   "text": "and a benchmark never authorizes payment."
+  },
+  {
+   "s": 30.013,
+   "e": 32.69,
+   "text": "This is more than an API integration."
+  },
+  {
+   "s": 32.73,
+   "e": 36.219,
+   "text": "ACR has an on-chain oracle, attestations,"
+  },
+  {
+   "s": 36.259,
+   "e": 38.351,
+   "text": "and settlement infrastructure."
+  },
+  {
+   "s": 38.442,
+   "e": 40.445,
+   "text": "Aomi connects protocol-specific"
+  },
+  {
+   "s": 40.485,
+   "e": 42.547,
+   "text": "knowledge and off-chain records"
+  },
+  {
+   "s": 42.587,
+   "e": 46.709,
+   "text": "to a harness that can prepare reviewed contract actions."
+  },
+  {
+   "s": 47.16,
+   "e": 48.223,
+   "text": "For treasury payments,"
+  },
+  {
+   "s": 48.263,
+   "e": 50.812,
+   "text": "the recorded bill determines the recipient,"
+  },
+  {
+   "s": 50.852,
+   "e": 53.575,
+   "text": "amount, category, and decision hash."
+  },
+  {
+   "s": 53.615,
+   "e": 56.605,
+   "text": "Aomi stages spendAsOwner, simulates it,"
+  },
+  {
+   "s": 56.645,
+   "e": 58.846,
+   "text": "and requests owner authorization."
+  },
+  {
+   "s": 58.886,
+   "e": 61.586,
+   "text": "The guard restricts chain, contract, and function;"
+  },
+  {
+   "s": 61.626,
+   "e": 63.78,
+   "text": "PolicyWallet enforces ownership,"
+  },
+  {
+   "s": 63.82,
+   "e": 66.643,
+   "text": "budget, and replay protection."
+  },
+  {
+   "s": 67.093,
+   "e": 70.884,
+   "text": "After payment, ACR verifies the successful receipt and"
+  },
+  {
+   "s": 70.924,
+   "e": 73.984,
+   "text": "matching event before reconciling the original bill."
+  },
+  {
+   "s": 74.024,
+   "e": 76.562,
+   "text": "That closes the loop: off-chain evidence,"
+  },
+  {
+   "s": 76.602,
+   "e": 78.408,
+   "text": "authorized on-chain action,"
+  },
+  {
+   "s": 78.448,
+   "e": 81.421,
+   "text": "and a business record that knows what settled."
+  },
+  {
+   "s": 81.872,
+   "e": 85.454,
+   "text": "Back in the product, Ask ACR Agent is the entry point."
+  },
+  {
+   "s": 85.494,
+   "e": 88.194,
+   "text": "The merged frontend imports Aomi’s widget"
+  },
+  {
+   "s": 88.234,
+   "e": 90.957,
+   "text": "and pins it to the hosted ACR app."
+  },
+  {
+   "s": 90.997,
+   "e": 92.966,
+   "text": "The protocol keeps its own interface;"
+  },
+  {
+   "s": 93.006,
+   "e": 95.875,
+   "text": "the component supplies the conversation."
+  },
+  {
+   "s": 96.325,
+   "e": 99.617,
+   "text": "That is the foundation for one-shotting a protocol app."
+  },
+  {
+   "s": 99.657,
+   "e": 101.951,
+   "text": "Describe the workflow, connect the infrastructure,"
+  },
+  {
+   "s": 101.991,
+   "e": 104.76,
+   "text": "and define the contract actions and guards."
+  },
+  {
+   "s": 104.8,
+   "e": 107.501,
+   "text": "Aomi supplies the agent runtime and frontend"
+  },
+  {
+   "s": 107.541,
+   "e": 110.7,
+   "text": "component around those protocol-specific pieces."
+  },
+  {
+   "s": 111.15,
+   "e": 113.339,
+   "text": "The frontend integration is shipped."
+  },
+  {
+   "s": 113.379,
+   "e": 115.777,
+   "text": "The treasury workflow is implemented,"
+  },
+  {
+   "s": 115.817,
+   "e": 118.273,
+   "text": "with production payment acceptance still pending."
+  },
+  {
+   "s": 118.313,
+   "e": 120.642,
+   "text": "The value is one agent that connects"
+  },
+  {
+   "s": 120.682,
+   "e": 123.899,
+   "text": "understanding the protocol with acting on it."
+  }
+ ],
+ "steps": [
+  {
+   "id": 1,
+   "title": "What is ACR?",
+   "url": "https://arc-compute-rate.vercel.app/",
+   "T0": 2.8,
+   "T1": 14.606
+  },
+  {
+   "id": 2,
+   "title": "Evidence before action",
+   "url": "https://arc-compute-rate.vercel.app/#fixing",
+   "T0": 14.606,
+   "T1": 29.663
+  },
+  {
+   "id": 3,
+   "title": "A protocol with infrastructure",
+   "url": "https://arc-compute-rate.vercel.app/#fixing",
+   "T0": 29.663,
+   "T1": 46.81
+  },
+  {
+   "id": 4,
+   "title": "From a bill to a contract call",
+   "url": "file:///Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/homepage-cut/scene-6.html",
+   "T0": 46.81,
+   "T1": 66.743
+  },
+  {
+   "id": 5,
+   "title": "Bring settlement back",
+   "url": "file:///Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/homepage-cut/scene-7.html",
+   "T0": 66.743,
+   "T1": 81.522
+  },
+  {
+   "id": 6,
+   "title": "A frontend component",
+   "url": "https://arc-compute-rate.vercel.app/",
+   "T0": 81.522,
+   "T1": 95.975
+  },
+  {
+   "id": 7,
+   "title": "Build from the workflow",
+   "url": "https://arc-compute-rate.vercel.app/#fixing",
+   "T0": 95.975,
+   "T1": 110.8
+  },
+  {
+   "id": 8,
+   "title": "One connected workflow",
+   "url": "https://arc-compute-rate.vercel.app/",
+   "T0": 110.8,
+   "T1": 124
+  }
+ ]
+}

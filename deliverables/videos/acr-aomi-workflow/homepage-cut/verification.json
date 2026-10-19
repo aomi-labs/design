@@ -1,0 +1,29 @@
+{
+  "duration_seconds": 128,
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "rendered_frames": 3840,
+  "voice": "ElevenLabs",
+  "voice_clips": 8,
+  "subtitle_cues": 43,
+  "full_decode": "passed",
+  "audio_peak_db": -1.4,
+  "preview_bytes": 6792441,
+  "full_bytes": 8919545,
+  "preview_sha256": "f5d66173f6412587d2d5758a1c630ea868aefef2800c36cea261768947d2c52a",
+  "visual_qa_seconds": [
+    2,
+    8,
+    22,
+    40,
+    60,
+    75,
+    90,
+    108,
+    122,
+    126
+  ],
+  "live_payment_executed": false,
+  "agent_drawer_evidence": "Repository screenshot, explicitly labeled"
+}
