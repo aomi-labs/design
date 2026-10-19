@@ -1,0 +1,119 @@
+1
+00:00:00,120 --> 00:00:04,237
+ACR stands for Arc Compute Rate. It publishes reference
+
+2
+00:00:04,137 --> 00:00:09,438
+indices for AI inference, GPU compute, and data delivery,
+
+3
+00:00:09,338 --> 00:00:11,644
+with updates recorded on-chain.
+
+4
+00:00:11,520 --> 00:00:15,324
+It also helps businesses investigate compute bills, comparing
+
+5
+00:00:15,224 --> 00:00:18,389
+charges with published market prices. Those price comparisons
+
+6
+00:00:18,289 --> 00:00:21,790
+are separate from ACR’s reference indices.
+
+7
+00:00:21,653 --> 00:00:25,015
+Aomi brings those tools into the conversation. Let’s
+
+8
+00:00:24,915 --> 00:00:28,591
+check this bill and inspect the evidence. The agent flags
+
+9
+00:00:28,491 --> 00:00:32,086
+it for review and explains that the pricing data is nearly
+
+10
+00:00:31,986 --> 00:00:36,683
+thirteen days old. That context matters before considering
+
+11
+00:00:36,583 --> 00:00:37,589
+a payment.
+
+12
+00:00:37,453 --> 00:00:40,827
+The treasury implementation connects that review to on-chain
+
+13
+00:00:40,727 --> 00:00:44,426
+payments. Aomi provides cloud-hosted contract access
+
+14
+00:00:44,326 --> 00:00:48,048
+alongside the app’s API tools. A configured deployment
+
+15
+00:00:47,948 --> 00:00:51,195
+checks ownership, funds, budget, and replay protection
+
+16
+00:00:51,095 --> 00:00:53,064
+before preparing a payment.
+
+17
+00:00:52,920 --> 00:00:56,875
+Here is the actual workflow on GitHub: stage the transaction,
+
+18
+00:00:56,775 --> 00:01:00,532
+simulate it, and ask the owner to authorize it. After
+
+19
+00:01:00,432 --> 00:01:03,655
+confirmation, verify the receipt and payment event before
+
+20
+00:01:03,555 --> 00:01:06,998
+updating the bill. This is implemented code; deployed
+
+21
+00:01:06,898 --> 00:01:09,274
+payment acceptance is still pending.
+
+22
+00:01:09,187 --> 00:01:13,258
+A general-purpose agent framework can call tools. Aomi
+
+23
+00:01:13,158 --> 00:01:16,938
+also supplies contract access and the transaction pipeline,
+
+24
+00:01:16,838 --> 00:01:19,933
+so the protocol team can focus on its business rules
+
+25
+00:01:19,833 --> 00:01:24,194
+instead of assembling the blockchain execution infrastructure.
+
+26
+00:01:23,720 --> 00:01:27,431
+ACR registers its tools and treasury skill here. The
+
+27
+00:01:27,331 --> 00:01:31,030
+frontend imports Aomi’s widget and points it at the app.
+
+28
+00:01:30,930 --> 00:01:34,339
+That connects the protocol’s workflow to the conversation
+
+29
+00:01:34,239 --> 00:01:36,405
+inside its existing interface.
+
+30
+00:01:36,253 --> 00:01:38,721
+ACR, powered by Aomi.

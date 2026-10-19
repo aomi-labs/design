@@ -1,0 +1,70 @@
+{
+  "duration_s": 98.46666666666665,
+  "canvas": [
+    1920,
+    1080
+  ],
+  "pixel_aspect_ratio": "1:1",
+  "display_aspect_ratio": "16:9",
+  "scaling": "uniform contain, never stretch",
+  "max_scale_rounding_error": 6.66845437996555e-05,
+  "logo": "official square Aomi mark rendered white",
+  "live_research_tools": [
+    "acr_check_bill"
+  ],
+  "treasury_execution": "Not demonstrated. Source walkthrough explicitly labeled; deployment acceptance pending.",
+  "github_capture": "Actual Chrome GitHub pages and screen recording",
+  "scenes": [
+    {
+      "id": 1,
+      "start": 0,
+      "duration": 11.4,
+      "title": "What is ACR?"
+    },
+    {
+      "id": 2,
+      "start": 11.4,
+      "duration": 10.133333333333333,
+      "title": "Review the bill"
+    },
+    {
+      "id": 3,
+      "start": 21.53333333333333,
+      "duration": 15.8,
+      "title": "Read the evidence"
+    },
+    {
+      "id": 4,
+      "start": 37.33333333333333,
+      "duration": 15.466666666666667,
+      "title": "APIs and contracts"
+    },
+    {
+      "id": 5,
+      "start": 52.8,
+      "duration": 16.266666666666666,
+      "title": "Transaction pipeline"
+    },
+    {
+      "id": 6,
+      "start": 69.06666666666666,
+      "duration": 14.533333333333333,
+      "title": "Why this infrastructure matters"
+    },
+    {
+      "id": 7,
+      "start": 83.6,
+      "duration": 12.533333333333333,
+      "title": "The app implementation"
+    },
+    {
+      "id": 8,
+      "start": 96.13333333333333,
+      "duration": 2.3333333333333335,
+      "title": "ACR \u00d7 Aomi"
+    }
+  ],
+  "longest_detected_screen_hold_s": 8.133333,
+  "voice_pauses_at_least_one_second": 0,
+  "full_video_decode": "passed"
+}

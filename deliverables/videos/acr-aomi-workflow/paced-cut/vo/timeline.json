@@ -1,0 +1,239 @@
+{
+  "dur": 98.46666666666665,
+  "vo": [
+    {
+      "file": "/Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/paced-cut/vo/step01.mp3",
+      "start": 0.12
+    },
+    {
+      "file": "/Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/paced-cut/vo/step02.mp3",
+      "start": 11.52
+    },
+    {
+      "file": "/Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/paced-cut/vo/step03.mp3",
+      "start": 21.653333333333332
+    },
+    {
+      "file": "/Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/paced-cut/vo/step04.mp3",
+      "start": 37.453333333333326
+    },
+    {
+      "file": "/Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/paced-cut/vo/step05.mp3",
+      "start": 52.919999999999995
+    },
+    {
+      "file": "/Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/paced-cut/vo/step06.mp3",
+      "start": 69.18666666666667
+    },
+    {
+      "file": "/Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/paced-cut/vo/step07.mp3",
+      "start": 83.72
+    },
+    {
+      "file": "/Users/cecilia/Code/aomi-design-worktrees/eleven-announcer/deliverables/videos/acr-aomi-workflow/paced-cut/vo/step08.mp3",
+      "start": 96.25333333333333
+    }
+  ],
+  "cues": [
+    {
+      "s": 0.12,
+      "e": 4.237,
+      "text": "ACR stands for Arc Compute Rate. It publishes reference"
+    },
+    {
+      "s": 4.1370000000000005,
+      "e": 9.438,
+      "text": "indices for AI inference, GPU compute, and data delivery,"
+    },
+    {
+      "s": 9.338,
+      "e": 11.644,
+      "text": "with updates recorded on-chain."
+    },
+    {
+      "s": 11.52,
+      "e": 15.324000000000002,
+      "text": "It also helps businesses investigate compute bills, comparing"
+    },
+    {
+      "s": 15.224,
+      "e": 18.389,
+      "text": "charges with published market prices. Those price comparisons"
+    },
+    {
+      "s": 18.289,
+      "e": 21.79,
+      "text": "are separate from ACR\u2019s reference indices."
+    },
+    {
+      "s": 21.653333333333332,
+      "e": 25.01533333333333,
+      "text": "Aomi brings those tools into the conversation. Let\u2019s"
+    },
+    {
+      "s": 24.915333333333333,
+      "e": 28.59133333333333,
+      "text": "check this bill and inspect the evidence. The agent flags"
+    },
+    {
+      "s": 28.49133333333333,
+      "e": 32.08633333333333,
+      "text": "it for review and explains that the pricing data is nearly"
+    },
+    {
+      "s": 31.98633333333333,
+      "e": 36.68333333333333,
+      "text": "thirteen days old. That context matters before considering"
+    },
+    {
+      "s": 36.58333333333333,
+      "e": 37.58933333333333,
+      "text": "a payment."
+    },
+    {
+      "s": 37.453333333333326,
+      "e": 40.82733333333333,
+      "text": "The treasury implementation connects that review to on-chain"
+    },
+    {
+      "s": 40.72733333333333,
+      "e": 44.42633333333333,
+      "text": "payments. Aomi provides cloud-hosted contract access"
+    },
+    {
+      "s": 44.32633333333333,
+      "e": 48.04833333333333,
+      "text": "alongside the app\u2019s API tools. A configured deployment"
+    },
+    {
+      "s": 47.94833333333332,
+      "e": 51.19533333333333,
+      "text": "checks ownership, funds, budget, and replay protection"
+    },
+    {
+      "s": 51.09533333333333,
+      "e": 53.06433333333333,
+      "text": "before preparing a payment."
+    },
+    {
+      "s": 52.919999999999995,
+      "e": 56.875,
+      "text": "Here is the actual workflow on GitHub: stage the transaction,"
+    },
+    {
+      "s": 56.775,
+      "e": 60.532,
+      "text": "simulate it, and ask the owner to authorize it. After"
+    },
+    {
+      "s": 60.431999999999995,
+      "e": 63.655,
+      "text": "confirmation, verify the receipt and payment event before"
+    },
+    {
+      "s": 63.55499999999999,
+      "e": 66.99799999999999,
+      "text": "updating the bill. This is implemented code; deployed"
+    },
+    {
+      "s": 66.898,
+      "e": 69.274,
+      "text": "payment acceptance is still pending."
+    },
+    {
+      "s": 69.18666666666667,
+      "e": 73.25766666666667,
+      "text": "A general-purpose agent framework can call tools. Aomi"
+    },
+    {
+      "s": 73.15766666666666,
+      "e": 76.93766666666666,
+      "text": "also supplies contract access and the transaction pipeline,"
+    },
+    {
+      "s": 76.83766666666666,
+      "e": 79.93266666666666,
+      "text": "so the protocol team can focus on its business rules"
+    },
+    {
+      "s": 79.83266666666667,
+      "e": 84.19366666666666,
+      "text": "instead of assembling the blockchain execution infrastructure."
+    },
+    {
+      "s": 83.72,
+      "e": 87.431,
+      "text": "ACR registers its tools and treasury skill here. The"
+    },
+    {
+      "s": 87.33099999999999,
+      "e": 91.03,
+      "text": "frontend imports Aomi\u2019s widget and points it at the app."
+    },
+    {
+      "s": 90.92999999999999,
+      "e": 94.339,
+      "text": "That connects the protocol\u2019s workflow to the conversation"
+    },
+    {
+      "s": 94.23899999999999,
+      "e": 96.405,
+      "text": "inside its existing interface."
+    },
+    {
+      "s": 96.25333333333333,
+      "e": 98.72133333333332,
+      "text": "ACR, powered by Aomi."
+    }
+  ],
+  "scenes": [
+    {
+      "id": 1,
+      "start": 0,
+      "duration": 11.4,
+      "title": "What is ACR?"
+    },
+    {
+      "id": 2,
+      "start": 11.4,
+      "duration": 10.133333333333333,
+      "title": "Review the bill"
+    },
+    {
+      "id": 3,
+      "start": 21.53333333333333,
+      "duration": 15.8,
+      "title": "Read the evidence"
+    },
+    {
+      "id": 4,
+      "start": 37.33333333333333,
+      "duration": 15.466666666666667,
+      "title": "APIs and contracts"
+    },
+    {
+      "id": 5,
+      "start": 52.8,
+      "duration": 16.266666666666666,
+      "title": "Transaction pipeline"
+    },
+    {
+      "id": 6,
+      "start": 69.06666666666666,
+      "duration": 14.533333333333333,
+      "title": "Why this infrastructure matters"
+    },
+    {
+      "id": 7,
+      "start": 83.6,
+      "duration": 12.533333333333333,
+      "title": "The app implementation"
+    },
+    {
+      "id": 8,
+      "start": 96.13333333333333,
+      "duration": 2.3333333333333335,
+      "title": "ACR \u00d7 Aomi"
+    }
+  ]
+}
