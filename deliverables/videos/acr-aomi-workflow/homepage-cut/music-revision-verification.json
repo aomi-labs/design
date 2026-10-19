@@ -1,0 +1,26 @@
+{
+  "video_streams_unchanged": true,
+  "duration_seconds": 128,
+  "preview": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac"
+      }
+    ],
+    "format": {
+      "duration": "128.000000",
+      "size": "6836036"
+    }
+  },
+  "music_bpm": 124
+}

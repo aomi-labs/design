@@ -1,6 +1,6 @@
 # ACR × Aomi — homepage-led demo
 
-Final edit: 128.000 seconds, eight scenes, ElevenLabs voiceover, burned-in captions and separate SRT, quiet ambient music.
+Final edit: 128.000 seconds, eight scenes, ElevenLabs voiceover, burned-in captions and separate SRT, a vibrant electronic instrumental.
 
 ## Content
 
@@ -26,7 +26,7 @@ Treasury evidence: `services/index_api/index_api/payments.py`, `contracts/src/Po
 
 Narration: eight successful ElevenLabs timestamped synthesis responses. All returned character alignments were verified against the exact script. Credentials are not stored in the deliverable.
 
-Music: original quiet sustained synthesis; no arpeggios, percussion, or outro chime.
+Music revision: original 124 BPM electronic score with four-on-the-floor drums, syncopated bass, bright chord stabs, and a lighter breakdown under the contract explanation. The music ducks beneath the unchanged ElevenLabs narration.
 
 ## Rebuild
 
@@ -37,3 +37,7 @@ Raw frames and generated videos remain local and are ignored by Git.
 ## Verification
 
 The final 1920 × 1080, 30 fps H.264/AAC preview decoded all 3,840 frames successfully. Duration is 128 seconds; eight voice clips and 43 caption cues fit without overlap. Audio peak is -1.4 dB. Representative frames and the encoded outro were visually checked. See `verification.json` for file sizes and checksum.
+
+## Vibrant music revision
+
+Latest videos: `acr-aomi-vibrant.mp4` and `acr-aomi-vibrant-preview.mp4`. Rebuild with `node remix.mjs`. This replaces only the audio mix; the original encoded video stream is copied without re-encoding. The existing SRT remains valid. Earlier `homepage-cut*.mp4` files preserve the ambient version.

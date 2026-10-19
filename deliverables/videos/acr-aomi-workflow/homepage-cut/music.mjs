@@ -1,46 +1,32 @@
 #!/usr/bin/env node
-// Quiet sustained ambient bed for the ACR walkthrough: no samples, no licensing. The chord changes on every step
-// (cycling a calm progression), with a soft plucked arpeggio and a chime as the outro begins.
-// Reads vo/timeline.json (written by compose.mjs). finish.mjs ducks it under the voice.
-//   node music.mjs out.wav
-import { writeFileSync, readFileSync } from 'node:fs';
-
-const TL = JSON.parse(readFileSync(new URL('./vo/timeline.json', import.meta.url), 'utf8'));
-const PROG = [[[50, 57, 64, 66], 38], [[47, 54, 57, 62], 35], [[43, 50, 54, 59], 43], [[45, 52, 57, 61], 33]]; // Dadd9 Bm7 Gmaj7 A
-const OUTRO = [[50, 57, 61, 64, 66], 38];
-const DUR = TL.dur, starts = [0, ...TL.steps.slice(1).map(s => s.T0)], outroAt = TL.steps.at(-1).T1;
-const CHORDS = [...starts.map((t, i) => [t, starts[i + 1] ?? outroAt, ...PROG[i % PROG.length]]), [outroAt, DUR, ...OUTRO]];
-
-const SR = 44100, NS = Math.round(SR * DUR), L = new Float32Array(NS), R = new Float32Array(NS);
-const mtof = m => 440 * Math.pow(2, (m - 69) / 12), cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
-const smooth = x => { x = cl(x); return x * x * (3 - 2 * x); };
-let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-const env = (t, t0, t1) => smooth((t - t0 + .6) / 1.5) * (1 - smooth((t - t1 + .2) / 1.4));
-const master = t => smooth(t / 1.5) * (1 - smooth((t - (DUR - 2.4)) / 2.2));
-for (const [t0, t1, notes] of CHORDS) for (const m of notes) for (const cents of [-7, 0, 7]) {
-  const f = mtof(m) * Math.pow(2, cents / 1200), pan = .5 + cents / 30, ph = rnd() * 6.28;
-  for (let i = Math.max(0, Math.floor((t0 - .6) * SR)), e = Math.min(NS, Math.floor((t1 + 1.2) * SR)); i < e; i++) {
-    const t = i / SR, w = 2 * Math.PI * f * t + ph, v = (Math.sin(w) + .42 * Math.sin(2 * w) + .2 * Math.sin(3 * w)) * env(t, t0, t1) * .026;
-    L[i] += v * (1 - pan * .6); R[i] += v * (.4 + pan * .6);
-  }
+// Original 124 BPM electronic instrumental: drums, syncopated bass, bright synths.
+// Synthesized from oscillators/noise; no samples or third-party recordings.
+import {readFileSync,writeFileSync} from 'node:fs';
+const {dur:DUR}=JSON.parse(readFileSync(new URL('./vo/timeline.json',import.meta.url),'utf8'));
+const SR=44100,N=Math.round(DUR*SR),L=new Float32Array(N),R=new Float32Array(N);
+const B=60/124,bar=4*B,tau=2*Math.PI,hz=m=>440*2**((m-69)/12);
+let seed=319;const noise=()=>((seed=(seed*16807)%2147483647)/2147483647)*2-1;
+const chords=[[62,66,69,73],[59,62,66,69],[55,59,62,66],[57,61,64,69]],bass=[38,35,31,33];
+const add=(start,len,fn,pan=.5,g=1)=>{const n0=Math.round(start*SR);for(let i=0;i<len*SR&&n0+i<N;i++){if(n0+i<0)continue;const v=fn(i/SR)*g;L[n0+i]+=v*Math.sqrt(1-pan);R[n0+i]+=v*Math.sqrt(pan)}};
+const synth=(start,note,len,amp,pan=.5)=>{const f=hz(note);const tone=t=>{const env=Math.min(1,t/.008)*Math.exp(-t/.19)*Math.min(1,(len-t)/.04);return env*(Math.sin(tau*f*t)+.30*Math.sin(tau*f*2*t)+.12*Math.sin(tau*f*3*t))};add(start,len,tone,pan,amp);add(start+B*.75,len,tone,1-pan,amp*.14)};
+for(let k=0;k*B<DUR;k++){
+ const t=k*B,beat=k%4,bi=Math.floor(k/4),ci=Math.floor(bi/2)%4;
+ const breakdown=t>=47&&t<66, intro=t<2.5, ending=t>DUR-4;
+ const energy=breakdown?.55:intro?.75:1;
+ // Tuned kick, four on the floor; half-time under the contract explanation.
+ if(!breakdown||beat%2===0)add(t,.42,x=>{const phase=tau*(48*x+110*.023*(1-Math.exp(-x/.023)));return Math.sin(phase)*Math.exp(-x/.11)*Math.min(1,x/.001)+noise()*.045*Math.exp(-x/.007)},.5,.75*energy);
+ if(beat===1||beat===3)add(t,.20,x=>{const n=noise(),env=Math.exp(-x/.045)+.35*Math.exp(-Math.abs(x-.013)/.012)+.2*Math.exp(-Math.abs(x-.025)/.012);return (n*.67+Math.sin(tau*190*x)*.15)*env*Math.min(1,x/.001)},.5,.21*energy);
+ for(const off of [0,.5]){let prev=0;add(t+off*B,.10,x=>{const n=noise(),v=n-prev;prev=n;return v*Math.exp(-x/(off?.035:.014))*Math.min(1,x/.001)},off?.65:.35,(off?.045:.025)*energy)}
+ if(!intro&&!ending){
+  for(const off of [.5,.875])add(t+off*B,.20,x=>{const f=hz(bass[ci]),e=Math.min(1,x/.006)*Math.exp(-x/.11)*Math.min(1,(.20-x)/.02);return e*(Math.sin(tau*f*x)+.25*Math.sin(tau*f*2*x)+.1*Math.sin(tau*f*3*x))},.5,.27*energy);
+ }
+ // Wide syncopated major-seventh stabs, leaving room for narration.
+ if(beat===0||beat===2){const off=beat===0?.5:.75;chords[ci].forEach((m,j)=>synth(t+off*B,m,.65,.046*energy,.2+j*.2));}
+ if(!breakdown&&t>6&&bi%4>=2){const pattern=[0,2,1,3];synth(t+B*.5,chords[ci][pattern[beat]]+12,.28,.045,beat%2?.72:.28);}
+ // Short rising texture into each eight-bar phrase.
+ if(beat===3&&bi%8===7&&!ending)add(t+B*.5,B*.5,x=>noise()*.025*(x/(B*.5))**2,.5);
 }
-for (const [t0, t1, , b] of CHORDS) { const f = mtof(b + 12);
-  for (let i = Math.max(0, Math.floor((t0 - .6) * SR)), e = Math.min(NS, Math.floor((t1 + 1.2) * SR)); i < e; i++) { const t = i / SR, v = Math.sin(2 * Math.PI * f * t) * env(t, t0, t1) * .09; L[i] += v; R[i] += v; } }
-const add = (t0, len, fn, pan = .5) => { const s0 = Math.floor(t0 * SR); for (let k = 0; k < len * SR && s0 + k < NS; k++) { const v = fn(k / SR); L[s0 + k] += v * (1 - pan); R[s0 + k] += v * pan; } };
-// Deliberately no arpeggio, pulse, percussion, or outro chime.
-
-const reverb = (x, off) => { const combs = [1557, 1617, 1491, 1422].map(d => ({ b: new Float32Array(d + off), i: 0, s: 0 })), aps = [225, 556].map(d => ({ b: new Float32Array(d + off), i: 0 }));
-  const out = new Float32Array(NS); let lp = 0;
-  for (let n = 0; n < NS; n++) { lp += .35 * (x[n] - lp); let y = 0;
-    for (const c of combs) { const o = c.b[c.i]; c.s = o * .7 + c.s * .3; c.b[c.i] = lp + c.s * .84; c.i = (c.i + 1) % c.b.length; y += o; }
-    for (const a of aps) { const o = a.b[a.i], o2 = -.5 * y + o; a.b[a.i] = y + .5 * o2; y = o2; a.i = (a.i + 1) % a.b.length; }
-    out[n] = (lp * .78 + y * .07) * master(n / SR); }
-  return out; };
-const oL = reverb(L, 0), oR = reverb(R, 23);
-let peak = 0; for (let n = 0; n < NS; n++) peak = Math.max(peak, Math.abs(oL[n]), Math.abs(oR[n]));
-const g = .40 / peak, buf = Buffer.alloc(44 + NS * 4);
-buf.write('RIFF', 0); buf.writeUInt32LE(36 + NS * 4, 4); buf.write('WAVEfmt ', 8); buf.writeUInt32LE(16, 16); buf.writeUInt16LE(1, 20); buf.writeUInt16LE(2, 22);
-buf.writeUInt32LE(SR, 24); buf.writeUInt32LE(SR * 4, 28); buf.writeUInt16LE(4, 32); buf.writeUInt16LE(16, 34); buf.write('data', 36); buf.writeUInt32LE(NS * 4, 40);
-for (let n = 0; n < NS; n++) { buf.writeInt16LE(Math.round(cl(oL[n] * g, -1, 1) * 32767), 44 + n * 4); buf.writeInt16LE(Math.round(cl(oR[n] * g, -1, 1) * 32767), 46 + n * 4); }
-writeFileSync(process.argv[2] || 'music.wav', buf);
-console.log(`music bed ${DUR.toFixed(1)}s → ${process.argv[2] || 'music.wav'}`);
+// A short resolved chord on the outro.
+chords[0].forEach((m,j)=>synth(DUR-3.8,m,1.2,.09,.2+j*.2));
+let peak=0;for(let i=0;i<N;i++){const t=i/SR,fade=Math.min(1,t/.04)*Math.min(1,(DUR-t)/1.4);L[i]=Math.tanh(L[i]*1.15)*fade;R[i]=Math.tanh(R[i]*1.15)*fade;peak=Math.max(peak,Math.abs(L[i]),Math.abs(R[i]));}
+const g=.92/peak,buf=Buffer.alloc(44+N*4);buf.write('RIFF');buf.writeUInt32LE(36+N*4,4);buf.write('WAVEfmt ',8);buf.writeUInt32LE(16,16);buf.writeUInt16LE(1,20);buf.writeUInt16LE(2,22);buf.writeUInt32LE(SR,24);buf.writeUInt32LE(SR*4,28);buf.writeUInt16LE(4,32);buf.writeUInt16LE(16,34);buf.write('data',36);buf.writeUInt32LE(N*4,40);for(let i=0;i<N;i++){buf.writeInt16LE(Math.round(L[i]*g*32767),44+i*4);buf.writeInt16LE(Math.round(R[i]*g*32767),46+i*4)}writeFileSync(process.argv[2]||'music.wav',buf);console.log(`Vibrant electronic score: ${DUR}s at 124 BPM.`);
