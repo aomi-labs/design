@@ -1,6 +1,0 @@
-# Recording artifacts and encoded video are regenerated from walkthrough.mjs.
-rec/
-*.mp4
-vo/
-timeline.js
-*.srt

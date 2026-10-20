@@ -43,6 +43,31 @@ Step options:
 - `maxZoom`: cap the zoom (default 1.5).
 - `keepZoom`: stay zoomed into the next step.
 
+## Recording options
+
+By default, the recorder launches its own browser and reuses the saved sign-in session.
+To record with an existing Chrome profile, start a dedicated Chrome instance with a
+remote debugging port and set `META.cdp` in `walkthrough.mjs`:
+
+```js
+export const META = {
+  cdp: 'http://localhost:9222',
+  viewport: { width: 1600, height: 900 },
+  scale: 1.5,
+  colorScheme: 'light',
+  reducedMotion: 'reduce',
+};
+```
+
+The recorder opens a new tab in the default context, so it shares that profile's
+sessions and extensions. It applies the viewport and media settings to that tab.
+On completion or failure, it closes its tab and disconnects; Chrome and your other
+tabs stay open. Use a current Playwright version for Chrome extension compatibility.
+
+For macOS draft narration, set `EA_SAY_VOICE` to a voice installed on your Mac and
+`EA_SAY_RATE` to the speaking rate in words per minute. The default rate is 175.
+These settings apply only to `tts.mjs --draft`.
+
 ## Selectors
 
 - Prefer user-facing locators: `role=button[name="Run fuzz"]`, `role=tab[name="Fuzz"]`, `text=Counterexample found`, `[data-testid=fuzz-run]`.

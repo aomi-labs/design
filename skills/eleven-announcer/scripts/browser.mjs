@@ -12,34 +12,9 @@ export function loadChromium() {
   const here = path.dirname(new URL(import.meta.url).pathname);
   for (const base of [process.cwd(), here, path.join(here, '../../slide-to-video/scripts')]) {
     const req = createRequire(path.join(base, 'package.json'));
-    for (const n of names) { try { const chromium = req(n).chromium; tolerateExtensionTargets(req, n); return chromium; } catch {} }
+    for (const n of names) { try { return req(n).chromium; } catch {} }
   }
   throw new Error('playwright-core not found: `npm i -D playwright-core` in the project, or set PW_CORE=/path/to/node_modules/playwright-core');
-}
-
-// When attached over CDP to a real Chrome, an extension's service worker (MetaMask's, once it
-// has been used) can be reported without a browserContextId; Playwright 1.49 asserts on that,
-// which kills the recorder mid-connect and leaves Chrome's DevTools endpoint hung. Detach from
-// such targets instead: the recorder only needs pages.
-function tolerateExtensionTargets(req, name) {
-  let CRBrowser;
-  try {
-    // an absolute path sidesteps the package's `exports` map, which hides lib/
-    const root = path.dirname(req.resolve(name + '/package.json'));
-    ({ CRBrowser } = req(path.join(root, 'lib/server/chromium/crBrowser.js')));
-  } catch { return; }
-  const proto = CRBrowser && CRBrowser.prototype;
-  if (!proto || proto.__eaTolerant) return;
-  const attach = proto._onAttachedToTarget;
-  proto._onAttachedToTarget = function (event) {
-    const { targetInfo, sessionId } = event;
-    if (targetInfo.type !== 'browser' && !targetInfo.browserContextId) {
-      this._session.createChildSession(sessionId).detach().catch(() => {});
-      return;
-    }
-    return attach.call(this, event);
-  };
-  proto.__eaTolerant = true;
 }
 
 export function browserPath(kind /* 'headless' | 'headed' */) {

@@ -41,71 +41,81 @@ const CURSOR = `(() => { if (window.top !== window) return;
 // META.cdp (e.g. 'http://localhost:9222') records a fresh tab inside an already running Chrome,
 // so the page sees that profile's sessions and wallet. Start Chrome with --remote-debugging-port=9222.
 // Otherwise a Playwright browser is launched with the saved login session for the first host.
-let browser, context, page, attached = Boolean(META.cdp);
-if (attached) {
-  browser = await loadChromium().connectOverCDP(META.cdp);
-  context = browser.contexts()[0] || await browser.newContext();
-  page = await context.newPage();
-  await page.addInitScript(CURSOR);
-} else {
-  browser = await loadChromium().launch({ headless: !headed, executablePath: browserPath(headed ? 'headed' : 'headless') });
-  context = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: DSF, colorScheme: META.colorScheme || 'light', reducedMotion: META.reducedMotion || 'no-preference',
-    storageState: state && fs.existsSync(state) ? state : undefined });
-  await context.addInitScript(CURSOR);
-  page = await context.newPage();
-}
-const cdp = await context.newCDPSession(page);
-// An attached tab keeps its window; emulate the recording viewport and scale on it.
-if (attached) await cdp.send('Emulation.setDeviceMetricsOverride', { width: VW, height: VH, deviceScaleFactor: DSF, mobile: false });
-const frames = []; let n = 0;
-cdp.on('Page.screencastFrame', async ({ data, metadata, sessionId }) => {
-  const f = `frames/${String(n++).padStart(6, '0')}.jpg`;
-  fs.writeFileSync(path.join(out, f), Buffer.from(data, 'base64')); frames.push({ f, t: metadata.timestamp });
-  try { await cdp.send('Page.screencastFrameAck', { sessionId }); } catch {}
-});
-// Restarting a live screencast throws on current Chromium, so stop it first.
-const cast = async () => { await cdp.send('Page.stopScreencast').catch(() => {}); return cdp.send('Page.startScreencast', { format: 'jpeg', quality: 88, maxWidth: Math.round(VW * DSF), maxHeight: Math.round(VH * DSF), everyNthFrame: 1 }); };
-await cast();
-
-const now = () => Date.now() / 1000, wait = s => page.waitForTimeout(s * 1000);
-let cur = [VW / 2, VH * .6];
-const moveTo = async (x, y, ms = 700) => { await page.evaluate(([x, y, ms]) => window.__eaMove?.(x, y, ms), [x, y, ms]); await wait(ms / 1000 + .08); cur = [x, y]; };
-const find = async sel => { const loc = page.locator(sel).first(); await loc.waitFor({ state: 'visible', timeout: 20000 }); await loc.scrollIntoViewIfNeeded(); await wait(.25); return { loc, b: await loc.boundingBox() }; };
-const steps = [];
-for (const st of STEPS) {
-  const rec = { id: st.id, title: st.title, t0: now(), focus: [], url: '' };
-  try {
-    for (const [op, ...a] of st.do) {
-      if (op === 'goto') { await page.goto(a[0], { waitUntil: 'load', timeout: 60000 }); await wait(.8); await cast(); await page.evaluate(([x, y]) => window.__eaMove?.(x, y, 0), cur); rec.tReady ??= now(); }
-      else if (op === 'click' || op === 'hover' || op === 'type' || op === 'focus') {
-        const { loc, b } = await find(a[0]);
-        rec.focus.push({ t: now(), x: b.x, y: b.y, w: b.width, h: b.height });
-        if (op !== 'focus' || a[1]?.cursor) await moveTo(b.x + b.width / 2, b.y + b.height / 2);
-        if (op === 'click' || op === 'type') { await page.evaluate(() => window.__eaClick?.()); await loc.click(); await wait(.35); }
-        if (op === 'type') { await loc.pressSequentially(a[1], { delay: a[2]?.delay ?? 45 }); await wait(.3); }
-      }
-      else if (op === 'press') { await page.keyboard.press(a[0]); await wait(.4); }
-      else if (op === 'scroll') { for (let k = 0; k < 12; k++) { await page.mouse.wheel(0, a[0] / 12); await wait(.035); } await wait(.5); }
-      else if (op === 'wait') await wait(a[0]);
-      else if (op === 'waitFor') await page.locator(a[0]).first().waitFor({ state: 'visible', timeout: (a[1] ?? 60) * 1000 });
-      else throw new Error(`unknown action "${op}"`);
-    }
-    await wait(st.hold ?? .8);
-  } catch (e) {
-    await page.screenshot({ path: path.join(out, `error-step-${st.id}.png`) }).catch(() => {});
-    console.error(`step ${st.id} (${st.title}) failed: ${e.message.split('\n')[0]}\nscreenshot: rec/error-step-${st.id}.png`);
-    await browser.close(); process.exit(1);
+const attached = Boolean(META.cdp);
+let browser, context, page;
+try {
+  if (attached) {
+    browser = await loadChromium().connectOverCDP(META.cdp);
+    context = browser.contexts()[0];
+    if (!context) throw new Error('The CDP browser has no default context');
+    page = await context.newPage();
+    await page.addInitScript(CURSOR);
+  } else {
+    browser = await loadChromium().launch({ headless: !headed, executablePath: browserPath(headed ? 'headed' : 'headless') });
+    context = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: DSF, colorScheme: META.colorScheme || 'light', reducedMotion: META.reducedMotion || 'no-preference',
+      storageState: state && fs.existsSync(state) ? state : undefined });
+    await context.addInitScript(CURSOR);
+    page = await context.newPage();
   }
-  rec.t1 = now(); rec.url = page.url(); steps.push(rec);
-  console.log(`step ${st.id} recorded · ${(rec.t1 - rec.t0).toFixed(1)}s`);
-}
-await cdp.send('Page.stopScreencast').catch(() => {}); await wait(.3);
-if (attached) { await page.close().catch(() => {}); await browser.close(); } else await browser.close();
+  const cdp = await context.newCDPSession(page);
+  // An attached tab keeps its window; emulate the recording viewport and scale on it.
+  if (attached) {
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: VW, height: VH, deviceScaleFactor: DSF, mobile: false });
+    await page.emulateMedia({ colorScheme: META.colorScheme || 'light', reducedMotion: META.reducedMotion || 'no-preference' });
+  }
+  const frames = []; let n = 0;
+  cdp.on('Page.screencastFrame', async ({ data, metadata, sessionId }) => {
+    const f = `frames/${String(n++).padStart(6, '0')}.jpg`;
+    fs.writeFileSync(path.join(out, f), Buffer.from(data, 'base64')); frames.push({ f, t: metadata.timestamp });
+    try { await cdp.send('Page.screencastFrameAck', { sessionId }); } catch {}
+  });
+  // Restarting a live screencast throws on current Chromium, so stop it first.
+  const cast = async () => { await cdp.send('Page.stopScreencast').catch(() => {}); return cdp.send('Page.startScreencast', { format: 'jpeg', quality: 88, maxWidth: Math.round(VW * DSF), maxHeight: Math.round(VH * DSF), everyNthFrame: 1 }); };
+  await cast();
 
-const base = Math.min(frames[0]?.t ?? steps[0].t0, steps[0].t0), r3 = v => +(v - base).toFixed(3);
-fs.writeFileSync(path.join(out, 'record.json'), JSON.stringify({
-  viewport: { w: VW, h: VH, scale: DSF },
-  steps: steps.map(s => ({ ...s, t0: r3(s.t0), t1: r3(s.t1), ...(s.tReady ? { tReady: r3(s.tReady) } : {}), focus: s.focus.map(f => ({ ...f, t: r3(f.t) })) })),
-  frames: frames.map(f => ({ f: f.f, t: r3(f.t) })),
-}));
-console.log(`recorded ${steps.length} steps · ${frames.length} frames → rec/`);
+  const now = () => Date.now() / 1000, wait = s => page.waitForTimeout(s * 1000);
+  let cur = [VW / 2, VH * .6];
+  const moveTo = async (x, y, ms = 700) => { await page.evaluate(([x, y, ms]) => window.__eaMove?.(x, y, ms), [x, y, ms]); await wait(ms / 1000 + .08); cur = [x, y]; };
+  const find = async sel => { const loc = page.locator(sel).first(); await loc.waitFor({ state: 'visible', timeout: 20000 }); await loc.scrollIntoViewIfNeeded(); await wait(.25); return { loc, b: await loc.boundingBox() }; };
+  const steps = [];
+  for (const st of STEPS) {
+    const rec = { id: st.id, title: st.title, t0: now(), focus: [], url: '' };
+    try {
+      for (const [op, ...a] of st.do) {
+        if (op === 'goto') { await page.goto(a[0], { waitUntil: 'load', timeout: 60000 }); await wait(.8); await cast(); await page.evaluate(([x, y]) => window.__eaMove?.(x, y, 0), cur); rec.tReady ??= now(); }
+        else if (op === 'click' || op === 'hover' || op === 'type' || op === 'focus') {
+          const { loc, b } = await find(a[0]);
+          rec.focus.push({ t: now(), x: b.x, y: b.y, w: b.width, h: b.height });
+          if (op !== 'focus' || a[1]?.cursor) await moveTo(b.x + b.width / 2, b.y + b.height / 2);
+          if (op === 'click' || op === 'type') { await page.evaluate(() => window.__eaClick?.()); await loc.click(); await wait(.35); }
+          if (op === 'type') { await loc.pressSequentially(a[1], { delay: a[2]?.delay ?? 45 }); await wait(.3); }
+        }
+        else if (op === 'press') { await page.keyboard.press(a[0]); await wait(.4); }
+        else if (op === 'scroll') { for (let k = 0; k < 12; k++) { await page.mouse.wheel(0, a[0] / 12); await wait(.035); } await wait(.5); }
+        else if (op === 'wait') await wait(a[0]);
+        else if (op === 'waitFor') await page.locator(a[0]).first().waitFor({ state: 'visible', timeout: (a[1] ?? 60) * 1000 });
+        else throw new Error(`unknown action "${op}"`);
+      }
+      await wait(st.hold ?? .8);
+    } catch (e) {
+      await page.screenshot({ path: path.join(out, `error-step-${st.id}.png`) }).catch(() => {});
+      console.error(`step ${st.id} (${st.title}) failed: ${e.message.split('\n')[0]}\nscreenshot: rec/error-step-${st.id}.png`);
+      throw e;
+    }
+    rec.t1 = now(); rec.url = page.url(); steps.push(rec);
+    console.log(`step ${st.id} recorded · ${(rec.t1 - rec.t0).toFixed(1)}s`);
+  }
+  await cdp.send('Page.stopScreencast').catch(() => {}); await wait(.3);
+
+  const base = Math.min(frames[0]?.t ?? steps[0].t0, steps[0].t0), r3 = v => +(v - base).toFixed(3);
+  fs.writeFileSync(path.join(out, 'record.json'), JSON.stringify({
+    viewport: { w: VW, h: VH, scale: DSF },
+    steps: steps.map(s => ({ ...s, t0: r3(s.t0), t1: r3(s.t1), ...(s.tReady ? { tReady: r3(s.tReady) } : {}), focus: s.focus.map(f => ({ ...f, t: r3(f.t) })) })),
+    frames: frames.map(f => ({ f: f.f, t: r3(f.t) })),
+  }));
+  console.log(`recorded ${steps.length} steps · ${frames.length} frames → rec/`);
+
+} finally {
+  if (attached) await page?.close().catch(() => {});
+  await browser?.close(); // CDP connections disconnect; launched browsers close.
+}

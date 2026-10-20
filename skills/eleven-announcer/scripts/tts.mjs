@@ -25,7 +25,7 @@ for (const [i, st] of lines.entries()) {
   if (only.length ? !only.includes(st.id) : (fs.existsSync(`${base}.mp3`) && !force)) continue;
   if (draft) {
     const aiff = path.join(os.tmpdir(), `ea-${process.pid}-${st.id}.aiff`);
-    const sayVoice = process.env.EA_SAY_VOICE, sayRate = process.env.EA_SAY_RATE || '170';
+    const sayVoice = process.env.EA_SAY_VOICE, sayRate = process.env.EA_SAY_RATE || '175';
     execFileSync('say', [...(sayVoice ? ['-v', sayVoice] : []), '-r', sayRate, '-o', aiff, st.say]);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', aiff, '-ar', '44100', '-ac', '1', '-b:a', '96k', `${base}.mp3`]); fs.rmSync(aiff);
     const dur = +execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', `${base}.mp3`]).toString();
