@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Intent to Execution Posts</title>
+<!--
+  Social post images for "From intent to execution", in an isometric illustration style:
+  a big serif headline, one mono line, and a small 3D scene that tells the point. ?n=1…5 picks the post.
+  Palette follows the film: sky = EVM / passed, green = Solana, rose = failed.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#09090b;--navy:#1f3a63;--sky:#5288c2;--rose:#df5d90;--grn:#2e9e6b}
+html,body{margin:0;background:#fff}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#fff}
+#gl,#ov{position:absolute;inset:0} #ov{pointer-events:none}
+.logo{position:absolute;right:66px;top:50px;display:flex;align-items:center;gap:14px}
+.logo svg{width:72px;height:72px}
+h1{position:absolute;left:58px;top:132px;margin:0;white-space:nowrap;font:700 112px/.95 'PT Serif',serif;letter-spacing:-.035em;color:var(--ink)}
+.sub{position:absolute;left:66px;font:500 34px 'Geist Mono',monospace;color:var(--navy)}
+.foot{position:absolute;left:0;right:0;bottom:44px;text-align:center;font:500 30px 'Geist Mono',monospace;color:var(--navy)}
+.tag{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font:600 30px 'Geist Mono',monospace;background:#fff;border:2.5px solid var(--navy);color:var(--navy);border-radius:14px;padding:10px 20px;box-shadow:0 10px 24px rgba(31,58,99,.08)}
+.tag.rose{border-color:var(--rose);color:var(--rose)} .tag.sky{border-color:var(--sky);color:var(--sky)} .tag.grn{border-color:var(--grn);color:var(--grn)}
+.tag b{font-weight:700}
+.receipt{position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:168px;background:#fff;border:2.5px solid #9db6d8;border-radius:12px;padding:16px 18px 18px}
+.receipt i{display:block;font:600 18px 'Geist Mono',monospace;color:var(--navy);font-style:normal;margin-bottom:12px}
+.receipt u{display:block;height:6px;border-radius:3px;background:#7facd6;margin:9px 0;text-decoration:none}
+.receipt s{position:absolute;right:14px;bottom:14px;width:46px;height:46px;border-radius:50%;background:var(--grn);text-decoration:none;display:grid;place-items:center;color:#fff;font:700 28px 'Geist',sans-serif}
+.receipt.bad{border-color:var(--rose)} .receipt.bad u{background:#f2b3cb} .receipt.bad s{background:var(--rose)}
+</style>
+</head>
+<body>
+<div id="stage"><div id="gl"></div><div id="ov">
+  <div class="logo"><svg viewBox="0 0 362 362"><g fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g></svg></div>
+  <h1></h1><div class="sub"></div><div class="foot"></div>
+</div></div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+const W = 1920, H = 1080, N = +(new URLSearchParams(location.search).get('n') || 1);
+await document.fonts.ready;
+
+// ---------- iso stage: orthographic camera looking down (1,1,1) ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(1); renderer.setSize(W, H);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; document.getElementById('gl').appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xffffff);
+const FH = 15, cam = new THREE.OrthographicCamera(-FH * W / H / 2, FH * W / H / 2, FH / 2, -FH / 2, .1, 600);
+cam.position.set(60, 60, 60); cam.lookAt(0, 0, 0); cam.updateMatrixWorld();
+scene.add(new THREE.HemisphereLight(0xffffff, 0xe6eef8, 1.35));
+const sun = new THREE.DirectionalLight(0xffffff, 1.5); sun.position.set(18, 40, 10); sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096);
+Object.assign(sun.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 1, far: 140 }); sun.shadow.radius = 6; sun.shadow.bias = -.0004; scene.add(sun);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.ShadowMaterial({ opacity: .07 })); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const grid = new THREE.GridHelper(200, 200, 0xdfe7f2, 0xdfe7f2); grid.material.transparent = true; grid.material.opacity = .75; grid.position.y = .001; scene.add(grid);
+// ground point that lands at screen coords (sx, sy) in world units from the centre (sx right, sy up)
+const at = (sx, sy) => { const a = sx * Math.SQRT2, b = -sy * Math.sqrt(6); return new THREE.Vector3((a + b) / 2, 0, (b - a) / 2); };
+
+// ---------- kit ----------
+const C = { sky: 0x5288c2, skyL: 0x7facd6, rose: 0xdf5d90, grn: 0x2e9e6b, grnL: 0x6cc39a, slab: 0xf6f9fe, edge: 0xb3c8e4, pipe: 0xa9c6ea, white: 0xf3f7fc, term: 0x1c1c21, grey: 0xc9d3e0 };
+const std = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .5, metalness: 0, ...o });
+const edges = (geo, c = C.edge, op = 1) => new THREE.LineSegments(new THREE.EdgesGeometry(geo, 20), new THREE.LineBasicMaterial({ color: c, transparent: true, opacity: op }));
+function canvasTex(w, h, draw) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+const ICONS = {
+  doc: g => { g.beginPath(); g.moveTo(70, 40); g.lineTo(160, 40); g.lineTo(196, 76); g.lineTo(196, 216); g.lineTo(70, 216); g.closePath(); g.stroke(); [100, 132, 164].forEach(y => { g.beginPath(); g.moveTo(98, y); g.lineTo(168, y); g.stroke(); }); },
+  swap: g => { g.beginPath(); g.moveTo(52, 96); g.lineTo(200, 96); g.moveTo(166, 62); g.lineTo(200, 96); g.lineTo(166, 130); g.moveTo(204, 164); g.lineTo(56, 164); g.moveTo(90, 130); g.lineTo(56, 164); g.lineTo(90, 198); g.stroke(); },
+  chart: g => { [[64, 150], [114, 110], [164, 60]].forEach(([x, y]) => { g.fillRect(x, y, 34, 206 - y); }); },
+  key: g => { g.beginPath(); g.arc(88, 128, 40, 0, 7); g.stroke(); g.beginPath(); g.moveTo(128, 128); g.lineTo(214, 128); g.moveTo(190, 128); g.lineTo(190, 162); g.moveTo(214, 128); g.lineTo(214, 154); g.stroke(); },
+  shield: g => { g.beginPath(); g.moveTo(128, 34); g.lineTo(206, 64); g.lineTo(200, 140); g.quadraticCurveTo(190, 196, 128, 226); g.quadraticCurveTo(66, 196, 56, 140); g.lineTo(50, 64); g.closePath(); g.stroke(); g.beginPath(); g.moveTo(92, 130); g.lineTo(118, 156); g.lineTo(166, 104); g.stroke(); },
+  bolt: g => { g.beginPath(); g.moveTo(146, 30); g.lineTo(70, 142); g.lineTo(124, 142); g.lineTo(108, 226); g.lineTo(188, 108); g.lineTo(134, 108); g.closePath(); g.fill(); },
+  coins: g => { [170, 130, 90].forEach(y => { g.beginPath(); g.ellipse(128, y, 72, 24, 0, 0, 7); g.stroke(); }); g.beginPath(); g.moveTo(56, 90); g.lineTo(56, 170); g.moveTo(200, 90); g.lineTo(200, 170); g.stroke(); },
+  term: g => { g.beginPath(); g.moveTo(60, 88); g.lineTo(112, 128); g.lineTo(60, 168); g.moveTo(128, 178); g.lineTo(196, 178); g.stroke(); },
+  x: g => { g.beginPath(); g.moveTo(78, 78); g.lineTo(178, 178); g.moveTo(178, 78); g.lineTo(78, 178); g.stroke(); },
+  check: g => { g.beginPath(); g.moveTo(66, 132); g.lineTo(110, 176); g.lineTo(194, 88); g.stroke(); },
+  spark: g => { g.beginPath(); g.moveTo(128, 34); g.quadraticCurveTo(138, 118, 222, 128); g.quadraticCurveTo(138, 138, 128, 222); g.quadraticCurveTo(118, 138, 34, 128); g.quadraticCurveTo(118, 118, 128, 34); g.fill(); },
+  search: g => { g.beginPath(); g.arc(112, 112, 56, 0, 7); g.stroke(); g.beginPath(); g.moveTo(152, 152); g.lineTo(208, 208); g.stroke(); },
+  wallet: g => { g.beginPath(); g.roundRect(44, 70, 168, 126, 16); g.stroke(); g.beginPath(); g.roundRect(142, 112, 70, 44, 10); g.stroke(); g.beginPath(); g.arc(168, 134, 7, 0, 7); g.fill(); },
+  dollar: g => { g.beginPath(); g.arc(128, 128, 84, 0, 7); g.stroke(); g.font = "700 120px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('$', 128, 134); },
+  eth: g => { g.font = "700 76px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ETH', 128, 132); },
+  sol: g => { g.font = "700 76px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('SOL', 128, 132); },
+};
+const iconCache = {};
+const iconTex = (name, ink) => iconCache[name + ink] ||= canvasTex(256, 256, g => { g.strokeStyle = g.fillStyle = ink; g.lineWidth = 18; g.lineCap = g.lineJoin = 'round'; ICONS[name](g); });
+function cube(p, { s = 1, c = C.sky, icon, ink = '#ffffff', y = 0 } = {}) { // a soft rounded cube with a line icon on its two visible faces
+  const g = new THREE.Group(), m = new THREE.Mesh(new RoundedBoxGeometry(s, s, s, 5, s * .13), std(c, { roughness: .42 })); m.castShadow = m.receiveShadow = true; g.add(m);
+  if (icon) [[0, 0, s / 2 + .002, 0], [s / 2 + .002, 0, 0, Math.PI / 2], [0, s / 2 + .002, 0, null]].forEach(([x, yy, z, ry]) => {
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(s * .66, s * .66), new THREE.MeshBasicMaterial({ map: iconTex(icon, ink), transparent: true, depthWrite: false }));
+    pl.position.set(x, yy, z); if (ry === null) pl.rotation.x = -Math.PI / 2; else pl.rotation.y = ry; if (ry === null) return; g.add(pl); });
+  g.position.copy(p).add(new THREE.Vector3(0, s / 2 + y, 0)); scene.add(g); return g;
+}
+function slab(p, w, d, label, { h = .62, c = C.slab, ink = '#1f3a63', lw = w, lx = 0 } = {}) { // lw/lx: a shorter label, shifted along the edge // a platform with its label on the front edge
+  const geo = new RoundedBoxGeometry(w, h, d, 3, .06), m = new THREE.Mesh(geo, std(c, { roughness: .6 })); m.receiveShadow = m.castShadow = true; m.add(edges(geo, C.edge, .9));
+  m.position.copy(p).add(new THREE.Vector3(0, h / 2, 0)); scene.add(m);
+  if (label) { const tw = Math.round(lw * 110), tex = canvasTex(tw, 80, (g) => { g.fillStyle = ink; g.textBaseline = 'middle'; g.textAlign = 'center'; g.letterSpacing = '5px'; let fs = 46; do { g.font = `600 ${fs}px 'Geist Mono'`; fs -= 2; } while (fs > 20 && g.measureText(label).width > tw * .84); g.fillText(label, tw / 2, 42); }); // shrink long labels to fit the edge
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(lw, Math.min(h * .96, lw * 80 / tw)), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })); pl.position.set(lx, 0, d / 2 + .003); m.add(pl); }
+  return m;
+}
+function glass(p, w, h, d, { c = 0xcfe0f5, e = 0x8fb0d8 } = {}) {
+  const geo = new THREE.BoxGeometry(w, h, d); geo.translate(0, h / 2, 0);
+  const m = new THREE.Mesh(geo, std(c, { transparent: true, opacity: .14, depthWrite: false })); m.add(edges(geo, e, .95)); m.position.copy(p); scene.add(m); return m;
+}
+function pipe(a, b, { r = .13, c = C.pipe } = {}) { const d = b.clone().sub(a), m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, d.length(), 20), std(c, { roughness: .35, emissive: c, emissiveIntensity: .12 }));
+  m.position.copy(a).add(b).multiplyScalar(.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); m.castShadow = true; scene.add(m); return m; }
+function tube(pts, { r = .12, c = C.pipe } = {}) { const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 64, r, 16), std(c, { roughness: .35, emissive: c, emissiveIntensity: .15 })); m.castShadow = true; scene.add(m); return m; }
+function dotted(a, b, c = 0x9db6d8) { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), new THREE.LineDashedMaterial({ color: c, dashSize: .18, gapSize: .14 })); l.computeLineDistances(); scene.add(l); return l; }
+function tree(p, s = 1) { const g = new THREE.Group(); const t = new THREE.Mesh(new THREE.CylinderGeometry(.05 * s, .07 * s, .55 * s, 8), std(0x8a6a4b)); t.position.y = .27 * s; g.add(t);
+  [[0, .78, 0, .3], [.14, .62, .08, .22], [-.12, .64, -.06, .2]].forEach(([x, y, z, r]) => { const b = new THREE.Mesh(new THREE.SphereGeometry(r * s, 20, 14), std(0x3f9e6a, { roughness: .7 })); b.position.set(x * s, y * s, z * s); b.castShadow = true; g.add(b); });
+  g.position.copy(p); scene.add(g); return g; }
+function arch(p, w = 2.2, h = 2.4, d = .7, rot = 0) { // a pale arch, the gate
+  const s = new THREE.Shape(); s.moveTo(-w / 2, 0); s.lineTo(w / 2, 0); s.lineTo(w / 2, h); s.lineTo(-w / 2, h); s.closePath();
+  const hole = new THREE.Path(), r = w * .27; hole.moveTo(-r, 0); hole.lineTo(-r, h * .5); hole.absarc(0, h * .5, r, Math.PI, 0, true); hole.lineTo(r, 0); hole.closePath(); s.holes.push(hole);
+  const geo = new THREE.ExtrudeGeometry(s, { depth: d, bevelEnabled: false }); geo.translate(0, 0, -d / 2);
+  const m = new THREE.Mesh(geo, std(0xedf3fb, { roughness: .6 })); m.add(edges(geo, C.edge, .9)); m.castShadow = m.receiveShadow = true; m.position.copy(p); m.rotation.y = rot; scene.add(m); return m; }
+function block(p, w, h, d, c = 0xeef3fa) { const geo = new THREE.BoxGeometry(w, h, d); geo.translate(0, h / 2, 0); const m = new THREE.Mesh(geo, std(c, { roughness: .6 })); m.add(edges(geo, C.edge, .8)); m.castShadow = m.receiveShadow = true; m.position.copy(p); scene.add(m); return m; }
+function coin(p, c = C.rose, y = 0) { const g = new THREE.Group(); const body = new THREE.Mesh(new THREE.CylinderGeometry(.48, .48, .16, 40), std(c, { roughness: .4 })); body.rotation.z = Math.PI / 2; body.rotation.y = Math.PI / 4; body.castShadow = true; g.add(body);
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(.78, .78), new THREE.MeshBasicMaterial({ map: iconTex('dollar', '#ffffff'), transparent: true })); face.rotation.y = Math.PI / 4; face.position.set(.06, 0, .06); g.add(face);
+  g.position.copy(p).add(new THREE.Vector3(0, .6 + y, 0)); scene.add(g); return g; }
+const V = (x, y, z) => new THREE.Vector3(x, y, z), off = (p, x, y, z) => p.clone().add(V(x, y, z));
+// HTML tags pinned to 3D points
+const ov = document.getElementById('ov'), pins = [];
+function tag(p, html, cls = '') { const e = document.createElement('div'); e.className = 'tag ' + cls; e.innerHTML = html; ov.appendChild(e); pins.push([e, p]); }
+function receipt(p, bad) { const e = document.createElement('div'); e.className = 'receipt' + (bad ? ' bad' : ''); e.innerHTML = `<i>TX RECEIPT</i><u></u><u style="width:80%"></u><u style="width:55%"></u><u style="width:35%"></u><s>${bad ? '✕' : '✓'}</s>`; ov.appendChild(e); pins.push([e, p]); }
+function copy(h1, sub, foot) { document.querySelector('h1').innerHTML = h1; const s = document.querySelector('.sub'); s.textContent = sub; s.style.top = (132 + 106 * h1.split('<br>').length + 26) + 'px'; document.querySelector('.foot').textContent = foot || ''; }
+
+// ---------- the five posts ----------
+const S = .62; // slab height: things stand on top of it
+const POSTS = {
+  1() { // same model, same prompt: no harness vs. the Aomi harness
+    copy('Same model, same prompt.', 'Claude Code alone vs. Claude through Aomi', 'The harness is the difference.');
+    const L = at(-6.6, -4.4), R = at(6.4, -3.9);
+    slab(L, 7, 5.4, 'NO HARNESS');
+    cube(off(L, -2.2, S, -1.4), { s: 1.3, c: C.term, icon: 'term' });
+    [[-.5, -1.9], [.8, -1.2], [2.3, -1.8], [-1.4, .3], [1.6, .8], [2.7, -.4], [-.2, 1.6]].forEach(([x, z], i) => cube(off(L, x, S, z), { s: .5, c: C.grey, icon: i % 2 ? 'search' : 'doc', ink: '#5b6b82' }));
+    [[.5, .1], [2.2, 1.9]].forEach(([x, z]) => cube(off(L, x, S, z), { s: .85, c: C.rose, icon: 'x' }));
+    pipe(off(L, -1.4, .95, -1.4), off(L, -.4, .95, -.6)); pipe(off(L, 1.0, .95, .5), off(L, 1.9, .95, 1.5));
+    [[-1.4, .3], [.8, -1.2], [2.3, -1.8], [1.6, .8]].reduce((a, [x, z]) => { const b = off(L, x, .88, z); if (a) dotted(a, b, 0xc4a0b4); return b; }, null);
+    coin(off(L, -2.7, S, 1.9), C.rose); tree(off(L, 2.9, S, -2.2), 1.0); tree(off(L, -2.9, S, -.2), .8);
+    tag(off(L, .6, 4.6, -.6), '<b>9</b> calls · <b>6</b> signatures', 'rose');
+    slab(R, 7, 5.4, 'AOMI HARNESS'); glass(off(R, -.7, S, -.2), 4.8, 2.1, 3.0);
+    const row = [[-2.6, 'doc'], [-1.2, 'search'], [.2, 'chart']].map(([x, ic]) => { cube(off(R, x, S, -.2), { s: .9, c: C.sky, icon: ic }); return off(R, x, S + .45, -.2); });
+    cube(off(R, 2.5, S, -.2), { s: 1.2, c: C.sky, icon: 'check' }); pipe(row[0], row[2]); pipe(row[2], off(R, 2.5, S + .45, -.2));
+    cube(off(R, 2.5, S, 1.9), { s: 1.0, c: C.white, icon: 'wallet', ink: '#1f3a63' }); pipe(off(R, 2.5, S + .45, .4), off(R, 2.5, S + .45, 1.4));
+    tree(off(R, -2.9, S, 2.0), 1.0); tree(off(R, -1.9, S, 2.3), .7); arch(off(R, 2.0, S, -2.25), 1.7, 1.9, .5); block(off(R, -2.9, S, -2.2), .8, 1.1, .8);
+    tag(off(R, 0, 4.4, 0), '<b>5</b> calls · <b>1</b> signature', 'sky');
+  },
+  2() { // why a harness: three pillars on three plinths, in a row across the frame
+    copy('Why a harness.', 'Performance · token efficiency · security', 'Frontier models can transact alone. With a harness they work better.');
+    [[-4.4, 'PERFORMANCE', 'bolt', C.sky, '9 → 5', 'calls', 'sky'], [1.9, 'TOKENS', 'coins', C.grn, '12 → 1', 'reads', 'grn'], [8.2, 'SECURITY', 'shield', C.sky, '0 → 2', 'simulations', 'sky']].forEach(([sx, lab, ic, c, n, u, k], i) => {
+      const P = at(sx, -4.3); slab(P, 3.6, 3.6, lab); cube(off(P, 0, S, 0), { s: 1.9, c, icon: ic });
+      tag(off(P, 0, 4.4, 0), `<b style="font-size:44px">${n}</b> ${u}`, k);
+      tree(off(P, 1.35, S, 1.35), .7 + (i % 2) * .2); });
+    tree(at(-9.5, -5.2), 1.1);
+  },
+  3() { // a dozen calls, one function
+    copy('A dozen calls, one function.', 'Chain and wallet state, read deterministically', 'What Claude searched for, Aomi already knows.');
+    const Sc = at(-8.2, -4.6), G = at(-.4, -4.1), K = at(7.6, -4.3);
+    const pts = [[-2.4, -1.6], [-1.4, -2.5], [-.3, -1.9], [-2.7, -.3], [-1.7, .3], [-.6, -.7], [.4, .5], [-2.4, 1.5], [-1.3, 2.0], [-.2, 1.6], [.9, -1.5], [1.1, 2.1]];
+    pts.forEach(([x, z], i) => cube(off(Sc, x, 0, z), { s: .5, c: C.grey, icon: i % 3 ? 'search' : 'doc', ink: '#5b6b82', y: (i % 4) * .22 }));
+    pts.forEach(([x, z], i) => dotted(off(Sc, x, .28 + (i % 4) * .22, z), off(G, -1.1, S + 1.0, 0)));
+    tag(off(Sc, -.6, 2.6, 0), '<b>~12</b> calls', 'rose');
+    slab(G, 4.0, 3.6, 'CONTEXT'); arch(off(G, -1.15, S, 0), 2.0, 2.3, .6, Math.PI / 2); cube(off(G, .7, S, 0), { s: 1.45, c: C.sky, icon: 'doc' });
+    tag(off(G, .4, 3.9, 0), '<b>1</b> call · 200 ms', 'sky');
+    slab(K, 4.6, 3.8, 'CHAINS');
+    [0, 1, 2].forEach(i => cube(off(K, -1.1, S + i * .92, -.5), { s: .9, c: i === 2 ? C.sky : C.skyL, icon: i === 2 ? 'eth' : null }));
+    [0, 1, 2].forEach(i => cube(off(K, 1.1, S + i * .92, .4), { s: .9, c: i === 2 ? C.grn : C.grnL, icon: i === 2 ? 'sol' : null }));
+    tube([off(G, 1.45, 1.3, 0), off(G, 3.0, 1.55, -.2), off(K, -2.1, 1.55, -.5), off(K, -1.6, 1.35, -.5)]);
+    tree(off(K, 1.7, S, -1.4), .9); tree(off(G, 1.5, S, 1.4), .7);
+  },
+  4() { // fail on a fork, not onchain
+    copy('Fail on a fork, not onchain.', 'Reverts go back to the model. Only green runs commit.', 'Same idea as CI for coding agents.');
+    const M = at(-10.2, -3.9), F = at(-1.6, -3.7), K = at(8.9, -3.2);
+    slab(M, 2.6, 2.6, 'MODEL'); cube(off(M, 0, S, 0), { s: 1.4, c: C.white, icon: 'spark', ink: '#1f3a63' });
+    slab(F, 7.6, 5.0, 'FORK OF LIVE STATE'); glass(off(F, 0, S, 0), 7.0, 2.3, 4.4);
+    const xs = [-2.4, -.5, 1.4], row = xs.map(x => off(F, x, S + .48, -.5));
+    cube(off(F, xs[0], S, -.5), { s: .95, c: C.sky, icon: 'doc' }); cube(off(F, xs[1], S, -.5), { s: .95, c: C.sky, icon: 'swap' }); cube(off(F, xs[2], S, -.5), { s: .95, c: C.rose, icon: 'x' });
+    pipe(row[0], row[1]); pipe(row[1], row[2]);
+    tube([off(F, 1.4, S + 1.0, -.5), off(F, 1.0, 3.6, -1.2), off(M, 2.0, 3.6, -.4), off(M, .3, S + 1.5, 0)], { c: C.rose, r: .1 });
+    tube([off(M, .8, S + .5, .4), off(F, -4.0, S + .5, 1.2), off(F, -2.4, S + .48, 1.4)], { r: .1 });
+    cube(off(F, 1.4, S, 1.4), { s: .95, c: C.sky, icon: 'check' }); pipe(off(F, -2.4, S + .48, 1.4), off(F, 1.4, S + .48, 1.4));
+    tube([off(F, 1.9, S + .48, 1.4), off(F, 4.4, S + .5, 1.4), off(K, -2.3, S + .5, .2), off(K, -1.4, S + .5, .2)]);
+    receipt(off(F, 2.0, 4.0, -.6), true); tag(off(M, 3.2, 3.0, -.3), 'back pressure', 'rose');
+    slab(K, 4.2, 3.8, 'CHAIN'); [0, 1, 2, 3].forEach(i => cube(off(K, -.6, S + i * .8, -.3), { s: .8, c: i === 3 ? C.sky : 0xe4e9f1 }));
+    receipt(off(K, 1.2, 4.0, -.4), false); tree(off(K, 1.5, S, 1.3), .9);
+  },
+  5() { // six steps, one signature
+    copy('Six steps, one signature.', 'Account abstraction compresses the flow', 'The key stays in your wallet.');
+    const E = at(-.9, -1.9), Sl = at(-3.6, -3.45), Wt = at(8.6, -3.3);
+    slab(E, 8.6, 2.2, 'ETHEREUM', { lw: 3.6, lx: -2.4 }); slab(Sl, 8.6, 2.2, 'SOLANA', { ink: '#23805a', lw: 3.6, lx: -2.4 });
+    pipe(off(E, -4.0, S + .35, 0), off(E, 4.0, S + .35, 0)); pipe(off(Sl, -4.0, S + .35, 0), off(Sl, 4.0, S + .35, 0), { c: 0xa8dcc0 });
+    [-3.6, -2.85, -2.1, -1.35, -.6, .15].forEach(x => cube(off(E, x, S, 0), { s: .58, c: C.skyL }));
+    [-3.6, -2.85, -2.1, -1.35, -.6].forEach(x => cube(off(Sl, x, S, 0), { s: .58, c: C.grnL }));
+    arch(off(E, 1.5, S, 0), 1.8, 2.1, .5, Math.PI / 2); arch(off(Sl, 1.5, S, 0), 1.8, 2.1, .5, Math.PI / 2);
+    cube(off(E, 3.1, S, 0), { s: 1.3, c: C.sky, icon: 'check' }); cube(off(Sl, 3.1, S, 0), { s: 1.3, c: C.grn, icon: 'check' });
+    slab(Wt, 4.2, 4.2, 'YOUR WALLET'); cube(off(Wt, 0, S, 0), { s: 1.8, c: C.white, icon: 'key', ink: '#1f3a63' });
+    tube([off(E, 3.8, S + .7, 0), off(E, 5.6, S + .9, 0), off(Wt, -2.2, S + 1.0, -.2), off(Wt, -.9, S + .9, -.1)]);
+    tube([off(Sl, 3.8, S + .7, 0), off(Sl, 6.4, S + .9, 0), off(Wt, -1.6, S + .8, 1.3), off(Wt, -.6, S + .8, .6)], { c: 0xa8dcc0 });
+    tag(off(E, -2.0, 2.6, -.4), '<b>6</b> transactions', 'sky'); tag(off(Wt, 0, 4.0, 0), '<b>1</b> signature', 'sky');
+    tree(off(Wt, 1.5, S, 1.5), .9); tree(off(Wt, -1.5, S, -1.5), .7);
+  },
+};
+POSTS[N]();
+renderer.render(scene, cam);
+const tmp = new THREE.Vector3();
+pins.forEach(([e, p]) => { tmp.copy(p).project(cam); e.style.left = ((tmp.x + 1) / 2 * W) + 'px'; e.style.top = ((1 - tmp.y) / 2 * H) + 'px'; });
+window.__READY__ = true;
+</script>
+</body>
+</html>
