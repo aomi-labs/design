@@ -17,8 +17,8 @@
 html,body{margin:0;background:#fff}
 #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#fff}
 #gl,#ov{position:absolute;inset:0} #ov{pointer-events:none}
-.logo{position:absolute;left:66px;top:50px;display:flex;align-items:center;gap:14px}
-.logo svg{width:58px;height:58px} .logo span{font:600 54px/1 'Source Serif 4',serif;letter-spacing:-.01em;color:var(--ink)}
+.logo{position:absolute;right:66px;top:50px;display:flex;align-items:center;gap:14px}
+.logo svg{width:72px;height:72px}
 h1{position:absolute;left:58px;top:132px;margin:0;white-space:nowrap;font:700 112px/.95 'PT Serif',serif;letter-spacing:-.035em;color:var(--ink)}
 .sub{position:absolute;left:66px;font:500 34px 'Geist Mono',monospace;color:var(--navy)}
 .foot{position:absolute;left:0;right:0;bottom:44px;text-align:center;font:500 30px 'Geist Mono',monospace;color:var(--navy)}
@@ -34,7 +34,7 @@ h1{position:absolute;left:58px;top:132px;margin:0;white-space:nowrap;font:700 11
 </head>
 <body>
 <div id="stage"><div id="gl"></div><div id="ov">
-  <div class="logo"><svg viewBox="0 0 362 362"><g fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g></svg><span>aomi labs</span></div>
+  <div class="logo"><svg viewBox="0 0 362 362"><g fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g></svg></div>
   <h1></h1><div class="sub"></div><div class="foot"></div>
 </div></div>
 <script src="posts.js" onerror="void 0"></script> <!-- window.POST_SPECS from mermaid-to-spec.mjs; optional -->
@@ -88,12 +88,52 @@ const ICONS = {
 };
 const iconCache = {};
 const iconTex = (name, ink) => iconCache[name + ink] ||= canvasTex(256, 256, g => { g.strokeStyle = g.fillStyle = ink; g.lineWidth = 18; g.lineCap = g.lineJoin = 'round'; ICONS[name](g); });
-function cube(p, { s = 1, c = C.sky, icon, ink = '#ffffff', y = 0 } = {}) { // a soft rounded cube with a line icon on its two visible faces
+function cube(p, { s = 1, c = C.sky, icon, ink = '#ffffff', y = 0, yaw = 0 } = {}) { // a soft rounded cube with a line icon on every side, so it can face any way
   const g = new THREE.Group(), m = new THREE.Mesh(new RoundedBoxGeometry(s, s, s, 5, s * .13), std(c, { roughness: .42 })); m.castShadow = m.receiveShadow = true; g.add(m);
-  if (icon) [[0, 0, s / 2 + .002, 0], [s / 2 + .002, 0, 0, Math.PI / 2], [0, s / 2 + .002, 0, null]].forEach(([x, yy, z, ry]) => {
-    const pl = new THREE.Mesh(new THREE.PlaneGeometry(s * .66, s * .66), new THREE.MeshBasicMaterial({ map: iconTex(icon, ink), transparent: true, depthWrite: false }));
-    pl.position.set(x, yy, z); if (ry === null) pl.rotation.x = -Math.PI / 2; else pl.rotation.y = ry; if (ry === null) return; g.add(pl); });
-  g.position.copy(p).add(new THREE.Vector3(0, s / 2 + y, 0)); scene.add(g); return g;
+  if (icon) [0, 1, 2, 3].forEach(q => { const pl = new THREE.Mesh(new THREE.PlaneGeometry(s * .66, s * .66), new THREE.MeshBasicMaterial({ map: iconTex(icon, ink), transparent: true, depthWrite: false }));
+    const a = q * Math.PI / 2; pl.position.set(Math.sin(a) * (s / 2 + .002), 0, Math.cos(a) * (s / 2 + .002)); pl.rotation.y = a; g.add(pl); });
+  g.rotation.y = yaw; g.position.copy(p).add(new THREE.Vector3(0, s / 2 + y, 0)); scene.add(g); return g;
+}
+// ---------- more than cubes: a person, a chat bubble, a wallet, a chain stack, a database, a paper card ----------
+const FACE = Math.PI / 4; // turns a front face toward the camera
+function person(p, { c = 0xe3ebf5, s = 1, say = false } = {}) { // a little rounded person; say: a chat bubble above them
+  const g = new THREE.Group(), body = new THREE.Mesh(new THREE.CapsuleGeometry(.36 * s, .5 * s, 10, 24), std(c, { roughness: .45 })); body.position.y = .62 * s; body.castShadow = true; g.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.3 * s, 32, 24), std(0xf7f9fc, { roughness: .45 })); head.position.y = 1.36 * s; head.castShadow = true; g.add(head);
+  if (say) { const b = bubble(V(0, 0, 0), { s: .62 * s }); b.position.set(.5 * s, 1.95 * s, -.5 * s); g.add(b); scene.remove(b); g.add(b); }
+  g.position.copy(p); scene.add(g); return g;
+}
+function bubble(p, { s = 1, c = C.sky } = {}) { // 💬 a rounded speech bubble with three typing dots, facing the camera
+  const w = 1.3 * s, h = .86 * s, r = .26 * s, sh = new THREE.Shape();
+  sh.moveTo(-w / 2 + r, -h / 2); sh.lineTo(w / 2 - .5 * s, -h / 2); sh.lineTo(w / 2 - .18 * s, -h / 2 - .3 * s); sh.lineTo(w / 2 - .3 * s, -h / 2); sh.lineTo(w / 2 - r, -h / 2);
+  sh.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r); sh.lineTo(w / 2, h / 2 - r); sh.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2);
+  sh.lineTo(-w / 2 + r, h / 2); sh.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r); sh.lineTo(-w / 2, -h / 2 + r); sh.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: .16 * s, bevelEnabled: true, bevelThickness: .05 * s, bevelSize: .05 * s, bevelSegments: 4, curveSegments: 16 }); geo.translate(0, 0, -.08 * s);
+  const g = new THREE.Group(), m = new THREE.Mesh(geo, std(c, { roughness: .4, emissive: c, emissiveIntensity: .12 })); m.castShadow = true; g.add(m);
+  [-.28, 0, .28].forEach(x => { const d = new THREE.Mesh(new THREE.SphereGeometry(.075 * s, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffffff })); d.position.set(x * s, 0, .16 * s); g.add(d); });
+  g.rotation.y = FACE; g.position.copy(p); scene.add(g); return g;
+}
+function wallet(p, { s = 1 } = {}) { // a soft wallet: body, flap and clasp
+  const g = new THREE.Group(), body = new THREE.Mesh(new RoundedBoxGeometry(1.5 * s, 1.0 * s, .6 * s, 4, .14 * s), std(0xf3f7fc, { roughness: .45 })); body.position.y = .5 * s; body.castShadow = true; g.add(body);
+  const flap = new THREE.Mesh(new RoundedBoxGeometry(.62 * s, .46 * s, .16 * s, 3, .08 * s), std(C.sky, { roughness: .4 })); flap.position.set(.38 * s, .52 * s, .34 * s); g.add(flap);
+  const clasp = new THREE.Mesh(new THREE.SphereGeometry(.07 * s, 16, 12), std(0xffffff)); clasp.position.set(.5 * s, .52 * s, .44 * s); g.add(clasp);
+  g.rotation.y = FACE; g.position.copy(p); scene.add(g); return g;
+}
+function stack(p, { c = C.sky, icon = 'eth', s = 1 } = {}) { // a short chain of blocks; the top one carries the chain's mark
+  const g = new THREE.Group();
+  [0, 1, 2].forEach(i => { const top = i === 2, b = new THREE.Mesh(new RoundedBoxGeometry(1.0 * s, .42 * s, 1.0 * s, 3, .07 * s), std(top ? c : 0xe4e9f1, { roughness: .5 })); b.position.y = (.21 + i * .52) * s; b.castShadow = true; g.add(b);
+    if (top && icon) [0, Math.PI / 2].forEach(a => { const pl = new THREE.Mesh(new THREE.PlaneGeometry(.62 * s, .62 * s), new THREE.MeshBasicMaterial({ map: iconTex(icon, '#ffffff'), transparent: true, depthWrite: false })); pl.position.set(Math.sin(a) * .502 * s, b.position.y, Math.cos(a) * .502 * s); pl.rotation.y = a; g.add(pl); });
+    if (i) { const l = new THREE.Mesh(new THREE.CylinderGeometry(.07 * s, .07 * s, .14 * s, 10), std(C.track)); l.position.y = (i * .52 - .05) * s; g.add(l); } });
+  g.position.copy(p); scene.add(g); return g;
+}
+function cylinder(p, { c = C.sky, s = 1 } = {}) { // a database
+  const g = new THREE.Group(), body = new THREE.Mesh(new THREE.CylinderGeometry(.62 * s, .62 * s, 1.1 * s, 40), std(c, { roughness: .42 })); body.position.y = .55 * s; body.castShadow = true; g.add(body);
+  [.38, .72].forEach(y => { const ring = new THREE.Mesh(new THREE.TorusGeometry(.625 * s, .025 * s, 8, 48), std(0xffffff)); ring.rotation.x = Math.PI / 2; ring.position.y = y * s; g.add(ring); });
+  g.position.copy(p); scene.add(g); return g;
+}
+const cardTex = canvasTex(256, 320, g => { g.fillStyle = '#ffffff'; g.fillRect(0, 0, 256, 320); g.fillStyle = '#7facd6'; [70, 110, 150, 190].forEach((y, i) => g.fillRect(36, y, [180, 150, 120, 80][i], 14)); g.fillStyle = '#2e9e6b'; g.beginPath(); g.arc(196, 256, 34, 0, 7); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 12; g.lineCap = 'round'; g.beginPath(); g.moveTo(180, 256); g.lineTo(192, 268); g.lineTo(214, 244); g.stroke(); });
+function card(p, { s = 1 } = {}) { // a standing paper card (a receipt)
+  const g = new THREE.Group(), m = new THREE.Mesh(new RoundedBoxGeometry(1.05 * s, 1.35 * s, .07 * s, 2, .03 * s), [std(0xffffff), std(0xffffff), std(0xffffff), std(0xffffff), new THREE.MeshStandardMaterial({ map: cardTex, roughness: .6 }), std(0xffffff)]);
+  m.position.y = .72 * s; m.castShadow = true; g.add(m); g.rotation.y = FACE; g.position.copy(p); scene.add(g); return g;
 }
 function slab(p, w, d, label, { h = .62, c = C.slab, ink = '#1f3a63', lw = w, lx = 0 } = {}) { // lw/lx: a shorter label, shifted along the edge // a platform with its label on the front edge
   const geo = new RoundedBoxGeometry(w, h, d, 3, .06), m = new THREE.Mesh(geo, std(c, { roughness: .6 })); m.receiveShadow = m.castShadow = true; m.add(edges(geo, C.edge, .9));
@@ -131,6 +171,7 @@ function copy(h1, sub, foot) { document.querySelector('h1').innerHTML = h1; cons
 
 // ---------- the five posts ----------
 const S = .62; // slab height: things that stand on a slab start at y = S
+const bodies = []; // per spec node, its scene objects; labels are moved off them after layout
 // ---------- posts: one function per post. Place things by screen position with at(sx, sy):
 // sx ∈ about −13…13 (left → right), sy ∈ about −7.5…7.5 (bottom → top). Keep scenes below sy ≈ 0
 // on the left half (the headline lives there) and above sy ≈ −6.5 (the footer lives there).
@@ -160,44 +201,103 @@ const POSTS = {
   },
 };
 // ---------- posts built from a spec (mermaid-to-spec.mjs → posts.js) ----------
-// A spec lays nodes on an iso grid: column r runs along world x, row k along world z. Subgraphs become
-// labelled platforms (glass: true adds a sandbox box), lone nodes get a small plinth, edges become pipes
-// (same row), arcs (skipping rows or looping back), rose arcs (fail) or dotted lines (dotted).
-// Optional per-node fields: s (cube size), tagY (raise its label), label: '' (no label). Spec: labels:false hides all node labels.
+// Columns run left → right across the banner, rows stack downward; shapes stay isometric.
+// A group (subgraph) becomes one bonsai diorama: a shared platform with its own trees, little buildings and an arch,
+// under one glass box when it's a sandbox. Lone nodes stand on their own plinths.
+// Wires are routed like plumbing: straight runs along the iso axes with rounded elbows, never free curves.
 const COL = { sky: C.sky, grn: C.grn, rose: C.rose, white: C.white }, TAGCLS = { sky: 'sky', grn: 'grn', rose: 'rose', white: '' };
+function roundedPath(pts, rad = .34) { // a polyline with rounded corners
+  const path = new THREE.CurvePath(); let prev = pts[0];
+  for (let i = 1; i < pts.length; i++) { const cur = pts[i], next = pts[i + 1]; if (!next) { path.add(new THREE.LineCurve3(prev, cur)); break; }
+    const d1 = cur.clone().sub(prev), d2 = next.clone().sub(cur), r = Math.min(rad, d1.length() / 2, d2.length() / 2);
+    const a = cur.clone().sub(d1.normalize().multiplyScalar(r)), b = cur.clone().add(d2.normalize().multiplyScalar(r));
+    path.add(new THREE.LineCurve3(prev, a)); path.add(new THREE.QuadraticBezierCurve3(a, cur, b)); prev = b; }
+  return path;
+}
+function wire(pts, { c = C.pipe, r = .11, dashed = false } = {}) {
+  pts = pts.filter((q, i) => i === 0 || q.distanceTo(pts[i - 1]) > 1e-3); if (pts.length < 2) return;
+  const path = roundedPath(pts, dashed ? .2 : .34);
+  if (dashed) { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(path.getSpacedPoints(240)), new THREE.LineDashedMaterial({ color: c, dashSize: .2, gapSize: .15 })); l.computeLineDistances(); scene.add(l); return; }
+  const m = new THREE.Mesh(new THREE.TubeGeometry(path, 60 * pts.length, r, 14), std(c, { roughness: .35, emissive: c, emissiveIntensity: .12 })); m.castShadow = true; scene.add(m);
+}
 function build(spec) {
   copy(spec.headline, spec.sub, spec.foot);
-  // columns run left → right across the banner (world (1,0,−1)), rows stack downward (world (1,0,1)); cubes stay isometric.
-  // Every node stands on its own plinth; a group's label goes on its first member's plinth, and glass groups get a sandbox box per member.
-  const seq = spec.kind === 'sequence', GX = 4.4, GZ = 3.2, R2 = Math.SQRT1_2;
-  const at0 = n => V((n.r * GX + n.k * GZ) * R2, 0, (-n.r * GX + n.k * GZ) * R2), byId = Object.fromEntries(spec.nodes.map(n => [n.id, n]));
-  const groups = Object.fromEntries((spec.groups || []).map(g => [g.id, g])), labelled = new Set();
-  [...spec.nodes].sort((a, b) => a.r - b.r).forEach(n => {
-    const g = groups[n.group], first = g && !labelled.has(g.id), s = n.s || 1.25, w = Math.max(2.3, s + 1.0); if (first) labelled.add(g.id);
-    slab(at0(n), w, w, first ? (g.label || '').toUpperCase() : '', /sol(ana)?|svm/i.test(g?.label || '') ? { ink: '#23805a' } : {});
-    if (g?.glass) glass(off(at0(n), 0, S, 0), w - .3, s + 1.0, w - .3);
-    if (g && spec.trees !== false && first) tree(off(at0(n), w / 2 - .35, S, w / 2 - .35), .75);
+  const seq = spec.kind === 'sequence', GX = 4.4, GZ = 3.4, R2 = Math.SQRT1_2, DR = V(R2, 0, -R2), DK = V(R2, 0, R2);
+  const P = {}, grid0 = n => DR.clone().multiplyScalar(n.r * GX).add(DK.clone().multiplyScalar(n.k * GZ)), at0 = n => (P[n.id] || grid0(n)).clone(), byId = Object.fromEntries(spec.nodes.map(n => [n.id, n]));
+  const deg = {}; spec.edges.forEach(e => { deg[e.from] = (deg[e.from] || 0) + 1; deg[e.to] = (deg[e.to] || 0) + 1; });
+  const size = n => n.s || (n.shape === 'cube' || !n.shape ? 1.0 + .16 * Math.min(deg[n.id] || 0, 3) : 1); // busier cubes are bigger
+  // an intertwined flow (loop-backs, skipped columns, several rows) with no subgraphs becomes one little world on a shared diorama;
+  // people stay outside on their own plinth. `world: false` turns this off, `world: 'LABEL'` names it.
+  const tangled = spec.edges.filter(e => { const A = byId[e.from], B = byId[e.to]; return A && B && (e.back || A.k !== B.k || Math.abs(B.r - A.r) > 1); }).length >= 2;
+  if (spec.world !== false && !(spec.groups || []).length && !seq && (spec.world || tangled)) {
+    spec.groups = [{ id: '__world', label: typeof spec.world === 'string' ? spec.world : '' }];
+    const ms = spec.nodes.filter(n => n.shape !== 'person').sort((a, b) => a.r - b.r || a.k - b.k), cols = Math.ceil(Math.sqrt(ms.length)), base = grid0(ms[0]);
+    // pack the world into a small grid on the world axes: columns run along −z (up-right on screen), rows along +x
+    ms.forEach((n, i) => { n.group = '__world'; n.col = i % cols; n.row = Math.floor(i / cols); P[n.id] = base.clone().add(V(n.row * 4.4, 0, -n.col * 4.4)); });
+  }
+  const groups = Object.fromEntries((spec.groups || []).map(g => [g.id, { ...g, members: spec.nodes.filter(n => n.group === g.id) }]));
+  // platforms: one diorama per group, a plinth per lone node
+  Object.values(groups).filter(g => g.members.length).forEach(g => {
+    const ps = g.members.map(at0), xs = ps.map(q => q.x), zs = ps.map(q => q.z), pad = 1.9, side = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs)) + 2 * pad;
+    const c = V((Math.max(...xs) + Math.min(...xs)) / 2, 0, (Math.max(...zs) + Math.min(...zs)) / 2), back = c.clone().add(V(-side / 2 + 1.0, S, -side / 2 + 1.0));
+    slab(c, side, side, (g.label || '').toUpperCase(), /sol(ana)?|svm/i.test(g.label || '') ? { ink: '#23805a' } : {});
+    if (spec.trees !== false) { // the little world: buildings and an arch at the back, trees at the sides
+      block(back, .7, 1.4, .7); block(off(back, .85, 0, .1), .6, .9, .6); arch(off(back, side * .55, 0, -.1), 1.8, 2.0, .45);
+      tree(c.clone().add(V(-side / 2 + .7, S, side / 2 - 1.6)), .95); tree(c.clone().add(V(side / 2 - 1.6, S, -side / 2 + .7)), .85); tree(c.clone().add(V(side / 2 - .8, S, -side / 2 + 1.9)), .6);
+    }
+    if (g.glass) glass(off(c, 0, S, 0), side - .45, 2.9, side - .45);
   });
-  spec.nodes.forEach(n => { const s = n.s || 1.25; cube(off(at0(n), 0, S, 0), { s, c: COL[n.color] || C.sky, icon: n.icon, ink: n.color === 'white' ? '#1f3a63' : '#ffffff' });
-    if (spec.labels !== false && n.label) tag(off(at0(n), 0, S + s + 1.0 + (n.tagY ?? (n.r % 2) * 1.2), 0), n.label, TAGCLS[n.color] ?? 'sky'); });
-  const yc = S + .62;
-  spec.edges.forEach((e, i) => {
-    const A = byId[e.from], B = byId[e.to]; if (!A || !B) return; const a = at0(A), b = at0(B), fail = e.style === 'fail', c = fail ? C.rose : C.pipe;
-    if (seq && A === B) { tube([off(a, .2, yc + .5, .5), off(a, .9, yc + 1.4, .9), off(a, 0, yc + 1.9, 0), off(a, -.2, yc + .7, -.4)], { c, r: .08 }); if (spec.edgeLabels) tag(off(a, .8, yc + 2.6, .8), e.label, fail ? 'rose' : 'sky'); return; } // a message to itself: a small loop
-    if (seq) { const h = yc + 1.4 + i * .55, m = a.clone().lerp(b, .5);
-      if (e.style === 'dotted') { dotted(off(a, 0, h, 0), off(b, 0, h, 0), 0x7facd6); dotted(off(a, 0, yc, 0), off(a, 0, h, 0), 0x9db6d8); dotted(off(b, 0, yc, 0), off(b, 0, h, 0), 0x9db6d8); }
-      else tube([off(a, 0, yc + .5, 0), off(a, 0, h, 0), off(m, 0, h + .25, 0), off(b, 0, h, 0), off(b, 0, yc + .5, 0)], { c, r: .09 });
-      if (spec.edgeLabels) tag(off(m, 0, h + .7, 0), e.label, fail ? 'rose' : 'sky'); return; }
-    if (e.style === 'dotted') { dotted(off(a, 0, yc, 0), off(b, 0, yc, 0)); return; }
-    if (A.k === B.k && !e.back && !fail && Math.abs(A.r - B.r) === 1) { pipe(off(a, 0, yc, 0), off(b, 0, yc, 0), { c }); if (spec.edgeLabels && e.label) tag(off(a.clone().lerp(b, .5), 0, yc + .9, 0), e.label, 'sky'); return; }
-    const lift = e.back || fail ? 2.4 : 1.1, m = a.clone().lerp(b, .5);
-    tube([off(a, 0, yc + .3, 0), off(a.clone().lerp(b, .2), 0, yc + lift * .8, 0), off(m, 0, yc + lift, 0), off(a.clone().lerp(b, .8), 0, yc + lift * .8, 0), off(b, 0, yc + .3, 0)], { c, r: fail ? .1 : .12 });
-    if (spec.edgeLabels && e.label) tag(off(m, 0, yc + lift + .7, 0), e.label, fail ? 'rose' : 'sky');
+  const B0 = n => n.shape === 'person' && !groups[n.group] ? 0 : S; // a lone person stands on the ground, not a plinth
+  spec.nodes.filter(n => !groups[n.group] && B0(n)).forEach(n => { const w = Math.max(2.2, size(n) + 1.0); slab(at0(n), w, w, ''); });
+  // nodes
+  const top = {}, mid = {}, half = {};
+  spec.nodes.forEach((n, i) => {
+    const before = scene.children.length;
+    const p = off(at0(n), 0, B0(n), 0), s = size(n), shape = n.shape || 'cube', col = COL[n.color] || C.sky;
+    if (shape === 'person') { person(p, { s, say: n.say, c: n.color === 'white' || !n.color ? 0xe3ebf5 : col }); top[n.id] = 1.7 * s; mid[n.id] = .65 * s; half[n.id] = .4 * s; }
+    else if (shape === 'bubble') { bubble(off(p, 0, .95 * s, 0), { s: 1.05 * s, c: col === C.white ? C.sky : col }); top[n.id] = 1.45 * s; mid[n.id] = .95 * s; half[n.id] = .5 * s; }
+    else if (shape === 'wallet') { wallet(p, { s }); top[n.id] = 1.0 * s; mid[n.id] = .5 * s; half[n.id] = .55 * s; }
+    else if (shape === 'stack') { stack(p, { s, c: col === C.white ? C.sky : col, icon: n.icon === 'sol' || n.color === 'grn' ? 'sol' : n.icon === 'eth' ? 'eth' : null }); top[n.id] = 1.5 * s; mid[n.id] = .73 * s; half[n.id] = .5 * s; }
+    else if (shape === 'db') { cylinder(p, { s, c: col === C.white ? C.sky : col }); top[n.id] = 1.1 * s; mid[n.id] = .55 * s; half[n.id] = .62 * s; }
+    else if (shape === 'card') { card(p, { s }); top[n.id] = 1.4 * s; mid[n.id] = .72 * s; half[n.id] = .3 * s; }
+    else { cube(p, { s, c: col, icon: n.icon, ink: n.color === 'white' ? '#1f3a63' : '#ffffff', yaw: [0, .2, -.16][i % 3] }); top[n.id] = s; mid[n.id] = s / 2; half[n.id] = s / 2 * Math.SQRT2 * .8; }
+    bodies.push(scene.children.slice(before)); // the objects labels must keep clear of
   });
+  // wires: one per pair of nodes (a reply or loop-back along the same pair shares the forward wire, rose if either is a failure).
+  // Neighbours in a row join face to face; a self-message is a square loop off the right face; everything else rises,
+  // runs along the axes at its own height and drops into the target. Every run is straight with rounded elbows.
+  const topMax = Math.max(...spec.nodes.map(n => top[n.id])), y0 = S + topMax, pairs = new Map();
+  spec.edges.forEach(e => { if (!byId[e.from] || !byId[e.to]) return; const key = [e.from, e.to].sort().join('\u0000'), had = pairs.get(key);
+    if (!had) pairs.set(key, { ...e }); else { if (e.style === 'fail') had.style = 'fail'; else if (had.style === 'dotted' && e.style !== 'dotted') Object.assign(had, { ...e, style: e.style }); had.label = had.label || e.label; } });
+  // a face-to-face wire runs level: at the middle of the height both bodies share, so it never slopes
+  const level = (A, B) => { const lo = Math.max(B0(A), B0(B)), hi = Math.min(B0(A) + top[A.id], B0(B) + top[B.id]); return hi > lo ? (lo + hi) / 2 : B0(A) + mid[A.id]; };
+  let lane = 0;
+  [...pairs.values()].forEach(e => {
+    const A = byId[e.from], B = byId[e.to], a = at0(A), b = at0(B), fail = e.style === 'fail', dashed = e.style === 'dotted', c = fail ? C.rose : dashed ? 0x7facd6 : C.pipe;
+    const up = (q, n, h) => off(q, 0, h ?? B0(n) + top[n.id], 0), side = (n, dir) => off(at0(n).add(DR.clone().multiplyScalar(dir * (half[n.id] + .02))), 0, B0(n) + mid[n.id], 0);
+    if (A === B) { const f = side(A, 1), o = f.clone().add(DR.clone().multiplyScalar(.9)), h = B0(A) + top[A.id] + .7;
+      wire([f, o, V(o.x, h, o.z), V(a.x, h, a.z), up(a, A)], { c, dashed }); return; }
+    const packed = P[A.id] && P[B.id], face = (n, ax, d) => off(at0(n).add(ax.clone().multiplyScalar(d * (half[n.id] + .02))), 0, B0(n) + mid[n.id], 0);
+    if (packed && Math.abs(A.row - B.row) + Math.abs(A.col - B.col) === 1 && !fail && !e.back) { // grid neighbours in the world
+      const ax = A.row === B.row ? V(0, 0, -1) : V(1, 0, 0), d = A.row === B.row ? Math.sign(B.col - A.col) : Math.sign(B.row - A.row);
+      const y = level(A, B); wire([V(face(A, ax, d).x, y, face(A, ax, d).z), V(face(B, ax, -d).x, y, face(B, ax, -d).z)], { c, dashed }); return; }
+    if (P[A.id] || P[B.id]) { const h = y0 + .5 + (lane++) * .3 + (fail || e.back ? .4 : 0); // anything touching the world: rise, run along x then z, drop
+      wire([up(a, A), V(a.x, h, a.z), V(b.x, h, a.z), V(b.x, h, b.z), up(b, B)], { c, dashed }); return; }
+    if (A.k === B.k && Math.abs(B.r - A.r) === 1) { const d = Math.sign(B.r - A.r), y = level(A, B); wire([V(side(A, d).x, y, side(A, d).z), V(side(B, -d).x, y, side(B, -d).z)], { c, dashed });
+      if (spec.edgeLabels && e.label) tag(off(a.clone().lerp(b, .5), 0, S + mid[A.id] + .9, 0), e.label, fail ? 'rose' : 'sky'); return; }
+    const h = y0 + .9 + (lane++) * .55 + (fail || e.back ? .4 : 0), pts = [up(a, A), up(a, A, h)];
+    if (B.k !== A.k) pts.push(pts.at(-1).clone().add(DK.clone().multiplyScalar((B.k - A.k) * GZ)));
+    pts.push(up(b, B, h)); pts.push(up(b, B));
+    wire(pts, { c, dashed });
+    if (spec.edgeLabels && e.label) tag(off(a.clone().lerp(b, .5), 0, h + .7, 0), e.label, fail ? 'rose' : 'sky');
+  });
+  // labels ride above the highest wire, staggered by column
+  const yTag = y0 + .9 + lane * .55 + 1.1;
+  if (spec.labels !== false) spec.nodes.forEach((n, i) => { if (!n.label) return; tag(P[n.id] ? off(at0(n), 0, B0(n) + top[n.id] + .7 + (n.tagY ?? 0), 0) : off(at0(n), 0, yTag + (n.tagY ?? (n.r % 2) * .8), 0), n.label, n.shape === 'person' ? '' : (TAGCLS[n.color] ?? 'sky')); pins.at(-1)[0].dataset.body = i; });
   fit();
 }
 // zoom and pan the camera so the whole scene (and its tags) sits in the space below the headline
-function fit(area = { x0: -12.4, x1: 12.4, y0: -6.3, y1: 2.6 }) {
+function fit(area = { x0: -12.0, x1: 12.0, y0: -6.3, y1: 2.6 }) {
   cam.zoom = 1; cam.updateProjectionMatrix(); cam.updateMatrixWorld();
   const hw = FH * W / H / 2, hh = FH / 2, box = new THREE.Box3(), v = new THREE.Vector3(); let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
   const take = p => { v.copy(p).project(cam); x0 = Math.min(x0, v.x * hw); x1 = Math.max(x1, v.x * hw); y0 = Math.min(y0, v.y * hh); y1 = Math.max(y1, v.y * hh); };
@@ -214,12 +314,27 @@ if (SPECS[N - 1]) build(SPECS[N - 1]); else POSTS[N]();
 renderer.render(scene, cam);
 const tmp = new THREE.Vector3();
 pins.forEach(([e, p]) => { tmp.copy(p).project(cam); e.style.left = ((tmp.x + 1) / 2 * W) + 'px'; e.style.top = ((1 - tmp.y) / 2 * H) + 'px'; });
-// nudge colliding tags apart: the later (lower) one moves down-right, a few passes until nothing overlaps
-for (let pass = 0; pass < 12; pass++) { let moved = false; const els = pins.map(([e]) => e);
-  els.forEach((a, i) => els.slice(i + 1).forEach(b => { const A = a.getBoundingClientRect(), Bb = b.getBoundingClientRect();
-    if (A.left < Bb.right + 6 && Bb.left < A.right + 6 && A.top < Bb.bottom + 6 && Bb.top < A.bottom + 6) { const lo = A.top > Bb.top ? a : b, d = Math.min(A.bottom, Bb.bottom) - Math.max(A.top, Bb.top) + 10;
-      lo.style.top = (parseFloat(lo.style.top) + d) + 'px'; moved = true; } }));
-  if (!moved) break; }
+// keep labels off the drawing: lowest label first, each takes the nearest spot around its anchor that clears every node body,
+// every placed label, the copy and the canvas edge
+const sx = q => { tmp.copy(q).project(cam); return [(tmp.x + 1) / 2 * W, (1 - tmp.y) / 2 * H]; }, box3 = new THREE.Box3();
+const bodyRects = bodies.map(objs => { box3.makeEmpty(); objs.forEach(o => box3.expandByObject(o)); let l = 1e9, t = 1e9, r = -1e9, b = -1e9;
+  for (const x of [box3.min.x, box3.max.x]) for (const y of [box3.min.y, box3.max.y]) for (const z of [box3.min.z, box3.max.z]) { const [u, v] = sx(V(x, y, z)); l = Math.min(l, u); r = Math.max(r, u); t = Math.min(t, v); b = Math.max(b, v); }
+  return { left: l, top: t, right: r, bottom: b }; });
+const gap = 8, fixedRects = ['h1', '.sub', '.foot', '.logo'].map(q => document.querySelector(q)).filter(e => e && e.textContent.trim()).map(e => e.getBoundingClientRect()), placed = [];
+const clear = r => r.left > 12 && r.top > 12 && r.right < W - 12 && r.bottom < H - 12 &&
+  [...bodyRects, ...fixedRects, ...placed].every(Bb => !(r.left < Bb.right + gap && Bb.left < r.right + gap && r.top < Bb.bottom + gap && Bb.top < r.bottom + gap));
+pins.map(([e]) => e).sort((a, b) => b.getBoundingClientRect().top - a.getBoundingClientRect().top).forEach(e => {
+  const A = e.getBoundingClientRect(), w = A.width + gap, h = A.height + gap, tries = [];
+  for (let j = -6; j <= 3; j++) for (let i = -3; i <= 3; i++) tries.push([i * w * .5, j * h * .75]);
+  tries.sort((p, q) => Math.hypot(p[0] * .7, p[1]) - Math.hypot(q[0] * .7, q[1]));
+  const ok = tries.find(([dx, dy]) => clear({ left: A.left + dx, right: A.right + dx, top: A.top + dy, bottom: A.bottom + dy })) || [0, 0];
+  if (ok[0] || ok[1]) e.dataset.moved = 1; e.style.left = (parseFloat(e.style.left) + ok[0]) + 'px'; e.style.top = (parseFloat(e.style.top) + ok[1]) + 'px'; placed.push(e.getBoundingClientRect()); });
+// a label that had to move far from its node gets a thin leader line down to the node
+const lead = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); lead.setAttribute('width', W); lead.setAttribute('height', H); lead.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0'; ov.prepend(lead);
+pins.forEach(([e]) => { const k = e.dataset.body; if (k === undefined || !e.dataset.moved) return; const r = e.getBoundingClientRect(), b = bodyRects[k], tx = (b.left + b.right) / 2, ty = b.top + 4;
+  if (r.left < b.right && r.right > b.left) return; // still sits over its node: no leader needed
+  const cx = Math.max(r.left + 10, Math.min(r.right - 10, tx)), cy = ty > r.bottom ? r.bottom : r.top;
+  lead.insertAdjacentHTML('beforeend', `<line x1="${cx}" y1="${cy}" x2="${tx}" y2="${ty}" stroke="#7facd6" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/><circle cx="${tx}" cy="${ty}" r="5" fill="#7facd6"/>`); });
 window.__READY__ = true;
 </script>
 </body>

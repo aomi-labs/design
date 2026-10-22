@@ -34,6 +34,18 @@ const RULES = [
 const guess = (text, cls = '') => { if (FAIL.test(cls)) return { icon: 'x', color: 'rose' };
   for (const [re, icon, color] of RULES) if (re.test(text)) return { icon, color: OKC.test(cls) && color === 'rose' ? 'sky' : color };
   return { icon: 'doc', color: 'sky' }; };
+// which object stands for the node: a person, a chat bubble, a wallet, a chain stack, a database, a paper card, or a cube
+const SHAPES = [
+  [/\b(user|users|human|you|customer|trader|person|people|owner)\b/i, 'person'],
+  [/\b(intent|prompt|request|message|ask|chat|instruction)\b/i, 'bubble'],
+  [/\bwallet\b/i, 'wallet'],
+  [/\b(chain|ethereum|evm|solana|svm|base|arbitrum|optimism|polygon|hedera|network|onchain|l1|l2|settle\w*|block(s|chain)?)\b/i, 'stack'],
+  [/\b(db|database|storage|cache|state|registry|postgres|redis)\b/i, 'db'],
+  [/\b(receipt|proof|record|report|invoice|statement)\b/i, 'card'],
+];
+const shapeOf = (text, mshape) => { if (FAIL.test(text)) return { shape: 'cube' }; if (mshape === 'db') return { shape: 'db' };
+  for (const [re, shape] of SHAPES) if (re.test(text)) return shape === 'person' && SHAPES[1][0].test(text) ? { shape, say: true } : { shape };
+  return { shape: 'cube' }; };
 const clean = s => (s || '').replace(/^["'`]|["'`]$/g, '').replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
 const SANDBOX = /\b(fork|sandbox|simulat\w*|test\w*|rehears\w*|anvil|litesvm)\b/i;
 
@@ -79,7 +91,7 @@ function parseFlowchart(lines) {
   if (chain && maxR >= 7) { const w = Math.ceil((maxR + 1) / 2); ids.forEach(i => { const row = Math.floor(r[i] / w), c = r[i] % w; r[i] = row % 2 ? w - 1 - c : c; k[i] = row * 1.3; }); } // fold long chains into a snake of rows
   return {
     kind: 'flow',
-    nodes: ids.map(id => { const n = nodes.get(id), cls = classOf[id] || ''; return { id, label: n.label, ...guess(`${n.label} ${id} ${n.shape === 'db' ? 'db' : ''}`, cls), r: r[id], k: k[id], group: n.group }; }),
+    nodes: ids.map(id => { const n = nodes.get(id), cls = classOf[id] || ''; return { id, label: n.label, ...guess(`${n.label} ${id} ${n.shape === 'db' ? 'db' : ''}`, cls), ...shapeOf(`${n.label}`, n.shape), r: r[id], k: k[id], group: n.group }; }),
     edges: edges.map((e, i) => ({ ...e, style: e.style === 'pipe' && (FAIL.test(e.label) || /fail|error|bad/i.test(classOf[e.to] || '')) ? 'fail' : e.style, back: back.has(i) || undefined })),
     groups: groups.filter(g => ids.some(id => nodes.get(id).group === g.id)).map(g => ({ ...g, glass: SANDBOX.test(g.label) })),
   };
@@ -95,7 +107,7 @@ function parseSequence(lines) {
       msgs.push({ from: m[1], to: m[3], label, style: m[2].endsWith('x') || FAIL.test(label) ? 'fail' : m[2].startsWith('--') ? 'dotted' : 'pipe' });
     }
   }
-  return { kind: 'sequence', nodes: parts.map((p, i) => ({ id: p.id, label: p.label, ...guess(`${p.label} ${p.id}`), r: i, k: 0, group: null })), edges: msgs, groups: [] };
+  return { kind: 'sequence', nodes: parts.map((p, i) => ({ id: p.id, label: p.label, ...guess(`${p.label} ${p.id}`), ...shapeOf(p.label), r: i, k: 0, group: null })), edges: msgs, groups: [] };
 }
 
 const specs = process.argv.slice(2).map(f => {
