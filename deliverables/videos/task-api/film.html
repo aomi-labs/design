@@ -30,6 +30,9 @@ canvas{display:block}
 .lbl.rule{font:500 19px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;background:rgba(255,255,255,.92);padding:5px 12px;border:1.5px solid rgba(9,9,11,.25);border-radius:8px}
 .lbl.rule.ok{color:#fff;background:var(--sky);border-color:var(--sky)}
 .lbl.rule.amb{color:#8a5a0f;background:#fdf4e3;border-color:var(--amber)}
+.lbl.rule.okg{color:#fff;background:#2e9e6b;border-color:#2e9e6b}
+.lbl.zone.g{color:#23805a;border-color:rgba(46,158,107,.7)}
+.lbl.big.bad{color:#df5d90;border-color:#df5d90;background:#fdf2f7}
 .lbl.rule.bad{color:var(--rose);border-color:var(--rose);background:#fdf2f7}
 .lbl.tagw{font:600 30px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;color:#1f3a63;background:#fff;padding:8px 20px;border:2px solid #1f3a63;border-radius:12px;box-shadow:0 10px 24px rgba(31,58,99,.10)}
 .lbl.tagw.s{color:#416cac;border-color:#5288c2}
@@ -120,8 +123,8 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 //  74.2  S8b 3D   the buyer's wallet signs; the block settles on Arc; Aomi holds no key, no funds
 //  81.4  S9  2D   watch it live (slot for the screen recording)
 //  89.4  S10 2D   transparent settlement + verifiable work = outcome-based pricing
-//  94.6  S11 2D   the trust boundary today, and the TEE next
-// 101.6  outro  3D   the lineup returns; its cubes line up along the mark's two rings, turn into black squares, and the logo's outline links them and fills in
+//  93.0  S11 3D   the trust boundary: the harness cube is unverified (rose), then sealed in a glass TEE (green)
+// 101.6  outro  3D   the lineup returns; its cubes line up along the mark's two rings, turn into black squares, and fuse into the logo
 const W = 1920, H = 1080, DUR = 110, O = 101.6;
 const EDIT = [[0, 5.4], [37.4, 89.4], [5.4, 37.4], [89.4, 110]]; // authored ranges, in playback order
 const authorTime = x => { for (const [a, b] of EDIT) { if (x < b - a) return a + x; x -= b - a; } return DUR; };
@@ -203,7 +206,7 @@ const STATIONS = []; // [group, visible from, visible to] on the authoring clock
 function station(x, z, a, b, w, d) { const g = new THREE.Group(); g.position.set(x, 0, z); g.add(plinth(w, d)); scene.add(g); STATIONS.push([g, a, b]); return g; }
 
 // the bundle card: a banknote with "$" — the transactions Aomi builds for the buyer
-const ICON_INK = { [C.sky4]: '#1f3a63', [C.sky]: '#ffffff', [C.grey]: '#3f3f46', [C.white]: '#09090b' };
+const ICON_INK = { [C.sky4]: '#1f3a63', [C.sky]: '#ffffff', [C.grey]: '#3f3f46', [0x9ad8bb]: '#14532d' };
 const iconGeo = new THREE.PlaneGeometry(1.5, .95), iconCache = new Map(), tileGeo = new RoundedBoxGeometry(1.5, .95, .14, 4, .1);
 function drawIcon(cv, ink) {
   const g = cv.getContext('2d'); g.clearRect(0, 0, 600, 380); g.strokeStyle = g.fillStyle = ink; g.lineWidth = 15; g.lineCap = 'round';
@@ -287,10 +290,21 @@ const chainSt = station(0, CHZ, 70, 999);
 const chain = { blocks: [] };
 for (let i = 0; i < 4; i++) { const b = edged(new RoundedBoxGeometry(1.2, .4, 1.2, 3, .06), std(i === 3 ? C.sky : 0xdcdce1, { emissive: C.sky, emissiveIntensity: i === 3 ? .2 : 0 }), 0xb4b4bf, .8); b.position.y = .45 + .2 + i * .43; chainSt.add(b); chain.blocks.push(b); }
 const CH_TOP = .45 + .2 + 3 * .43; // where the new block lands
+// S11 station: the trust boundary — agent → harness → fingerprint; the harness cube is first unverified, then sealed in a glass TEE
+const TZ = -92, GREEN = 0x2e9e6b, ROSEC3 = new THREE.Color(C.rose), BLUEC3 = new THREE.Color(0x4f7fbf);
+const tAgent = station(0, TZ + 4.4, 92, O + .45); { const c = cube('agent', 0xececf0); c.position.y = TOP; tAgent.add(c); }
+const tHarn = station(0, TZ, 92, O + .45), tCube = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); tCube.position.y = TOP; tHarn.add(tCube);
+const tOut = station(0, TZ - 4.4, 92, O + .45), tCard = makeCard(C.sky4); tCard.position.y = 1.55; tOut.add(tCard);
+[pipe([[0, .95, TZ + 4.4 - .66], [0, .95, TZ + .66]]), pipe([[0, .95, TZ - .66], [0, .95, TZ - 4.4 + .8]])].forEach(m => STATIONS.push([m, 92, O + .45]));
+const glass = new THREE.Group(); tHarn.add(glass);
+const glassGeo = new THREE.BoxGeometry(2.0, 2.0, 2.0), glassMat = std(0xe8eef5, { transparent: true, opacity: .24, depthWrite: false, roughness: .1, emissive: GREEN, emissiveIntensity: 0 });
+glass.add(new THREE.Mesh(glassGeo, glassMat)); const glassEdge = new THREE.LineSegments(new THREE.EdgesGeometry(glassGeo), lineM(C.arch, .95)); glass.add(glassEdge);
+const lidBar = new THREE.Mesh(new THREE.BoxGeometry(2.06, .08, 2.06), std(C.arch, { emissive: GREEN, emissiveIntensity: 0 })); lidBar.position.y = 1.0; glass.add(lidBar);
+
 // outro station: the lineup once more; its cubes build the Aomi mark (seen from above) and hand over to the real logo
 const OZ = -112, OC = V(0, 0, OZ), MK = 4.4 / 362; // world units per logo unit (the mark is 362 units across)
 const outroG = new THREE.Group(); outroG.position.copy(OC); scene.add(outroG);
-const ORZ = [6.3, 2.1, -2.1, -6.3], INKC = new THREE.Color(0x09090b);
+const ORZ = [6.3, 2.1, -2.1, -6.3], INKC = new THREE.Color(0x000000); // lit black reads as the logo's ink
 const oPl = ORZ.map(z => { const p_ = plinth(); p_.position.z = z; outroG.add(p_); return p_; });
 const agentO = cube('agent', 0xececf0); agentO.position.set(0, TOP, ORZ[0]); outroG.add(agentO);
 const harnO = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); harnO.position.set(0, TOP, ORZ[1]); outroG.add(harnO);
@@ -308,7 +322,8 @@ const agentBase = new THREE.Color(0xececf0);
 const SRING = Array.from({ length: 8 }, (_, i) => { const a = deg(-90 + i * 45), r = 74.1 * MK;
   const m = edged(new RoundedBoxGeometry(.46, .46, .46, 3, .06), std(0xececf0), 0xb4b4bf, .5); outroG.add(m);
   return { m, base: new THREE.Color(0xececf0), x: SMALL[0] + r * Math.cos(a), z: SMALL[1] + r * Math.sin(a), ry: -a, h: .23, src: agentO, at: O + 1.25 + i * .06 }; });
-RING.forEach(r => { r.h = .31; });
+RING.forEach(r => { r.h = .31; r.grow = [.63 / .62, .80 / .62]; });
+SRING.forEach(r => { r.grow = [.50 / .46, .80 / .46]; }); // [radial, along the ring]: the ring's thickness, and its outer chord between neighbours
 const CUBES = [...RING, ...SRING];
 let MARK_CY = 540; const MARK_S = 3.6; // the logo is drawn this large over the squares, then shrinks into the lockup // the logo's screen centre once the lockup is laid out (measured after fonts load)
 
@@ -328,6 +343,8 @@ const CK = [
   [74.0, [7.0, 3.2, WZ + 6], [0, 1.4, WZ + 1]],
   [76.4, [7.2, 3.4, WZ + 1.5], [-.4, 1.4, WZ - 3]],
   [80.4, [7.8, 3.9, CHZ + 5.4], [0, 1.4, CHZ - .6]],
+  [93.4, [12.0, 6.2, TZ + 6.4], [0, 1.2, TZ - .8]],
+  [101.6, [10.6, 5.5, TZ + 5.6], [0, 1.3, TZ - .8]],
   [DUR, [7.8, 3.9, CHZ + 5.4], [0, 1.4, CHZ - .6]]];
 const camPos = new THREE.CatmullRomCurve3(CK.map(k => V(...k[1])), false, 'centripetal');
 const camTgt = new THREE.CatmullRomCurve3(CK.map(k => V(...k[2])), false, 'centripetal');
@@ -335,8 +352,8 @@ const rawU = t => { t = cl(t, 0, DUR); for (let i = 0; i < CK.length - 1; i++) i
 const camU = t => { let s = 0; for (let i = 0; i < 17; i++) s += rawU(t + (i / 16 - .5) * 1.5); return s / 17 / (CK.length - 1); };
 // [flatten start, flat, unflatten start, 3D again, fixed target (default: the hero), half-height]
 const FLAT = [[4.6, 5.4, 6, 6.5, V(0, TOP, 0)], [5.3, 5.4, 20.6, 21.4, V(-.4, 1.4, HZ)], [28.0, 28.8, 29.2, 29.6, V(-.4, 1.4, HZ)], [28.8, 29.0, 47.6, 48.4, V(0, TOP, HAZ + 4.6)],
-  [58.0, 58.8, 73.4, 74.2], [80.6, 81.4, 999, 1000]];
-const FLAT2D = [[4.9, 20.8], [28.6, 47.8], [58.6, 73.6], [81.2, O + .4]];
+  [58.0, 58.8, 73.4, 74.2], [80.6, 81.4, 81.8, 82.2], [81.4, 81.6, 93.0, 93.8, V(0, TOP, TZ)]];
+const FLAT2D = [[4.9, 20.8], [28.6, 47.8], [58.6, 73.6], [81.2, 93.2]];
 function flatAt(t) { let best = { k: 0 }; for (const [a, b, c, d, tg, half] of FLAT) { const k = eio(seg(t, a, b)) * (1 - eio(seg(t, c, d))); if (k > best.k) best = { k, tg, half: half || 4.5 }; } return best; }
 
 // hero route: it moves only while hidden or while the 2D layer is opaque
@@ -367,7 +384,14 @@ label('Aomi · no keys · no funds', 'rule', V(-2.4, 3.4, WZ - 3.4), 76.6, 81);
 label('settled on Arc', 'rule ok', V(0, 3.4, CHZ), 78.6, 81);
 label('faster · more reliable · fewer tokens', 'zone s', V(0, .1, CHZ + 1.8), 79.4, 81);
 
-const CHAPTERS = [['A person hires a contractor', 21.6, 28.0], ['Harness · build, then simulate on a fork', 48.6, 58.0], ['The buyer executes', 74.4, 80.6]];
+// S11
+label('agent', 'zone', V(0, 2.4, TZ + 4.4), 93.8, 101.4);
+label('Aomi simulation runtime', 'zone s', V(0, 3.6, TZ), 94.4, 101.4);
+label('fingerprint', 'zone', V(0, 2.65, TZ - 4.4), 93.8, 101.4);
+label('ran honestly?', 'big bad', V(0, 2.9, TZ + .2), 96.4, 98.9);
+label('🔒 TEE · attested execution', 'rule okg', V(0, 2.75, TZ + .2), 99.0, 101.4);
+label('✓ trustless service purchase', 'zone g', V(2.4, .1, TZ - 3.4), 99.8, 101.4);
+const CHAPTERS = [['A person hires a contractor', 21.6, 28.0], ['Harness · build, then simulate on a fork', 48.6, 58.0], ['The buyer executes', 74.4, 80.6], ['The remaining trust boundary', 93.6, 101.4]];
 const hud = document.getElementById('hud');
 const chapEls = CHAPTERS.map(([txt]) => { const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `<i></i>${txt}`; hud.appendChild(d); return d; });
 
@@ -481,15 +505,15 @@ const LOOP_DOT = [];
   el('circle', { cx: xp[0], cy: xp[1], r: 30, fill: '#fff', stroke: ROSEC, 'stroke-width': 3 }, x); el('path', { d: `M${xp[0] - 11} ${xp[1] - 11}l22 22M${xp[0] + 11} ${xp[1] - 11}l-22 22`, stroke: ROSEC, 'stroke-width': 4.5, 'stroke-linecap': 'round' }, x);
   T(rv(g, 32.0), 'quality is known only after you pay', L[0], 822, F.uiS, ROSEC, 'middle');
   // agent loop: run → proof → pay → deliver ✓
-  const al = rv(g, 32.6); T(al, 'AGENT ECONOMY', Rr[0], 330, F.lab, SKY2, 'middle', .16);
+  const al = rv(g, 32.5); T(al, 'AGENT ECONOMY', Rr[0], 330, F.lab, SKY2, 'middle', .16);
   el('circle', { cx: Rr[0], cy: Rr[1], r: R, fill: 'none', stroke: '#eef4fa', 'stroke-width': 18 }, al);
-  [['run', -90, 33.0], ['proof', 0, 33.6], ['pay', 90, 34.2], ['deliver', 180, 34.8]].forEach(([s, a, at], i) => {
+  [['run', -90, 32.7], ['proof', 0, 32.9], ['pay', 90, 33.1], ['deliver', 180, 33.3]].forEach(([s, a, at], i) => {
     const x = Rr[0] + R * Math.cos(deg(a)), y = Rr[1] + R * Math.sin(deg(a)); chip(rv(g, at), s, x, y, i === 1 ? 'skyS' : 'sky', { anchor: 'middle', h: 44, font: F.ui });
-    if (i < 3) drawable('path', { d: arcPath(Rr[0], Rr[1], R, a + 22, a + 68), stroke: SKYC, 'stroke-width': 3 }, g, 'ahSky', at + .2, at + .55); });
-  drawable('path', { d: arcPath(Rr[0], Rr[1], R, 202, 248), stroke: SKYC, 'stroke-width': 3 }, g, 'ahSky', 35.0, 35.35);
-  const ok = rv(g, 35.4, 0, 0); el('circle', { cx: Rr[0], cy: Rr[1], r: 34, fill: SKYC }, ok); el('path', { d: `M${Rr[0] - 14} ${Rr[1] + 1}l9 10l19 -22`, stroke: '#fff', 'stroke-width': 5, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, ok);
-  T(rv(g, 35.6), 'the outcome is checked before payment', Rr[0], 822, F.uiS, SKY2, 'middle');
-  LOOP_DOT.push({ d: loopDot, c: Rr, R, a: 35.6, b: 37.4 });
+    if (i < 3) drawable('path', { d: arcPath(Rr[0], Rr[1], R, a + 22, a + 68), stroke: SKYC, 'stroke-width': 3 }, g, 'ahSky', at + .08, at + .28); });
+  drawable('path', { d: arcPath(Rr[0], Rr[1], R, 202, 248), stroke: SKYC, 'stroke-width': 3 }, g, 'ahSky', 33.38, 33.58);
+  const ok = rv(g, 33.6, 0, 0); el('circle', { cx: Rr[0], cy: Rr[1], r: 34, fill: SKYC }, ok); el('path', { d: `M${Rr[0] - 14} ${Rr[1] + 1}l9 10l19 -22`, stroke: '#fff', 'stroke-width': 5, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, ok);
+  T(rv(g, 33.7), 'the outcome is checked before payment', Rr[0], 822, F.uiS, SKY2, 'middle');
+  LOOP_DOT.push({ d: loopDot, c: Rr, R, a: 33.7, b: 37.4 });
 }
 
 // -- S5: the Task API receives one intent (the message itself is the DOM card #intent) ------------------
@@ -580,30 +604,12 @@ const termTau = t => { if (t <= TAU[0][0]) return 0; for (let i = 0; i < TAU.len
 
 // -- S10: the thesis -------------------------------------------------------------------------------------
 {
-  const g = scn(89.4, 94.6);
+  const g = scn(89.4, 93.2);
   heading(g, 89.6, 'Outcome-based pricing for services', 'What x402 does for data, extended to work an agent can check before it pays.');
   [[150, 'TRANSPARENT SETTLEMENT', 'Arc · USDC · x402', 'payment anyone can verify', 89.9, 0], [740, 'VERIFIABLE MACHINE WORK', 'Outcome fingerprint', 'checked before delivery', 90.7, 0], [1330, '', 'Outcome-based pricing', 'pay for what the work does', 91.5, 1]]
     .forEach(([x, k, n, s, a, hi]) => { const p = rv(g, a); B(p, x, 380, 440, 260, { rx: 24, fill: hi ? SKYC : '#ffffff', stroke: hi ? SKYC : INK, sw: hi ? 3 : 2 });
       if (k) T(p, k, x + 34, 430, F.lab, MUTED, 'start', .16); T(p, n, x + 34, hi ? 500 : 520, F.uiB, hi ? '#ffffff' : INK); T(p, s, x + 34, hi ? 548 : 568, F.uiS, hi ? '#e7f0f9' : MUTED); });
   T(rv(g, 90.5), '+', 665, 528, "300 64px 'Geist',sans-serif", INK, 'middle'); T(rv(g, 91.3), '=', 1255, 528, "300 64px 'Geist',sans-serif", INK, 'middle');
-}
-
-// -- S11: the remaining trust boundary, and the TEE next -------------------------------------------------
-{
-  const g = scn(94.6, 101.8);
-  heading(g, 94.8, 'The remaining trust boundary', 'Today the fingerprint is only as honest as the runtime that produced it.');
-  const Y = 520;
-  node(rv(g, 95.0), 270, Y, 'BUYER', 'Intent', { orb: true });
-  arrow(g, 'M450 520H560', 95.2, 'ink');
-  node(rv(g, 96.0), 1650, Y, 'BUYER', 'Fingerprint');
-  const tB = rv(g, 95.2, 98.6, 0); B(tB, 580, 400, 760, 240, { rx: 26, fill: '#fafafa', stroke: GREY, dash: '12 9', sw: 2.5 });
-  T(tB, 'AOMI SIMULATION RUNTIME', 960, 470, F.lab, MUTED, 'middle', .16); T(tB, 'harness · internal fork', 960, 520, F.uiB, INK, 'middle'); T(tB, 'trusted: Aomi runs it honestly', 960, 568, F.uiS, MUTED, 'middle');
-  chip(rv(g, 96.6, 98.6), 'ran honestly?', 960, 690, 'rose', { anchor: 'middle' });
-  const tA = rv(g, 98.6, 0, 0); B(tA, 580, 400, 760, 240, { rx: 26, fill: '#f1f7fc', stroke: SKYC, sw: 3 });
-  T(tA, 'TRUSTED EXECUTION ENVIRONMENT', 960, 470, F.lab, SKY2, 'middle', .16); T(tA, 'harness · internal fork', 960, 520, F.uiB, INK, 'middle'); T(tA, 'attested: anyone can check what ran', 960, 568, F.uiS, SKY2, 'middle');
-  chip(tA, 'roadmap', 1340, 400, 'dark', { anchor: 'end', h: 34, font: "500 16px 'Geist Mono',monospace" });
-  arrow(g, 'M1360 520H1470', 96.0, 'ink');
-  chip(rv(g, 99.6), '✓ trustless service purchase', 960, 700, 'skyS', { anchor: 'middle', h: 46, font: "500 22px 'Geist Mono',monospace" });
 }
 
 // -- the hero in 2D: same spot and scale as the flattened 3D hero (120 px per unit) --------------------
@@ -637,17 +643,14 @@ function seek2D(t) {
   { const [x, y, s, o] = keyed(CARD_K, t); tf(cardF, x, y, s); op(cardF, o); }
 }
 
-// ---------- outro: the cube squares are linked by the logo's outline, which fills into the real logo, then the lockup ----------
+// ---------- outro: the black squares fuse into the mark's rings and blend into the real logo, then the lockup ----------
 const veil = document.getElementById('veil'), outro = document.getElementById('outro'), markEl = document.getElementById('mark');
 const wmEl = outro.querySelector('.wm'), osubEl = outro.querySelector('.sub'), urlEl = outro.querySelector('.url');
 const logoPaths = [...document.querySelectorAll('#logo path')];
-logoPaths.forEach(p_ => { p_.setAttribute('pathLength', 1); p_.setAttribute('stroke-dasharray', 1); p_.setAttribute('stroke', '#09090b'); p_.setAttribute('stroke-width', 3); p_.setAttribute('stroke-linejoin', 'round'); });
 function seekOutro(t) {
-  // the 3D squares stay visible while the logo's outline draws around them; the fill and the veil take over together
-  veil.style.opacity = Math.max(eio(seg(t, O, O + .4)) * (1 - eio(seg(t, O + .5, O + .9))), eio(seg(t, O + 3.55, O + 3.95)));
-  outro.style.opacity = seg(t, O + 2.95, O + 3.05);
-  const d = eio(seg(t, O + 3.0, O + 3.6)), f = eio(seg(t, O + 3.55, O + 3.95));
-  logoPaths.forEach(p_ => { p_.setAttribute('stroke-dashoffset', (1 - d).toFixed(4)); p_.setAttribute('fill-opacity', f.toFixed(3)); });
+  // the black squares fuse into two rings (in 3D); the real logo, same size and place, blends in over them
+  veil.style.opacity = Math.max(eio(seg(t, O, O + .4)) * (1 - eio(seg(t, O + .5, O + .9))), eio(seg(t, O + 3.35, O + 3.75)));
+  outro.style.opacity = eio(seg(t, O + 3.3, O + 3.7));
   const lk = eio(seg(t, O + 4.1, O + 4.8)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(MARK_S, 1, lk)})`;
   wmEl.style.opacity = seg(t, O + 4.2, O + 4.8); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 4.2, O + 4.9))) * -18}px)`;
   [[osubEl, O + 4.7], [urlEl, O + 5.0]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
@@ -712,6 +715,12 @@ function seek(t) {
   { const d = eio(seg(t, 78.0, 78.5)), top = chain.blocks[3]; top.visible = t > 78.0; top.position.y = CH_TOP + (1 - d) * 1.4; if (t > 78.1) card.visible = false;
     chain.blocks.forEach((b, i) => { b.material.emissiveIntensity = (i === 3 ? .2 : 0) + .55 * pulse(t, 78.9 + (3 - i) * .14, 79.5 + (3 - i) * .14); }); }
 
+  // S11: the runtime is unverified (rose, pulsing), then a glass TEE drops over it, seals, and turns green
+  { const rk = seg(t, 96.4, 96.7) * (1 - seg(t, 98.6, 99.0)), b = tCube.userData.body.material, sl = eio(seg(t, 98.1, 98.8)), gk = eio(seg(t, 98.9, 99.3));
+    b.color.lerpColors(BLUEC3, ROSEC3, rk); b.emissive.copy(b.color); b.emissiveIntensity = .18 + rk * (.25 + .2 * Math.sin(t * 9));
+    glass.visible = t > 97.9; glass.position.y = .45 + 1.0 + (1 - sl) * 4.2;
+    glassEdge.material.color.lerpColors(ARCHC, new THREE.Color(GREEN), gk); glassMat.emissiveIntensity = .25 * gk + .4 * pulse(t, 98.8, 99.6); lidBar.material.emissiveIntensity = .5 * gk; lidBar.material.color.lerpColors(ARCHC, new THREE.Color(GREEN), gk);
+    tCard.rotation.y = Math.atan2(camera.position.x, camera.position.z - (TZ - 4.4)); tCard.userData.set(t > 99.8 ? 0x9ad8bb : C.sky4); }
   // outro: plinths sink, the harness, wallet and Arc cubes become the ring, the agent cube takes the small ring's place
   outroG.visible = t > O + .3; grid.visible = t < O + .4;
   if (outroG.visible) {
@@ -721,7 +730,7 @@ function seek(t) {
     agentO.scale.setScalar(tiny(1 - eio(seg(t, O + 1.25, O + 1.75)))); agentO.visible = t < O + 1.75;
     CUBES.forEach(r => { const f = eio(seg(t, r.at, r.at + .9)), sp = r.src.position, y0 = r.h * (1 - .94 * fl2);
       r.m.visible = t > r.at; r.m.position.set(lerp(sp.x, r.x, f), lerp(sp.y, y0, f) + 1.4 * Math.sin(Math.PI * f), lerp(sp.z, r.z, f)); r.m.rotation.set(0, lerp(0, r.ry, f), 0);
-      r.m.scale.set(1, tiny(1 - .94 * fl2), 1); r.m.material.color.lerpColors(r.base, INKC, fl2); r.m.material.emissiveIntensity = (r.base.getHex() === 0x4f7fbf ? .15 : 0) * (1 - fl2) + .4 * pulse(t, r.at + .8, r.at + 1.3);
+      const mg = eio(seg(t, O + 2.95, O + 3.4)); r.m.scale.set(lerp(1, r.grow[0], mg), tiny(1 - .94 * fl2), lerp(1, r.grow[1], mg)); r.m.material.color.lerpColors(r.base, INKC, fl2); r.m.material.roughness = lerp(.55, 1, fl2); r.m.material.emissiveIntensity = (r.base.getHex() === 0x4f7fbf ? .15 : 0) * (1 - fl2) + .4 * pulse(t, r.at + .8, r.at + 1.3);
       r.m.children[0].material.opacity = .5 * (1 - fl2); });
   }
   if (t > O + .4) { // from under the veil: an iso view of the lineup, swinging overhead to a top-down view that matches the logo's size and place

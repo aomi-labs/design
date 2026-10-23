@@ -219,29 +219,29 @@ plus machine work that can be checked before delivery,
 makes outcome-based pricing for services possible.
 
 56
-00:02:55,999 --> 00:02:58,525
+00:02:54,799 --> 00:02:57,325
 One trust assumption remains: today,
 
 57
-00:02:58,565 --> 00:03:02,449
+00:02:57,365 --> 00:03:01,249
 the buyer trusts that Aomi's simulation ran honestly.
 
 58
-00:03:02,489 --> 00:03:04,574
+00:03:01,289 --> 00:03:03,374
 Next, we plan to run the harness in
 
 59
-00:03:04,614 --> 00:03:06,791
+00:03:03,414 --> 00:03:05,591
 a trusted execution environment,
 
 60
-00:03:06,831 --> 00:03:09,724
+00:03:05,631 --> 00:03:08,524
 so buying a service becomes trustless.
 
 61
-00:03:11,774 --> 00:03:15,403
+00:03:10,574 --> 00:03:14,203
 The Task API is live, settling in USDC on Arc.
 
 62
-00:03:15,443 --> 00:03:17,929
+00:03:14,243 --> 00:03:16,729
 Try it at aomi.dev.

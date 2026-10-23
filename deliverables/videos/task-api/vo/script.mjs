@@ -54,15 +54,15 @@ export const LINES = [
   // 10 · two loops
   { id: 10, start: 81.2, end: 88.6,
     text: "This loop never completes in the human economy. Machines can do better, because their service is usually the result of processing data, which can be checked before it's delivered. That's the loop the Task API runs.",
-    anchors: [['loop', 1, 81.6], ['human', 1, 83.8], ['Machines', 1, 84.6], ['checked', 1, 85.6], ['delivered', 1, 86.8], ['loop', 2, 87.4], ['runs', 1, 88.0]] },
+    anchors: [['loop', 1, 81.6], ['human', 1, 83.8], ['Machines', 1, 84.6], ['service', 1, 85.6], ['loop', 2, 87.4], ['runs', 1, 88.0]] },
   // 11 · thesis
   { id: 11, start: 89.6, end: 92.4,
     text: 'A transparent settlement layer, plus machine work that can be checked before delivery, makes outcome-based pricing for services possible.',
     anchors: [['transparent', 1, 90.0], ['checked', 1, 90.8], ['outcome-based', 1, 91.6]] },
   // 12 · trust + roadmap
-  { id: 12, start: 94.8, end: 100.4,
+  { id: 12, start: 93.6, end: 100.4,
     text: "One trust assumption remains: today, the buyer trusts that Aomi's simulation ran honestly. Next, we plan to run the harness in a trusted execution environment, so buying a service becomes trustless.",
-    anchors: [['assumption', 1, 95.4], ['honestly', 1, 96.6], ['environment', 1, 98.8], ['trustless', 1, 99.8]] },
+    anchors: [['assumption', 1, 94.4], ['honestly', 1, 96.6], ['environment', 1, 98.8], ['trustless', 1, 99.8]] },
   // 13 · outro
   { id: 13, start: 102.6, end: 106.0,
     text: 'The Task API is live, settling in USDC on Arc. Try it at aomi dot dev.',
