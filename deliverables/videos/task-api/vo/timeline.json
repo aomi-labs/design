@@ -1,0 +1,730 @@
+{
+ "dur": 199.092,
+ "anchors": [
+  [
+   0,
+   0
+  ],
+  [
+   1,
+   1
+  ],
+  [
+   1.871,
+   1.6
+  ],
+  [
+   3.197,
+   3.6
+  ],
+  [
+   5.397,
+   5.8
+  ],
+  [
+   8.834,
+   7
+  ],
+  [
+   10.087,
+   8.6
+  ],
+  [
+   11.469,
+   10.2
+  ],
+  [
+   14.453,
+   11.8
+  ],
+  [
+   16.612,
+   12.6
+  ],
+  [
+   17.625,
+   13.2
+  ],
+  [
+   18.125,
+   13.7
+  ],
+  [
+   24.766,
+   14
+  ],
+  [
+   26.38,
+   15.4
+  ],
+  [
+   27.819,
+   17
+  ],
+  [
+   28.772,
+   17.6
+  ],
+  [
+   29.889,
+   18.6
+  ],
+  [
+   33.489,
+   22.2
+  ],
+  [
+   35.59,
+   22.8
+  ],
+  [
+   37.576,
+   24.2
+  ],
+  [
+   38.551,
+   25
+  ],
+  [
+   39.355,
+   26.4
+  ],
+  [
+   42.155,
+   29.2
+  ],
+  [
+   42.434,
+   29.6
+  ],
+  [
+   46.811,
+   31.8
+  ],
+  [
+   47.635,
+   32.6
+  ],
+  [
+   56.145,
+   33
+  ],
+  [
+   57.585,
+   33.6
+  ],
+  [
+   58.804,
+   34.2
+  ],
+  [
+   60,
+   34.8
+  ],
+  [
+   60.978,
+   36.4
+  ],
+  [
+   62.178,
+   37.6
+  ],
+  [
+   63.687,
+   37.8
+  ],
+  [
+   66.95,
+   38.8
+  ],
+  [
+   69.365,
+   42.6
+  ],
+  [
+   70.073,
+   43.2
+  ],
+  [
+   75.077,
+   44
+  ],
+  [
+   79.337,
+   44.8
+  ],
+  [
+   80.15,
+   45.6
+  ],
+  [
+   82.626,
+   46.2
+  ],
+  [
+   85.026,
+   48.6
+  ],
+  [
+   85.595,
+   49
+  ],
+  [
+   87.371,
+   51
+  ],
+  [
+   89.937,
+   51.6
+  ],
+  [
+   91.435,
+   52.8
+  ],
+  [
+   94.929,
+   53.8
+  ],
+  [
+   96.915,
+   55.2
+  ],
+  [
+   98.006,
+   57.2
+  ],
+  [
+   99.112,
+   57.6
+  ],
+  [
+   100.512,
+   59
+  ],
+  [
+   102.021,
+   59.4
+  ],
+  [
+   102.613,
+   59.8
+  ],
+  [
+   103.902,
+   60.6
+  ],
+  [
+   106.491,
+   61.2
+  ],
+  [
+   109.405,
+   61.8
+  ],
+  [
+   112.296,
+   63
+  ],
+  [
+   117.985,
+   64
+  ],
+  [
+   121.119,
+   64.8
+  ],
+  [
+   122.028,
+   65.6
+  ],
+  [
+   124.028,
+   67.6
+  ],
+  [
+   124.655,
+   68.6
+  ],
+  [
+   127.198,
+   69.2
+  ],
+  [
+   130.785,
+   70.4
+  ],
+  [
+   134.814,
+   71.6
+  ],
+  [
+   135.699,
+   72.2
+  ],
+  [
+   138.699,
+   75.2
+  ],
+  [
+   139.256,
+   75.8
+  ],
+  [
+   143.355,
+   76.8
+  ],
+  [
+   146.454,
+   78.4
+  ],
+  [
+   150.019,
+   79.4
+  ],
+  [
+   153.806,
+   80.6
+  ],
+  [
+   162.806,
+   89.6
+  ],
+  [
+   163.201,
+   90
+  ],
+  [
+   166.301,
+   90.8
+  ],
+  [
+   168.274,
+   91.6
+  ],
+  [
+   171.412,
+   92.4
+  ],
+  [
+   173.812,
+   94.8
+  ],
+  [
+   174.462,
+   95.4
+  ],
+  [
+   179.234,
+   96.6
+  ],
+  [
+   183.82,
+   98.8
+  ],
+  [
+   186.269,
+   99.8
+  ],
+  [
+   187.387,
+   100.4
+  ],
+  [
+   189.587,
+   102.6
+  ],
+  [
+   190.841,
+   103.4
+  ],
+  [
+   193.883,
+   105.6
+  ],
+  [
+   195.592,
+   106
+  ],
+  [
+   199.092,
+   108
+  ]
+ ],
+ "cues": [
+  {
+   "s": 1,
+   "e": 3.347,
+   "text": "Here's Aomi's Task API."
+  },
+  {
+   "s": 5.397,
+   "e": 8.794,
+   "text": "x402 lets agents pay for data:"
+  },
+  {
+   "s": 8.834,
+   "e": 12.265,
+   "text": "call an API, pay in USDC, get the data."
+  },
+  {
+   "s": 12.305,
+   "e": 14.982,
+   "text": "The chain sits in between as a neutral rail,"
+  },
+  {
+   "s": 15.022,
+   "e": 17.775,
+   "text": "so neither side has to trust the other."
+  },
+  {
+   "s": 18.125,
+   "e": 19.176,
+   "text": "That works for data,"
+  },
+  {
+   "s": 19.216,
+   "e": 21.591,
+   "text": "because data arrives the moment you pay,"
+  },
+  {
+   "s": 21.631,
+   "e": 23.135,
+   "text": "and you can see what you got."
+  },
+  {
+   "s": 23.175,
+   "e": 25.527,
+   "text": "But what if an agent wants to buy a service?"
+  },
+  {
+   "s": 25.567,
+   "e": 26.862,
+   "text": "The payment can be enforced."
+  },
+  {
+   "s": 26.902,
+   "e": 30.039,
+   "text": "Whether the work was delivered, and how well, can't."
+  },
+  {
+   "s": 33.489,
+   "e": 35.109,
+   "text": "People haven't solved this either."
+  },
+  {
+   "s": 35.149,
+   "e": 35.852,
+   "text": "After one visit,"
+  },
+  {
+   "s": 35.892,
+   "e": 39.505,
+   "text": "you can't really tell whether a contractor did a good job."
+  },
+  {
+   "s": 42.155,
+   "e": 46.016,
+   "text": "With people, quality is only known after you've paid,"
+  },
+  {
+   "s": 46.056,
+   "e": 47.595,
+   "text": "so the loop breaks."
+  },
+  {
+   "s": 47.635,
+   "e": 48.988,
+   "text": "Machines can do better:"
+  },
+  {
+   "s": 49.028,
+   "e": 51.496,
+   "text": "a machine's service is usually"
+  },
+  {
+   "s": 51.536,
+   "e": 53.284,
+   "text": "the result of processing data,"
+  },
+  {
+   "s": 53.324,
+   "e": 55.618,
+   "text": "so it can be checked before it's delivered."
+  },
+  {
+   "s": 55.658,
+   "e": 56.802,
+   "text": "The seller runs the work,"
+  },
+  {
+   "s": 56.842,
+   "e": 58.474,
+   "text": "shows the buyer proof of the outcome,"
+  },
+  {
+   "s": 58.514,
+   "e": 61.128,
+   "text": "gets paid, and only then delivers."
+  },
+  {
+   "s": 62.178,
+   "e": 66.26,
+   "text": "That's what the Aomi Task API does for onchain execution."
+  },
+  {
+   "s": 66.3,
+   "e": 70.033,
+   "text": "Here, a treasury agent on Arc sends one long instruction:"
+  },
+  {
+   "s": 70.073,
+   "e": 74.328,
+   "text": "rebalance into EURC, JPYC and MXNB,"
+  },
+  {
+   "s": 74.368,
+   "e": 79.912,
+   "text": "fill within 15 bps of mid, keep 25,000 USDC for payroll,"
+  },
+  {
+   "s": 79.952,
+   "e": 82.775,
+   "text": "and revert everything if any leg fails."
+  },
+  {
+   "s": 85.026,
+   "e": 88.121,
+   "text": "Aomi's harness turns that into transactions"
+  },
+  {
+   "s": 88.161,
+   "e": 90.21,
+   "text": "across StableFX and Arc pools,"
+  },
+  {
+   "s": 90.25,
+   "e": 92.498,
+   "text": "so the agent never writes calldata."
+  },
+  {
+   "s": 92.538,
+   "e": 95.841,
+   "text": "Then it runs the whole batch on an internal fork of Arc,"
+  },
+  {
+   "s": 95.881,
+   "e": 99.262,
+   "text": "and checks every constraint against the result."
+  },
+  {
+   "s": 100.512,
+   "e": 102.573,
+   "text": "What comes back is an outcome fingerprint,"
+  },
+  {
+   "s": 102.613,
+   "e": 108.971,
+   "text": "signed by Aomi: 22,000 USDC out, EURC and JPYC in,"
+  },
+  {
+   "s": 109.011,
+   "e": 112.86,
+   "text": "every constraint passed, and the MXNB leg skipped,"
+  },
+  {
+   "s": 112.9,
+   "e": 116.308,
+   "text": "because the best fill was 19 bps from mid."
+  },
+  {
+   "s": 116.348,
+   "e": 118.583,
+   "text": "Getting this far costs one cent."
+  },
+  {
+   "s": 118.623,
+   "e": 120.162,
+   "text": "The buyer sees the outcome before"
+  },
+  {
+   "s": 120.202,
+   "e": 122.177,
+   "text": "anything touches its wallet."
+  },
+  {
+   "s": 124.028,
+   "e": 125.207,
+   "text": "Now the buyer decides."
+  },
+  {
+   "s": 125.247,
+   "e": 126.24,
+   "text": "If it wants the batch,"
+  },
+  {
+   "s": 126.28,
+   "e": 129.607,
+   "text": "it pays 3% of the USDC leaving its wallet,"
+  },
+  {
+   "s": 129.647,
+   "e": 135.849,
+   "text": "here 660 USDC, over x402, and gets the full bundle."
+  },
+  {
+   "s": 138.699,
+   "e": 141.898,
+   "text": "Then it signs and broadcasts the bundle itself."
+  },
+  {
+   "s": 141.938,
+   "e": 144.847,
+   "text": "Aomi never holds its keys or its funds."
+  },
+  {
+   "s": 144.887,
+   "e": 147.03,
+   "text": "What Aomi sells is the work:"
+  },
+  {
+   "s": 147.07,
+   "e": 150.849,
+   "text": "a harness that runs complex money-lego intents faster,"
+  },
+  {
+   "s": 150.889,
+   "e": 153.956,
+   "text": "more reliably, and with fewer tokens."
+  },
+  {
+   "s": 162.806,
+   "e": 164.716,
+   "text": "So a transparent settlement layer,"
+  },
+  {
+   "s": 164.756,
+   "e": 167.886,
+   "text": "plus machine work that can be checked before delivery,"
+  },
+  {
+   "s": 167.926,
+   "e": 171.562,
+   "text": "makes outcome-based pricing for services possible."
+  },
+  {
+   "s": 173.812,
+   "e": 176.338,
+   "text": "One trust assumption remains: today,"
+  },
+  {
+   "s": 176.378,
+   "e": 180.262,
+   "text": "the buyer trusts that Aomi's simulation ran honestly."
+  },
+  {
+   "s": 180.302,
+   "e": 182.387,
+   "text": "Next, we plan to run the harness in"
+  },
+  {
+   "s": 182.427,
+   "e": 184.604,
+   "text": "a trusted execution environment,"
+  },
+  {
+   "s": 184.644,
+   "e": 187.537,
+   "text": "so buying a service becomes trustless."
+  },
+  {
+   "s": 189.587,
+   "e": 193.216,
+   "text": "The Task API is live, settling in USDC on Arc."
+  },
+  {
+   "s": 193.256,
+   "e": 195.742,
+   "text": "Try it at aomi.dev."
+  }
+ ],
+ "vo": [
+  {
+   "id": 0,
+   "file": "vo/line00.mp3",
+   "start": 1,
+   "dur": 1.997
+  },
+  {
+   "id": 1,
+   "file": "vo/line01.mp3",
+   "start": 5.397,
+   "dur": 12.028
+  },
+  {
+   "id": 2,
+   "file": "vo/line02.mp3",
+   "start": 18.125,
+   "dur": 11.564
+  },
+  {
+   "id": 3,
+   "file": "vo/line03.mp3",
+   "start": 33.489,
+   "dur": 5.666
+  },
+  {
+   "id": 4,
+   "file": "vo/line04.mp3",
+   "start": 42.155,
+   "dur": 18.622
+  },
+  {
+   "id": 5,
+   "file": "vo/line05.mp3",
+   "start": 62.178,
+   "dur": 20.248
+  },
+  {
+   "id": 6,
+   "file": "vo/line06.mp3",
+   "start": 85.026,
+   "dur": 13.886
+  },
+  {
+   "id": 7,
+   "file": "vo/line07.mp3",
+   "start": 100.512,
+   "dur": 21.316
+  },
+  {
+   "id": 8,
+   "file": "vo/line08.mp3",
+   "start": 124.028,
+   "dur": 11.471
+  },
+  {
+   "id": 13,
+   "file": "vo/line13.mp3",
+   "start": 138.699,
+   "dur": 14.907
+  },
+  {
+   "id": 10,
+   "file": "vo/line10.mp3",
+   "start": 162.806,
+   "dur": 8.406
+  },
+  {
+   "id": 11,
+   "file": "vo/line11.mp3",
+   "start": 173.812,
+   "dur": 13.375
+  },
+  {
+   "id": 12,
+   "file": "vo/line12.mp3",
+   "start": 189.587,
+   "dur": 5.805
+  }
+ ]
+}
