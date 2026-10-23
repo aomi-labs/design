@@ -121,7 +121,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 //  81.4  S9  2D   watch it live (slot for the screen recording)
 //  89.4  S10 2D   transparent settlement + verifiable work = outcome-based pricing
 //  94.6  S11 2D   the trust boundary today, and the TEE next
-// 101.6  outro  3D   the lineup returns and breaks into cubes that build the Aomi mark, seen from above, then the lockup
+// 101.6  outro  3D   the lineup returns; its cubes line up along the mark's two rings, turn into black squares, and the logo's outline links them and fills in
 const W = 1920, H = 1080, DUR = 110, O = 101.6;
 const EDIT = [[0, 5.4], [37.4, 89.4], [5.4, 37.4], [89.4, 110]]; // authored ranges, in playback order
 const authorTime = x => { for (const [a, b] of EDIT) { if (x < b - a) return a + x; x -= b - a; } return DUR; };
@@ -304,12 +304,13 @@ const RING = Array.from({ length: 13 }, (_, i) => { const a = deg(lerp(13, 257, 
   const m = edged(new RoundedBoxGeometry(.62, .62, .62, 3, .08), std(base, { emissive: 0x4f7fbf, emissiveIntensity: base === 0x4f7fbf ? .15 : 0 }), 0xb4b4bf, .5); outroG.add(m);
   return { m, base: new THREE.Color(base), x: r * Math.cos(a), z: r * Math.sin(a), ry: -a, src: [harnO, walO, arcO][i % 3], at: O + 1.0 + i * .06 }; });
 const agentBase = new THREE.Color(0xececf0);
-// the mark's real shapes, which the cubes settle into: the small ring (the agent cube drops into it) and the big ring's arc
-const smallRing = new THREE.Mesh(new THREE.TorusGeometry(74.1 * MK, 20.1 * MK, 20, 72), std(0x4f7fbf, { emissive: 0x4f7fbf, emissiveIntensity: .2 }));
-smallRing.rotation.x = Math.PI / 2; smallRing.position.set(SMALL[0], .3, SMALL[1]); smallRing.castShadow = true; outroG.add(smallRing);
-const bigRingG = new THREE.Group(); bigRingG.rotation.y = deg(-13); outroG.add(bigRingG);
-const bigRing = new THREE.Mesh(new THREE.TorusGeometry(155.1 * MK, 25.85 * MK, 20, 160, deg(244)), std(0x09090b, { transparent: true, opacity: 0 })); bigRing.rotation.x = Math.PI / 2; bigRingG.add(bigRing);
-let MARK_CY = 540; // the logo's screen centre once the lockup is laid out (measured after fonts load)
+// the small ring as smaller cubes along its centreline (r = 74 logo units); they come out of the agent cube
+const SRING = Array.from({ length: 8 }, (_, i) => { const a = deg(-90 + i * 45), r = 74.1 * MK;
+  const m = edged(new RoundedBoxGeometry(.46, .46, .46, 3, .06), std(0xececf0), 0xb4b4bf, .5); outroG.add(m);
+  return { m, base: new THREE.Color(0xececf0), x: SMALL[0] + r * Math.cos(a), z: SMALL[1] + r * Math.sin(a), ry: -a, h: .23, src: agentO, at: O + 1.25 + i * .06 }; });
+RING.forEach(r => { r.h = .31; });
+const CUBES = [...RING, ...SRING];
+let MARK_CY = 540; const MARK_S = 3.6; // the logo is drawn this large over the squares, then shrinks into the lockup // the logo's screen centre once the lockup is laid out (measured after fonts load)
 
 const chainPipe = pipe([[0, 1.2, WZ - .76], [0, 1.2, CHZ + .66]]); STATIONS.push([chainPipe, 70, 999]);
 
@@ -636,15 +637,20 @@ function seek2D(t) {
   { const [x, y, s, o] = keyed(CARD_K, t); tf(cardF, x, y, s); op(cardF, o); }
 }
 
-// ---------- outro: the cube-built mark hands over to the real logo, then the lockup ----------
+// ---------- outro: the cube squares are linked by the logo's outline, which fills into the real logo, then the lockup ----------
 const veil = document.getElementById('veil'), outro = document.getElementById('outro'), markEl = document.getElementById('mark');
 const wmEl = outro.querySelector('.wm'), osubEl = outro.querySelector('.sub'), urlEl = outro.querySelector('.url');
+const logoPaths = [...document.querySelectorAll('#logo path')];
+logoPaths.forEach(p_ => { p_.setAttribute('pathLength', 1); p_.setAttribute('stroke-dasharray', 1); p_.setAttribute('stroke', '#09090b'); p_.setAttribute('stroke-width', 3); p_.setAttribute('stroke-linejoin', 'round'); });
 function seekOutro(t) {
-  veil.style.opacity = Math.max(eio(seg(t, O, O + .4)) * (1 - eio(seg(t, O + .5, O + .9))), eio(seg(t, O + 3.0, O + 3.35)));
-  outro.style.opacity = seg(t, O + 3.0, O + 3.35);
-  const lk = eio(seg(t, O + 3.6, O + 4.3)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(1.5, 1, lk)})`;
-  wmEl.style.opacity = seg(t, O + 3.7, O + 4.3); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 3.7, O + 4.4))) * -18}px)`;
-  [[osubEl, O + 4.2], [urlEl, O + 4.5]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
+  // the 3D squares stay visible while the logo's outline draws around them; the fill and the veil take over together
+  veil.style.opacity = Math.max(eio(seg(t, O, O + .4)) * (1 - eio(seg(t, O + .5, O + .9))), eio(seg(t, O + 3.55, O + 3.95)));
+  outro.style.opacity = seg(t, O + 2.95, O + 3.05);
+  const d = eio(seg(t, O + 3.0, O + 3.6)), f = eio(seg(t, O + 3.55, O + 3.95));
+  logoPaths.forEach(p_ => { p_.setAttribute('stroke-dashoffset', (1 - d).toFixed(4)); p_.setAttribute('fill-opacity', f.toFixed(3)); });
+  const lk = eio(seg(t, O + 4.1, O + 4.8)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(MARK_S, 1, lk)})`;
+  wmEl.style.opacity = seg(t, O + 4.2, O + 4.8); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 4.2, O + 4.9))) * -18}px)`;
+  [[osubEl, O + 4.7], [urlEl, O + 5.0]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
 }
 
 // ---------- seek(t) ----------
@@ -709,24 +715,19 @@ function seek(t) {
   // outro: plinths sink, the harness, wallet and Arc cubes become the ring, the agent cube takes the small ring's place
   outroG.visible = t > O + .3; grid.visible = t < O + .4;
   if (outroG.visible) {
-    const sink = eio(seg(t, O + 1.0, O + 1.6)), fl2 = eio(seg(t, O + 2.7, O + 3.2));
+    const sink = eio(seg(t, O + 1.0, O + 1.6)), fl2 = eio(seg(t, O + 2.55, O + 2.95));
     oPl.forEach(p_ => { p_.scale.setScalar(tiny(1 - sink)); p_.position.y = .225 * (1 - sink); p_.visible = sink < .99; }); oPipes.forEach(m => { m.visible = sink < .3; });
     [harnO, walO, arcO].forEach((c, i) => { const s_ = 1 - eio(seg(t, O + 1.0 + i * .12, O + 1.5 + i * .12)); c.scale.setScalar(tiny(s_)); c.visible = s_ > .002; });
-    RING.forEach(r => { const f = eio(seg(t, r.at, r.at + .9)), sp = r.src.position, y0 = .31 * (1 - .92 * fl2);
+    agentO.scale.setScalar(tiny(1 - eio(seg(t, O + 1.25, O + 1.75)))); agentO.visible = t < O + 1.75;
+    CUBES.forEach(r => { const f = eio(seg(t, r.at, r.at + .9)), sp = r.src.position, y0 = r.h * (1 - .94 * fl2);
       r.m.visible = t > r.at; r.m.position.set(lerp(sp.x, r.x, f), lerp(sp.y, y0, f) + 1.4 * Math.sin(Math.PI * f), lerp(sp.z, r.z, f)); r.m.rotation.set(0, lerp(0, r.ry, f), 0);
-      r.m.scale.set(1, tiny(1 - .92 * fl2), 1); r.m.material.color.lerpColors(r.base, INKC, fl2); r.m.material.emissiveIntensity = (r.base.getHex() === 0x4f7fbf ? .15 : 0) * (1 - fl2) + .4 * pulse(t, r.at + .8, r.at + 1.3);
+      r.m.scale.set(1, tiny(1 - .94 * fl2), 1); r.m.material.color.lerpColors(r.base, INKC, fl2); r.m.material.emissiveIntensity = (r.base.getHex() === 0x4f7fbf ? .15 : 0) * (1 - fl2) + .4 * pulse(t, r.at + .8, r.at + 1.3);
       r.m.children[0].material.opacity = .5 * (1 - fl2); });
-    { // the agent cube hops over to the small ring's spot, the ring rises around it, and the cube drops into it
-      const f = eio(seg(t, O + 1.1, O + 2.2)), drop = eio(seg(t, O + 2.35, O + 2.8)), sc = (1 - drop) * 1.0;
-      agentO.visible = drop < .99; agentO.position.set(lerp(0, SMALL[0], f), lerp(TOP, .65, f) + 1.8 * Math.sin(Math.PI * f) - drop * .6, lerp(ORZ[0], SMALL[1], f)); agentO.scale.setScalar(tiny(sc));
-      const rr = eback(seg(t, O + 2.1, O + 2.6)); smallRing.visible = t > O + 2.1; smallRing.scale.set(tiny(rr), tiny(rr), tiny(rr * (1 - .9 * fl2)));
-      smallRing.position.y = .3 * (1 - .9 * fl2); smallRing.material.color.lerpColors(new THREE.Color(0x4f7fbf), INKC, fl2); smallRing.material.emissiveIntensity = .2 * (1 - fl2) + .5 * pulse(t, O + 2.6, O + 3.0);
-      bigRing.material.opacity = fl2; bigRingG.scale.y = .1; bigRingG.position.y = .02; bigRingG.visible = fl2 > 0; }
   }
   if (t > O + .4) { // from under the veil: an iso view of the lineup, swinging overhead to a top-down view that matches the logo's size and place
-    const m = eio(seg(t, O + 1.3, O + 2.7)), z2 = eio(seg(t, O + 2.4, O + 3.15)), P = 210 / (362 * MK), drift = eio(seg(t, O + .4, O + 1.6));
+    const m = eio(seg(t, O + 1.3, O + 2.5)), z2 = eio(seg(t, O + 2.3, O + 2.95)), P = 140 * MARK_S / (362 * MK), drift = eio(seg(t, O + .4, O + 1.6));
     const tg = OC.clone().add(V(0, .8, .6 * (1 - drift))).lerp(OC, m).add(V(0, 0, -(MARK_CY - 540) / P * z2)), dir = V(11, 7.5, 7.5).normalize().lerp(V(0, 1, 1e-4), m).normalize();
-    const fov = lerp(35, 12, m), half = lerp(lerp(lerp(6.2, 5.4, drift), 3.9, m), 540 / P, z2), dist = half / Math.tan(deg(fov / 2));
+    const fov = lerp(35, 12, m), half = lerp(lerp(6.2, 5.4, drift), 540 / P, m), dist = half / Math.tan(deg(fov / 2));
     camera.up.set(0, 1, 0).lerp(V(0, 0, -1), m).normalize(); camera.position.copy(tg).add(dir.multiplyScalar(dist)); camera.fov = fov; camera.near = .5; camera.lookAt(tg);
     camera.updateProjectionMatrix(); camera.updateMatrixWorld(); scene.fog.near = 400; scene.fog.far = 900; sun.position.copy(OC).add(V(14, 30, 12)); sun.target.position.copy(OC);
   } else camera.up.set(0, 1, 0);

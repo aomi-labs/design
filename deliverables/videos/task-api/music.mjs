@@ -34,7 +34,7 @@ const HEART = [73.4, 80.8];                             // the drop: a soft hear
 const RISERS = [[3.2, 5.4], [14.2, 16.4], [32.4, 34.6], [55.2, 57.4], [78.4, 80.8], [87.2, 89.4]]; // noise sweeps into a scene
 const IMPACTS = [5.4, 16.4, 34.6, 57.4, 80.8, 89.4];    // boom + crash on the downbeat of a new act
 const CHIMES = [[2.4, 81], [23.0, 81], [23.45, 83], [23.9, 84], [24.35, 86], [24.8, 88], [25.4, 88], [29.8, 84], [30.0, 86], [30.2, 88],
-  [36.6, 84], [43.8, 86], [46.6, 81], [46.9, 88], [52.3, 84], [56.6, 88], [63.0, 81], [87.4, 84], [99.6, 88], [102.7, 81], [103.0, 84], [103.3, 86], [103.6, 88], [104.8, 93]]; // … the ring of cubes lands, the logo appears
+  [36.6, 84], [43.8, 86], [46.6, 81], [46.9, 88], [52.3, 84], [56.6, 88], [63.0, 81], [87.4, 84], [99.6, 88], [102.7, 81], [103.0, 84], [103.3, 86], [103.6, 88], [104.3, 84], [105.3, 93]]; // … the cubes land, turn black, the outline fills into the logo
 const THUDS = [25.1, 67.4, 83.8, 96.6];                 // MXNB skipped · outcome not verifiable · the human loop breaks · ran honestly?
 
 // ---- original clock → narrated clock ----
