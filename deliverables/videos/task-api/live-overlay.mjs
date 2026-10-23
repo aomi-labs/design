@@ -12,13 +12,13 @@ import path from 'node:path';
 
 const dir = path.dirname(new URL(import.meta.url).pathname), slug = path.basename(dir);
 const src = path.join(dir, 'research/live-take.mov'), full = path.join(dir, `${slug}.mp4`), preview = path.join(dir, `${slug}-preview.mp4`);
-const LIVE = { A: [82.0, 83.6], B: [86.6, 89.0] };                  // film windows — keep in step with LIVE in film.html
+const LIVE = { A: [50.0, 51.6], B: [54.6, 57.0] };                  // playback-clock windows: LIVE in film.html (authored clock) minus 32 s, per EDIT
 const CLIPS = { A: [0, 8.8], B: [47.2, 51.9] };                      // clear stretches of the recording (seconds); B ends on the verified totals
 // the window's text area in the 1418×994 capture, and where film.html draws it (the window is 1100 px wide, scaled from 1192)
 const s = 1100 / 1192, CROP = [1154, 678, 116, 141], AT = [Math.round(410 + (116 - 113) * s), Math.round(245 + (141 - 76) * s)];
 const SIZE = [Math.round(1154 * s), Math.round(678 * s)];
 
-// film clock → narrated clock, from vo/timeline.json
+// playback clock → narrated clock, from vo/timeline.json
 const TL = JSON.parse(readFileSync(path.join(dir, 'vo/timeline.json'), 'utf8'));
 const N = old => { const A = TL.anchors; if (old <= A[0][1]) return old;
   for (let i = 0; i < A.length - 1; i++) { const [n0, o0] = A[i], [n1, o1] = A[i + 1]; if (old <= o1) return o1 === o0 ? n0 : n0 + (n1 - n0) * (old - o0) / (o1 - o0); }

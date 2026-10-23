@@ -3,39 +3,39 @@
 // An upbeat, driving piece: A minor, 124 bpm. Four-on-the-floor kick with the pads pumping against it,
 // an off-beat octave bass, 16th-note arpeggios, claps on 2 and 4, noise risers into each act and an
 // impact on every scene change. It drops to pads and a heartbeat for the contractor (the problem), then
-// builds back up. Section boundaries are written on the ORIGINAL film clock and moved onto the narrated
+// builds back up. Section boundaries are written on the film's playback clock and moved onto the narrated
 // clock through vo/timeline.json; the beat grid itself runs at a constant tempo on the narrated clock.
 //
 //   node music.mjs out.wav
 import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
-const FILM_DUR = 108;                                   // DUR in film.html
+const FILM_DUR = 108;                                   // DUR in film.html (playback clock, after EDIT reorders the scenes)
 const CHORDS = [                                        // [start, end, chord (MIDI), bass (MIDI)] — changes on scene boundaries
-  [0, 5.4, [57, 60, 64, 67], 45],                       // S0  title                Am7
-  [5.4, 13.6, [53, 57, 60, 64], 41],                    // S1  x402 over data       Fmaj7
-  [13.6, 21.4, [55, 59, 62, 65], 43],                   // S2  a service?           G7
-  [21.4, 28.8, [52, 55, 59, 62], 40],                   // S3  the contractor       Em7 — the problem
-  [28.8, 37.4, [53, 57, 60, 64], 41],                   // S4  two loops            Fmaj7
-  [37.4, 48.4, [48, 52, 55, 59], 36],                   // S5  the intent           Cmaj7
-  [48.4, 58.8, [57, 60, 64, 67], 45],                   // S6  harness + fork       Am7
-  [58.8, 66.6, [53, 57, 60, 65], 41],                   // S7  fingerprint          F
-  [66.6, 74.2, [55, 59, 62, 67], 43],                   // S8a pay over x402        G
-  [74.2, 81.4, [48, 52, 55, 60], 36],                   // S8b the buyer executes   C
-  [81.4, 89.4, [57, 60, 64, 67], 45],                   // S9  watch it live        Am7
-  [89.4, 94.6, [53, 57, 60, 64], 41],                   // S10 thesis               Fmaj7
-  [94.6, 101.6, [55, 59, 62, 65], 43],                  // S11 trust → TEE          G7
-  [101.6, 108, [57, 60, 64, 69, 71], 45]];              // outro                    Am(add9)
+  [0, 5.4, [57, 60, 64, 67], 45],                       // 1   title + lineup        Am7
+  [5.4, 16.4, [48, 52, 55, 59], 36],                    // 1   the intent            Cmaj7
+  [16.4, 26.8, [57, 60, 64, 67], 45],                   // 2   harness + fork        Am7
+  [26.8, 34.6, [53, 57, 60, 65], 41],                   // 3   fingerprint           F
+  [34.6, 42.2, [55, 59, 62, 67], 43],                   // 4   pay over x402         G
+  [42.2, 49.4, [48, 52, 55, 60], 36],                   // 5   the buyer executes    C
+  [49.4, 57.4, [57, 60, 64, 67], 45],                   // 6   watch it live         Am7
+  [57.4, 65.6, [53, 57, 60, 64], 41],                   // 7   why: x402 over data   Fmaj7
+  [65.6, 73.4, [55, 59, 62, 65], 43],                   // 8   a service?            G7
+  [73.4, 80.8, [52, 55, 59, 62], 40],                   // 9   the contractor        Em7 — the problem
+  [80.8, 89.4, [53, 57, 60, 64], 41],                   // 10  two loops             Fmaj7
+  [89.4, 94.6, [53, 57, 60, 64], 41],                   // 11  thesis                Fmaj7
+  [94.6, 101.6, [55, 59, 62, 65], 43],                  // 12  trust → TEE           G7
+  [101.6, 108, [57, 60, 64, 69, 71], 45]];              // outro                     Am(add9)
 const BEAT = 60 / 124;
-const DRIVE = [[5.4, 21.4], [28.8, 101.6]];             // kick, bass and hats run through these
-const CLAPS = [[37.4, 58.8], [66.6, 101.6]];            // claps on 2 and 4
-const ARP = [[13.6, 21.4], [37.4, 101.6]];              // 16th arpeggio
-const HEART = [21.4, 28.8];                             // the drop: a soft heartbeat under the contractor
-const RISERS = [[3.2, 5.4], [26.4, 28.8], [35.0, 37.4], [46.2, 48.4], [64.4, 66.6], [87.2, 89.4]]; // noise sweeps into a scene
-const IMPACTS = [5.4, 28.8, 37.4, 48.4, 66.6, 89.4];    // boom + crash on the downbeat of a new act
-const CHIMES = [[11.0, 81], [35.4, 84], [55.0, 81], [55.45, 83], [55.9, 84], [56.35, 86], [56.8, 88], [57.4, 88], [61.8, 84], [62.0, 86], [62.2, 88],
-  [68.6, 84], [75.8, 86], [78.6, 81], [78.9, 88], [99.6, 88], [105.0, 93]];
-const THUDS = [17.0, 31.8, 57.1, 96.6];                 // delivered? · the human loop breaks · MXNB skipped · ran honestly?
+const DRIVE = [[5.4, 73.4], [80.8, 101.6]];             // kick, bass and hats run through these
+const CLAPS = [[16.4, 49.4], [57.4, 73.4], [80.8, 101.6]]; // claps on 2 and 4
+const ARP = [[5.4, 101.6]];                             // 16th arpeggio
+const HEART = [73.4, 80.8];                             // the drop: a soft heartbeat under the contractor
+const RISERS = [[3.2, 5.4], [14.2, 16.4], [32.4, 34.6], [55.2, 57.4], [78.4, 80.8], [87.2, 89.4]]; // noise sweeps into a scene
+const IMPACTS = [5.4, 16.4, 34.6, 57.4, 80.8, 89.4];    // boom + crash on the downbeat of a new act
+const CHIMES = [[2.4, 81], [23.0, 81], [23.45, 83], [23.9, 84], [24.35, 86], [24.8, 88], [25.4, 88], [29.8, 84], [30.0, 86], [30.2, 88],
+  [36.6, 84], [43.8, 86], [46.6, 81], [46.9, 88], [52.3, 84], [56.6, 88], [63.0, 81], [87.4, 84], [99.6, 88], [105.0, 93]];
+const THUDS = [25.1, 67.4, 83.8, 96.6];                 // MXNB skipped · outcome not verifiable · the human loop breaks · ran honestly?
 
 // ---- original clock → narrated clock ----
 const tlPath = path.join(process.cwd(), 'vo/timeline.json');

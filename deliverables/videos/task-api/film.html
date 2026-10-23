@@ -4,11 +4,12 @@
 <meta charset="utf-8">
 <title>Aomi Task API</title>
 <!--
-  "Aomi Task API" — x402 settles fair exchange over data, but not over services. Machine services are the
-  output of data processing, so the outcome can be checked before delivery. The Task API does that for
-  onchain execution: an agent's intent goes through Aomi's harness, runs on an internal fork of Arc, and
-  comes back as a signed outcome fingerprint. The buyer pays 3% of the USDC the bundle moves, over x402,
-  then signs and broadcasts itself. Source: staging.aomi.dev/research/introducing-the-aomi-task-api.
+  "Aomi Task API" — opens on what it does: a treasury agent's intent goes through Aomi's harness, runs on an
+  internal fork of Arc, and comes back as a signed outcome fingerprint; the buyer pays 3% of the USDC the bundle
+  moves, over x402, then signs and broadcasts itself; then a real run on Arc Mainnet. Then why it matters: x402
+  settles fair exchange over data but not over services; machine services are the output of data processing, so
+  the outcome can be checked before delivery. Source: staging.aomi.dev/research/introducing-the-aomi-task-api.
+  3D is drawn as isometric plinths with cubes (agent, harness, wallet, Arc) joined by pipes.
   Built on skills/slide-to-video/assets/film-template.html; the whole frame is a pure function of t.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,17 +31,19 @@ canvas{display:block}
 .lbl.rule.ok{color:#fff;background:var(--sky);border-color:var(--sky)}
 .lbl.rule.amb{color:#8a5a0f;background:#fdf4e3;border-color:var(--amber)}
 .lbl.rule.bad{color:var(--rose);border-color:var(--rose);background:#fdf2f7}
+.lbl.tagw{font:600 30px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;color:#1f3a63;background:#fff;padding:8px 20px;border:2px solid #1f3a63;border-radius:12px;box-shadow:0 10px 24px rgba(31,58,99,.10)}
+.lbl.tagw.s{color:#416cac;border-color:#5288c2}
 .lbl.big{font:600 34px 'Geist',sans-serif;letter-spacing:0;text-transform:none;background:#fff;padding:8px 20px;border:2px solid rgba(9,9,11,.2);border-radius:14px}
 .chap{position:absolute;left:96px;top:78px;font:500 20px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:14px;opacity:0}
 .chap i{width:10px;height:10px;border-radius:50%;background:var(--sky)}
-#title{position:absolute;left:96px;bottom:200px;opacity:0}
+#title{position:absolute;left:96px;top:96px;opacity:0}
 #title .eyebrow{font:500 20px 'Geist Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
 #title h1{margin:0;font:700 132px/0.95 'PT Serif',serif;letter-spacing:-.025em;color:var(--ink)}
 #title p{margin:16px 0 0;font:italic 400 46px 'PT Serif',serif;color:var(--sky2)}
 /* the intent, as one agent briefs another */
 #intent{position:absolute;left:50%;top:262px;width:1500px;margin-left:-750px;box-sizing:border-box;padding:28px 40px 34px;background:#fff;border:1.5px solid rgba(9,9,11,.14);border-radius:26px;box-shadow:0 24px 60px rgba(9,9,11,.08);opacity:0}
 #intent .hd{display:flex;align-items:center;gap:14px;font:500 17px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
-#intent .hd b{display:inline-block;width:18px;height:18px;border-radius:50%;background:var(--sky)}
+#intent .hd svg{width:26px;height:26px}
 #intent .hd .ep{margin-left:auto;letter-spacing:.04em;text-transform:none;color:var(--sky2);background:#f1f7fc;border:1.5px solid var(--sky);border-radius:999px;padding:5px 14px}
 #intent .body{font:500 31px/1.52 'Geist',sans-serif;color:var(--ink)}
 #intent .body span{transition:none}
@@ -75,7 +78,7 @@ canvas{display:block}
   </svg>
   <div id="hud">
     <div id="title"><div class="eyebrow">Aomi Labs</div><h1>Task API</h1><p>Outcome-priced execution, settled on Arc</p></div>
-    <div id="intent"><div class="hd"><b></b>treasury-agent → aomi task api<span class="ep">POST /v1/task/build</span></div><div class="body"></div></div>
+    <div id="intent"><div class="hd"><svg viewBox="-14 -14 28 28"><path d="M0 -12L11 -6L0 0L-11 -6Z" fill="#f4f4f5" stroke="#a1a1aa"/><path d="M-11 -6L0 0V13L-11 7Z" fill="#d4d4d8" stroke="#a1a1aa"/><path d="M11 -6L0 0V13L11 7Z" fill="#e4e4e7" stroke="#a1a1aa"/><path d="M5.5 1.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" fill="#1f3a63"/></svg>treasury-agent → aomi task api<span class="ep">POST /v1/task/build</span></div><div class="body"></div></div>
     <div id="ex">Example intent · swap routing on roadmap</div>
   </div>
   <div id="veil"></div>
@@ -107,8 +110,11 @@ canvas{display:block}
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
-// ---------- timeline (silent film clock; the voice-over warps it later) ----------
-//   0.0  S0  3D   title: the intent orb on the Arc rail
+// ---------- timeline ----------
+// Scenes are authored on this clock; EDIT (below) plays the blocks in a different order: the title, then the
+// Task API itself (S5–S9), then why it matters (S1–S4), then the thesis, trust and outro. The voice-over warps
+// the playback clock (vo/script.mjs times are playback times).
+//   0.0  S0  3D   title: Agent → Aomi harness → Wallet → Arc, as plinths and cubes
 //   5.4  S1  2D   x402 over data: buyer, seller, the chain in between
 //  13.6  S2  2D   the same triangle, buying a service: delivery and quality can't be enforced
 //  21.4  S3  3D   a contractor, a house, one visit: was it a good job?
@@ -123,6 +129,8 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 //  94.6  S11 2D   the trust boundary today, and the TEE next
 // 101.6  outro
 const W = 1920, H = 1080, DUR = 108, O = 101.6;
+const EDIT = [[0, 5.4], [37.4, 89.4], [5.4, 37.4], [89.4, 108]]; // authored ranges, in playback order
+const authorTime = x => { for (const [a, b] of EDIT) { if (x < b - a) return a + x; x -= b - a; } return DUR; };
 
 // ---------- math ----------
 const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
@@ -173,6 +181,33 @@ function glowTexture(rgb) {
   gr.addColorStop(0, `rgba(${rgb},.5)`); gr.addColorStop(.5, `rgba(${rgb},.14)`); gr.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
   const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; return tx;
 }
+// isometric-style stations: a grey plinth with a cube on it, and pale-blue pipes between them
+const PIPE = 0x9dbbe0;
+function plinth(w = 2.2, d = 2.2) { const m = edged(new RoundedBoxGeometry(w, .45, d, 3, .06), std(0xe4e4e7), 0xb4b4bf, .9); m.position.y = .225; return m; }
+function glyphTex(kind, ink) {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256; const g = cv.getContext('2d'); g.strokeStyle = g.fillStyle = ink; g.lineCap = g.lineJoin = 'round';
+  const star = (x, y, r) => { g.beginPath(); g.moveTo(x, y - r); g.quadraticCurveTo(x, y, x + r * .55, y); g.quadraticCurveTo(x, y, x, y + r); g.quadraticCurveTo(x, y, x - r * .55, y); g.quadraticCurveTo(x, y, x, y - r); g.fill(); };
+  if (kind === 'agent') { star(128, 128, 62); }
+  if (kind === 'term') { g.lineWidth = 16; g.beginPath(); g.moveTo(70, 92); g.lineTo(112, 128); g.lineTo(70, 164); g.stroke(); g.beginPath(); g.moveTo(130, 172); g.lineTo(186, 172); g.stroke(); }
+  if (kind === 'arc') { g.font = "700 64px 'Geist Mono'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ARC', 128, 132); }
+  const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace; tx.userData = { cv, kind, ink }; GLYPHS.push(tx); return tx;
+}
+const GLYPHS = [];
+function cube(kind, color, size = 1.3, ink = '#1f3a63', ei = .1) {
+  const g = new THREE.Group(), body = edged(new RoundedBoxGeometry(size, size, size, 4, size * .11), glowM(color, ei, { roughness: .45 }), 0xb4b4bf, kind === 'term' ? 0 : .5);
+  g.add(body); g.userData.body = body;
+  if (kind) { const tx = glyphTex(kind, ink), pg = new THREE.PlaneGeometry(size * .8, size * .8);
+    [[0, 1], [Math.PI / 2, 1], [Math.PI, 1], [-Math.PI / 2, 1]].forEach(([ry]) => { const pl = new THREE.Mesh(pg, new THREE.MeshBasicMaterial({ map: tx, transparent: true, depthWrite: false }));
+      pl.position.set(Math.sin(ry) * (size / 2 + .006), 0, Math.cos(ry) * (size / 2 + .006)); pl.rotation.y = ry; g.add(pl); }); }
+  return g;
+}
+function pipe(pts, r = .07) { const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => V(...p)), false, 'catmullrom', .05), 80, r, 12, false), std(PIPE, { roughness: .35 })); m.castShadow = true; scene.add(m); return m; }
+function walletSlab() { const g = new THREE.Group(); g.add(edged(new RoundedBoxGeometry(1.5, .78, 1.0, 3, .12), std(0xe9e9ec), 0xb4b4bf, .6));
+  const b = new THREE.Mesh(new RoundedBoxGeometry(.42, .2, .08, 2, .04), glowM(C.sky, .15)); b.position.set(.42, .02, .52); g.add(b); g.userData.button = b;
+  const b2 = b.clone(); b2.material = b.material; b2.rotation.y = Math.PI / 2; b2.position.set(.77, .02, -.2); g.add(b2); return g; }
+const STATIONS = []; // [group, visible from, visible to] on the authoring clock
+function station(x, z, a, b, w, d) { const g = new THREE.Group(); g.position.set(x, 0, z); g.add(plinth(w, d)); scene.add(g); STATIONS.push([g, a, b]); return g; }
+
 // the bundle card: a banknote with "$" — the transactions Aomi builds for the buyer
 const ICON_INK = { [C.sky4]: '#1f3a63', [C.sky]: '#ffffff', [C.grey]: '#3f3f46', [C.white]: '#09090b' };
 const iconGeo = new THREE.PlaneGeometry(1.5, .95), iconCache = new Map(), tileGeo = new RoundedBoxGeometry(1.5, .95, .14, 4, .1);
@@ -201,16 +236,29 @@ const grid = new THREE.GridHelper(1200, 600, C.cool2, C.cool2); grid.position.se
 const routeGeo = new THREE.PlaneGeometry(.1, 1); routeGeo.rotateX(-Math.PI / 2); routeGeo.translate(0, .012, -.5);
 const route = new THREE.Mesh(routeGeo, new THREE.MeshBasicMaterial({ color: C.track })); route.position.z = 3; scene.add(route);
 
-// hero: the intent orb, which becomes the bundle card inside the harness
+// hero: the bundle card Aomi builds for the agent (it appears over the harness cube)
 const hero = new THREE.Group(); scene.add(hero);
-const orb = new THREE.Mesh(new THREE.SphereGeometry(.55, 48, 32), glowM(C.sky, .45)); orb.castShadow = true; hero.add(orb);
-const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture('82,136,194'), transparent: true, depthWrite: false })); hero.add(halo);
 const card = makeCard(C.grey); hero.add(card);
+
+// S0 title: the lineup — Agent → Aomi harness → Wallet → Arc, with pipes, as in the Aomi isometric posts
+const LZ = [0, -4.2, -8.4, -12.6], TOP = .45 + .65;
+const lineup = new THREE.Group(); scene.add(lineup);
+LZ.forEach(z => { const p = plinth(); p.position.z = z; lineup.add(p); });
+const agentA = cube('agent', 0xececf0); agentA.position.set(0, TOP, LZ[0]); lineup.add(agentA);
+const harnA = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); harnA.position.set(0, TOP, LZ[1]); lineup.add(harnA);
+const walA = walletSlab(); walA.position.set(0, .45 + .39, LZ[2]); lineup.add(walA);
+const stackA = new THREE.Group(); stackA.position.set(0, .45, LZ[3]); lineup.add(stackA);
+for (let i = 0; i < 3; i++) { const b = edged(new RoundedBoxGeometry(1.2, .4, 1.2, 3, .06), std(0xdcdce1), 0xb4b4bf, .8); b.position.y = .2 + i * .43; stackA.add(b); }
+{ const top = cube('arc', 0x4f7fbf, 1.0, '#ffffff', .18); top.scale.y = .42; top.position.y = .2 + 3 * .43; stackA.add(top); }
+const lineupPipes = [pipe([[0, .95, LZ[0] - .66], [0, .95, LZ[1] + .66]]), pipe([[0, .9, LZ[1] - .66], [0, .9, LZ[2] + .76]]),
+  pipe([[0, 1.75, LZ[1]], [0, 2.35, LZ[1] - .2], [0, 2.45, LZ[1] - 1.6], [0, 2.45, LZ[3] + 1.4], [0, 2.4, LZ[3] + .2], [0, 2.0, LZ[3]]])];
+lineupPipes.forEach(m => { scene.remove(m); lineup.add(m); });
 const seal = new THREE.Mesh(new THREE.TorusGeometry(.2, .045, 10, 40), glowM(C.sky, .5)); seal.position.set(.55, .32, .1); card.add(seal);
 
 // S3 station: a house, a contractor, one visit
 const HZ = -20;
-const house = new THREE.Group(); house.position.set(-2.0, 0, HZ - .6); scene.add(house);
+const house = new THREE.Group(); house.position.set(-2.0, .45, HZ - .6); scene.add(house);
+const housePl = plinth(3.4, 3.2); housePl.position.set(-2.0, .225, HZ - .6); scene.add(housePl);
 { const walls = edged(new THREE.BoxGeometry(2.4, 1.7, 2.2), std(C.block), 0xa1a1aa, .9); walls.position.y = .85; house.add(walls);
   const roof = new THREE.Mesh(new THREE.ConeGeometry(2.05, 1.1, 4, 1), std(C.arch)); roof.rotation.y = Math.PI / 4; roof.position.y = 2.25; roof.castShadow = true; house.add(roof);
   const door = new THREE.Mesh(new THREE.BoxGeometry(.06, .95, .55), std(0x8c8a99)); door.position.set(1.22, .48, .2); house.add(door);
@@ -224,14 +272,14 @@ const coin = new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, .06, 36), glowM
 
 // S6 station: the harness, three venues, the internal fork of Arc
 const HAZ = -44.5, VZ = -49, FZ = -53.2;
-const harness = new THREE.Group(); harness.position.set(0, 0, HAZ); scene.add(harness);
-const hGeo = new THREE.BoxGeometry(3.2, 2.6, 3.2); hGeo.translate(0, 1.3, 0);
-const hMat = std(0xcfe1f3, { transparent: true, opacity: .16, depthWrite: false, emissive: C.sky, emissiveIntensity: 0 });
-harness.add(new THREE.Mesh(hGeo, hMat));
-const hEdges = new THREE.LineSegments(new THREE.EdgesGeometry(hGeo), lineM(C.sky, .9)); harness.add(hEdges);
-{ const pl = new THREE.Mesh(new THREE.BoxGeometry(3.4, .06, 3.4), std(C.block)); pl.position.y = .03; pl.receiveShadow = true; harness.add(pl); }
+const AGZ = HAZ + 4.6;
+const agentSt = station(0, AGZ, 46, 60); const agentB = cube('agent', 0xececf0); agentB.position.y = TOP; agentSt.add(agentB);
+const harness = station(0, HAZ, 46, 60); const harnB = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); harnB.position.y = TOP; harness.add(harnB);
+const hMat = harnB.userData.body.material;
+const agentPipe = pipe([[0, .95, AGZ - .66], [0, .95, HAZ + .66]]); STATIONS.push([agentPipe, 46, 60]);
+const packet = new THREE.Mesh(new THREE.SphereGeometry(.13, 20, 14), glowM(C.sky, .6)); scene.add(packet);
 const VX = [-3.4, 0, 3.4];
-const venues = VX.map(x => { const v = edged(new RoundedBoxGeometry(1.4, 1.0, 1.4, 3, .1), std(C.block, { emissive: C.sky, emissiveIntensity: 0 }), 0xa1a1aa, .9); v.position.set(x, .5, VZ); scene.add(v); return v; });
+const venues = VX.map(x => { const st = station(x, VZ, 46, 60, 1.8, 1.8); const v = edged(new RoundedBoxGeometry(1.0, 1.0, 1.0, 3, .1), std(C.block, { emissive: C.sky, emissiveIntensity: 0 }), 0xa1a1aa, .9); v.position.y = .45 + .5; st.add(v); return st; });
 const minis = VX.map(() => { const m = makeCard(C.sky4); m.scale.setScalar(.4); scene.add(m); return m; });
 const fork = new THREE.Group(); fork.position.set(0, 0, FZ); scene.add(fork);
 { const slab = new THREE.Mesh(new THREE.BoxGeometry(5.2, .16, 4.2), std(0xe8eef5, { transparent: true, opacity: .9 })); slab.position.y = .08; slab.receiveShadow = true; fork.add(slab);
@@ -240,17 +288,18 @@ const fork = new THREE.Group(); fork.position.set(0, 0, FZ); scene.add(fork);
 
 // S8b station: the buyer's wallet, and the Arc chain the bundle settles on
 const WZ = -64, CHZ = -71;
-const wallet = edged(new RoundedBoxGeometry(.5, 1.7, 2.3, 3, .12), std(C.block, { emissive: C.sky, emissiveIntensity: 0 }), 0xa1a1aa, .9); wallet.position.set(-1.6, 1.1, WZ); scene.add(wallet);
-const blkGeo = new RoundedBoxGeometry(1.3, .95, 1.3, 3, .08), linkGeo = new THREE.BoxGeometry(.14, .14, .5);
-const chain = { blocks: [], links: [] };
-for (let i = 0; i < 7; i++) { const b = edged(blkGeo, std(C.block, { emissive: C.sky, emissiveIntensity: 0 }), 0xa1a1aa, .9); b.position.set(0, 1.4, CHZ - i * 1.8); scene.add(b); chain.blocks.push(b);
-  if (i) { const l = new THREE.Mesh(linkGeo, std(C.track)); l.position.set(0, 1.4, CHZ - i * 1.8 + .9); scene.add(l); chain.links.push(l); } }
-chain.dock = new THREE.Mesh(linkGeo, std(C.sky, { emissive: C.sky, emissiveIntensity: .4 })); chain.dock.position.set(0, 1.4, CHZ + .9); scene.add(chain.dock);
+const walletSt = station(0, WZ, 70, 999); const wallet = walletSlab(); wallet.position.y = .45 + .39; walletSt.add(wallet);
+const chainSt = station(0, CHZ, 70, 999);
+const chain = { blocks: [] };
+for (let i = 0; i < 4; i++) { const b = edged(new RoundedBoxGeometry(1.2, .4, 1.2, 3, .06), std(i === 3 ? C.sky : 0xdcdce1, { emissive: C.sky, emissiveIntensity: i === 3 ? .2 : 0 }), 0xb4b4bf, .8); b.position.y = .45 + .2 + i * .43; chainSt.add(b); chain.blocks.push(b); }
+const CH_TOP = .45 + .2 + 3 * .43; // where the new block lands
+const chainPipe = pipe([[0, 1.2, WZ - .76], [0, 1.2, CHZ + .66]]); STATIONS.push([chainPipe, 70, 999]);
 
 // ---------- camera ----------
 const CK = [
-  [0, [6.5, 3.0, 10], [0, 1.2, 0]],
-  [4.4, [4.2, 2.3, 6.6], [0, 1.3, -.5]],
+  [0, [14.0, 9.0, 3.2], [0, 2.3, -6.6]],
+  [3.0, [13.2, 8.4, 2.6], [0, 2.1, -6.4]],
+  [4.4, [4.4, 2.5, 4.4], [0, 1.1, 0]],
   [20.8, [8.6, 3.9, HZ + 9.5], [-.4, 1.4, HZ]],
   [28.0, [6.9, 3.1, HZ + 7.2], [-.4, 1.3, HZ - .2]],
   [48.0, [8.6, 4.2, HAZ + 8], [0, 1.4, HAZ + 1.5]],
@@ -266,35 +315,38 @@ const camTgt = new THREE.CatmullRomCurve3(CK.map(k => V(...k[2])), false, 'centr
 const rawU = t => { t = cl(t, 0, DUR); for (let i = 0; i < CK.length - 1; i++) if (t <= CK[i + 1][0]) return i + seg(t, CK[i][0], CK[i + 1][0]); return CK.length - 1; };
 const camU = t => { let s = 0; for (let i = 0; i < 17; i++) s += rawU(t + (i / 16 - .5) * 1.5); return s / 17 / (CK.length - 1); };
 // [flatten start, flat, unflatten start, 3D again, fixed target (default: the hero), half-height]
-const FLAT = [[4.6, 5.4, 20.6, 21.4], [28.0, 28.8, 47.6, 48.4], [58.0, 58.8, 73.4, 74.2], [80.6, 81.4, 999, 1000]];
-const FLAT2D = [[5.2, 20.8], [28.6, 47.8], [58.6, 73.6], [81.2, 999]];
+const FLAT = [[4.6, 5.4, 6, 6.5, V(0, TOP, 0)], [5.3, 5.4, 20.6, 21.4, V(-.4, 1.4, HZ)], [28.0, 28.8, 29.2, 29.6, V(-.4, 1.4, HZ)], [28.8, 29.0, 47.6, 48.4, V(0, TOP, HAZ + 4.6)],
+  [58.0, 58.8, 73.4, 74.2], [80.6, 81.4, 999, 1000]];
+const FLAT2D = [[4.9, 20.8], [28.6, 47.8], [58.6, 73.6], [81.2, 999]];
 function flatAt(t) { let best = { k: 0 }; for (const [a, b, c, d, tg, half] of FLAT) { const k = eio(seg(t, a, b)) * (1 - eio(seg(t, c, d))); if (k > best.k) best = { k, tg, half: half || 4.5 }; } return best; }
 
 // hero route: it moves only while hidden or while the 2D layer is opaque
-const HK = [[0, [0, 1.2, 0]], [11, [0, 1.2, 0]], [12, [0, 1.4, HZ]], [37, [0, 1.4, HZ]], [38, [0, 1.4, HAZ + 4.5]], [48.8, [0, 1.4, HAZ + 4.5]],
-  [50.0, [0, 1.4, HAZ]], [53.4, [0, 1.4, HAZ]], [54.6, [0, 1.0, FZ]], [62, [0, 1.0, FZ]], [66, [0, 1.4, WZ + 4]], [74.4, [0, 1.4, WZ + 4]],
-  [75.6, [0, 1.4, WZ]], [77.2, [0, 1.4, WZ]], [78.4, [0, 1.4, CHZ + 1.8]]];
+const HK = [[0, [0, 2.75, HAZ]], [53.4, [0, 2.75, HAZ]], [54.6, [0, .8, FZ]], [62, [0, .8, FZ]], [66, [0, 1.7, WZ + 4]], [74.4, [0, 1.7, WZ + 4]],
+  [75.6, [0, 1.95, WZ]], [77.2, [0, 1.95, WZ]], [78.2, [0, CH_TOP + 1.2, CHZ]]];
 
 // ---------- DOM labels anchored to 3D points ----------
 const labels = [];
 function label(html, cls, pos, a, b) { const el = document.createElement('div'); el.className = 'lbl ' + (cls || ''); el.innerHTML = html; document.getElementById('labels').appendChild(el); const L = { el, pos, a, b }; labels.push(L); return L; }
+// S0 lineup
+[['Agent', '', 0], ['Aomi harness', ' s', 1], ['Wallet', '', 2], ['Arc', ' s', 3]].forEach(([s_, c, i]) => label(s_, 'tagw' + c, V(0, i % 2 ? 3.3 : 2.75, LZ[i]), .5 + i * .3, 3.6));
 // S3
-const jobL = label('✓ good job?', 'big', V(-2.0, 3.6, HZ - .6), 24.6, 28.2);
+const jobL = label('✓ good job?', 'big', V(-2.0, 4.0, HZ - .6), 24.6, 28.2);
 label('one visit', 'zone', V(1.6, 0, HZ - .4), 22.6, 28.2);
 const paidL = label('paid ✓', 'rule ok', () => coin.position.clone().add(V(0, .5, 0)), 24.2, 28.2);
 // S6
-label('Aomi harness', 'zone s', V(0, 3.2, HAZ), 48.8, 53.6);
-['StableFX RFQ', 'EURC / USDC pool', 'JPYC / USDC pool'].forEach((s, i) => label(s, 'zone', V(VX[i], 1.55, VZ), 50.8, 53.9));
+label('agent', 'zone', V(0, 2.4, AGZ), 48.6, 53.6);
+label('Aomi harness', 'zone s', V(0, 3.75, HAZ), 48.8, 53.6);
+['StableFX RFQ', 'EURC / USDC pool', 'JPYC / USDC pool'].forEach((s, i) => label(s, 'zone', V(VX[i], 2.0, VZ), 50.8, 53.9));
 label('internal fork of Arc', 'zone s', V(-2.6, .3, FZ + 2.2), 53.4, 58.2);
 const RULES = [['fill ≤ 15 bps of mid', V(-1.5, 2.6, FZ - 2.4)], ['USDC ≥ 25,000', V(-1.5, 2.6, FZ + 2.3)], ['approvals ⊆ 3 contracts', V(2.2, 1.6, FZ - 2.6)], ['gas ≤ 0.5 USDC', V(2.2, 1.6, FZ + 2.5)], ['revert all if a leg fails', V(-2.6, 3.6, FZ)]]
   .map(([s, p], i) => ({ s, L: label(s, 'rule', p, 54.6, 58.2), at: 55.0 + i * .45 }));
 const mxnbL = label('MXNB · skipped · 19 bps', 'rule amb', V(2.6, .6, FZ), 57.0, 58.2);
 // S8b
-label('buyer wallet', 'zone', V(-1.6, 2.4, WZ), 74.4, 81);
-const signL = label('signs · broadcasts', 'rule', V(-1.6, .2, WZ + 1.4), 75.4, 81);
-label('Aomi · no keys · no funds', 'rule', V(2.6, 2.9, WZ - 1), 76.6, 81);
-label('settled on Arc', 'rule ok', V(0, 2.4, CHZ + 1.8), 78.6, 81);
-label('faster · more reliable · fewer tokens', 'zone s', V(0, .45, CHZ - 1), 79.4, 81);
+label('buyer wallet', 'zone', V(0, .1, WZ + 1.6), 74.4, 81);
+const signL = label('signs · broadcasts', 'rule', V(0, 3.0, WZ + .4), 75.4, 81);
+label('Aomi · no keys · no funds', 'rule', V(-2.4, 3.4, WZ - 3.4), 76.6, 81);
+label('settled on Arc', 'rule ok', V(0, 3.4, CHZ), 78.6, 81);
+label('faster · more reliable · fewer tokens', 'zone s', V(0, .1, CHZ + 1.8), 79.4, 81);
 
 const CHAPTERS = [['A person hires a contractor', 21.6, 28.0], ['Harness · build, then simulate on a fork', 48.6, 58.0], ['The buyer executes', 74.4, 80.6]];
 const hud = document.getElementById('hud');
@@ -348,11 +400,14 @@ function chip(p, s, x, cy, kind = 'ink', o = {}) {
 }
 const layer = el('g');
 const heading = (g, a, title, sub, b = 0) => { const p = rv(g, a, b); T(p, title, 96, 178, F.head); if (sub) T(p, sub, 96, 220, F.sub, MUTED); };
-const orbIcon = (p, x, y, r = 20) => { el('circle', { cx: x, cy: y, r: r * 2.4, fill: 'url(#halo)' }, p); el('circle', { cx: x, cy: y, r, fill: SKYC }, p); };
+// the agent as a small isometric cube (as on the posts)
+const cubeIcon = (p, x, y, r = 20) => { const g = el('g', { transform: `translate(${x} ${y}) scale(${r / 12})` }, p);
+  el('path', { d: 'M0 -12L11 -6L0 0L-11 -6Z', fill: '#f4f4f5', stroke: GREY, 'stroke-width': .8 }, g); el('path', { d: 'M-11 -6L0 0V13L-11 7Z', fill: '#d4d4d8', stroke: GREY, 'stroke-width': .8 }, g);
+  el('path', { d: 'M11 -6L0 0V13L11 7Z', fill: '#e4e4e7', stroke: GREY, 'stroke-width': .8 }, g); el('path', { d: 'M5.5 1.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z', fill: '#1f3a63' }, g); };
 // a node in the exchange triangle
 function node(p, cx, cy, kicker, name, o = {}) {
   B(p, cx - 170, cy - 74, 340, 148, { rx: 22, fill: o.fill ?? '#ffffff', stroke: o.stroke ?? INK, sw: o.sw ?? 2 });
-  if (o.orb) orbIcon(p, cx - 108, cy, 17);
+  if (o.orb) cubeIcon(p, cx - 108, cy, 24);
   const tx = o.orb ? cx - 70 : cx, an = o.orb ? 'start' : 'middle';
   T(p, kicker, tx, cy - 14, F.lab, o.kc ?? MUTED, an, .16); T(p, name, tx, cy + 26, "600 28px 'Geist',sans-serif", INK, an);
 }
@@ -367,8 +422,8 @@ const coin2D = (lbl, kind = 'skyS') => g => { el('circle', { r: 20, fill: SKYC, 
 const BX = 400, SX = 1520, NY = 470;
 {
   const g = scn(5.4, 20.6);
-  heading(g, 5.6, 'x402: fair exchange over data', 'The buyer pays, the seller delivers, and the chain settles in between.', 13.6);
-  heading(g, 13.9, 'Now buy a service', 'The chain can enforce the payment. It can’t enforce the work.');
+  heading(g, 5.6, 'Why it matters', 'x402 already settles fair exchange over data, with the chain in between.', 13.6);
+  heading(g, 13.9, 'Now buy a service', 'The outcome of the work can’t be checked before it’s delivered.');
   node(rv(g, 5.9), BX, NY, 'BUYER', 'Agent', { orb: true });
   node(rv(g, 6.2), SX, NY, 'SELLER', 'API');
   rail(rv(g, 6.5), 'ARC · NEUTRAL SETTLEMENT RAIL');
@@ -385,9 +440,7 @@ const BX = 400, SX = 1520, NY = 470;
   const svc = rv(g, 14.0); B(svc, SX - 120, 560, 240, 70, { rx: 14, fill: '#fafafa', stroke: GREY, dash: '8 6' }); T(svc, 'service', SX, 604, F.ui, MUTED, 'middle');
   const dash = rv(g, 14.4, 0, 0); el('path', { d: `M${SX - 180} 520H${BX + 190}`, stroke: GREY, 'stroke-width': 2.5, 'stroke-dasharray': '10 9', fill: 'none', 'marker-end': 'url(#ahGrey)' }, dash);
   B(dash, 930, 496, 60, 48, { rx: 24, fill: '#fff', stroke: GREY }); T(dash, '?', 960, 529, "700 28px 'Geist',sans-serif", MUTED, 'middle');
-  chip(rv(g, 15.4), '✓ payment enforced', 960, 700, 'skyS', { anchor: 'middle' });
-  chip(rv(g, 17.0), 'delivered?', 780, 600, 'rose', { anchor: 'middle' });
-  chip(rv(g, 17.6), 'done well?', 1140, 600, 'rose', { anchor: 'middle' });
+  chip(rv(g, 15.4), 'outcome not verifiable before delivery', 960, 640, 'rose', { anchor: 'middle', h: 46, font: "500 22px 'Geist Mono',monospace" });
 }
 
 // -- S4: two loops — the human economy breaks, the agent economy checks first --------------------------
@@ -536,7 +589,9 @@ const termTau = t => { if (t <= TAU[0][0]) return 0; for (let i = 0; i < TAU.len
 
 // -- the hero in 2D: same spot and scale as the flattened 3D hero (120 px per unit) --------------------
 const heroLayer = el('g', {}, layer);
-const orbF = el('g', {}, heroLayer); el('circle', { r: 200, fill: 'url(#halo)' }, orbF); el('circle', { r: 66, fill: SKYC }, orbF);
+// the agent cube, flat: its side face as the flattened camera sees it (1.3 units ⇒ 156 px)
+const orbF = el('g', {}, heroLayer); el('rect', { x: -78, y: -78, width: 156, height: 156, rx: 16, fill: '#ececf0', stroke: '#b4b4bf', 'stroke-width': 2 }, orbF);
+el('path', { d: 'M0 -50Q0 0 28 0Q0 0 0 50Q0 0 -28 0Q0 0 0 -50Z', fill: '#1f3a63' }, orbF);
 function card2D(fill, ink) {
   const g = el('g', {}, heroLayer); el('rect', { x: -90, y: -57, width: 180, height: 114, rx: 12, fill }, g);
   const ic = el('g', { fill: 'none', stroke: ink, 'stroke-width': 4.5, 'stroke-linecap': 'round' }, g); el('rect', { x: -61.5, y: -35.4, width: 123, height: 70.8, rx: 7 }, ic); el('path', { d: 'M33 -21.6H48M-48 21.6H-33' }, ic);
@@ -544,8 +599,8 @@ function card2D(fill, ink) {
 }
 const cardF = card2D('#5288c2', '#ffffff');
 // [t, [x, y, scale, opacity]]
-const ORB_K = [[5.2, [960, 540, 1, 1]], [5.5, [960, 540, 1, 1]], [6.1, [BX - 108, NY, .26, 1]], [6.4, [BX - 108, NY, .26, 0]],
-  [28.6, [960, 540, .6, 0]], [37.0, [960, 540, .6, 0]], [46.6, [960, 540, .6, 0]], [47.0, [960, 540, 1, 1]], [47.8, [960, 540, 1, 1]], [48.2, [960, 540, 1, 0]]];
+const ORB_K = [[4.9, [960, 540, 1, 0]], [5.2, [960, 540, 1, 1]], [5.4, [960, 540, 1, 1]], [5.41, [960, 540, 1, 0]], [37.39, [960, 540, 1, 0]],
+  [37.4, [960, 540, 1, 1]], [38.0, [960, 540, 1, 1]], [38.7, [253, 300, .17, 0]], [46.6, [960, 540, .6, 0]], [47.0, [960, 540, 1, 1]], [47.8, [960, 540, 1, 1]], [48.2, [960, 540, 1, 0]]];
 const CARD_K = [[58.2, [960, 540, 1, 0]], [58.6, [960, 540, 1, 1]], [59.0, [960, 540, 1, 1]], [59.5, [700, 560, .7, 0]],
   [71.0, [SX, 600, .55, 0]], [71.2, [SX, 600, .55, 1]], [72.0, [BX, 600, .55, 1]], [72.6, [BX, 600, .55, 1]], [73.2, [960, 540, 1, 1]], [73.6, [960, 540, 1, 1]], [74, [960, 540, 1, 0]]];
 function seek2D(t) {
@@ -600,47 +655,53 @@ function seek(t) {
   } else { camera.position.copy(cp); camera.fov = 35; camera.near = .1; camera.lookAt(ct); }
   camera.updateProjectionMatrix(); camera.updateMatrixWorld();
   scene.fog.near = 30 + extra; scene.fog.far = 95 + extra;
-  const tgt = k > 0 ? hero.position : ct; sun.position.copy(tgt).add(V(14, 30, 12)); sun.target.position.copy(tgt);
+  const tgt = k > 0 ? (fl.tg || hero.position) : ct; sun.position.copy(tgt).add(V(14, 30, 12)); sun.target.position.copy(tgt);
 
-  // hero: the orb shows on the title and again as the treasury agent; it becomes the bundle card inside the harness
-  const os = eback(seg(t, .3, 1.3)) * (1 - seg(t, 11, 11.2)) + (t > 47 ? eback(seg(t, 47.4, 48.0)) * (1 - eio(seg(t, 49.8, 50.2))) : 0);
-  orb.scale.setScalar(tiny(os)); orb.visible = os > .002; halo.scale.setScalar(tiny(os) * 3.4); halo.material.opacity = cl(os);
+  // S0: the lineup builds up plinth by plinth; the camera pushes into the agent cube
+  lineup.visible = t < 6;
+  lineupPipes.forEach((m, i) => { const n = m.geometry.index.count, f = eio(seg(t, 1.5 + i * .25, 2.3 + i * .25)); m.geometry.setDrawRange(0, Math.floor(n * f / 6) * 6); m.visible = f > 0; });
+  [agentA, harnA, walA, stackA].forEach((c, i) => { const s_ = eback(seg(t, .3 + i * .25, .9 + i * .25)); c.scale.set(s_ < .002 ? 1e-3 : 1, tiny(s_), s_ < .002 ? 1e-3 : 1); });
+  harnA.userData.body.material.emissiveIntensity = .18 + .25 * pulse(t, 2.4, 3.4);
+  STATIONS.forEach(([g, a, b]) => { g.visible = t > a && t < b; });
+  // the agent hands its intent to the harness: a packet runs the pipe, and the bundle card appears over the cube
+  { const m = seg(t, 49.0, 50.0); packet.visible = m > 0 && m < 1; packet.position.set(0, .95, lerp(AGZ - .66, HAZ + .66, eio(m))); }
+  agentB.userData.body.material.emissiveIntensity = .1 + .3 * pulse(t, 48.8, 49.6);
   const cs = eback(seg(t, 50.0, 50.5)); card.scale.setScalar(tiny(cs)); card.visible = cs > .002;
   card.userData.set(t > 75.8 ? C.sky : t > 57.4 ? C.sky4 : C.grey);
   seal.visible = t > 75.8; seal.scale.setScalar(tiny(eback(seg(t, 75.8, 76.3))));
   card.rotation.set(0, Math.atan2(camera.position.x - hp[0], camera.position.z - hp[2]), 0);
-  route.scale.z = tiny(t < 4.2 ? 6 * eout(seg(t, 2.6, 4.2)) : 90);
+  route.visible = t > 15; route.scale.z = 90;
 
   // S3: the house rises, the contractor walks up, gets paid; the "good job?" check flickers
-  const showH = t > 20 && t < 30; house.visible = person.visible = coin.visible = showH;
+  const showH = t > 20 && t < 30; house.visible = person.visible = coin.visible = housePl.visible = showH;
   house.scale.set(1, tiny(eout(seg(t, 21.2, 22.0))), 1); house.visible = showH && house.scale.y > .01;
   person.scale.setScalar(tiny(eback(seg(t, 21.6, 22.1)))); person.visible = showH && t > 21.6;
   { const w = eio(seg(t, 22.0, 23.6)); person.position.set(lerp(2.8, .6, w), Math.abs(Math.sin(t * 7)) * .05 * (w > 0 && w < 1 ? 1 : 0), lerp(HZ - 4.5, HZ - 2.0, w)); person.rotation.y = lerp(-.72, -1.08, w); }
-  { const m = eio(seg(t, 23.4, 24.3)); coin.position.set(lerp(-.7, .5, m), 1.2 + .5 * Math.sin(Math.PI * m) + .55 * m, lerp(HZ - .3, HZ - 1.9, m)); coin.scale.setScalar(tiny(eback(seg(t, 23.2, 23.6)))); coin.rotation.set(Math.PI / 2, .785 + .5 * Math.sin(t * 4), 0); }
+  { const m = eio(seg(t, 23.4, 24.3)); coin.position.set(lerp(-.7, .5, m), 1.65 + .5 * Math.sin(Math.PI * m) + .55 * m, lerp(HZ - .3, HZ - 1.9, m)); coin.scale.setScalar(tiny(eback(seg(t, 23.2, 23.6)))); coin.rotation.set(Math.PI / 2, .785 + .5 * Math.sin(t * 4), 0); }
   { const q = t > 24.8 && Math.floor((t - 24.8) / .4) % 2 === 1; const s = q ? '? good job?' : '✓ good job?'; if (jobL.el.textContent !== s) jobL.el.textContent = s; jobL.el.style.color = q ? '#df5d90' : '#416cac'; }
 
   // S6: the harness glows; calls fan out to the venues and back; the batch drops on the fork; constraints tick
-  const showS6 = t > 46 && t < 60; harness.visible = fork.visible = showS6;
-  harness.scale.set(1, tiny(eout(seg(t, 48.0, 48.8))), 1); harness.visible = showS6 && harness.scale.y > .01;
-  hMat.emissiveIntensity = .3 * pulse(t, 50.0, 51.0) + (t > 50 && t < 53.4 ? .12 : 0); hMat.opacity = .16 + .1 * pulse(t, 50.0, 51.0);
-  venues.forEach((v, i) => { v.scale.set(1, tiny(eback(seg(t, 50.4 + i * .12, 50.9 + i * .12)) * (1 - eio(seg(t, 54.0 + i * .1, 54.6 + i * .1)))), 1); v.visible = showS6 && v.scale.y > .01; v.material.emissiveIntensity = .45 * pulse(t, 51.6 + i * .1, 52.4 + i * .1); });
+  const showS6 = t > 46 && t < 60; fork.visible = showS6;
+  hMat.emissiveIntensity = .18 + .35 * pulse(t, 50.0, 51.0) + (t > 50 && t < 53.4 ? .1 : 0);
+  venues.forEach((v, i) => { const sy = eback(seg(t, 50.4 + i * .12, 50.9 + i * .12)) * (1 - eio(seg(t, 54.0 + i * .1, 54.6 + i * .1))); v.scale.set(1, tiny(sy), 1); v.visible = showS6 && sy > .01;
+    v.children[1].material.emissiveIntensity = .45 * pulse(t, 51.6 + i * .1, 52.4 + i * .1); });
   minis.forEach((m, i) => { const out = eio(seg(t, 51.0 + i * .1, 51.8 + i * .1)), back = eio(seg(t, 52.4, 53.1)), f = out * (1 - back);
-    m.visible = t > 51 && t < 53.2; m.position.set(lerp(0, VX[i], f), 1.4 + .9 * Math.sin(Math.PI * f) + f * .2, lerp(HAZ, VZ, f)); m.rotation.y = card.rotation.y; });
+    m.visible = t > 51 && t < 53.2; m.position.set(lerp(0, VX[i], f), 2.75 + .6 * Math.sin(Math.PI * f) - f * .9, lerp(HAZ, VZ, f)); m.rotation.y = card.rotation.y; });
   fork.scale.set(1, tiny(eout(seg(t, 52.6, 53.4))), 1); fork.visible = showS6 && fork.scale.y > .01;
   RULES.forEach(r => { const ok = t >= r.at; if (r.L.el.classList.contains('ok') !== ok) { r.L.el.classList.toggle('ok', ok); r.L.el.textContent = (ok ? '✓ ' : '') + r.s; } });
 
   // S8b: the wallet signs, the block docks on Arc, a pulse runs down the chain
-  const showS8 = t > 72; wallet.visible = showS8; chain.blocks.forEach(b => { b.visible = showS8; }); chain.links.forEach(l => { l.visible = showS8; });
-  wallet.material.emissiveIntensity = .5 * pulse(t, 75.4, 76.4) + (t > 76 ? .12 : 0);
+  wallet.userData.button.material.emissiveIntensity = .15 + .7 * pulse(t, 75.4, 76.4) + (t > 76 ? .2 : 0);
   if (signL.el.classList.contains('ok') !== t > 75.8) signL.el.classList.toggle('ok', t > 75.8);
-  chain.dock.visible = t > 78.3; chain.dock.scale.set(1, 1, tiny(eback(seg(t, 78.3, 78.6))));
-  chain.blocks.forEach((b, i) => { b.material.emissiveIntensity = .55 * pulse(t, 78.6 + i * .14, 79.2 + i * .14); });
+  // the card lands on the Arc stack as its new top block, and a pulse runs down the stack
+  { const d = eio(seg(t, 78.0, 78.5)), top = chain.blocks[3]; top.visible = t > 78.0; top.position.y = CH_TOP + (1 - d) * 1.4; if (t > 78.1) card.visible = false;
+    chain.blocks.forEach((b, i) => { b.material.emissiveIntensity = (i === 3 ? .2 : 0) + .55 * pulse(t, 78.9 + (3 - i) * .14, 79.5 + (3 - i) * .14); }); }
 
   labels.forEach(L => { const o = win(t, L.a, L.b, .35); if (o <= 0) { L.el.style.opacity = 0; return; }
     tmp.copy(typeof L.pos === 'function' ? L.pos() : L.pos).project(camera); if (tmp.z > 1) { L.el.style.opacity = 0; return; }
     L.el.style.opacity = o * (1 - k); L.el.style.transform = `translate(${(tmp.x + 1) / 2 * W}px,${(1 - tmp.y) / 2 * H}px) translate(-50%,-50%)`; });
   CHAPTERS.forEach(([, a, b], i) => { chapEls[i].style.opacity = win(t, a, b, .35); });
-  document.getElementById('title').style.opacity = win(t, 1.2, 4.6, .5);
+  document.getElementById('title').style.opacity = win(t, .9, 3.5, .45);
 
   seek2D(t); seekOutro(t);
   renderer.render(scene, camera);
@@ -654,7 +715,7 @@ function oldTime(T) {
   return A[A.length - 1][1];
 }
 function seekFilm(T) {
-  seek(oldTime(T));
+  seek(authorTime(oldTime(T)));
   const c = TL && TL.cues.find(q => T >= q.s && T < q.e);
   captionEl.textContent = c ? c.text : ''; captionEl.style.opacity = c ? Math.min(seg(T, c.s, c.s + .1), 1 - seg(T, c.e - .1, c.e)) : 0;
 }
@@ -671,6 +732,7 @@ window.__AOMI_VIDEO__ = {
 await document.fonts.ready;
 fits.forEach(f => f());
 iconCache.forEach(v => { drawIcon(v.cv, v.ink); v.tx.needsUpdate = true; });
+GLYPHS.forEach(tx => { const { cv, kind, ink } = tx.userData; if (kind !== 'arc') return; const g = cv.getContext('2d'); g.clearRect(0, 0, 256, 256); g.fillStyle = ink; g.font = "700 64px 'Geist Mono'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ARC', 128, 132); tx.needsUpdate = true; }); // web font now loaded
 seekFilm(+(params.get('t') || 0));
 window.__AOMI_VIDEO_READY__ = true;
 if (!params.has('render') && !params.has('t')) {
