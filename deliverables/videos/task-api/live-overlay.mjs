@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Lays Cecilia's screen recording of the live take into scene 9, after finish.mjs has encoded the film.
+// Lays Cecilia's screen recording of the live take into scene 6 (watch it live), after finish.mjs has encoded the film.
 // The recording (research/live-take.mov, kept out of git) went black from 8.9 s to 20.7 s and from 25.3 s to 46.6 s,
 // so only its clear stretches are used: the request, the 1-cent x402 payment and the first poll (0–8.8 s), and
 // signing, confirmations and balance checks (47.2–51.9 s). film.html draws the same Terminal window and rebuilds
