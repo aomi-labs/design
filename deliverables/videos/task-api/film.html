@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Aomi Task API</title>
+<!--
+  "Aomi Task API" — opens on what it does: a treasury agent's intent goes through Aomi's harness, runs on an
+  internal fork of Arc, and comes back as a signed outcome fingerprint; the buyer pays 3% of the USDC the bundle
+  moves, over x402, then signs and broadcasts itself; then a real run on Arc Mainnet. Then why it matters: x402
+  settles fair exchange over data but not over services; machine services are the output of data processing, so
+  the outcome can be checked before delivery. Source: staging.aomi.dev/research/introducing-the-aomi-task-api.
+  3D is drawn as isometric plinths with cubes (agent, harness, wallet, Arc) joined by pipes.
+  Built on skills/slide-to-video/assets/film-template.html; the whole frame is a pure function of t.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#09090b;--paper:#ffffff;--sky:#5288c2;--sky2:#416cac;--sky4:#7facd6;--rose:#df5d90;--amber:#d9982b;--g200:#e4e4e7;--g400:#a1a1aa;--muted:#71717a}
+html,body{margin:0;background:var(--paper)}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--paper)}
+body.fit #stage{transform-origin:0 0}
+#gl,#labels,#hud,#veil,#vig,#flat{position:absolute;inset:0}
+#labels,#hud,#vig,#flat,#sub{pointer-events:none}
+canvas{display:block}
+#vig{background:linear-gradient(180deg,rgba(255,255,255,.78) 0,rgba(255,255,255,0) 170px,rgba(255,255,255,0) 700px,rgba(255,255,255,.85) 1080px)}
+.lbl{position:absolute;left:0;top:0;font:500 17px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);white-space:nowrap;opacity:0}
+.lbl.sky{color:var(--sky2)} .lbl.rose{color:var(--rose)}
+.lbl.zone{font:600 21px 'Geist Mono',monospace;letter-spacing:.16em;background:rgba(255,255,255,.88);padding:7px 16px;border:1.5px dashed rgba(9,9,11,.45);border-radius:999px}
+.lbl.zone.s{color:var(--sky2);border-color:rgba(82,136,194,.7)}
+.lbl.rule{font:500 19px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;background:rgba(255,255,255,.92);padding:5px 12px;border:1.5px solid rgba(9,9,11,.25);border-radius:8px}
+.lbl.rule.ok{color:#fff;background:var(--sky);border-color:var(--sky)}
+.lbl.rule.amb{color:#8a5a0f;background:#fdf4e3;border-color:var(--amber)}
+.lbl.rule.okg{color:#fff;background:#2e9e6b;border-color:#2e9e6b}
+.lbl.zone.g{color:#23805a;border-color:rgba(46,158,107,.7)}
+.lbl.big.bad{color:#df5d90;border-color:#df5d90;background:#fdf2f7}
+.lbl.rule.bad{color:var(--rose);border-color:var(--rose);background:#fdf2f7}
+.lbl.tagw{font:600 30px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;color:#1f3a63;background:#fff;padding:8px 20px;border:2px solid #1f3a63;border-radius:12px;box-shadow:0 10px 24px rgba(31,58,99,.10)}
+.lbl.tagw.s{color:#416cac;border-color:#5288c2}
+.lbl.big{font:600 34px 'Geist',sans-serif;letter-spacing:0;text-transform:none;background:#fff;padding:8px 20px;border:2px solid rgba(9,9,11,.2);border-radius:14px}
+.chap{position:absolute;left:96px;top:78px;font:500 20px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:14px;opacity:0}
+.chap i{width:10px;height:10px;border-radius:50%;background:var(--sky)}
+#title{position:absolute;left:96px;top:96px;opacity:0}
+#title .eyebrow{font:500 20px 'Geist Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+#title h1{margin:0;font:700 132px/0.95 'PT Serif',serif;letter-spacing:-.025em;color:var(--ink)}
+#title p{margin:16px 0 0;font:italic 400 46px 'PT Serif',serif;color:var(--sky2)}
+/* the intent, as one agent briefs another */
+#intent{position:absolute;left:50%;top:262px;width:1500px;margin-left:-750px;box-sizing:border-box;padding:28px 40px 34px;background:#fff;border:1.5px solid rgba(9,9,11,.14);border-radius:26px;box-shadow:0 24px 60px rgba(9,9,11,.08);opacity:0}
+#intent .hd{display:flex;align-items:center;gap:14px;font:500 17px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+#intent .hd svg{width:26px;height:26px}
+#intent .hd .ep{margin-left:auto;letter-spacing:.04em;text-transform:none;color:var(--sky2);background:#f1f7fc;border:1.5px solid var(--sky);border-radius:999px;padding:5px 14px}
+#intent .body{font:500 31px/1.52 'Geist',sans-serif;color:var(--ink)}
+#intent .body span{transition:none}
+#intent .body .hl{border-radius:6px;padding:0 2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+#intent .body .hl.on{background:#dcebf8;color:#1f3a63}
+#ex{position:absolute;right:96px;top:74px;font:500 16px 'Geist Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1.5px dashed rgba(9,9,11,.3);border-radius:999px;padding:7px 16px;opacity:0;background:#fff}
+#veil{background:var(--paper);opacity:0}
+#outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+#outro .lock{display:flex;align-items:center;gap:48px}
+#mark{width:140px;height:140px;overflow:visible;display:block}
+#outro .wm{font:600 140px/1 'Source Serif 4',serif;letter-spacing:-.02em;color:var(--ink);opacity:0}
+#outro .sub{font:italic 400 44px 'PT Serif',serif;color:var(--ink);margin-top:46px;opacity:0}
+#outro .url{font:500 22px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:30px;opacity:0}
+#sub{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);max-width:1600px;text-align:center;font:500 34px/1.3 'Geist',sans-serif;color:#fff;background:rgba(9,9,11,.82);padding:10px 24px;border-radius:10px;opacity:0;white-space:nowrap}
+#flat{opacity:0}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="gl"></div>
+  <div id="vig"></div>
+  <div id="labels"></div>
+  <svg id="flat" viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="halo"><stop offset="0" stop-color="#5288c2" stop-opacity=".45"/><stop offset=".5" stop-color="#5288c2" stop-opacity=".12"/><stop offset="1" stop-color="#5288c2" stop-opacity="0"/></radialGradient>
+      <marker id="ahInk" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#09090b"/></marker>
+      <marker id="ahSky" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5288c2"/></marker>
+      <marker id="ahRose" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#df5d90"/></marker>
+      <marker id="ahGrey" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a1a1aa"/></marker>
+    </defs>
+    <rect width="1920" height="1080" fill="#ffffff"/>
+  </svg>
+  <div id="hud">
+    <div id="title"><div class="eyebrow">Aomi Labs</div><h1>Task API</h1><p>Outcome-priced execution, settled on Arc</p></div>
+    <div id="intent"><div class="hd"><svg viewBox="-14 -14 28 28"><path d="M0 -12L11 -6L0 0L-11 -6Z" fill="#f4f4f5" stroke="#a1a1aa"/><path d="M-11 -6L0 0V13L-11 7Z" fill="#d4d4d8" stroke="#a1a1aa"/><path d="M11 -6L0 0V13L11 7Z" fill="#e4e4e7" stroke="#a1a1aa"/><path d="M5.5 1.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z" fill="#1f3a63"/></svg>treasury-agent → aomi task api<span class="ep">POST /v1/task/build</span></div><div class="body"></div></div>
+    <div id="ex">Example intent · swap routing on roadmap</div>
+  </div>
+  <div id="veil"></div>
+  <div id="outro">
+    <div class="lock">
+      <svg id="mark" viewBox="0 0 362 362">
+        <!-- paths copied from assets/logo/aomi-mark.svg — re-copy if the mark changes -->
+        <g id="logo" fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g>
+      </svg>
+      <div class="wm">aomi</div>
+    </div>
+    <div class="sub">The Task API is live on Arc</div>
+    <div class="url">aomi.dev &nbsp;·&nbsp; @aomi_labs</div>
+  </div>
+  <div id="sub"></div>
+</div>
+<script src="research/live-log.js" onerror="void 0"></script>
+<script src="vo/timeline.js" onerror="void 0"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+// ---------- timeline ----------
+// Scenes are authored on this clock; EDIT (below) plays the blocks in a different order: the title, then the
+// Task API itself (S5–S9), then why it matters (S1–S4), then the thesis, trust and outro. The voice-over warps
+// the playback clock (vo/script.mjs times are playback times).
+//   0.0  S0  3D   title: Agent → Aomi harness → Wallet → Arc, as plinths and cubes
+//   5.4  S1  2D   x402 over data: buyer, seller, the chain in between
+//  13.6  S2  2D   the same triangle, buying a service: delivery and quality can't be enforced
+//  21.4  S3  3D   a contractor, a house, one visit: was it a good job?
+//  28.8  S4  2D   two loops: the human economy breaks (✗), the agent economy checks before paying
+//  37.4  S5  2D   the Task API: one long intent, briefed the way agents brief subagents
+//  48.4  S6  3D   harness builds the calls, runs the batch on an internal fork of Arc, checks every constraint
+//  58.8  S7  2D   the outcome fingerprint (signed preview)
+//  66.6  S8a 2D   the buyer decides, pays 3% over x402, receives the bundle
+//  74.2  S8b 3D   the buyer's wallet signs; the block settles on Arc; Aomi holds no key, no funds
+//  81.4  S9  2D   watch it live (slot for the screen recording)
+//  89.4  S10 2D   transparent settlement + verifiable work = outcome-based pricing
+//  93.0  S11 3D   the trust boundary: the harness cube is unverified (rose), then sealed in a glass TEE (green)
+// 101.6  outro  3D   the trust scene's cubes line up along the mark's two rings, turn into black squares, and fuse into the logo
+const W = 1920, H = 1080, DUR = 110, O = 101.6;
+const EDIT = [[0, 5.4], [37.4, 89.4], [5.4, 17.6], [20.2, 27.7], [28.7, 35.4], [37.0, 37.4], [89.4, 110]]; // 35.4–37.0 is one lap of the loop dot // authored ranges, in playback order (static holds cut)
+const PLAY_DUR = EDIT.reduce((s_, [a, b]) => s_ + b - a, 0);
+const authorTime = x => { for (const [a, b] of EDIT) { if (x < b - a) return a + x; x -= b - a; } return DUR; };
+
+// ---------- math ----------
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => cl((t - a) / (b - a));
+const lerp = (a, b, x) => a + (b - a) * x;
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eout = x => 1 - Math.pow(1 - x, 3);
+const eback = x => { const c1 = 1.70158, c3 = c1 + 1; return x <= 0 ? 0 : 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const win = (t, a, b, f = .4) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+const pulse = (t, a, b) => Math.sin(Math.PI * seg(t, a, b));
+const tiny = s => Math.max(s, 1e-3);
+const deg = THREE.MathUtils.degToRad;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+function keyed(keys, t) {
+  if (t <= keys[0][0]) return keys[0][1].slice();
+  for (let i = 0; i < keys.length - 1; i++) { const [a, pa] = keys[i], [b, pb] = keys[i + 1]; if (t <= b) { const x = eio(seg(t, a, b)); return pa.map((v, j) => lerp(v, pb[j], x)); } }
+  return keys[keys.length - 1][1].slice();
+}
+// a point at fraction u along a polyline [[x, y], …]
+function polyAt(pts, u) {
+  const lens = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1])), tot = lens.reduce((a, b) => a + b, 0);
+  let d = cl(u) * tot; for (let i = 0; i < lens.length; i++) { if (d <= lens[i] || i === lens.length - 1) { const f = lens[i] ? d / lens[i] : 0; return [lerp(pts[i][0], pts[i + 1][0], f), lerp(pts[i][1], pts[i + 1][1], f)]; } d -= lens[i]; }
+}
+
+// ---------- palette (3D structure is grey; sky = passed / ours, rose = failed, amber = skipped) ----------
+const C = { paper: 0xffffff, ink: 0x09090b, sky: 0x5288c2, sky4: 0x7facd6, rose: 0xdf5d90, amber: 0xd9982b, arch: 0x9d9da8, track: 0xa1a1aa, block: 0xe4e4e7, cool2: 0xe4e4e7, grey: 0xc9c9d1 };
+const SKY = new THREE.Color(C.sky), ARCHC = new THREE.Color(C.arch), GLASS = new THREE.Color(0xcfe1f3);
+
+// ---------- renderer ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('gl').appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(C.paper); scene.fog = new THREE.Fog(C.paper, 30, 95);
+const camera = new THREE.PerspectiveCamera(35, W / H, .1, 2000);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xece4e2, 1.25));
+const sun = new THREE.DirectionalLight(0xffffff, 1.7); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 120 }); sun.shadow.bias = -.0005; sun.shadow.radius = 5;
+scene.add(sun, sun.target);
+
+// ---------- factories ----------
+const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: .55, metalness: 0, ...o });
+const glowM = (color, ei = .35, o = {}) => std(color, { emissive: color, emissiveIntensity: ei, ...o });
+const lineM = (color = C.ink, op = 1) => new THREE.LineBasicMaterial({ color, transparent: true, opacity: op });
+function edged(geo, mat, lcol = C.ink, lop = .8) { const m = new THREE.Mesh(geo, mat); m.castShadow = m.receiveShadow = true; m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), lineM(lcol, lop))); return m; }
+function glowTexture(rgb) {
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, `rgba(${rgb},.5)`); gr.addColorStop(.5, `rgba(${rgb},.14)`); gr.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+  const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; return tx;
+}
+// isometric-style stations: a grey plinth with a cube on it, and pale-blue pipes between them
+const PIPE = 0x9dbbe0;
+function plinth(w = 2.2, d = 2.2) { const m = edged(new RoundedBoxGeometry(w, .45, d, 3, .06), std(0xe4e4e7), 0xb4b4bf, .9); m.position.y = .225; return m; }
+function glyphTex(kind, ink) {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256; const g = cv.getContext('2d'); g.strokeStyle = g.fillStyle = ink; g.lineCap = g.lineJoin = 'round';
+  const star = (x, y, r) => { g.beginPath(); g.moveTo(x, y - r); g.quadraticCurveTo(x, y, x + r * .55, y); g.quadraticCurveTo(x, y, x, y + r); g.quadraticCurveTo(x, y, x - r * .55, y); g.quadraticCurveTo(x, y, x, y - r); g.fill(); };
+  if (kind === 'agent') { star(128, 128, 62); }
+  if (kind === 'term') { g.lineWidth = 16; g.beginPath(); g.moveTo(70, 92); g.lineTo(112, 128); g.lineTo(70, 164); g.stroke(); g.beginPath(); g.moveTo(130, 172); g.lineTo(186, 172); g.stroke(); }
+  if (kind === 'arc') { g.font = "700 64px 'Geist Mono'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ARC', 128, 132); }
+  const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace; tx.userData = { cv, kind, ink }; GLYPHS.push(tx); return tx;
+}
+const GLYPHS = [];
+function cube(kind, color, size = 1.3, ink = '#1f3a63', ei = .1) {
+  const g = new THREE.Group(), body = edged(new RoundedBoxGeometry(size, size, size, 4, size * .11), glowM(color, ei, { roughness: .45 }), 0xb4b4bf, kind === 'term' ? 0 : .5);
+  g.add(body); g.userData.body = body;
+  if (kind) { const tx = glyphTex(kind, ink), pg = new THREE.PlaneGeometry(size * .8, size * .8);
+    [[0, 1], [Math.PI / 2, 1], [Math.PI, 1], [-Math.PI / 2, 1]].forEach(([ry]) => { const pl = new THREE.Mesh(pg, new THREE.MeshBasicMaterial({ map: tx, transparent: true, depthWrite: false }));
+      pl.position.set(Math.sin(ry) * (size / 2 + .006), 0, Math.cos(ry) * (size / 2 + .006)); pl.rotation.y = ry; g.add(pl); }); }
+  return g;
+}
+function pipe(pts, r = .07) { const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => V(...p)), false, 'catmullrom', .05), 80, r, 12, false), std(PIPE, { roughness: .35 })); m.castShadow = true; scene.add(m); return m; }
+function walletSlab() { const g = new THREE.Group(); g.add(edged(new RoundedBoxGeometry(1.5, .78, 1.0, 3, .12), std(0xe9e9ec), 0xb4b4bf, .6));
+  const b = new THREE.Mesh(new RoundedBoxGeometry(.42, .2, .08, 2, .04), glowM(C.sky, .15)); b.position.set(.42, .02, .52); g.add(b); g.userData.button = b;
+  const b2 = b.clone(); b2.material = b.material; b2.rotation.y = Math.PI / 2; b2.position.set(.77, .02, -.2); g.add(b2); return g; }
+const STATIONS = []; // [group, visible from, visible to] on the authoring clock
+function station(x, z, a, b, w, d) { const g = new THREE.Group(); g.position.set(x, 0, z); g.add(plinth(w, d)); scene.add(g); STATIONS.push([g, a, b]); return g; }
+
+// the bundle card: a banknote with "$" — the transactions Aomi builds for the buyer
+const ICON_INK = { [C.sky4]: '#1f3a63', [C.sky]: '#ffffff', [C.grey]: '#3f3f46', [0x9ad8bb]: '#14532d' };
+const iconGeo = new THREE.PlaneGeometry(1.5, .95), iconCache = new Map(), tileGeo = new RoundedBoxGeometry(1.5, .95, .14, 4, .1);
+function drawIcon(cv, ink) {
+  const g = cv.getContext('2d'); g.clearRect(0, 0, 600, 380); g.strokeStyle = g.fillStyle = ink; g.lineWidth = 15; g.lineCap = 'round';
+  g.beginPath(); g.roundRect(95, 72, 410, 236, 22); g.stroke(); g.font = "600 150px 'Geist'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('$', 300, 200);
+  g.beginPath(); g.moveTo(410, 118); g.lineTo(460, 118); g.moveTo(140, 262); g.lineTo(190, 262); g.stroke();
+}
+function iconTex(color) {
+  if (!iconCache.has(color)) { const cv = document.createElement('canvas'); cv.width = 600; cv.height = 380; const ink = ICON_INK[color] || '#09090b'; drawIcon(cv, ink);
+    const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace; iconCache.set(color, { cv, tx, ink }); }
+  return iconCache.get(color).tx;
+}
+function makeCard(base = C.sky4) {
+  const g = new THREE.Group(), body = new THREE.Mesh(tileGeo, glowM(base, .22)); body.castShadow = true; g.add(body);
+  const planes = [.075, -.075].map((z, k) => { const pl = new THREE.Mesh(iconGeo, new THREE.MeshBasicMaterial({ map: iconTex(base), transparent: true, depthWrite: false })); pl.position.z = z; pl.rotation.y = k ? Math.PI : 0; g.add(pl); return pl; });
+  let cur = base;
+  g.userData.set = color => { if (color === cur) return; cur = color; body.material.color.setHex(color); body.material.emissive.setHex(color); planes.forEach(p => { p.material.map = iconTex(color); }); };
+  return g;
+}
+
+// ---------- world ----------
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.ShadowMaterial({ opacity: .09 })); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const grid = new THREE.GridHelper(1200, 600, C.cool2, C.cool2); grid.position.set(0, .002, -120); grid.material.transparent = true; grid.material.opacity = .35; scene.add(grid);
+// the Arc rail: one track the whole film runs along
+const routeGeo = new THREE.PlaneGeometry(.1, 1); routeGeo.rotateX(-Math.PI / 2); routeGeo.translate(0, .012, -.5);
+const route = new THREE.Mesh(routeGeo, new THREE.MeshBasicMaterial({ color: C.track })); route.position.z = 3; scene.add(route);
+
+// hero: the bundle card Aomi builds for the agent (it appears over the harness cube)
+const hero = new THREE.Group(); scene.add(hero);
+const card = makeCard(C.grey); hero.add(card);
+
+// S0 title: the lineup — Agent → Aomi harness → Wallet → Arc, with pipes, as in the Aomi isometric posts
+const LZ = [0, -4.2, -8.4, -12.6], TOP = .45 + .65;
+const lineup = new THREE.Group(); scene.add(lineup);
+LZ.forEach(z => { const p = plinth(); p.position.z = z; lineup.add(p); });
+const agentA = cube('agent', 0xececf0); agentA.position.set(0, TOP, LZ[0]); lineup.add(agentA);
+const harnA = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); harnA.position.set(0, TOP, LZ[1]); lineup.add(harnA);
+const walA = walletSlab(); walA.position.set(0, .45 + .39, LZ[2]); lineup.add(walA);
+const stackA = new THREE.Group(); stackA.position.set(0, .45, LZ[3]); lineup.add(stackA);
+for (let i = 0; i < 3; i++) { const b = edged(new RoundedBoxGeometry(1.2, .4, 1.2, 3, .06), std(0xdcdce1), 0xb4b4bf, .8); b.position.y = .2 + i * .43; stackA.add(b); }
+{ const top = cube('arc', 0x4f7fbf, 1.0, '#ffffff', .18); top.scale.y = .42; top.position.y = .2 + 3 * .43; stackA.add(top); }
+const lineupPipes = [pipe([[0, .95, LZ[0] - .66], [0, .95, LZ[1] + .66]]), pipe([[0, .9, LZ[1] - .66], [0, .9, LZ[2] + .76]]),
+  pipe([[0, 1.75, LZ[1]], [0, 2.35, LZ[1] - .2], [0, 2.45, LZ[1] - 1.6], [0, 2.45, LZ[3] + 1.4], [0, 2.4, LZ[3] + .2], [0, 2.0, LZ[3]]])];
+lineupPipes.forEach(m => { scene.remove(m); lineup.add(m); });
+const seal = new THREE.Mesh(new THREE.TorusGeometry(.2, .045, 10, 40), glowM(C.sky, .5)); seal.position.set(.55, .32, .1); card.add(seal);
+
+// S3 station: a house, a contractor, one visit
+const HZ = -20;
+const house = new THREE.Group(); house.position.set(-2.0, .45, HZ - .6); scene.add(house);
+const housePl = plinth(3.4, 3.2); housePl.position.set(-2.0, .225, HZ - .6); scene.add(housePl);
+{ const walls = edged(new THREE.BoxGeometry(2.4, 1.7, 2.2), std(C.block), 0xa1a1aa, .9); walls.position.y = .85; house.add(walls);
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(2.05, 1.1, 4, 1), std(C.arch)); roof.rotation.y = Math.PI / 4; roof.position.y = 2.25; roof.castShadow = true; house.add(roof);
+  const door = new THREE.Mesh(new THREE.BoxGeometry(.06, .95, .55), std(0x8c8a99)); door.position.set(1.22, .48, .2); house.add(door);
+  const win1 = new THREE.Mesh(new THREE.BoxGeometry(.06, .45, .45), std(0xcfe1f3, { emissive: C.sky, emissiveIntensity: .15 })); win1.position.set(1.22, 1.1, -.55); house.add(win1); }
+const person = new THREE.Group(); scene.add(person);
+{ const body = new THREE.Mesh(new THREE.CapsuleGeometry(.27, .62, 8, 20), glowM(C.sky4, .18)); body.position.y = .62; body.castShadow = true; person.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.23, 32, 20), glowM(C.sky4, .18)); head.position.y = 1.42; head.castShadow = true; person.add(head);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(.25, .25, .09, 24), std(C.arch)); cap.position.y = 1.58; person.add(cap);
+  const box = edged(new THREE.BoxGeometry(.34, .22, .5), std(C.arch), 0x71717a, .8); box.position.set(0, .3, .42); person.add(box); }
+const coin = new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, .06, 36), glowM(C.sky, .4)); coin.rotation.order = 'YXZ'; coin.castShadow = true; scene.add(coin);
+
+// S6 station: the harness, three venues, the internal fork of Arc
+const HAZ = -44.5, VZ = -49, FZ = -53.2;
+const AGZ = HAZ + 4.6;
+const agentSt = station(0, AGZ, 46, 60); const agentB = cube('agent', 0xececf0); agentB.position.y = TOP; agentSt.add(agentB);
+const harness = station(0, HAZ, 46, 60); const harnB = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); harnB.position.y = TOP; harness.add(harnB);
+const hMat = harnB.userData.body.material;
+const agentPipe = pipe([[0, .95, AGZ - .66], [0, .95, HAZ + .66]]); STATIONS.push([agentPipe, 46, 60]);
+const packet = new THREE.Mesh(new THREE.SphereGeometry(.13, 20, 14), glowM(C.sky, .6)); scene.add(packet);
+const VX = [-3.4, 0, 3.4];
+const venues = VX.map(x => { const st = station(x, VZ, 46, 60, 1.8, 1.8); const v = edged(new RoundedBoxGeometry(1.0, 1.0, 1.0, 3, .1), std(C.block, { emissive: C.sky, emissiveIntensity: 0 }), 0xa1a1aa, .9); v.position.y = .45 + .5; st.add(v); return st; });
+const minis = VX.map(() => { const m = makeCard(C.sky4); m.scale.setScalar(.4); scene.add(m); return m; });
+const fork = new THREE.Group(); fork.position.set(0, 0, FZ); scene.add(fork);
+{ const slab = new THREE.Mesh(new THREE.BoxGeometry(5.2, .16, 4.2), std(0xe8eef5, { transparent: true, opacity: .9 })); slab.position.y = .08; slab.receiveShadow = true; fork.add(slab);
+  const fe = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(5.2, .16, 4.2)), lineM(C.sky, .7)); fe.position.y = .08; fork.add(fe);
+  for (let i = -2; i <= 2; i++) { const l = new THREE.Mesh(new THREE.BoxGeometry(5.0, .005, .02), new THREE.MeshBasicMaterial({ color: 0xbcd0e6 })); l.position.set(0, .165, i * .8); fork.add(l); } }
+
+// S8b station: the buyer's wallet, and the Arc chain the bundle settles on
+const WZ = -64, CHZ = -71;
+const walletSt = station(0, WZ, 70, 999); const wallet = walletSlab(); wallet.position.y = .45 + .39; walletSt.add(wallet);
+const chainSt = station(0, CHZ, 70, 999);
+const chain = { blocks: [] };
+for (let i = 0; i < 4; i++) { const b = edged(new RoundedBoxGeometry(1.2, .4, 1.2, 3, .06), std(i === 3 ? C.sky : 0xdcdce1, { emissive: C.sky, emissiveIntensity: i === 3 ? .2 : 0 }), 0xb4b4bf, .8); b.position.y = .45 + .2 + i * .43; chainSt.add(b); chain.blocks.push(b); }
+const CH_TOP = .45 + .2 + 3 * .43; // where the new block lands
+// S11 station: the trust boundary — agent → harness → fingerprint; the harness cube is first unverified, then sealed in a glass TEE
+const T_PIPES = [], TZ = -92, GREEN = 0x2e9e6b, ROSEC3 = new THREE.Color(C.rose), BLUEC3 = new THREE.Color(0x4f7fbf);
+const tAgent = station(0, TZ + 4.4, 92, 999), tAgentCube = cube('agent', 0xececf0); tAgentCube.position.y = TOP; tAgent.add(tAgentCube);
+const tHarn = station(0, TZ, 92, 999), tCube = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); tCube.position.y = TOP; tHarn.add(tCube);
+const tOut = station(0, TZ - 4.4, 92, 999), tCard = makeCard(C.sky4); tCard.position.y = 1.55; tOut.add(tCard);
+[pipe([[0, .95, TZ + 4.4 - .66], [0, .95, TZ + .66]]), pipe([[0, .95, TZ - .66], [0, .95, TZ - 4.4 + .8]])].forEach(m => { STATIONS.push([m, 92, 999]); T_PIPES.push(m); });
+const glass = new THREE.Group(); tHarn.add(glass);
+const glassGeo = new THREE.BoxGeometry(2.0, 2.0, 2.0), glassMat = std(0xe8eef5, { transparent: true, opacity: .24, depthWrite: false, roughness: .1, emissive: GREEN, emissiveIntensity: 0 });
+glass.add(new THREE.Mesh(glassGeo, glassMat)); const glassEdge = new THREE.LineSegments(new THREE.EdgesGeometry(glassGeo), lineM(C.arch, .95)); glass.add(glassEdge);
+const lidBar = new THREE.Mesh(new THREE.BoxGeometry(2.06, .08, 2.06), std(C.arch, { emissive: GREEN, emissiveIntensity: 0 })); lidBar.position.y = 1.0; glass.add(lidBar);
+
+// outro: built from the trust scene's own objects — the harness cube and the fingerprint card become the mark's big ring,
+// the agent cube its small ring — seen from above, then handed over to the real logo
+const OC = V(0, 0, TZ), MK = 4.4 / 362; // world units per logo unit (the mark is 362 units across)
+const outroG = new THREE.Group(); outroG.position.copy(OC); scene.add(outroG);
+const INKC = new THREE.Color(0x000000); // lit black reads as the logo's ink
+const SRC = { harn: V(0, TOP, 0), card: V(0, 1.55, -4.4), agent: V(0, TOP, 4.4) }; // in outroG's frame
+// the mark's big ring as small cubes along its centreline (r = 155 logo units), leaving the notch where the small ring sits
+const L2W = (u, v) => [(u - 181) * MK, (v - 181) * MK], SMALL = L2W(267.765, 94.235);
+const RING = Array.from({ length: 13 }, (_, i) => { const a = deg(lerp(13, 257, i / 12)), r = 155.1 * MK, base = i % 3 === 1 ? 0x9ad8bb : 0x4f7fbf;
+  const m = edged(new RoundedBoxGeometry(.62, .62, .62, 3, .08), std(base, { emissive: 0x4f7fbf, emissiveIntensity: base === 0x4f7fbf ? .15 : 0 }), 0xb4b4bf, .5); outroG.add(m);
+  return { m, base: new THREE.Color(base), x: r * Math.cos(a), z: r * Math.sin(a), ry: -a, src: i % 3 === 1 ? SRC.card : SRC.harn, at: O + 1.0 + i * .06 }; });
+// the small ring as smaller cubes along its centreline (r = 74 logo units); they come out of the agent cube
+const SRING = Array.from({ length: 8 }, (_, i) => { const a = deg(-90 + i * 45), r = 74.1 * MK;
+  const m = edged(new RoundedBoxGeometry(.46, .46, .46, 3, .06), std(0xececf0), 0xb4b4bf, .5); outroG.add(m);
+  return { m, base: new THREE.Color(0xececf0), x: SMALL[0] + r * Math.cos(a), z: SMALL[1] + r * Math.sin(a), ry: -a, h: .23, src: SRC.agent, at: O + 1.25 + i * .06 }; });
+RING.forEach(r => { r.h = .31; r.grow = [.63 / .62, .80 / .62]; });
+SRING.forEach(r => { r.grow = [.50 / .46, .80 / .46]; }); // [radial, along the ring]: the ring's thickness, and its outer chord between neighbours
+const CUBES = [...RING, ...SRING];
+let MARK_CY = 540; const MARK_S = 3.6; // the logo is drawn this large over the squares, then shrinks into the lockup // the logo's screen centre once the lockup is laid out (measured after fonts load)
+
+const chainPipe = pipe([[0, 1.2, WZ - .76], [0, 1.2, CHZ + .66]]); STATIONS.push([chainPipe, 70, 999]);
+
+// ---------- camera ----------
+const CK = [
+  [0, [14.0, 9.0, 3.2], [0, 2.3, -6.6]],
+  [3.0, [13.2, 8.4, 2.6], [0, 2.1, -6.4]],
+  [4.4, [4.4, 2.5, 4.4], [0, 1.1, 0]],
+  [20.8, [8.6, 3.9, HZ + 9.5], [-.4, 1.4, HZ]],
+  [28.0, [6.9, 3.1, HZ + 7.2], [-.4, 1.3, HZ - .2]],
+  [48.0, [8.6, 4.2, HAZ + 8], [0, 1.4, HAZ + 1.5]],
+  [50.6, [11.5, 6.0, HAZ + 5], [0, 1.0, HAZ - 3]],
+  [53.2, [11.0, 6.2, VZ + 3.8], [0, 1.0, VZ - 2]],
+  [57.8, [10.4, 6.6, FZ + 6.2], [0, .9, FZ - .6]],
+  [74.0, [7.0, 3.2, WZ + 6], [0, 1.4, WZ + 1]],
+  [76.4, [7.2, 3.4, WZ + 1.5], [-.4, 1.4, WZ - 3]],
+  [80.4, [7.8, 3.9, CHZ + 5.4], [0, 1.4, CHZ - .6]],
+  [93.4, [12.0, 6.2, TZ + 6.4], [0, 1.2, TZ - .8]],
+  [101.6, [10.6, 5.5, TZ + 5.6], [0, 1.3, TZ - .8]],
+  [DUR, [10.6, 5.5, TZ + 5.6], [0, 1.3, TZ - .8]]];
+const camPos = new THREE.CatmullRomCurve3(CK.map(k => V(...k[1])), false, 'centripetal');
+const camTgt = new THREE.CatmullRomCurve3(CK.map(k => V(...k[2])), false, 'centripetal');
+const rawU = t => { t = cl(t, 0, DUR); for (let i = 0; i < CK.length - 1; i++) if (t <= CK[i + 1][0]) return i + seg(t, CK[i][0], CK[i + 1][0]); return CK.length - 1; };
+const camU = t => { let s = 0; for (let i = 0; i < 17; i++) s += rawU(t + (i / 16 - .5) * 1.5); return s / 17 / (CK.length - 1); };
+// [flatten start, flat, unflatten start, 3D again, fixed target (default: the hero), half-height]
+const FLAT = [[4.6, 5.4, 6, 6.5, V(0, TOP, 0)], [5.3, 5.4, 20.6, 21.4, V(-.4, 1.4, HZ)], [26.8, 27.6, 29.2, 29.6, V(-.4, 1.4, HZ)], [28.8, 29.0, 47.6, 48.4, V(0, TOP, HAZ + 4.6)],
+  [58.0, 58.8, 73.4, 74.2], [80.6, 81.4, 81.8, 82.2], [81.4, 81.6, 93.0, 93.8, V(0, TOP, TZ)]];
+const FLAT2D = [[4.9, 20.8], [27.4, 47.8], [58.6, 73.6], [81.2, 93.2]];
+function flatAt(t) { let best = { k: 0 }; for (const [a, b, c, d, tg, half] of FLAT) { const k = eio(seg(t, a, b)) * (1 - eio(seg(t, c, d))); if (k > best.k) best = { k, tg, half: half || 4.5 }; } return best; }
+
+// hero route: it moves only while hidden or while the 2D layer is opaque
+const HK = [[0, [0, 2.75, HAZ]], [53.4, [0, 2.75, HAZ]], [54.6, [0, .8, FZ]], [62, [0, .8, FZ]], [66, [0, 1.7, WZ + 4]], [74.4, [0, 1.7, WZ + 4]],
+  [75.6, [0, 1.95, WZ]], [77.2, [0, 1.95, WZ]], [78.2, [0, CH_TOP + 1.2, CHZ]]];
+
+// ---------- DOM labels anchored to 3D points ----------
+const labels = [];
+function label(html, cls, pos, a, b) { const el = document.createElement('div'); el.className = 'lbl ' + (cls || ''); el.innerHTML = html; document.getElementById('labels').appendChild(el); const L = { el, pos, a, b }; labels.push(L); return L; }
+// S0 lineup
+[['Agent', '', 0], ['Aomi harness', ' s', 1], ['Wallet', '', 2], ['Arc', ' s', 3]].forEach(([s_, c, i]) => label(s_, 'tagw' + c, V(0, i % 2 ? 3.3 : 2.75, LZ[i]), .5 + i * .3, 3.6));
+// S3
+const jobL = label('✓ good job?', 'big', V(-2.0, 4.0, HZ - .6), 24.6, 27.2);
+label('one visit', 'zone', V(1.6, 0, HZ - .4), 22.6, 27.2);
+const paidL = label('paid ✓', 'rule ok', () => coin.position.clone().add(V(0, .5, 0)), 24.2, 27.2);
+// S6
+label('agent', 'zone', V(0, 2.4, AGZ), 48.6, 53.6);
+label('Aomi harness', 'zone s', V(0, 3.75, HAZ), 48.8, 53.6);
+['StableFX RFQ', 'EURC / USDC pool', 'JPYC / USDC pool'].forEach((s, i) => label(s, 'zone', V(VX[i], 2.0, VZ), 50.8, 53.9));
+label('internal fork of Arc', 'zone s', V(-2.6, .3, FZ + 2.2), 53.4, 58.2);
+const RULES = [['fill ≤ 15 bps of mid', V(-1.5, 2.6, FZ - 2.4)], ['USDC ≥ 25,000', V(-1.5, 2.6, FZ + 2.3)], ['approvals ⊆ 3 contracts', V(2.2, 1.6, FZ - 2.6)], ['gas ≤ 0.5 USDC', V(2.2, 1.6, FZ + 2.5)], ['revert all if a leg fails', V(-2.6, 3.6, FZ)]]
+  .map(([s, p], i) => ({ s, L: label(s, 'rule', p, 54.6, 58.2), at: 55.0 + i * .45 }));
+const mxnbL = label('MXNB · skipped · 19 bps', 'rule amb', V(2.6, .6, FZ), 57.0, 58.2);
+// S8b
+label('buyer wallet', 'zone', V(0, .1, WZ + 1.6), 74.4, 81);
+const signL = label('signs · broadcasts', 'rule', V(0, 3.0, WZ + .4), 75.4, 81);
+label('Aomi · no keys · no funds', 'rule', V(-2.4, 3.4, WZ - 3.4), 76.6, 81);
+label('settled on Arc', 'rule ok', V(0, 3.4, CHZ), 78.6, 81);
+label('faster · more reliable · fewer tokens', 'zone s', V(0, .1, CHZ + 1.8), 79.4, 81);
+
+// S11
+label('agent', 'zone', V(0, 2.4, TZ + 4.4), 93.8, 101.4);
+label('Aomi simulation runtime', 'zone s', V(0, 3.6, TZ), 94.4, 101.4);
+label('fingerprint', 'zone', V(0, 2.65, TZ - 4.4), 93.8, 101.4);
+label('ran honestly?', 'big bad', V(0, 2.9, TZ + .2), 96.4, 98.9);
+label('🔒 TEE · attested execution', 'rule okg', V(0, 2.75, TZ + .2), 99.0, 101.4);
+label('✓ trustless service purchase', 'zone g', V(2.4, .1, TZ - 3.4), 99.8, 101.4);
+const CHAPTERS = [['A person hires a contractor', 21.6, 27.0], ['Harness · build, then simulate on a fork', 48.6, 58.0], ['The buyer executes', 74.4, 80.6], ['The remaining trust boundary', 93.6, 101.4]];
+const hud = document.getElementById('hud');
+const chapEls = CHAPTERS.map(([txt]) => { const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `<i></i>${txt}`; hud.appendChild(d); return d; });
+
+// ---------- the intent (S5), typed out word by word ----------
+const INTENT = [
+  ['Rebalance treasury 0x7a3…e91 on Arc so that by the end it holds ', -1], ['40% USDC, 30% EURC, 15% JPYC and 15% MXNB', 0],
+  [' at the StableFX mid at fork block, by selling down the current 62% USDC position in at most three legs, routing EURC through StableFX RFQ first and falling back to the Arc EURC/USDC pool only if the quote is worse by more than 4 bps, sourcing JPYC and MXNB from whichever pool or RFQ fills ', -1],
+  ['inside 15 bps of mid', 1], [' and skipping either leg rather than paying more, ', -1], ['keeping at least 25,000 USDC liquid for payroll on Friday', 2],
+  [', approving only the StableFX settlement contract and the two named pools, spending no more than 0.5 USDC in gas, finishing inside ten minutes, ', -1],
+  ['and reverting the whole batch if any leg reverts', 3], [', then returning the outcome fingerprint for review before anything is signed.', -1]];
+const HL_AT = [43.2, 44.0, 44.8, 45.6], TYPE = [38.6, 42.6];
+const intentEl = document.getElementById('intent'), exEl = document.getElementById('ex'), words = [], hls = [];
+{ const body = intentEl.querySelector('.body');
+  INTENT.forEach(([s, h]) => { const host = h >= 0 ? Object.assign(document.createElement('span'), { className: 'hl' }) : body; if (h >= 0) { body.appendChild(host); hls[h] = host; }
+    s.split(/(\s+)/).forEach(w => { if (!w) return; const sp = document.createElement('span'); sp.textContent = w; host.appendChild(sp); if (w.trim()) words.push(sp); }); }); }
+function seekIntent(t) {
+  const o = win(t, 38.2, 47.0, .4); intentEl.style.opacity = o; intentEl.style.transform = `translateY(${(1 - eout(seg(t, 38.2, 38.8))) * 16}px) scale(${lerp(1, .9, eio(seg(t, 46.4, 47.0)))})`;
+  exEl.style.opacity = win(t, 39.0, 47.0, .4);
+  const n = Math.floor(seg(t, TYPE[0], TYPE[1]) * words.length);
+  words.forEach((w, i) => { w.style.opacity = i < n ? 1 : 0; });
+  hls.forEach((h, i) => h.classList.toggle('on', t >= HL_AT[i]));
+}
+
+// ---------- 2D layer ----------
+const svg = document.getElementById('flat'), NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent = svg) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
+const tf = (e, x, y, s = 1, r = 0) => e.setAttribute('transform', `translate(${x} ${y}) rotate(${r}) scale(${tiny(s)})`);
+const op = (e, o) => e.setAttribute('opacity', cl(o).toFixed(3));
+const F = { head: "700 46px 'PT Serif',serif", sub: "italic 400 25px 'PT Serif',serif", mono: "500 19px 'Geist Mono',monospace", code: "400 19px 'Geist Mono',monospace",
+  lab: "600 16px 'Geist Mono',monospace", ui: "500 22px 'Geist',sans-serif", uiS: "400 19px 'Geist',sans-serif", uiB: "600 30px 'Geist',sans-serif", big: "600 40px 'Geist',sans-serif" };
+const INK = '#09090b', MUTED = '#71717a', SKYC = '#5288c2', SKY2 = '#416cac', ROSEC = '#df5d90', AMB = '#d9982b', AMB2 = '#8a5a0f', GREY = '#a1a1aa';
+function T(p, s, x, y, font, fill = INK, anchor = 'start', ls = 0) { const e = el('text', { x, y, fill, 'text-anchor': anchor, style: `font:${font};letter-spacing:${ls}em;white-space:pre` }, p); e.textContent = s; return e; }
+function B(p, x, y, w, h, o = {}) { return el('rect', { x, y, width: w, height: h, rx: o.rx ?? 14, fill: o.fill ?? '#ffffff', stroke: o.stroke ?? INK, 'stroke-width': o.sw ?? 2, ...(o.dash ? { 'stroke-dasharray': o.dash } : {}) }, p); }
+const DRAWS = [], REVS = [], SCENES = [], CUSTOM = [];
+function drawable(tag, attrs, parent, arrow, a, b) { const e = el(tag, { fill: 'none', ...attrs, pathLength: 1, 'stroke-dasharray': 1, 'stroke-dashoffset': 1 }, parent); DRAWS.push({ e, arrow, a, b }); return e; }
+const COLS = { ink: INK, sky: SKYC, rose: ROSEC, grey: GREY }, HEADS = { ink: 'ahInk', sky: 'ahSky', rose: 'ahRose', grey: 'ahGrey' };
+const arrow = (p, d, a, color = 'ink', w = 2.5) => drawable('path', { d, stroke: COLS[color], 'stroke-width': w, 'stroke-linecap': 'round' }, p, HEADS[color], a, a + .5);
+function rv(p, a, b = 0, dy = 14) { const g = el('g', {}, p); REVS.push({ g, a, b, dy }); return g; }
+function scn(a, b) { const g = el('g', {}, layer); SCENES.push({ g, a, b }); return g; }
+const fits = [];
+const PK = { ink: ['#ffffff', INK, INK], sky: ['#f1f7fc', SKY2, SKYC], skyS: [SKYC, '#ffffff', SKYC], rose: ['#fdf2f7', ROSEC, ROSEC], amb: ['#fdf4e3', AMB2, AMB], grey: ['#f4f4f5', INK, '#d4d4d8'], dark: ['#18181b', '#ffffff', '#18181b'] };
+function chip(p, s, x, cy, kind = 'ink', o = {}) {
+  const [fill, color, stroke] = PK[kind], h = o.h || 40, font = o.font || F.mono;
+  const g = el('g', {}, p), r = el('rect', { x, y: cy - h / 2, height: h, rx: o.rx ?? h / 2, fill, stroke, 'stroke-width': 1.8, ...(kind === 'rose' ? { 'stroke-dasharray': '6 5' } : {}) }, g);
+  const t = el('text', { x: x + h * .45, y: cy + h * .17, fill: color, style: `font:${font};white-space:pre` }, g); t.textContent = s;
+  const c = { g, r, t, x, w: 0, pad: h * .45, place(nx) { this.x = nx; r.setAttribute('x', nx); t.setAttribute('x', nx + this.pad); } };
+  fits.push(() => { c.w = t.getComputedTextLength() + c.pad * 2; r.setAttribute('width', c.w); if (o.anchor === 'middle') c.place(x - c.w / 2); if (o.anchor === 'end') c.place(x - c.w); });
+  return c;
+}
+const layer = el('g');
+const heading = (g, a, title, sub, b = 0) => { const p = rv(g, a, b); T(p, title, 96, 178, F.head); if (sub) T(p, sub, 96, 220, F.sub, MUTED); };
+// the agent as a small isometric cube (as on the posts)
+const cubeIcon = (p, x, y, r = 20) => { const g = el('g', { transform: `translate(${x} ${y}) scale(${r / 12})` }, p);
+  el('path', { d: 'M0 -12L11 -6L0 0L-11 -6Z', fill: '#f4f4f5', stroke: GREY, 'stroke-width': .8 }, g); el('path', { d: 'M-11 -6L0 0V13L-11 7Z', fill: '#d4d4d8', stroke: GREY, 'stroke-width': .8 }, g);
+  el('path', { d: 'M11 -6L0 0V13L11 7Z', fill: '#e4e4e7', stroke: GREY, 'stroke-width': .8 }, g); el('path', { d: 'M5.5 1.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z', fill: '#1f3a63' }, g); };
+// a node in the exchange triangle
+function node(p, cx, cy, kicker, name, o = {}) {
+  B(p, cx - 170, cy - 74, 340, 148, { rx: 22, fill: o.fill ?? '#ffffff', stroke: o.stroke ?? INK, sw: o.sw ?? 2 });
+  if (o.orb) cubeIcon(p, cx - 108, cy, 24);
+  const tx = o.orb ? cx - 70 : cx, an = o.orb ? 'start' : 'middle';
+  T(p, kicker, tx, cy - 14, F.lab, o.kc ?? MUTED, an, .16); T(p, name, tx, cy + 26, "600 28px 'Geist',sans-serif", INK, an);
+}
+// the Arc rail under the triangle
+function rail(p, label) { B(p, 250, 742, 1420, 28, { rx: 14, fill: '#e4e4e7', stroke: 'none', sw: 0 }); T(p, label, 960, 812, F.lab, MUTED, 'middle', .16); }
+// a dot that rides a polyline between two times
+const RIDERS = [];
+function rider(p, pts, a, b, draw) { const g = el('g', {}, p); draw(g); RIDERS.push({ g, pts, a, b }); return g; }
+const coin2D = (lbl, kind = 'skyS') => g => { el('circle', { r: 20, fill: SKYC, stroke: '#fff', 'stroke-width': 3 }, g); T(g, '$', 0, 8, "700 22px 'Geist',sans-serif", '#fff', 'middle'); if (lbl) chip(g, lbl, 30, 0, kind, { h: 34, font: "500 17px 'Geist Mono',monospace" }); };
+
+// -- S1–S2: x402 over data, then over a service --------------------------------------------------------
+const BX = 400, SX = 1520, NY = 470;
+{
+  const g = scn(5.4, 20.6);
+  heading(g, 5.6, 'Why it matters', 'x402 already settles fair exchange over data, with the chain in between.', 13.6);
+  heading(g, 13.9, 'Now buy a service', 'The outcome of the work can’t be checked before it’s delivered.');
+  node(rv(g, 5.9), BX, NY, 'BUYER', 'Agent', { orb: true });
+  node(rv(g, 6.2), SX, NY, 'SELLER', 'API');
+  rail(rv(g, 6.5), 'ARC · NEUTRAL SETTLEMENT RAIL');
+  // request, 402, pay along the rail, deliver
+  arrow(g, `M${BX + 180} 410H${SX - 190}`, 7.0, 'ink'); T(rv(g, 7.1), 'GET /fx-rates', 960, 394, F.mono, INK, 'middle');
+  arrow(g, `M${SX - 180} 462H${BX + 190}`, 7.8, 'ink'); chip(rv(g, 7.9), '402 · pay 0.01 USDC', 960, 462, 'sky', { anchor: 'middle', h: 36 });
+  drawable('path', { d: `M${BX} ${NY + 78}V742M${SX} 742V${NY + 78}`, stroke: '#d4d4d8', 'stroke-width': 2, 'stroke-dasharray': '1' }, g, null, 8.4, 8.8);
+  rider(g, [[BX, NY + 78], [BX, 756], [SX, 756], [SX, NY + 78]], 8.6, 9.8, coin2D('USDC'));
+  const dataArrow = rv(g, 10.0, 13.8, 0); arrow(dataArrow, `M${SX - 180} 520H${BX + 190}`, 10.0, 'sky', 3);
+  const packet = rider(g, [[SX - 230, 520], [BX + 250, 520]], 10.2, 11.0, pg => chip(pg, 'data ✓', 0, 0, 'skyS', { anchor: 'middle', h: 38 }));
+  CUSTOM.push(t => op(packet, seg(t, 10.1, 10.3) * (1 - seg(t, 13.6, 13.9))));
+  const glow = rv(g, 11.8, 13.6, 0); B(glow, 244, 736, 1432, 40, { rx: 20, fill: 'none', stroke: SKYC, sw: 3 }); chip(glow, '✓ neither side trusts the other', 960, 690, 'sky', { anchor: 'middle' });
+  // S2: a service instead of data
+  const svc = rv(g, 14.0); B(svc, SX - 120, 560, 240, 70, { rx: 14, fill: '#fafafa', stroke: GREY, dash: '8 6' }); T(svc, 'service', SX, 604, F.ui, MUTED, 'middle');
+  const dash = rv(g, 14.4, 0, 0); el('path', { d: `M${SX - 180} 520H${BX + 190}`, stroke: GREY, 'stroke-width': 2.5, 'stroke-dasharray': '10 9', fill: 'none', 'marker-end': 'url(#ahGrey)' }, dash);
+  B(dash, 930, 496, 60, 48, { rx: 24, fill: '#fff', stroke: GREY }); T(dash, '?', 960, 529, "700 28px 'Geist',sans-serif", MUTED, 'middle');
+  chip(rv(g, 15.4), 'outcome not verifiable before delivery', 960, 640, 'rose', { anchor: 'middle', h: 46, font: "500 22px 'Geist Mono',monospace" });
+}
+
+// -- S4: two loops — the human economy breaks, the agent economy checks first --------------------------
+const arcPath = (cx, cy, r, a0, a1) => { const p = a => [cx + r * Math.cos(deg(a)), cy + r * Math.sin(deg(a))]; const [x0, y0] = p(a0), [x1, y1] = p(a1); return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
+const LOOP_DOT = [];
+{
+  const g = scn(28.8, 37.4);
+  heading(g, 29.0, 'Can machines do better?', 'A machine’s service is the output of data processing, so the outcome can be checked first.');
+  const R = 175, L = [520, 560], Rr = [1400, 560];
+  const loopDot = el('circle', { r: 8, fill: SKYC, opacity: 0 }, g);
+  // human loop: pay → work → check quality (only after paying) ✗
+  const hl = rv(g, 29.4); T(hl, 'HUMAN ECONOMY', L[0], 330, F.lab, MUTED, 'middle', .16);
+  el('circle', { cx: L[0], cy: L[1], r: R, fill: 'none', stroke: '#f0f0f2', 'stroke-width': 18 }, hl);
+  [['pay', -90], ['work', 30], ['check quality', 150]].forEach(([s, a], i) => { const x = L[0] + R * Math.cos(deg(a)), y = L[1] + R * Math.sin(deg(a)); chip(rv(g, 29.6 + i * .3), s, x, y, 'ink', { anchor: 'middle', h: 44, font: F.ui }); });
+  drawable('path', { d: arcPath(L[0], L[1], R, -66, 4), stroke: INK, 'stroke-width': 2.5 }, g, 'ahInk', 29.9, 30.5);
+  drawable('path', { d: arcPath(L[0], L[1], R, 196, 254), stroke: GREY, 'stroke-width': 2.5 }, g, 'ahGrey', 30.4, 30.9);
+  drawable('path', { d: arcPath(L[0], L[1], R, 52, 110), stroke: ROSEC, 'stroke-width': 3.5 }, g, 'ahRose', 31.0, 31.6);
+  const x = rv(g, 31.8, 0, 0), xp = [L[0] + R * Math.cos(deg(81)), L[1] + R * Math.sin(deg(81))];
+  el('circle', { cx: xp[0], cy: xp[1], r: 30, fill: '#fff', stroke: ROSEC, 'stroke-width': 3 }, x); el('path', { d: `M${xp[0] - 11} ${xp[1] - 11}l22 22M${xp[0] + 11} ${xp[1] - 11}l-22 22`, stroke: ROSEC, 'stroke-width': 4.5, 'stroke-linecap': 'round' }, x);
+  T(rv(g, 32.0), 'quality is known only after you pay', L[0], 822, F.uiS, ROSEC, 'middle');
+  // agent loop: run → proof → pay → deliver ✓
+  const al = rv(g, 32.5); T(al, 'AGENT ECONOMY', Rr[0], 330, F.lab, SKY2, 'middle', .16);
+  el('circle', { cx: Rr[0], cy: Rr[1], r: R, fill: 'none', stroke: '#eef4fa', 'stroke-width': 18 }, al);
+  [['run', -90, 32.7], ['proof', 0, 32.9], ['pay', 90, 33.1], ['deliver', 180, 33.3]].forEach(([s, a, at], i) => {
+    const x = Rr[0] + R * Math.cos(deg(a)), y = Rr[1] + R * Math.sin(deg(a)); chip(rv(g, at), s, x, y, i === 1 ? 'skyS' : 'sky', { anchor: 'middle', h: 44, font: F.ui });
+    if (i < 3) drawable('path', { d: arcPath(Rr[0], Rr[1], R, a + 22, a + 68), stroke: SKYC, 'stroke-width': 3 }, g, 'ahSky', at + .08, at + .28); });
+  drawable('path', { d: arcPath(Rr[0], Rr[1], R, 202, 248), stroke: SKYC, 'stroke-width': 3 }, g, 'ahSky', 33.38, 33.58);
+  const ok = rv(g, 33.6, 0, 0); el('circle', { cx: Rr[0], cy: Rr[1], r: 34, fill: SKYC }, ok); el('path', { d: `M${Rr[0] - 14} ${Rr[1] + 1}l9 10l19 -22`, stroke: '#fff', 'stroke-width': 5, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, ok);
+  T(rv(g, 33.7), 'the outcome is checked before payment', Rr[0], 822, F.uiS, SKY2, 'middle');
+  LOOP_DOT.push({ d: loopDot, c: Rr, R, a: 33.7, b: 37.4 });
+}
+
+// -- S5: the Task API receives one intent (the message itself is the DOM card #intent) ------------------
+{
+  const g = scn(37.4, 47.6);
+  heading(g, 37.6, 'Aomi Task API', 'One intent, written the way agents brief each other.', 46.4);
+}
+
+// -- S7: the outcome fingerprint --------------------------------------------------------------------------
+const JSON_LINES = [
+  ['{', 0], ['"quoteId": "tq_8f3c91",', 1], ['"requestHash": "0x91ab…e04c",', 1], ['"payloadHash": "0x4e07…b2d1",', 1], ['"summary": {', 1],
+  ['"source": { "chainId": 5042, "forkBlock": 1284903 },', 2], ['"effects": [', 2],
+  ['{ "token": "USDC", "delta": "-22,000.00" },', 3, 'usdc'], ['{ "token": "EURC", "delta": "+11,204.30", "via": "stablefx" },', 3, 'in'],
+  ['{ "token": "JPYC", "delta": "+1,349,820", "via": "arc-pool" },', 3, 'in'], ['{ "token": "MXNB", "delta": "0", "skipped": "fill 19bps > 15bps" }', 3, 'mxnb'],
+  ['],', 2], ['"constraints": [', 2], ['{ "id": "fill<=15bps", "status": "passed" },', 3, 'c'], ['{ "id": "usdc>=25000", "status": "passed" },', 3, 'c'],
+  ['{ "id": "gas<=0.5usdc", "status": "passed" }', 3, 'c'], [']', 2], ['},', 1], ['"pricing": { "retrieval": "3% of USDC out" },', 1], ['"expiresAt": "+5 min"', 1], ['}', 0]];
+{
+  const g = scn(58.8, 66.6);
+  heading(g, 59.0, 'Outcome fingerprint', 'The signed preview: what the bundle will do, measured on the fork.');
+  const cardG = rv(g, 59.2); B(cardG, 150, 252, 1060, 640, { rx: 20, fill: '#fbfbfc', stroke: '#d4d4d8', sw: 1.5 });
+  const LH = 28.4, X0 = 186, Y0 = 290, HL = { usdc: [60.6, 'sky'], in: [61.2, 'sky'], c: [61.8, 'sky'], mxnb: [63.0, 'amb'] };
+  JSON_LINES.forEach(([s, ind, kind], i) => {
+    const y = Y0 + i * LH, p = rv(g, 59.4 + i * .045, 0, 4);
+    if (kind) { const [at, k] = HL[kind], bar = rv(p, kind === 'c' ? at + (i - 13) * .2 : at, 0, 0);
+      el('rect', { x: X0 - 14, y: y - 20, width: 1000, height: LH, rx: 6, fill: k === 'amb' ? '#fdf4e3' : '#e7f0f9' }, bar);
+      if (kind === 'c') { T(bar, '✓', 1170, y, "700 20px 'Geist',sans-serif", SKYC, 'middle'); }
+      if (kind === 'mxnb') { T(bar, '!', 1170, y, "700 20px 'Geist',sans-serif", AMB, 'middle'); } }
+    const tx = el('text', { x: X0 + ind * 26, y, style: `font:${F.code};white-space:pre` }, p);
+    const parts = s.split(/("[^"]*")/); // keys ink, string values sky, punctuation muted
+    parts.forEach((part, j) => { if (!part) return; const key = part.startsWith('"') && /^\s*:/.test(parts[j + 1] || ''); const sp = el('tspan', { fill: !part.startsWith('"') ? MUTED : key ? INK : SKY2 }, tx); sp.textContent = part; });
+  });
+  // right column: who signed it, what it cost so far, and what it touched
+  const sg = rv(g, 59.8); B(sg, 1280, 260, 500, 170, { rx: 20, fill: '#f1f7fc', stroke: SKYC });
+  { const m = el('g', { transform: 'translate(1316 300) scale(.25)' }, sg); el('path', { d: 'M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z', fill: INK }, m);
+    el('path', { d: 'M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z', fill: INK }, m); }
+  T(sg, 'SIGNED BY AOMI', 1430, 330, F.lab, SKY2, 'start', .16); T(sg, 'request · payer · price', 1430, 366, F.uiS, INK); T(sg, '· bundle hash, bound', 1430, 394, F.uiS, INK);
+  const c1 = rv(g, 64.0); B(c1, 1280, 470, 500, 120, { rx: 20 }); T(c1, 'COST SO FAR', 1310, 508, F.lab, MUTED, 'start', .16); T(c1, '0.01 USDC', 1310, 560, F.big, INK); T(c1, 'to prepare', 1560, 560, F.uiS, MUTED);
+  const c2 = rv(g, 64.8); B(c2, 1280, 630, 500, 120, { rx: 20 }); T(c2, 'BUYER WALLET', 1310, 668, F.lab, MUTED, 'start', .16); T(c2, 'untouched', 1310, 720, F.big, SKY2); T(c2, 'nothing signed yet', 1530, 720, F.uiS, MUTED);
+}
+
+// -- S8a: the buyer decides, pays 3% over x402, gets the bundle ----------------------------------------
+{
+  const g = scn(66.6, 73.4);
+  heading(g, 66.8, 'Outcome-based pricing, over x402', 'The fee follows what the bundle does, not how hard it was to build.');
+  node(rv(g, 67.0), BX, NY, 'BUYER', 'Treasury agent', { orb: true });
+  node(rv(g, 67.2), SX, NY, 'SELLER', 'Aomi Task API', { fill: '#f1f7fc', stroke: SKYC, kc: SKY2 });
+  rail(rv(g, 67.3), 'ARC · USDC');
+  rider(g, [[SX - 200, 410], [BX + 250, 410]], 67.4, 68.2, pg => chip(pg, '{ } fingerprint · free to inspect', 0, 0, 'grey', { anchor: 'middle', h: 38 }));
+  chip(rv(g, 68.6), '✓ take it', BX, 352, 'skyS', { anchor: 'middle' });
+  arrow(g, `M${SX - 180} 470H${BX + 190}`, 69.0, 'ink'); chip(rv(g, 69.2), '402 · 3% of USDC out = 660 USDC', 960, 470, 'sky', { anchor: 'middle', h: 38 });
+  drawable('path', { d: `M${BX} ${NY + 78}V742M${SX} 742V${NY + 78}`, stroke: '#d4d4d8', 'stroke-width': 2 }, g, null, 69.6, 69.9);
+  rider(g, [[BX, NY + 78], [BX, 756], [SX, 756], [SX, NY + 78]], 69.8, 70.8, coin2D('660 USDC'));
+  T(rv(g, 71.4), 'full bundle · unsigned', 960, 600, F.mono, SKY2, 'middle');
+}
+
+// -- S9: watch it live — a real Task API purchase on Arc Mainnet (23 Oct 2026, staging endpoint) ----------
+// Where the screen capture is clear, live-overlay.mjs lays Cecilia's footage over the window's text area (LIVE windows).
+// Where the capture went black, the window is rebuilt from the run's own terminal output (research/live-log.js).
+const TW = { x: 410, y: 245, w: 1100, h: 710, s: 1100 / 1192 };          // the Terminal window, scaled from the 1192 px capture
+const LIVE = { A: [82.0, 83.6], B: [86.6, 89.0] };                        // film windows covered by footage (live-overlay.mjs reads these)
+const TAU = [[81.6, 0], [83.6, 6.6], [84.2, 33.7], [84.8, 34.5], [85.8, 38.9], [86.6, 44.2], [89.0, 49]]; // film → log seconds
+const LOG = window.LIVE_LOG || [];
+const TROWS = LOG.flatMap(([lt, col, text]) => { const out = []; for (let i = 0; i < Math.max(1, text.length); i += 80) out.push({ lt, col, text: text.slice(i, i + 80) }); return out; });
+const TERM_ROWS = [];
+const termTau = t => { if (t <= TAU[0][0]) return 0; for (let i = 0; i < TAU.length - 1; i++) { const [a, la] = TAU[i], [b, lb] = TAU[i + 1]; if (t <= b) return lerp(la, lb, seg(t, a, b)); } return TAU.at(-1)[1]; };
+{
+  const g = scn(81.4, 89.4), s = TW.s, X = v => TW.x + (v - 113) * s, Y = v => TW.y + (v - 76) * s;
+  heading(g, 81.6, 'Watch it live', 'A real Task API purchase on Arc Mainnet, through the staging endpoint · 23 Oct 2026');
+  const w = rv(g, 81.6, 0, 8);
+  B(w, TW.x, TW.y, TW.w, TW.h, { rx: 24, fill: '#191919', stroke: '#3a3a3c', sw: 1.5 });
+  B(w, X(125), Y(89), 130 * s, 38 * s, { rx: 19 * s, fill: 'none', stroke: '#3a3a3c', sw: 1.5 });
+  el('path', { d: `M${X(279)} ${Y(97)}h${9 * s}l${3 * s} ${3 * s}h${14 * s}v${17 * s}h${-26 * s}z`, fill: '#8a7a3e' }, w);
+  T(w, 'cecilia — Redo Task API.command — node ◂ zsh -f ~/Documents/ChatGPT/t…', X(316), Y(117), "600 24px -apple-system,'Helvetica Neue',sans-serif", '#8c8c8c');
+  B(w, X(1279), Y(180), 19 * s, 650 * s, { rx: 9, fill: '#232323', stroke: 'none', sw: 0 }); B(w, X(1281), Y(752), 15 * s, 76 * s, { rx: 7, fill: '#7a7a7a', stroke: 'none', sw: 0 });
+  for (let k = 0; k < 24; k++) TERM_ROWS.push(el('text', { x: X(132), y: (Y(176) + 28 * s * k).toFixed(1), style: "font:400 21.45px Menlo,monospace;white-space:pre" }, w));
+  const cursor = el('rect', { x: X(132), width: 14 * s, height: 26 * s, fill: '#9a9a9a' }, w);
+  const tag = chip(rv(g, 81.8), '', TW.x + TW.w, 222, 'grey', { anchor: 'end', h: 34, font: "500 16px 'Geist Mono',monospace" });
+  CUSTOM.push(t => {
+    if (t < 81.3 || t > 89.5) return;
+    const tau = termTau(t), vis = TROWS.filter(r => r.lt <= tau + 1e-6), shown = vis.slice(-23);
+    TERM_ROWS.forEach((e, k) => { const r = shown[k]; e.textContent = r ? r.text : ''; e.setAttribute('fill', r && r.col === 'g' ? '#37bd2a' : r && r.col === 'c' ? '#33b5c5' : '#efefef'); e.setAttribute('font-weight', r && r.col === 'b' ? 700 : 400); });
+    cursor.setAttribute('y', (Y(176) + 28 * s * shown.length - 20 * s).toFixed(1));
+    const live = (t >= LIVE.A[0] && t < LIVE.A[1]) || (t >= LIVE.B[0] && t < LIVE.B[1]);
+    const label = live ? 'screen recording' : `rebuilt from the session log · same run · t+${tau.toFixed(1)}s`;
+    if (tag.t.textContent !== label) { tag.t.textContent = label; tag.w = tag.t.getComputedTextLength() + tag.pad * 2; tag.r.setAttribute('width', tag.w); tag.place(TW.x + TW.w - tag.w); }
+  });
+}
+
+// -- S10: the thesis -------------------------------------------------------------------------------------
+{
+  const g = scn(89.4, 93.2);
+  heading(g, 89.6, 'Outcome-based pricing for services', 'What x402 does for data, extended to work an agent can check before it pays.');
+  [[150, 'TRANSPARENT SETTLEMENT', 'Arc · USDC · x402', 'payment anyone can verify', 89.9, 0], [740, 'VERIFIABLE MACHINE WORK', 'Outcome fingerprint', 'checked before delivery', 90.7, 0], [1330, '', 'Outcome-based pricing', 'pay for what the work does', 91.5, 1]]
+    .forEach(([x, k, n, s, a, hi]) => { const p = rv(g, a); B(p, x, 380, 440, 260, { rx: 24, fill: hi ? SKYC : '#ffffff', stroke: hi ? SKYC : INK, sw: hi ? 3 : 2 });
+      if (k) T(p, k, x + 34, 430, F.lab, MUTED, 'start', .16); T(p, n, x + 34, hi ? 500 : 520, F.uiB, hi ? '#ffffff' : INK); T(p, s, x + 34, hi ? 548 : 568, F.uiS, hi ? '#e7f0f9' : MUTED); });
+  T(rv(g, 90.5), '+', 665, 528, "300 64px 'Geist',sans-serif", INK, 'middle'); T(rv(g, 91.3), '=', 1255, 528, "300 64px 'Geist',sans-serif", INK, 'middle');
+}
+
+// -- the hero in 2D: same spot and scale as the flattened 3D hero (120 px per unit) --------------------
+const heroLayer = el('g', {}, layer);
+// the agent cube, flat: its side face as the flattened camera sees it (1.3 units ⇒ 156 px)
+const orbF = el('g', {}, heroLayer); el('rect', { x: -78, y: -78, width: 156, height: 156, rx: 16, fill: '#ececf0', stroke: '#b4b4bf', 'stroke-width': 2 }, orbF);
+el('path', { d: 'M0 -50Q0 0 28 0Q0 0 0 50Q0 0 -28 0Q0 0 0 -50Z', fill: '#1f3a63' }, orbF);
+function card2D(fill, ink) {
+  const g = el('g', {}, heroLayer); el('rect', { x: -90, y: -57, width: 180, height: 114, rx: 12, fill }, g);
+  const ic = el('g', { fill: 'none', stroke: ink, 'stroke-width': 4.5, 'stroke-linecap': 'round' }, g); el('rect', { x: -61.5, y: -35.4, width: 123, height: 70.8, rx: 7 }, ic); el('path', { d: 'M33 -21.6H48M-48 21.6H-33' }, ic);
+  T(g, '$', 0, 16, "600 45px 'Geist',sans-serif", ink, 'middle'); return g;
+}
+const cardF = card2D('#5288c2', '#ffffff');
+// [t, [x, y, scale, opacity]]
+const ORB_K = [[4.9, [960, 540, 1, 0]], [5.2, [960, 540, 1, 1]], [5.4, [960, 540, 1, 1]], [5.41, [960, 540, 1, 0]], [37.39, [960, 540, 1, 0]],
+  [37.4, [960, 540, 1, 1]], [38.0, [960, 540, 1, 1]], [38.7, [253, 300, .17, 0]], [46.6, [960, 540, .6, 0]], [47.0, [960, 540, 1, 1]], [47.8, [960, 540, 1, 1]], [48.2, [960, 540, 1, 0]]];
+const CARD_K = [[58.2, [960, 540, 1, 0]], [58.6, [960, 540, 1, 1]], [59.0, [960, 540, 1, 1]], [59.5, [700, 560, .7, 0]],
+  [71.0, [SX, 600, .55, 0]], [71.2, [SX, 600, .55, 1]], [72.0, [BX, 600, .55, 1]], [72.6, [BX, 600, .55, 1]], [73.2, [960, 540, 1, 1]], [73.6, [960, 540, 1, 1]], [74, [960, 540, 1, 0]]];
+function seek2D(t) {
+  const o2 = FLAT2D.reduce((o, [a, b]) => Math.max(o, win(t, a, b, .3)), 0);
+  svg.style.opacity = o2.toFixed(3); svg.style.display = o2 > 0 ? '' : 'none';
+  seekIntent(t);
+  if (o2 <= 0) return;
+  SCENES.forEach(s => { const o = win(t, s.a, s.b, .35); s.g.style.display = o > 0 ? '' : 'none'; op(s.g, o); });
+  REVS.forEach(r => { const k = seg(t, r.a, r.a + .45); op(r.g, k * (r.b ? 1 - seg(t, r.b, r.b + .35) : 1)); r.g.setAttribute('transform', `translate(0 ${((1 - eout(k)) * r.dy).toFixed(2)})`); });
+  DRAWS.forEach(d => { const x = seg(t, d.a, d.b); d.e.setAttribute('stroke-dashoffset', (1 - x).toFixed(4)); d.e.setAttribute('marker-end', d.arrow && x >= .98 ? `url(#${d.arrow})` : ''); });
+  RIDERS.forEach(r => { const [x, y] = polyAt(r.pts, eio(seg(t, r.a, r.b))); r.g.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`); op(r.g, win(t, r.a - .2, r.b + .5, .2)); });
+  LOOP_DOT.forEach(q => { const on = t >= q.a && t < q.b; op(q.d, on ? 1 : 0); if (!on) return; const a = -90 + ((t - q.a) / 1.6) * 360; q.d.setAttribute('cx', q.c[0] + q.R * Math.cos(deg(a))); q.d.setAttribute('cy', q.c[1] + q.R * Math.sin(deg(a))); });
+  CUSTOM.forEach(f => f(t));
+  { const [x, y, s, o] = keyed(ORB_K, t); tf(orbF, x, y, s); op(orbF, o); }
+  { const [x, y, s, o] = keyed(CARD_K, t); tf(cardF, x, y, s); op(cardF, o); }
+}
+
+// ---------- outro: the black squares fuse into the mark's rings and blend into the real logo, then the lockup ----------
+const veil = document.getElementById('veil'), outro = document.getElementById('outro'), markEl = document.getElementById('mark');
+const wmEl = outro.querySelector('.wm'), osubEl = outro.querySelector('.sub'), urlEl = outro.querySelector('.url');
+const logoPaths = [...document.querySelectorAll('#logo path')];
+function seekOutro(t) {
+  // the black squares fuse into two rings (in 3D); the real logo, same size and place, blends in over them
+  veil.style.opacity = eio(seg(t, O + 3.35, O + 3.75));
+  outro.style.opacity = eio(seg(t, O + 3.3, O + 3.7));
+  const lk = eio(seg(t, O + 4.1, O + 4.8)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(MARK_S, 1, lk)})`;
+  wmEl.style.opacity = seg(t, O + 4.2, O + 4.8); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 4.2, O + 4.9))) * -18}px)`;
+  [[osubEl, O + 4.7], [urlEl, O + 5.0]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
+}
+
+// ---------- seek(t) ----------
+const tmp = V(0, 0, 0);
+function seek(t) {
+  const hp = keyed(HK, t);
+  hero.position.set(hp[0], hp[1] + .06 * Math.sin(t * 2.2), hp[2]);
+
+  const u = camU(t), cp = camPos.getPoint(u), ct = camTgt.getPoint(u), fl = flatAt(t), k = fl.k;
+  let extra = 0;
+  if (k > 0) {
+    const tg = ct.clone().lerp(fl.tg ? fl.tg.clone() : V(hp[0], hp[1], hp[2]), k);
+    const d0 = cp.clone().sub(ct), dist0 = d0.length(); d0.normalize();
+    const dir = d0.lerp(V(Math.cos(.07), Math.sin(.07), 0), k).normalize();
+    const fov = 35 * Math.pow((fl.half > 10 ? 12 : 5) / 35, k), half = lerp(dist0 * Math.tan(deg(17.5)), fl.half, k), dist = half / Math.tan(deg(fov / 2));
+    camera.position.copy(tg).add(dir.multiplyScalar(dist)); camera.fov = fov; camera.near = Math.max(.1, dist * .08 * k); camera.lookAt(tg); extra = Math.max(0, dist - 14);
+  } else { camera.position.copy(cp); camera.fov = 35; camera.near = .1; camera.lookAt(ct); }
+  camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+  scene.fog.near = 30 + extra; scene.fog.far = 95 + extra;
+  const tgt = k > 0 ? (fl.tg || hero.position) : ct; sun.position.copy(tgt).add(V(14, 30, 12)); sun.target.position.copy(tgt);
+
+  // S0: the lineup builds up plinth by plinth; the camera pushes into the agent cube
+  lineup.visible = t < 6;
+  lineupPipes.forEach((m, i) => { const n = m.geometry.index.count, f = eio(seg(t, 1.5 + i * .25, 2.3 + i * .25)); m.geometry.setDrawRange(0, Math.floor(n * f / 6) * 6); m.visible = f > 0; });
+  [agentA, harnA, walA, stackA].forEach((c, i) => { const s_ = eback(seg(t, .3 + i * .25, .9 + i * .25)); c.scale.set(s_ < .002 ? 1e-3 : 1, tiny(s_), s_ < .002 ? 1e-3 : 1); });
+  harnA.userData.body.material.emissiveIntensity = .18 + .25 * pulse(t, 2.4, 3.4);
+  STATIONS.forEach(([g, a, b]) => { g.visible = t > a && t < b; });
+  // the agent hands its intent to the harness: a packet runs the pipe, and the bundle card appears over the cube
+  { const m = seg(t, 49.0, 50.0); packet.visible = m > 0 && m < 1; packet.position.set(0, .95, lerp(AGZ - .66, HAZ + .66, eio(m))); }
+  agentB.userData.body.material.emissiveIntensity = .1 + .3 * pulse(t, 48.8, 49.6);
+  const cs = eback(seg(t, 50.0, 50.5)); card.scale.setScalar(tiny(cs)); card.visible = cs > .002;
+  card.userData.set(t > 75.8 ? C.sky : t > 57.4 ? C.sky4 : C.grey);
+  seal.visible = t > 75.8; seal.scale.setScalar(tiny(eback(seg(t, 75.8, 76.3))));
+  card.rotation.set(0, Math.atan2(camera.position.x - hp[0], camera.position.z - hp[2]), 0);
+  route.visible = t > 15; route.scale.z = 90;
+
+  // S3: the house rises, the contractor walks up, gets paid; the "good job?" check flickers
+  const showH = t > 20 && t < 30; house.visible = person.visible = coin.visible = housePl.visible = showH;
+  house.scale.set(1, tiny(eout(seg(t, 21.2, 22.0))), 1); house.visible = showH && house.scale.y > .01;
+  person.scale.setScalar(tiny(eback(seg(t, 21.6, 22.1)))); person.visible = showH && t > 21.6;
+  { const w = eio(seg(t, 22.0, 23.6)); person.position.set(lerp(2.8, .6, w), Math.abs(Math.sin(t * 7)) * .05 * (w > 0 && w < 1 ? 1 : 0), lerp(HZ - 4.5, HZ - 2.0, w)); person.rotation.y = lerp(-.72, -1.08, w); }
+  { const m = eio(seg(t, 23.4, 24.3)); coin.position.set(lerp(-.7, .5, m), 1.65 + .5 * Math.sin(Math.PI * m) + .55 * m, lerp(HZ - .3, HZ - 1.9, m)); coin.scale.setScalar(tiny(eback(seg(t, 23.2, 23.6)))); coin.rotation.set(Math.PI / 2, .785 + .5 * Math.sin(t * 4), 0); }
+  { const q = t > 24.8 && Math.floor((t - 24.8) / .4) % 2 === 1; const s = q ? '? good job?' : '✓ good job?'; if (jobL.el.textContent !== s) jobL.el.textContent = s; jobL.el.style.color = q ? '#df5d90' : '#416cac'; }
+
+  // S6: the harness glows; calls fan out to the venues and back; the batch drops on the fork; constraints tick
+  const showS6 = t > 46 && t < 60; fork.visible = showS6;
+  hMat.emissiveIntensity = .18 + .35 * pulse(t, 50.0, 51.0) + (t > 50 && t < 53.4 ? .1 : 0);
+  venues.forEach((v, i) => { const sy = eback(seg(t, 50.4 + i * .12, 50.9 + i * .12)) * (1 - eio(seg(t, 54.0 + i * .1, 54.6 + i * .1))); v.scale.set(1, tiny(sy), 1); v.visible = showS6 && sy > .01;
+    v.children[1].material.emissiveIntensity = .45 * pulse(t, 51.6 + i * .1, 52.4 + i * .1); });
+  minis.forEach((m, i) => { const out = eio(seg(t, 51.0 + i * .1, 51.8 + i * .1)), back = eio(seg(t, 52.4, 53.1)), f = out * (1 - back);
+    m.visible = t > 51 && t < 53.2; m.position.set(lerp(0, VX[i], f), 2.75 + .6 * Math.sin(Math.PI * f) - f * .9, lerp(HAZ, VZ, f)); m.rotation.y = card.rotation.y; });
+  fork.scale.set(1, tiny(eout(seg(t, 52.6, 53.4))), 1); fork.visible = showS6 && fork.scale.y > .01;
+  RULES.forEach(r => { const ok = t >= r.at; if (r.L.el.classList.contains('ok') !== ok) { r.L.el.classList.toggle('ok', ok); r.L.el.textContent = (ok ? '✓ ' : '') + r.s; } });
+
+  // S8b: the wallet signs, the block docks on Arc, a pulse runs down the chain
+  wallet.userData.button.material.emissiveIntensity = .15 + .7 * pulse(t, 75.4, 76.4) + (t > 76 ? .2 : 0);
+  if (signL.el.classList.contains('ok') !== t > 75.8) signL.el.classList.toggle('ok', t > 75.8);
+  // the card lands on the Arc stack as its new top block, and a pulse runs down the stack
+  { const d = eio(seg(t, 78.0, 78.5)), top = chain.blocks[3]; top.visible = t > 78.0; top.position.y = CH_TOP + (1 - d) * 1.4; if (t > 78.1) card.visible = false;
+    chain.blocks.forEach((b, i) => { b.material.emissiveIntensity = (i === 3 ? .2 : 0) + .55 * pulse(t, 78.9 + (3 - i) * .14, 79.5 + (3 - i) * .14); }); }
+
+  // S11: the runtime is unverified (rose, pulsing), then a glass TEE drops over it, seals, and turns green
+  { const rk = seg(t, 96.4, 96.7) * (1 - seg(t, 98.6, 99.0)), b = tCube.userData.body.material, sl = eio(seg(t, 98.1, 98.8)), gk = eio(seg(t, 98.9, 99.3));
+    b.color.lerpColors(BLUEC3, ROSEC3, rk); b.emissive.copy(b.color); b.emissiveIntensity = .18 + rk * (.25 + .2 * Math.sin(t * 9));
+    glass.visible = t > 97.9; glass.position.y = .45 + 1.0 + (1 - sl) * 4.2;
+    glassEdge.material.color.lerpColors(ARCHC, new THREE.Color(GREEN), gk); glassMat.emissiveIntensity = .25 * gk + .4 * pulse(t, 98.8, 99.6); lidBar.material.emissiveIntensity = .5 * gk; lidBar.material.color.lerpColors(ARCHC, new THREE.Color(GREEN), gk);
+    tCard.rotation.y = Math.atan2(camera.position.x, camera.position.z - (TZ - 4.4)); tCard.userData.set(t > 99.8 ? 0x9ad8bb : C.sky4); }
+  // outro: plinths sink, the harness, wallet and Arc cubes become the ring, the agent cube takes the small ring's place
+  outroG.visible = t > O + .9;
+  if (t > O) {
+    const sink = eio(seg(t, O + 1.0, O + 1.6)), fl2 = eio(seg(t, O + 2.55, O + 2.95));
+    [tAgent, tHarn, tOut].forEach(st => { const p_ = st.children[0]; p_.scale.setScalar(tiny(1 - sink)); p_.position.y = .225 * (1 - sink); p_.visible = sink < .99; });
+    T_PIPES.forEach(m => { m.visible = sink < .3; });
+    const lift = eio(seg(t, O + .2, O + .9)); glass.position.y = .45 + 1.0 + lift * 3.5; glassMat.opacity = .24 * (1 - lift); glassEdge.material.opacity = .95 * (1 - lift); lidBar.material.transparent = true; lidBar.material.opacity = 1 - lift; glass.visible = lift < .99;
+    tCube.scale.setScalar(tiny(1 - eio(seg(t, O + 1.0, O + 1.5)))); tCube.visible = t < O + 1.5;
+    tCard.scale.setScalar(tiny(1 - eio(seg(t, O + 1.1, O + 1.6)))); tCard.visible = t < O + 1.6;
+    tAgentCube.scale.setScalar(tiny(1 - eio(seg(t, O + 1.25, O + 1.75)))); tAgentCube.visible = t < O + 1.75;
+    CUBES.forEach(r => { const f = eio(seg(t, r.at, r.at + .9)), sp = r.src, y0 = r.h * (1 - .94 * fl2);
+      r.m.visible = t > r.at; r.m.position.set(lerp(sp.x, r.x, f), lerp(sp.y, y0, f) + 1.4 * Math.sin(Math.PI * f), lerp(sp.z, r.z, f)); r.m.rotation.set(0, lerp(0, r.ry, f), 0);
+      const mg = eio(seg(t, O + 2.95, O + 3.4)); r.m.scale.set(lerp(1, r.grow[0], mg), tiny(1 - .94 * fl2), lerp(1, r.grow[1], mg)); r.m.material.color.lerpColors(r.base, INKC, fl2); r.m.material.roughness = lerp(.55, 1, fl2); r.m.material.emissiveIntensity = (r.base.getHex() === 0x4f7fbf ? .15 : 0) * (1 - fl2) + .4 * pulse(t, r.at + .8, r.at + 1.3);
+      r.m.children[0].material.opacity = .5 * (1 - fl2); });
+  }
+  if (t > O) { // from the trust shot, the camera swings overhead to a top-down view that matches the logo's size and place
+    const m = eio(seg(t, O + .9, O + 2.5)), z2 = eio(seg(t, O + 2.3, O + 2.95)), P = 140 * MARK_S / (362 * MK), c0 = CK.at(-2);
+    const tg = V(...c0[2]).lerp(OC, m).add(V(0, 0, -(MARK_CY - 540) / P * z2)), d0 = V(...c0[1]).sub(V(...c0[2])), dir = d0.clone().normalize().lerp(V(0, 1, 1e-4), m).normalize();
+    const fov = lerp(35, 12, m), half = lerp(d0.length() * Math.tan(deg(17.5)), 540 / P, m), dist = half / Math.tan(deg(fov / 2));
+    grid.material.opacity = .35 * (1 - m); route.material.transparent = true; route.material.opacity = 1 - m;
+    camera.up.set(0, 1, 0).lerp(V(0, 0, -1), m).normalize(); camera.position.copy(tg).add(dir.multiplyScalar(dist)); camera.fov = fov; camera.near = .5; camera.lookAt(tg);
+    camera.updateProjectionMatrix(); camera.updateMatrixWorld(); scene.fog.near = 400; scene.fog.far = 900; sun.position.copy(OC).add(V(14, 30, 12)); sun.target.position.copy(OC);
+  } else camera.up.set(0, 1, 0);
+
+  labels.forEach(L => { const o = win(t, L.a, L.b, .35); if (o <= 0) { L.el.style.opacity = 0; return; }
+    tmp.copy(typeof L.pos === 'function' ? L.pos() : L.pos).project(camera); if (tmp.z > 1) { L.el.style.opacity = 0; return; }
+    L.el.style.opacity = o * (1 - k); L.el.style.transform = `translate(${(tmp.x + 1) / 2 * W}px,${(1 - tmp.y) / 2 * H}px) translate(-50%,-50%)`; });
+  CHAPTERS.forEach(([, a, b], i) => { chapEls[i].style.opacity = win(t, a, b, .35); });
+  document.getElementById('title').style.opacity = win(t, .9, 3.5, .45);
+
+  seek2D(t); seekOutro(t);
+  renderer.render(scene, camera);
+}
+
+// ---------- narrated clock → film clock, subtitles ----------
+const TL = window.VO_TL || null, captionEl = document.getElementById('sub');
+function oldTime(T) {
+  if (!TL) return T; const A = TL.anchors; if (T <= A[0][0]) return A[0][1];
+  for (let i = 0; i < A.length - 1; i++) { const [n0, o0] = A[i], [n1, o1] = A[i + 1]; if (T <= n1) return o0 + (o1 - o0) * (T - n0) / (n1 - n0); }
+  return A[A.length - 1][1];
+}
+function seekFilm(T) {
+  seek(authorTime(oldTime(T)));
+  const c = TL && TL.cues.find(q => T >= q.s && T < q.e);
+  captionEl.textContent = c ? c.text : ''; captionEl.style.opacity = c ? Math.min(seg(T, c.s, c.s + .1), 1 - seg(T, c.e - .1, c.e)) : 0;
+}
+
+// ---------- playback contract (shared with skills/make-aomi-video) ----------
+const params = new URLSearchParams(location.search);
+let playing = false, t0 = 0, from = 0;
+window.__AOMI_VIDEO__ = {
+  duration: TL ? TL.dur : PLAY_DUR,
+  seek: seekFilm,
+  play() { playing = true; t0 = performance.now(); const loop = () => { if (!playing) return; seekFilm((from + (performance.now() - t0) / 1000) % this.duration); requestAnimationFrame(loop); }; loop(); },
+  pause() { playing = false; },
+};
+await document.fonts.ready;
+fits.forEach(f => f());
+{ markEl.style.transform = 'none'; const r = markEl.getBoundingClientRect(); MARK_CY = r.top + r.height / 2; }
+iconCache.forEach(v => { drawIcon(v.cv, v.ink); v.tx.needsUpdate = true; });
+GLYPHS.forEach(tx => { const { cv, kind, ink } = tx.userData; if (kind !== 'arc') return; const g = cv.getContext('2d'); g.clearRect(0, 0, 256, 256); g.fillStyle = ink; g.font = "700 64px 'Geist Mono'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ARC', 128, 132); tx.needsUpdate = true; }); // web font now loaded
+seekFilm(+(params.get('t') || 0));
+window.__AOMI_VIDEO_READY__ = true;
+if (!params.has('render') && !params.has('t')) {
+  document.body.classList.add('fit');
+  const fit = () => { document.getElementById('stage').style.transform = `scale(${Math.min(innerWidth / W, innerHeight / H)})`; };
+  fit(); addEventListener('resize', fit); window.__AOMI_VIDEO__.play();
+}
+</script>
+</body>
+</html>
