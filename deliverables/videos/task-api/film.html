@@ -85,14 +85,8 @@ canvas{display:block}
   <div id="outro">
     <div class="lock">
       <svg id="mark" viewBox="0 0 362 362">
-        <g id="morph" fill="none">
-          <path id="a1" stroke="#09090b" pathLength="1" stroke-dasharray="1"/>
-          <path id="a2" stroke="#416cac" pathLength="1" stroke-dasharray="1"/>
-          <path id="a3" stroke="#5288c2" pathLength="1" stroke-dasharray="1"/>
-          <circle id="dot" cx="181" cy="181" r="15" fill="#df5d90" stroke="#09090b" stroke-width="0"/>
-        </g>
         <!-- paths copied from assets/logo/aomi-mark.svg — re-copy if the mark changes -->
-        <g id="logo" fill="#09090b" opacity="0"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g>
+        <g id="logo" fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g>
       </svg>
       <div class="wm">aomi</div>
     </div>
@@ -127,9 +121,9 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 //  81.4  S9  2D   watch it live (slot for the screen recording)
 //  89.4  S10 2D   transparent settlement + verifiable work = outcome-based pricing
 //  94.6  S11 2D   the trust boundary today, and the TEE next
-// 101.6  outro
-const W = 1920, H = 1080, DUR = 108, O = 101.6;
-const EDIT = [[0, 5.4], [37.4, 89.4], [5.4, 37.4], [89.4, 108]]; // authored ranges, in playback order
+// 101.6  outro  3D   the lineup returns and breaks into cubes that build the Aomi mark, seen from above, then the lockup
+const W = 1920, H = 1080, DUR = 110, O = 101.6;
+const EDIT = [[0, 5.4], [37.4, 89.4], [5.4, 37.4], [89.4, 110]]; // authored ranges, in playback order
 const authorTime = x => { for (const [a, b] of EDIT) { if (x < b - a) return a + x; x -= b - a; } return DUR; };
 
 // ---------- math ----------
@@ -293,6 +287,30 @@ const chainSt = station(0, CHZ, 70, 999);
 const chain = { blocks: [] };
 for (let i = 0; i < 4; i++) { const b = edged(new RoundedBoxGeometry(1.2, .4, 1.2, 3, .06), std(i === 3 ? C.sky : 0xdcdce1, { emissive: C.sky, emissiveIntensity: i === 3 ? .2 : 0 }), 0xb4b4bf, .8); b.position.y = .45 + .2 + i * .43; chainSt.add(b); chain.blocks.push(b); }
 const CH_TOP = .45 + .2 + 3 * .43; // where the new block lands
+// outro station: the lineup once more; its cubes build the Aomi mark (seen from above) and hand over to the real logo
+const OZ = -112, OC = V(0, 0, OZ), MK = 4.4 / 362; // world units per logo unit (the mark is 362 units across)
+const outroG = new THREE.Group(); outroG.position.copy(OC); scene.add(outroG);
+const ORZ = [6.3, 2.1, -2.1, -6.3], INKC = new THREE.Color(0x09090b);
+const oPl = ORZ.map(z => { const p_ = plinth(); p_.position.z = z; outroG.add(p_); return p_; });
+const agentO = cube('agent', 0xececf0); agentO.position.set(0, TOP, ORZ[0]); outroG.add(agentO);
+const harnO = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); harnO.position.set(0, TOP, ORZ[1]); outroG.add(harnO);
+const walO = walletSlab(); walO.position.set(0, .45 + .39, ORZ[2]); outroG.add(walO);
+const arcO = cube('arc', 0x4f7fbf, 1.0, '#ffffff', .18); arcO.position.set(0, .45 + .5, ORZ[3]); outroG.add(arcO);
+const oPipes = [pipe([[0, .95, ORZ[0] - .66], [0, .95, ORZ[1] + .66]]), pipe([[0, .9, ORZ[1] - .66], [0, .9, ORZ[2] + .76]]), pipe([[0, .95, ORZ[2] - .76], [0, .95, ORZ[3] + .55]])];
+oPipes.forEach(m => { scene.remove(m); outroG.add(m); });
+// the mark's big ring as small cubes along its centreline (r = 155 logo units), leaving the notch where the small ring sits
+const L2W = (u, v) => [(u - 181) * MK, (v - 181) * MK], SMALL = L2W(267.765, 94.235);
+const RING = Array.from({ length: 13 }, (_, i) => { const a = deg(lerp(13, 257, i / 12)), r = 155.1 * MK, base = i % 3 === 1 ? 0xdcdce1 : 0x4f7fbf;
+  const m = edged(new RoundedBoxGeometry(.62, .62, .62, 3, .08), std(base, { emissive: 0x4f7fbf, emissiveIntensity: base === 0x4f7fbf ? .15 : 0 }), 0xb4b4bf, .5); outroG.add(m);
+  return { m, base: new THREE.Color(base), x: r * Math.cos(a), z: r * Math.sin(a), ry: -a, src: [harnO, walO, arcO][i % 3], at: O + 1.0 + i * .06 }; });
+const agentBase = new THREE.Color(0xececf0);
+// the mark's real shapes, which the cubes settle into: the small ring (the agent cube drops into it) and the big ring's arc
+const smallRing = new THREE.Mesh(new THREE.TorusGeometry(74.1 * MK, 20.1 * MK, 20, 72), std(0x4f7fbf, { emissive: 0x4f7fbf, emissiveIntensity: .2 }));
+smallRing.rotation.x = Math.PI / 2; smallRing.position.set(SMALL[0], .3, SMALL[1]); smallRing.castShadow = true; outroG.add(smallRing);
+const bigRingG = new THREE.Group(); bigRingG.rotation.y = deg(-13); outroG.add(bigRingG);
+const bigRing = new THREE.Mesh(new THREE.TorusGeometry(155.1 * MK, 25.85 * MK, 20, 160, deg(244)), std(0x09090b, { transparent: true, opacity: 0 })); bigRing.rotation.x = Math.PI / 2; bigRingG.add(bigRing);
+let MARK_CY = 540; // the logo's screen centre once the lockup is laid out (measured after fonts load)
+
 const chainPipe = pipe([[0, 1.2, WZ - .76], [0, 1.2, CHZ + .66]]); STATIONS.push([chainPipe, 70, 999]);
 
 // ---------- camera ----------
@@ -317,7 +335,7 @@ const camU = t => { let s = 0; for (let i = 0; i < 17; i++) s += rawU(t + (i / 1
 // [flatten start, flat, unflatten start, 3D again, fixed target (default: the hero), half-height]
 const FLAT = [[4.6, 5.4, 6, 6.5, V(0, TOP, 0)], [5.3, 5.4, 20.6, 21.4, V(-.4, 1.4, HZ)], [28.0, 28.8, 29.2, 29.6, V(-.4, 1.4, HZ)], [28.8, 29.0, 47.6, 48.4, V(0, TOP, HAZ + 4.6)],
   [58.0, 58.8, 73.4, 74.2], [80.6, 81.4, 999, 1000]];
-const FLAT2D = [[4.9, 20.8], [28.6, 47.8], [58.6, 73.6], [81.2, 999]];
+const FLAT2D = [[4.9, 20.8], [28.6, 47.8], [58.6, 73.6], [81.2, O + .4]];
 function flatAt(t) { let best = { k: 0 }; for (const [a, b, c, d, tg, half] of FLAT) { const k = eio(seg(t, a, b)) * (1 - eio(seg(t, c, d))); if (k > best.k) best = { k, tg, half: half || 4.5 }; } return best; }
 
 // hero route: it moves only while hidden or while the 2D layer is opaque
@@ -618,24 +636,15 @@ function seek2D(t) {
   { const [x, y, s, o] = keyed(CARD_K, t); tf(cardF, x, y, s); op(cardF, o); }
 }
 
-// ---------- outro: brand shapes become the real logo, then the lockup ----------
-const veil = document.getElementById('veil'), outro = document.getElementById('outro'), markEl = document.getElementById('mark'), morphEl = document.getElementById('morph'), logoEl = document.getElementById('logo');
+// ---------- outro: the cube-built mark hands over to the real logo, then the lockup ----------
+const veil = document.getElementById('veil'), outro = document.getElementById('outro'), markEl = document.getElementById('mark');
 const wmEl = outro.querySelector('.wm'), osubEl = outro.querySelector('.sub'), urlEl = outro.querySelector('.url');
-const arcEls = ['a1', 'a2', 'a3'].map(id => document.getElementById(id)), dot = document.getElementById('dot');
-const arcD = (r, a0, a1) => { const p = a => `${(181 + r * Math.cos(deg(a))).toFixed(2)} ${(181 + r * Math.sin(deg(a))).toFixed(2)}`; return `M${p(a0)} A${r.toFixed(2)} ${r.toFixed(2)} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${p(a1)}`; };
 function seekOutro(t) {
-  veil.style.opacity = eio(seg(t, O, O + 1.1)); outro.style.opacity = seg(t, O + .4, O + .7);
-  const m = eio(seg(t, O + 2.2, O + 3.2));
-  [155.14, 103, 52].forEach((r0, i) => { const a = arcEls[i], r = i === 0 ? r0 : lerp(r0, 1, m);
-    a.setAttribute('d', i === 0 ? arcD(r, lerp(180, 4, m), lerp(360, 266, m)) : arcD(r, 180, 360)); a.setAttribute('stroke-width', i === 0 ? lerp(6.5, 51.7, m) : 6.5);
-    a.setAttribute('stroke-dashoffset', (1 - eio(seg(t, O + .7 + i * .2, O + 1.6 + i * .2))).toFixed(4)); a.setAttribute('opacity', i === 0 ? 1 : 1 - m); });
-  const rise = eio(seg(t, O + 1.4, O + 2.2));
-  dot.setAttribute('cx', lerp(181, 267.765, m)); dot.setAttribute('cy', lerp(lerp(181, 26, rise), 94.235, m));
-  dot.setAttribute('r', lerp(15, 74.12, m)); dot.setAttribute('stroke-width', lerp(0, 40.2, m)); dot.setAttribute('fill-opacity', 1 - m); dot.setAttribute('opacity', seg(t, O + 1.35, O + 1.5));
-  logoEl.setAttribute('opacity', seg(t, O + 3.1, O + 3.3)); morphEl.setAttribute('opacity', 1 - seg(t, O + 3.15, O + 3.35));
-  const lk = eio(seg(t, O + 3.3, O + 4.0)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(1.5, 1, m)})`;
-  wmEl.style.opacity = seg(t, O + 3.4, O + 4.0); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 3.4, O + 4.1))) * -18}px)`;
-  [[osubEl, O + 3.9], [urlEl, O + 4.2]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
+  veil.style.opacity = Math.max(eio(seg(t, O, O + .4)) * (1 - eio(seg(t, O + .5, O + .9))), eio(seg(t, O + 3.0, O + 3.35)));
+  outro.style.opacity = seg(t, O + 3.0, O + 3.35);
+  const lk = eio(seg(t, O + 3.6, O + 4.3)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(1.5, 1, lk)})`;
+  wmEl.style.opacity = seg(t, O + 3.7, O + 4.3); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 3.7, O + 4.4))) * -18}px)`;
+  [[osubEl, O + 4.2], [urlEl, O + 4.5]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
 }
 
 // ---------- seek(t) ----------
@@ -697,6 +706,31 @@ function seek(t) {
   { const d = eio(seg(t, 78.0, 78.5)), top = chain.blocks[3]; top.visible = t > 78.0; top.position.y = CH_TOP + (1 - d) * 1.4; if (t > 78.1) card.visible = false;
     chain.blocks.forEach((b, i) => { b.material.emissiveIntensity = (i === 3 ? .2 : 0) + .55 * pulse(t, 78.9 + (3 - i) * .14, 79.5 + (3 - i) * .14); }); }
 
+  // outro: plinths sink, the harness, wallet and Arc cubes become the ring, the agent cube takes the small ring's place
+  outroG.visible = t > O + .3; grid.visible = t < O + .4;
+  if (outroG.visible) {
+    const sink = eio(seg(t, O + 1.0, O + 1.6)), fl2 = eio(seg(t, O + 2.7, O + 3.2));
+    oPl.forEach(p_ => { p_.scale.setScalar(tiny(1 - sink)); p_.position.y = .225 * (1 - sink); p_.visible = sink < .99; }); oPipes.forEach(m => { m.visible = sink < .3; });
+    [harnO, walO, arcO].forEach((c, i) => { const s_ = 1 - eio(seg(t, O + 1.0 + i * .12, O + 1.5 + i * .12)); c.scale.setScalar(tiny(s_)); c.visible = s_ > .002; });
+    RING.forEach(r => { const f = eio(seg(t, r.at, r.at + .9)), sp = r.src.position, y0 = .31 * (1 - .92 * fl2);
+      r.m.visible = t > r.at; r.m.position.set(lerp(sp.x, r.x, f), lerp(sp.y, y0, f) + 1.4 * Math.sin(Math.PI * f), lerp(sp.z, r.z, f)); r.m.rotation.set(0, lerp(0, r.ry, f), 0);
+      r.m.scale.set(1, tiny(1 - .92 * fl2), 1); r.m.material.color.lerpColors(r.base, INKC, fl2); r.m.material.emissiveIntensity = (r.base.getHex() === 0x4f7fbf ? .15 : 0) * (1 - fl2) + .4 * pulse(t, r.at + .8, r.at + 1.3);
+      r.m.children[0].material.opacity = .5 * (1 - fl2); });
+    { // the agent cube hops over to the small ring's spot, the ring rises around it, and the cube drops into it
+      const f = eio(seg(t, O + 1.1, O + 2.2)), drop = eio(seg(t, O + 2.35, O + 2.8)), sc = (1 - drop) * 1.0;
+      agentO.visible = drop < .99; agentO.position.set(lerp(0, SMALL[0], f), lerp(TOP, .65, f) + 1.8 * Math.sin(Math.PI * f) - drop * .6, lerp(ORZ[0], SMALL[1], f)); agentO.scale.setScalar(tiny(sc));
+      const rr = eback(seg(t, O + 2.1, O + 2.6)); smallRing.visible = t > O + 2.1; smallRing.scale.set(tiny(rr), tiny(rr), tiny(rr * (1 - .9 * fl2)));
+      smallRing.position.y = .3 * (1 - .9 * fl2); smallRing.material.color.lerpColors(new THREE.Color(0x4f7fbf), INKC, fl2); smallRing.material.emissiveIntensity = .2 * (1 - fl2) + .5 * pulse(t, O + 2.6, O + 3.0);
+      bigRing.material.opacity = fl2; bigRingG.scale.y = .1; bigRingG.position.y = .02; bigRingG.visible = fl2 > 0; }
+  }
+  if (t > O + .4) { // from under the veil: an iso view of the lineup, swinging overhead to a top-down view that matches the logo's size and place
+    const m = eio(seg(t, O + 1.3, O + 2.7)), z2 = eio(seg(t, O + 2.4, O + 3.15)), P = 210 / (362 * MK), drift = eio(seg(t, O + .4, O + 1.6));
+    const tg = OC.clone().add(V(0, .8, .6 * (1 - drift))).lerp(OC, m).add(V(0, 0, -(MARK_CY - 540) / P * z2)), dir = V(11, 7.5, 7.5).normalize().lerp(V(0, 1, 1e-4), m).normalize();
+    const fov = lerp(35, 12, m), half = lerp(lerp(lerp(6.2, 5.4, drift), 3.9, m), 540 / P, z2), dist = half / Math.tan(deg(fov / 2));
+    camera.up.set(0, 1, 0).lerp(V(0, 0, -1), m).normalize(); camera.position.copy(tg).add(dir.multiplyScalar(dist)); camera.fov = fov; camera.near = .5; camera.lookAt(tg);
+    camera.updateProjectionMatrix(); camera.updateMatrixWorld(); scene.fog.near = 400; scene.fog.far = 900; sun.position.copy(OC).add(V(14, 30, 12)); sun.target.position.copy(OC);
+  } else camera.up.set(0, 1, 0);
+
   labels.forEach(L => { const o = win(t, L.a, L.b, .35); if (o <= 0) { L.el.style.opacity = 0; return; }
     tmp.copy(typeof L.pos === 'function' ? L.pos() : L.pos).project(camera); if (tmp.z > 1) { L.el.style.opacity = 0; return; }
     L.el.style.opacity = o * (1 - k); L.el.style.transform = `translate(${(tmp.x + 1) / 2 * W}px,${(1 - tmp.y) / 2 * H}px) translate(-50%,-50%)`; });
@@ -731,6 +765,7 @@ window.__AOMI_VIDEO__ = {
 };
 await document.fonts.ready;
 fits.forEach(f => f());
+{ markEl.style.transform = 'none'; const r = markEl.getBoundingClientRect(); MARK_CY = r.top + r.height / 2; }
 iconCache.forEach(v => { drawIcon(v.cv, v.ink); v.tx.needsUpdate = true; });
 GLYPHS.forEach(tx => { const { cv, kind, ink } = tx.userData; if (kind !== 'arc') return; const g = cv.getContext('2d'); g.clearRect(0, 0, 256, 256); g.fillStyle = ink; g.font = "700 64px 'Geist Mono'"; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ARC', 128, 132); tx.needsUpdate = true; }); // web font now loaded
 seekFilm(+(params.get('t') || 0));

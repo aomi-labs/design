@@ -2,7 +2,7 @@
 // Times are on the film's playback clock (after EDIT in film.html reorders the authored scenes). `start` is where
 // the line begins, `anchors` pin a spoken word to the moment its animation happens, `end` is where the line should finish.
 // skills/slide-to-video/scripts/build-timeline.mjs stretches the film between these points so picture follows the voice.
-export const OLD_END = 108;   // last frame of the silent cut (DUR in film.html)
+export const OLD_END = 110;   // last frame of the silent cut (DUR in film.html)
 export const END_HOLD = 1.5;  // extra hold on the logo after the last line
 export const DISPLAY = [      // spoken → subtitle form (longest first)
   ['point zero zero nine', '0.009'], ['point one', '0.1'], ['point two', '0.2'],
