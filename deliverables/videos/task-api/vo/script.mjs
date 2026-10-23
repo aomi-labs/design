@@ -2,7 +2,7 @@
 // Times are on the film's playback clock (after EDIT in film.html reorders the authored scenes). `start` is where
 // the line begins, `anchors` pin a spoken word to the moment its animation happens, `end` is where the line should finish.
 // skills/slide-to-video/scripts/build-timeline.mjs stretches the film between these points so picture follows the voice.
-export const OLD_END = 110;   // last frame of the silent cut (DUR in film.html)
+export const OLD_END = 104.8;   // last frame of the silent cut (DUR in film.html)
 export const END_HOLD = 1.5;  // extra hold on the logo after the last line
 export const DISPLAY = [      // spoken → subtitle form (longest first)
   ['point zero zero nine', '0.009'], ['point one', '0.1'], ['point two', '0.2'],
@@ -44,27 +44,27 @@ export const LINES = [
     text: 'Why does this matter? x four oh two already lets agents pay for data. The chain sits in between as a neutral rail, so neither side has to trust the other.',
     anchors: [['matter', 1, 58.4], ['pay', 1, 60.6], ['rail', 1, 63.8], ['trust', 1, 64.6]] },
   // 8 · the gap: services
-  { id: 8, start: 65.7, end: 70.0,
+  { id: 8, start: 65.7, end: 69.4,
     text: 'But what if an agent wants to buy a service? The outcome of the work cannot be pre-verified before delivery.',
     anchors: [['service', 1, 66.0], ['outcome', 1, 66.6], ['delivery', 1, 68.4]] },
   // 9 · even humans
-  { id: 9, start: 73.6, end: 78.4,
+  { id: 9, start: 71, end: 75.8,
     text: "People haven't solved this either. You cannot tell whether a contractor does good jobs before seeing them work.",
-    anchors: [['contractor', 1, 75.8], ['jobs', 1, 76.9], ['work', 1, 77.6]] },
+    anchors: [['contractor', 1, 73.2], ['jobs', 1, 74.3], ['work', 1, 75]] },
   // 10 · two loops
-  { id: 10, start: 81.2, end: 88.6,
-    text: "This loop never completes in the human economy. Machines can do better, because their service is usually the result of processing data, which can be checked before it's delivered. That's the loop the Task API runs.",
-    anchors: [['loop', 1, 81.6], ['human', 1, 83.8], ['Machines', 1, 84.6], ['service', 1, 85.6], ['loop', 2, 87.4], ['runs', 1, 88.0]] },
+  { id: 10, start: 77.6, end: 83.6,
+    text: "This loop never completes in the human economy. Machines can do better, because their service is usually the result of processing data, which can be checked before it's delivered.",
+    anchors: [['loop', 1, 78], ['human', 1, 80.2], ['Machines', 1, 81], ['service', 1, 82]] },
   // 11 · thesis
-  { id: 11, start: 89.6, end: 92.4,
+  { id: 11, start: 84.4, end: 87.2,
     text: 'A transparent settlement layer, plus machine work that can be checked before delivery, makes outcome-based pricing for services possible.',
-    anchors: [['transparent', 1, 90.0], ['checked', 1, 90.8], ['outcome-based', 1, 91.6]] },
+    anchors: [['transparent', 1, 84.8], ['checked', 1, 85.6], ['outcome-based', 1, 86.4]] },
   // 12 · trust + roadmap
-  { id: 12, start: 93.6, end: 100.4,
+  { id: 12, start: 88.4, end: 95.2,
     text: "One trust assumption remains: today, the buyer trusts that Aomi's simulation ran honestly. Next, we plan to run the harness in a trusted execution environment, so buying a service becomes trustless.",
-    anchors: [['assumption', 1, 94.4], ['honestly', 1, 96.6], ['environment', 1, 98.8], ['trustless', 1, 99.8]] },
+    anchors: [['assumption', 1, 89.2], ['honestly', 1, 91.4], ['environment', 1, 93.6], ['trustless', 1, 94.6]] },
   // 13 · outro
-  { id: 13, start: 102.6, end: 106.0,
+  { id: 13, start: 97.4, end: 100.8,
     text: 'The Task API is live, settling in USDC on Arc. Try it at aomi dot dev.',
-    anchors: [['live', 1, 103.4], ['aomi', 1, 105.6]] },
+    anchors: [['live', 1, 98.2], ['aomi', 1, 100.4]] },
 ];

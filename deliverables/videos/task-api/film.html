@@ -124,9 +124,10 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 //  81.4  S9  2D   watch it live (slot for the screen recording)
 //  89.4  S10 2D   transparent settlement + verifiable work = outcome-based pricing
 //  93.0  S11 3D   the trust boundary: the harness cube is unverified (rose), then sealed in a glass TEE (green)
-// 101.6  outro  3D   the lineup returns; its cubes line up along the mark's two rings, turn into black squares, and fuse into the logo
+// 101.6  outro  3D   the trust scene's cubes line up along the mark's two rings, turn into black squares, and fuse into the logo
 const W = 1920, H = 1080, DUR = 110, O = 101.6;
-const EDIT = [[0, 5.4], [37.4, 89.4], [5.4, 37.4], [89.4, 110]]; // authored ranges, in playback order
+const EDIT = [[0, 5.4], [37.4, 89.4], [5.4, 17.6], [20.2, 27.7], [28.7, 35.4], [37.0, 37.4], [89.4, 110]]; // 35.4–37.0 is one lap of the loop dot // authored ranges, in playback order (static holds cut)
+const PLAY_DUR = EDIT.reduce((s_, [a, b]) => s_ + b - a, 0);
 const authorTime = x => { for (const [a, b] of EDIT) { if (x < b - a) return a + x; x -= b - a; } return DUR; };
 
 // ---------- math ----------
@@ -291,37 +292,31 @@ const chain = { blocks: [] };
 for (let i = 0; i < 4; i++) { const b = edged(new RoundedBoxGeometry(1.2, .4, 1.2, 3, .06), std(i === 3 ? C.sky : 0xdcdce1, { emissive: C.sky, emissiveIntensity: i === 3 ? .2 : 0 }), 0xb4b4bf, .8); b.position.y = .45 + .2 + i * .43; chainSt.add(b); chain.blocks.push(b); }
 const CH_TOP = .45 + .2 + 3 * .43; // where the new block lands
 // S11 station: the trust boundary — agent → harness → fingerprint; the harness cube is first unverified, then sealed in a glass TEE
-const TZ = -92, GREEN = 0x2e9e6b, ROSEC3 = new THREE.Color(C.rose), BLUEC3 = new THREE.Color(0x4f7fbf);
-const tAgent = station(0, TZ + 4.4, 92, O + .45); { const c = cube('agent', 0xececf0); c.position.y = TOP; tAgent.add(c); }
-const tHarn = station(0, TZ, 92, O + .45), tCube = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); tCube.position.y = TOP; tHarn.add(tCube);
-const tOut = station(0, TZ - 4.4, 92, O + .45), tCard = makeCard(C.sky4); tCard.position.y = 1.55; tOut.add(tCard);
-[pipe([[0, .95, TZ + 4.4 - .66], [0, .95, TZ + .66]]), pipe([[0, .95, TZ - .66], [0, .95, TZ - 4.4 + .8]])].forEach(m => STATIONS.push([m, 92, O + .45]));
+const T_PIPES = [], TZ = -92, GREEN = 0x2e9e6b, ROSEC3 = new THREE.Color(C.rose), BLUEC3 = new THREE.Color(0x4f7fbf);
+const tAgent = station(0, TZ + 4.4, 92, 999), tAgentCube = cube('agent', 0xececf0); tAgentCube.position.y = TOP; tAgent.add(tAgentCube);
+const tHarn = station(0, TZ, 92, 999), tCube = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); tCube.position.y = TOP; tHarn.add(tCube);
+const tOut = station(0, TZ - 4.4, 92, 999), tCard = makeCard(C.sky4); tCard.position.y = 1.55; tOut.add(tCard);
+[pipe([[0, .95, TZ + 4.4 - .66], [0, .95, TZ + .66]]), pipe([[0, .95, TZ - .66], [0, .95, TZ - 4.4 + .8]])].forEach(m => { STATIONS.push([m, 92, 999]); T_PIPES.push(m); });
 const glass = new THREE.Group(); tHarn.add(glass);
 const glassGeo = new THREE.BoxGeometry(2.0, 2.0, 2.0), glassMat = std(0xe8eef5, { transparent: true, opacity: .24, depthWrite: false, roughness: .1, emissive: GREEN, emissiveIntensity: 0 });
 glass.add(new THREE.Mesh(glassGeo, glassMat)); const glassEdge = new THREE.LineSegments(new THREE.EdgesGeometry(glassGeo), lineM(C.arch, .95)); glass.add(glassEdge);
 const lidBar = new THREE.Mesh(new THREE.BoxGeometry(2.06, .08, 2.06), std(C.arch, { emissive: GREEN, emissiveIntensity: 0 })); lidBar.position.y = 1.0; glass.add(lidBar);
 
-// outro station: the lineup once more; its cubes build the Aomi mark (seen from above) and hand over to the real logo
-const OZ = -112, OC = V(0, 0, OZ), MK = 4.4 / 362; // world units per logo unit (the mark is 362 units across)
+// outro: built from the trust scene's own objects — the harness cube and the fingerprint card become the mark's big ring,
+// the agent cube its small ring — seen from above, then handed over to the real logo
+const OC = V(0, 0, TZ), MK = 4.4 / 362; // world units per logo unit (the mark is 362 units across)
 const outroG = new THREE.Group(); outroG.position.copy(OC); scene.add(outroG);
-const ORZ = [6.3, 2.1, -2.1, -6.3], INKC = new THREE.Color(0x000000); // lit black reads as the logo's ink
-const oPl = ORZ.map(z => { const p_ = plinth(); p_.position.z = z; outroG.add(p_); return p_; });
-const agentO = cube('agent', 0xececf0); agentO.position.set(0, TOP, ORZ[0]); outroG.add(agentO);
-const harnO = cube('term', 0x4f7fbf, 1.3, '#ffffff', .18); harnO.position.set(0, TOP, ORZ[1]); outroG.add(harnO);
-const walO = walletSlab(); walO.position.set(0, .45 + .39, ORZ[2]); outroG.add(walO);
-const arcO = cube('arc', 0x4f7fbf, 1.0, '#ffffff', .18); arcO.position.set(0, .45 + .5, ORZ[3]); outroG.add(arcO);
-const oPipes = [pipe([[0, .95, ORZ[0] - .66], [0, .95, ORZ[1] + .66]]), pipe([[0, .9, ORZ[1] - .66], [0, .9, ORZ[2] + .76]]), pipe([[0, .95, ORZ[2] - .76], [0, .95, ORZ[3] + .55]])];
-oPipes.forEach(m => { scene.remove(m); outroG.add(m); });
+const INKC = new THREE.Color(0x000000); // lit black reads as the logo's ink
+const SRC = { harn: V(0, TOP, 0), card: V(0, 1.55, -4.4), agent: V(0, TOP, 4.4) }; // in outroG's frame
 // the mark's big ring as small cubes along its centreline (r = 155 logo units), leaving the notch where the small ring sits
 const L2W = (u, v) => [(u - 181) * MK, (v - 181) * MK], SMALL = L2W(267.765, 94.235);
-const RING = Array.from({ length: 13 }, (_, i) => { const a = deg(lerp(13, 257, i / 12)), r = 155.1 * MK, base = i % 3 === 1 ? 0xdcdce1 : 0x4f7fbf;
+const RING = Array.from({ length: 13 }, (_, i) => { const a = deg(lerp(13, 257, i / 12)), r = 155.1 * MK, base = i % 3 === 1 ? 0x9ad8bb : 0x4f7fbf;
   const m = edged(new RoundedBoxGeometry(.62, .62, .62, 3, .08), std(base, { emissive: 0x4f7fbf, emissiveIntensity: base === 0x4f7fbf ? .15 : 0 }), 0xb4b4bf, .5); outroG.add(m);
-  return { m, base: new THREE.Color(base), x: r * Math.cos(a), z: r * Math.sin(a), ry: -a, src: [harnO, walO, arcO][i % 3], at: O + 1.0 + i * .06 }; });
-const agentBase = new THREE.Color(0xececf0);
+  return { m, base: new THREE.Color(base), x: r * Math.cos(a), z: r * Math.sin(a), ry: -a, src: i % 3 === 1 ? SRC.card : SRC.harn, at: O + 1.0 + i * .06 }; });
 // the small ring as smaller cubes along its centreline (r = 74 logo units); they come out of the agent cube
 const SRING = Array.from({ length: 8 }, (_, i) => { const a = deg(-90 + i * 45), r = 74.1 * MK;
   const m = edged(new RoundedBoxGeometry(.46, .46, .46, 3, .06), std(0xececf0), 0xb4b4bf, .5); outroG.add(m);
-  return { m, base: new THREE.Color(0xececf0), x: SMALL[0] + r * Math.cos(a), z: SMALL[1] + r * Math.sin(a), ry: -a, h: .23, src: agentO, at: O + 1.25 + i * .06 }; });
+  return { m, base: new THREE.Color(0xececf0), x: SMALL[0] + r * Math.cos(a), z: SMALL[1] + r * Math.sin(a), ry: -a, h: .23, src: SRC.agent, at: O + 1.25 + i * .06 }; });
 RING.forEach(r => { r.h = .31; r.grow = [.63 / .62, .80 / .62]; });
 SRING.forEach(r => { r.grow = [.50 / .46, .80 / .46]; }); // [radial, along the ring]: the ring's thickness, and its outer chord between neighbours
 const CUBES = [...RING, ...SRING];
@@ -345,15 +340,15 @@ const CK = [
   [80.4, [7.8, 3.9, CHZ + 5.4], [0, 1.4, CHZ - .6]],
   [93.4, [12.0, 6.2, TZ + 6.4], [0, 1.2, TZ - .8]],
   [101.6, [10.6, 5.5, TZ + 5.6], [0, 1.3, TZ - .8]],
-  [DUR, [7.8, 3.9, CHZ + 5.4], [0, 1.4, CHZ - .6]]];
+  [DUR, [10.6, 5.5, TZ + 5.6], [0, 1.3, TZ - .8]]];
 const camPos = new THREE.CatmullRomCurve3(CK.map(k => V(...k[1])), false, 'centripetal');
 const camTgt = new THREE.CatmullRomCurve3(CK.map(k => V(...k[2])), false, 'centripetal');
 const rawU = t => { t = cl(t, 0, DUR); for (let i = 0; i < CK.length - 1; i++) if (t <= CK[i + 1][0]) return i + seg(t, CK[i][0], CK[i + 1][0]); return CK.length - 1; };
 const camU = t => { let s = 0; for (let i = 0; i < 17; i++) s += rawU(t + (i / 16 - .5) * 1.5); return s / 17 / (CK.length - 1); };
 // [flatten start, flat, unflatten start, 3D again, fixed target (default: the hero), half-height]
-const FLAT = [[4.6, 5.4, 6, 6.5, V(0, TOP, 0)], [5.3, 5.4, 20.6, 21.4, V(-.4, 1.4, HZ)], [28.0, 28.8, 29.2, 29.6, V(-.4, 1.4, HZ)], [28.8, 29.0, 47.6, 48.4, V(0, TOP, HAZ + 4.6)],
+const FLAT = [[4.6, 5.4, 6, 6.5, V(0, TOP, 0)], [5.3, 5.4, 20.6, 21.4, V(-.4, 1.4, HZ)], [26.8, 27.6, 29.2, 29.6, V(-.4, 1.4, HZ)], [28.8, 29.0, 47.6, 48.4, V(0, TOP, HAZ + 4.6)],
   [58.0, 58.8, 73.4, 74.2], [80.6, 81.4, 81.8, 82.2], [81.4, 81.6, 93.0, 93.8, V(0, TOP, TZ)]];
-const FLAT2D = [[4.9, 20.8], [28.6, 47.8], [58.6, 73.6], [81.2, 93.2]];
+const FLAT2D = [[4.9, 20.8], [27.4, 47.8], [58.6, 73.6], [81.2, 93.2]];
 function flatAt(t) { let best = { k: 0 }; for (const [a, b, c, d, tg, half] of FLAT) { const k = eio(seg(t, a, b)) * (1 - eio(seg(t, c, d))); if (k > best.k) best = { k, tg, half: half || 4.5 }; } return best; }
 
 // hero route: it moves only while hidden or while the 2D layer is opaque
@@ -366,9 +361,9 @@ function label(html, cls, pos, a, b) { const el = document.createElement('div');
 // S0 lineup
 [['Agent', '', 0], ['Aomi harness', ' s', 1], ['Wallet', '', 2], ['Arc', ' s', 3]].forEach(([s_, c, i]) => label(s_, 'tagw' + c, V(0, i % 2 ? 3.3 : 2.75, LZ[i]), .5 + i * .3, 3.6));
 // S3
-const jobL = label('✓ good job?', 'big', V(-2.0, 4.0, HZ - .6), 24.6, 28.2);
-label('one visit', 'zone', V(1.6, 0, HZ - .4), 22.6, 28.2);
-const paidL = label('paid ✓', 'rule ok', () => coin.position.clone().add(V(0, .5, 0)), 24.2, 28.2);
+const jobL = label('✓ good job?', 'big', V(-2.0, 4.0, HZ - .6), 24.6, 27.2);
+label('one visit', 'zone', V(1.6, 0, HZ - .4), 22.6, 27.2);
+const paidL = label('paid ✓', 'rule ok', () => coin.position.clone().add(V(0, .5, 0)), 24.2, 27.2);
 // S6
 label('agent', 'zone', V(0, 2.4, AGZ), 48.6, 53.6);
 label('Aomi harness', 'zone s', V(0, 3.75, HAZ), 48.8, 53.6);
@@ -391,7 +386,7 @@ label('fingerprint', 'zone', V(0, 2.65, TZ - 4.4), 93.8, 101.4);
 label('ran honestly?', 'big bad', V(0, 2.9, TZ + .2), 96.4, 98.9);
 label('🔒 TEE · attested execution', 'rule okg', V(0, 2.75, TZ + .2), 99.0, 101.4);
 label('✓ trustless service purchase', 'zone g', V(2.4, .1, TZ - 3.4), 99.8, 101.4);
-const CHAPTERS = [['A person hires a contractor', 21.6, 28.0], ['Harness · build, then simulate on a fork', 48.6, 58.0], ['The buyer executes', 74.4, 80.6], ['The remaining trust boundary', 93.6, 101.4]];
+const CHAPTERS = [['A person hires a contractor', 21.6, 27.0], ['Harness · build, then simulate on a fork', 48.6, 58.0], ['The buyer executes', 74.4, 80.6], ['The remaining trust boundary', 93.6, 101.4]];
 const hud = document.getElementById('hud');
 const chapEls = CHAPTERS.map(([txt]) => { const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `<i></i>${txt}`; hud.appendChild(d); return d; });
 
@@ -649,7 +644,7 @@ const wmEl = outro.querySelector('.wm'), osubEl = outro.querySelector('.sub'), u
 const logoPaths = [...document.querySelectorAll('#logo path')];
 function seekOutro(t) {
   // the black squares fuse into two rings (in 3D); the real logo, same size and place, blends in over them
-  veil.style.opacity = Math.max(eio(seg(t, O, O + .4)) * (1 - eio(seg(t, O + .5, O + .9))), eio(seg(t, O + 3.35, O + 3.75)));
+  veil.style.opacity = eio(seg(t, O + 3.35, O + 3.75));
   outro.style.opacity = eio(seg(t, O + 3.3, O + 3.7));
   const lk = eio(seg(t, O + 4.1, O + 4.8)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(MARK_S, 1, lk)})`;
   wmEl.style.opacity = seg(t, O + 4.2, O + 4.8); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 4.2, O + 4.9))) * -18}px)`;
@@ -722,21 +717,25 @@ function seek(t) {
     glassEdge.material.color.lerpColors(ARCHC, new THREE.Color(GREEN), gk); glassMat.emissiveIntensity = .25 * gk + .4 * pulse(t, 98.8, 99.6); lidBar.material.emissiveIntensity = .5 * gk; lidBar.material.color.lerpColors(ARCHC, new THREE.Color(GREEN), gk);
     tCard.rotation.y = Math.atan2(camera.position.x, camera.position.z - (TZ - 4.4)); tCard.userData.set(t > 99.8 ? 0x9ad8bb : C.sky4); }
   // outro: plinths sink, the harness, wallet and Arc cubes become the ring, the agent cube takes the small ring's place
-  outroG.visible = t > O + .3; grid.visible = t < O + .4;
-  if (outroG.visible) {
+  outroG.visible = t > O + .9;
+  if (t > O) {
     const sink = eio(seg(t, O + 1.0, O + 1.6)), fl2 = eio(seg(t, O + 2.55, O + 2.95));
-    oPl.forEach(p_ => { p_.scale.setScalar(tiny(1 - sink)); p_.position.y = .225 * (1 - sink); p_.visible = sink < .99; }); oPipes.forEach(m => { m.visible = sink < .3; });
-    [harnO, walO, arcO].forEach((c, i) => { const s_ = 1 - eio(seg(t, O + 1.0 + i * .12, O + 1.5 + i * .12)); c.scale.setScalar(tiny(s_)); c.visible = s_ > .002; });
-    agentO.scale.setScalar(tiny(1 - eio(seg(t, O + 1.25, O + 1.75)))); agentO.visible = t < O + 1.75;
-    CUBES.forEach(r => { const f = eio(seg(t, r.at, r.at + .9)), sp = r.src.position, y0 = r.h * (1 - .94 * fl2);
+    [tAgent, tHarn, tOut].forEach(st => { const p_ = st.children[0]; p_.scale.setScalar(tiny(1 - sink)); p_.position.y = .225 * (1 - sink); p_.visible = sink < .99; });
+    T_PIPES.forEach(m => { m.visible = sink < .3; });
+    const lift = eio(seg(t, O + .2, O + .9)); glass.position.y = .45 + 1.0 + lift * 3.5; glassMat.opacity = .24 * (1 - lift); glassEdge.material.opacity = .95 * (1 - lift); lidBar.material.transparent = true; lidBar.material.opacity = 1 - lift; glass.visible = lift < .99;
+    tCube.scale.setScalar(tiny(1 - eio(seg(t, O + 1.0, O + 1.5)))); tCube.visible = t < O + 1.5;
+    tCard.scale.setScalar(tiny(1 - eio(seg(t, O + 1.1, O + 1.6)))); tCard.visible = t < O + 1.6;
+    tAgentCube.scale.setScalar(tiny(1 - eio(seg(t, O + 1.25, O + 1.75)))); tAgentCube.visible = t < O + 1.75;
+    CUBES.forEach(r => { const f = eio(seg(t, r.at, r.at + .9)), sp = r.src, y0 = r.h * (1 - .94 * fl2);
       r.m.visible = t > r.at; r.m.position.set(lerp(sp.x, r.x, f), lerp(sp.y, y0, f) + 1.4 * Math.sin(Math.PI * f), lerp(sp.z, r.z, f)); r.m.rotation.set(0, lerp(0, r.ry, f), 0);
       const mg = eio(seg(t, O + 2.95, O + 3.4)); r.m.scale.set(lerp(1, r.grow[0], mg), tiny(1 - .94 * fl2), lerp(1, r.grow[1], mg)); r.m.material.color.lerpColors(r.base, INKC, fl2); r.m.material.roughness = lerp(.55, 1, fl2); r.m.material.emissiveIntensity = (r.base.getHex() === 0x4f7fbf ? .15 : 0) * (1 - fl2) + .4 * pulse(t, r.at + .8, r.at + 1.3);
       r.m.children[0].material.opacity = .5 * (1 - fl2); });
   }
-  if (t > O + .4) { // from under the veil: an iso view of the lineup, swinging overhead to a top-down view that matches the logo's size and place
-    const m = eio(seg(t, O + 1.3, O + 2.5)), z2 = eio(seg(t, O + 2.3, O + 2.95)), P = 140 * MARK_S / (362 * MK), drift = eio(seg(t, O + .4, O + 1.6));
-    const tg = OC.clone().add(V(0, .8, .6 * (1 - drift))).lerp(OC, m).add(V(0, 0, -(MARK_CY - 540) / P * z2)), dir = V(11, 7.5, 7.5).normalize().lerp(V(0, 1, 1e-4), m).normalize();
-    const fov = lerp(35, 12, m), half = lerp(lerp(6.2, 5.4, drift), 540 / P, m), dist = half / Math.tan(deg(fov / 2));
+  if (t > O) { // from the trust shot, the camera swings overhead to a top-down view that matches the logo's size and place
+    const m = eio(seg(t, O + .9, O + 2.5)), z2 = eio(seg(t, O + 2.3, O + 2.95)), P = 140 * MARK_S / (362 * MK), c0 = CK.at(-2);
+    const tg = V(...c0[2]).lerp(OC, m).add(V(0, 0, -(MARK_CY - 540) / P * z2)), d0 = V(...c0[1]).sub(V(...c0[2])), dir = d0.clone().normalize().lerp(V(0, 1, 1e-4), m).normalize();
+    const fov = lerp(35, 12, m), half = lerp(d0.length() * Math.tan(deg(17.5)), 540 / P, m), dist = half / Math.tan(deg(fov / 2));
+    grid.material.opacity = .35 * (1 - m); route.material.transparent = true; route.material.opacity = 1 - m;
     camera.up.set(0, 1, 0).lerp(V(0, 0, -1), m).normalize(); camera.position.copy(tg).add(dir.multiplyScalar(dist)); camera.fov = fov; camera.near = .5; camera.lookAt(tg);
     camera.updateProjectionMatrix(); camera.updateMatrixWorld(); scene.fog.near = 400; scene.fog.far = 900; sun.position.copy(OC).add(V(14, 30, 12)); sun.target.position.copy(OC);
   } else camera.up.set(0, 1, 0);
@@ -768,7 +767,7 @@ function seekFilm(T) {
 const params = new URLSearchParams(location.search);
 let playing = false, t0 = 0, from = 0;
 window.__AOMI_VIDEO__ = {
-  duration: TL ? TL.dur : DUR,
+  duration: TL ? TL.dur : PLAY_DUR,
   seek: seekFilm,
   play() { playing = true; t0 = performance.now(); const loop = () => { if (!playing) return; seekFilm((from + (performance.now() - t0) / 1000) % this.duration); requestAnimationFrame(loop); }; loop(); },
   pause() { playing = false; },

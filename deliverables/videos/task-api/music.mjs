@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Original music bed for "Aomi Task API" — synthesised, no samples, no licensing.
-// An upbeat, driving piece: A minor, 124 bpm. Four-on-the-floor kick with the pads pumping against it,
+// An upbeat, driving piece: A minor, 124 bpm, resolving to A major at the end. Four-on-the-floor kick with the pads pumping against it,
 // an off-beat octave bass, 16th-note arpeggios, claps on 2 and 4, noise risers into each act and an
 // impact on every scene change. It drops to pads and a heartbeat for the contractor (the problem), then
 // builds back up. Section boundaries are written on the film's playback clock and moved onto the narrated
@@ -10,7 +10,7 @@
 import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
-const FILM_DUR = 110;                                   // DUR in film.html (playback clock, after EDIT reorders the scenes)
+const FILM_DUR = 104.8;                                  // playback length of film.html (after EDIT reorders and trims the scenes)
 const CHORDS = [                                        // [start, end, chord (MIDI), bass (MIDI)] — changes on scene boundaries
   [0, 5.4, [57, 60, 64, 67], 45],                       // 1   title + lineup        Am7
   [5.4, 16.4, [48, 52, 55, 59], 36],                    // 1   the intent            Cmaj7
@@ -20,22 +20,23 @@ const CHORDS = [                                        // [start, end, chord (M
   [42.2, 49.4, [48, 52, 55, 60], 36],                   // 5   the buyer executes    C
   [49.4, 57.4, [57, 60, 64, 67], 45],                   // 6   watch it live         Am7
   [57.4, 65.6, [53, 57, 60, 64], 41],                   // 7   why: x402 over data   Fmaj7
-  [65.6, 73.4, [55, 59, 62, 65], 43],                   // 8   a service?            G7
-  [73.4, 80.8, [52, 55, 59, 62], 40],                   // 9   the contractor        Em7 — the problem
-  [80.8, 89.4, [53, 57, 60, 64], 41],                   // 10  two loops             Fmaj7
-  [89.4, 94.6, [53, 57, 60, 64], 41],                   // 11  thesis                Fmaj7
-  [94.6, 101.6, [55, 59, 62, 65], 43],                  // 12  trust → TEE           G7
-  [101.6, 110, [57, 60, 64, 69, 71], 45]];              // outro: cubes build the mark Am(add9)
+  [65.6, 69.6, [55, 59, 62, 65], 43],                   // 8   a service?            G7
+  [69.6, 76.6, [52, 55, 59, 62], 40],                   // 9   the contractor        Em7 — the problem
+  [76.6, 84.2, [53, 57, 60, 64], 41],                   // 10  two loops             Fmaj7
+  [84.2, 88.0, [53, 57, 60, 64], 41],                   // 11  thesis                Fmaj7
+  [88.0, 96.4, [52, 56, 59, 62], 40],                   // 12  trust → TEE           E7 — the dominant, leading home
+  [96.4, 104.8, [57, 61, 64, 69, 71], 45]];             // outro                     A major (add9): lands bright on the home chord
 const BEAT = 60 / 124;
-const DRIVE = [[5.4, 73.4], [80.8, 101.6]];             // kick, bass and hats run through these
-const CLAPS = [[16.4, 49.4], [57.4, 73.4], [80.8, 101.6]]; // claps on 2 and 4
-const ARP = [[5.4, 101.6]];                             // 16th arpeggio
-const HEART = [73.4, 80.8];                             // the drop: a soft heartbeat under the contractor
-const RISERS = [[3.2, 5.4], [14.2, 16.4], [32.4, 34.6], [55.2, 57.4], [78.4, 80.8], [87.2, 89.4]]; // noise sweeps into a scene
-const IMPACTS = [5.4, 16.4, 34.6, 57.4, 80.8, 89.4];    // boom + crash on the downbeat of a new act
+const DRIVE = [[5.4, 69.6], [76.6, 96.4]];              // kick, bass and hats run through these
+const CLAPS = [[16.4, 49.4], [57.4, 69.6], [76.6, 96.4]]; // claps on 2 and 4
+const ARP = [[5.4, 96.4]];                              // 16th arpeggio
+const HEART = [69.6, 76.6];                             // the drop: a soft heartbeat under the contractor
+const RISERS = [[3.2, 5.4], [14.2, 16.4], [32.4, 34.6], [55.2, 57.4], [74.4, 76.6], [86.0, 88.0]]; // noise sweeps into a scene
+const IMPACTS = [5.4, 16.4, 34.6, 57.4, 76.6, 84.2];    // boom + crash on the downbeat of a new act
 const CHIMES = [[2.4, 81], [23.0, 81], [23.45, 83], [23.9, 84], [24.35, 86], [24.8, 88], [25.4, 88], [29.8, 84], [30.0, 86], [30.2, 88],
-  [36.6, 84], [43.8, 86], [46.6, 81], [46.9, 88], [52.3, 84], [56.6, 88], [63.0, 81], [85.6, 84], [99.6, 88], [102.7, 81], [103.0, 84], [103.3, 86], [103.6, 88], [104.3, 84], [105.1, 93]]; // … the cubes land, turn black, fuse into the logo
-const THUDS = [25.1, 67.4, 83.8, 96.6];                 // MXNB skipped · outcome not verifiable · the human loop breaks · ran honestly?
+  [36.6, 84], [43.8, 86], [46.6, 81], [46.9, 88], [52.3, 84], [56.6, 88], [63.0, 81], [82.0, 84], [94.6, 88],
+  [97.5, 81], [97.8, 85], [98.1, 88], [98.4, 93], [99.1, 85], [99.9, 93]]; // outro chimes in A major: the cubes land, fuse, the logo appears
+const THUDS = [25.1, 67.4, 80.2, 91.4];                 // MXNB skipped · outcome not verifiable · the human loop breaks · ran honestly?
 
 // ---- original clock → narrated clock ----
 const tlPath = path.join(process.cwd(), 'vo/timeline.json');

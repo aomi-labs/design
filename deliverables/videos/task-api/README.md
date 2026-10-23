@@ -16,7 +16,7 @@ is not: it is Cecilia's live take of 23 Oct 2026 (0.10 + 0.20 USDC, 0.01 USDC to
 | File | What it is |
 |---|---|
 | `film.html` | The whole film as `seek(t)`, with the voice-over warp and burned-in subtitles. `?t=112` jumps to a moment. |
-| `music.mjs` | Original synthesized bed (A minor, 124 bpm, four-on-the-floor) on the film clock, moved onto the narrated clock |
+| `music.mjs` | Original synthesized bed (A minor resolving to A major, 124 bpm, four-on-the-floor) on the film clock, moved onto the narrated clock |
 | `vo/script.mjs` | Voice-over lines with word → animation anchors |
 | `vo/lineNN.{mp3,json}` | ElevenLabs clips (team voice) and their word timings |
 | `vo/timeline.{json,js}`, `task-api.srt` | Built by `build-timeline.mjs` |
