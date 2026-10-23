@@ -98,6 +98,7 @@ canvas{display:block}
   </div>
   <div id="sub"></div>
 </div>
+<script src="research/live-log.js" onerror="void 0"></script>
 <script src="vo/timeline.js" onerror="void 0"></script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
@@ -472,12 +473,37 @@ const JSON_LINES = [
   T(rv(g, 71.4), 'full bundle · unsigned', 960, 600, F.mono, SKY2, 'middle');
 }
 
-// -- S9: watch it live — slot for the screen recording --------------------------------------------------
+// -- S9: watch it live — a real Task API purchase on Arc Mainnet (23 Oct 2026, staging endpoint) ----------
+// Where the screen capture is clear, live-overlay.mjs lays Cecilia's footage over the window's text area (LIVE windows).
+// Where the capture went black, the window is rebuilt from the run's own terminal output (research/live-log.js).
+const TW = { x: 410, y: 245, w: 1100, h: 710, s: 1100 / 1192 };          // the Terminal window, scaled from the 1192 px capture
+const LIVE = { A: [82.0, 83.6], B: [86.6, 89.0] };                        // film windows covered by footage (live-overlay.mjs reads these)
+const TAU = [[81.6, 0], [83.6, 6.6], [84.2, 33.7], [84.8, 34.5], [85.8, 38.9], [86.6, 44.2], [89.0, 49]]; // film → log seconds
+const LOG = window.LIVE_LOG || [];
+const TROWS = LOG.flatMap(([lt, col, text]) => { const out = []; for (let i = 0; i < Math.max(1, text.length); i += 80) out.push({ lt, col, text: text.slice(i, i + 80) }); return out; });
+const TERM_ROWS = [];
+const termTau = t => { if (t <= TAU[0][0]) return 0; for (let i = 0; i < TAU.length - 1; i++) { const [a, la] = TAU[i], [b, lb] = TAU[i + 1]; if (t <= b) return lerp(la, lb, seg(t, a, b)); } return TAU.at(-1)[1]; };
 {
-  const g = scn(81.4, 89.4);
-  heading(g, 81.6, 'Watch it live', 'A real Task API purchase on Arc.');
-  const p = rv(g, 81.8); B(p, 260, 262, 1400, 640, { rx: 24, fill: '#fafafa', stroke: '#d4d4d8', dash: '10 8' });
-  T(p, 'SCREEN RECORDING', 960, 570, F.lab, MUTED, 'middle', .18); T(p, 'slot · replaced by the live recording', 960, 610, F.uiS, MUTED, 'middle');
+  const g = scn(81.4, 89.4), s = TW.s, X = v => TW.x + (v - 113) * s, Y = v => TW.y + (v - 76) * s;
+  heading(g, 81.6, 'Watch it live', 'A real Task API purchase on Arc Mainnet, through the staging endpoint · 23 Oct 2026');
+  const w = rv(g, 81.6, 0, 8);
+  B(w, TW.x, TW.y, TW.w, TW.h, { rx: 24, fill: '#191919', stroke: '#3a3a3c', sw: 1.5 });
+  B(w, X(125), Y(89), 130 * s, 38 * s, { rx: 19 * s, fill: 'none', stroke: '#3a3a3c', sw: 1.5 });
+  el('path', { d: `M${X(279)} ${Y(97)}h${9 * s}l${3 * s} ${3 * s}h${14 * s}v${17 * s}h${-26 * s}z`, fill: '#8a7a3e' }, w);
+  T(w, 'cecilia — Redo Task API.command — node ◂ zsh -f ~/Documents/ChatGPT/t…', X(316), Y(117), "600 24px -apple-system,'Helvetica Neue',sans-serif", '#8c8c8c');
+  B(w, X(1279), Y(180), 19 * s, 650 * s, { rx: 9, fill: '#232323', stroke: 'none', sw: 0 }); B(w, X(1281), Y(752), 15 * s, 76 * s, { rx: 7, fill: '#7a7a7a', stroke: 'none', sw: 0 });
+  for (let k = 0; k < 24; k++) TERM_ROWS.push(el('text', { x: X(132), y: (Y(176) + 28 * s * k).toFixed(1), style: "font:400 21.45px Menlo,monospace;white-space:pre" }, w));
+  const cursor = el('rect', { x: X(132), width: 14 * s, height: 26 * s, fill: '#9a9a9a' }, w);
+  const tag = chip(rv(g, 81.8), '', TW.x + TW.w, 222, 'grey', { anchor: 'end', h: 34, font: "500 16px 'Geist Mono',monospace" });
+  CUSTOM.push(t => {
+    if (t < 81.3 || t > 89.5) return;
+    const tau = termTau(t), vis = TROWS.filter(r => r.lt <= tau + 1e-6), shown = vis.slice(-23);
+    TERM_ROWS.forEach((e, k) => { const r = shown[k]; e.textContent = r ? r.text : ''; e.setAttribute('fill', r && r.col === 'g' ? '#37bd2a' : r && r.col === 'c' ? '#33b5c5' : '#efefef'); e.setAttribute('font-weight', r && r.col === 'b' ? 700 : 400); });
+    cursor.setAttribute('y', (Y(176) + 28 * s * shown.length - 20 * s).toFixed(1));
+    const live = (t >= LIVE.A[0] && t < LIVE.A[1]) || (t >= LIVE.B[0] && t < LIVE.B[1]);
+    const label = live ? 'screen recording' : `rebuilt from the session log · same run · t+${tau.toFixed(1)}s`;
+    if (tag.t.textContent !== label) { tag.t.textContent = label; tag.w = tag.t.getComputedTextLength() + tag.pad * 2; tag.r.setAttribute('width', tag.w); tag.place(TW.x + TW.w - tag.w); }
+  });
 }
 
 // -- S10: the thesis -------------------------------------------------------------------------------------

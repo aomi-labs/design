@@ -195,41 +195,77 @@ a harness that runs complex money-lego intents faster,
 more reliably, and with fewer tokens.
 
 50
-00:02:42,806 --> 00:02:44,716
-So a transparent settlement layer,
+00:02:34,806 --> 00:02:36,833
+Here's a real run on Arc Mainnet.
 
 51
-00:02:44,756 --> 00:02:47,886
-plus machine work that can be checked before delivery,
+00:02:36,873 --> 00:02:38,667
+The agent asks to send 0.1 and
 
 52
-00:02:47,926 --> 00:02:51,562
-makes outcome-based pricing for services possible.
+00:02:38,707 --> 00:02:41,697
+0.2 USDC to two ops wallets,
 
 53
-00:02:53,812 --> 00:02:56,338
-One trust assumption remains: today,
+00:02:41,737 --> 00:02:45,378
+and pays one cent over x402 to prepare.
 
 54
-00:02:56,378 --> 00:03:00,262
-the buyer trusts that Aomi's simulation ran honestly.
+00:02:45,418 --> 00:02:48,942
+It polls for free until the simulation passes every check.
 
 55
-00:03:00,302 --> 00:03:02,387
-Next, we plan to run the harness in
+00:02:48,982 --> 00:02:52,193
+Retrieval costs 3% of the thirty cents moved,
 
 56
-00:03:02,427 --> 00:03:04,604
-a trusted execution environment,
+00:02:52,233 --> 00:02:54,944
+so 0.009 USDC.
 
 57
-00:03:04,644 --> 00:03:07,537
-so buying a service becomes trustless.
+00:02:54,984 --> 00:02:58,590
+Then its own wallet signs, both transfers confirm onchain,
 
 58
-00:03:09,587 --> 00:03:13,216
-The Task API is live, settling in USDC on Arc.
+00:02:58,630 --> 00:03:01,395
+and the recipient balances are verified.
 
 59
-00:03:13,256 --> 00:03:15,742
+00:03:02,045 --> 00:03:03,955
+So a transparent settlement layer,
+
+60
+00:03:03,995 --> 00:03:07,125
+plus machine work that can be checked before delivery,
+
+61
+00:03:07,165 --> 00:03:10,801
+makes outcome-based pricing for services possible.
+
+62
+00:03:13,051 --> 00:03:15,577
+One trust assumption remains: today,
+
+63
+00:03:15,617 --> 00:03:19,501
+the buyer trusts that Aomi's simulation ran honestly.
+
+64
+00:03:19,541 --> 00:03:21,626
+Next, we plan to run the harness in
+
+65
+00:03:21,666 --> 00:03:23,843
+a trusted execution environment,
+
+66
+00:03:23,883 --> 00:03:26,776
+so buying a service becomes trustless.
+
+67
+00:03:28,826 --> 00:03:32,455
+The Task API is live, settling in USDC on Arc.
+
+68
+00:03:32,495 --> 00:03:34,981
 Try it at aomi.dev.

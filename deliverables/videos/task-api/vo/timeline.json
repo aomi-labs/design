@@ -1,5 +1,5 @@
 {
- "dur": 199.092,
+ "dur": 218.331,
  "anchors": [
   [
    0,
@@ -286,67 +286,111 @@
    80.6
   ],
   [
-   162.806,
+   154.806,
+   81.6
+  ],
+  [
+   155.201,
+   81.8
+  ],
+  [
+   161.099,
+   82.1
+  ],
+  [
+   162.527,
+   82.5
+  ],
+  [
+   166.068,
+   83.3
+  ],
+  [
+   167.472,
+   84.3
+  ],
+  [
+   169.876,
+   85
+  ],
+  [
+   176.029,
+   85.9
+  ],
+  [
+   177.48,
+   87.4
+  ],
+  [
+   180.255,
+   88.6
+  ],
+  [
+   181.245,
+   88.8
+  ],
+  [
+   182.045,
    89.6
   ],
   [
-   163.201,
+   182.44,
    90
   ],
   [
-   166.301,
+   185.54,
    90.8
   ],
   [
-   168.274,
+   187.513,
    91.6
   ],
   [
-   171.412,
+   190.651,
    92.4
   ],
   [
-   173.812,
+   193.051,
    94.8
   ],
   [
-   174.462,
+   193.701,
    95.4
   ],
   [
-   179.234,
+   198.473,
    96.6
   ],
   [
-   183.82,
+   203.059,
    98.8
   ],
   [
-   186.269,
+   205.508,
    99.8
   ],
   [
-   187.387,
+   206.626,
    100.4
   ],
   [
-   189.587,
+   208.826,
    102.6
   ],
   [
-   190.841,
+   210.08,
    103.4
   ],
   [
-   193.883,
+   213.122,
    105.6
   ],
   [
-   195.592,
+   214.831,
    106
   ],
   [
-   199.092,
+   218.331,
    108
   ]
  ],
@@ -597,53 +641,98 @@
    "text": "more reliably, and with fewer tokens."
   },
   {
-   "s": 162.806,
-   "e": 164.716,
+   "s": 154.806,
+   "e": 156.833,
+   "text": "Here's a real run on Arc Mainnet."
+  },
+  {
+   "s": 156.873,
+   "e": 158.667,
+   "text": "The agent asks to send 0.1 and"
+  },
+  {
+   "s": 158.707,
+   "e": 161.697,
+   "text": "0.2 USDC to two ops wallets,"
+  },
+  {
+   "s": 161.737,
+   "e": 165.378,
+   "text": "and pays one cent over x402 to prepare."
+  },
+  {
+   "s": 165.418,
+   "e": 168.942,
+   "text": "It polls for free until the simulation passes every check."
+  },
+  {
+   "s": 168.982,
+   "e": 172.193,
+   "text": "Retrieval costs 3% of the thirty cents moved,"
+  },
+  {
+   "s": 172.233,
+   "e": 174.944,
+   "text": "so 0.009 USDC."
+  },
+  {
+   "s": 174.984,
+   "e": 178.59,
+   "text": "Then its own wallet signs, both transfers confirm onchain,"
+  },
+  {
+   "s": 178.63,
+   "e": 181.395,
+   "text": "and the recipient balances are verified."
+  },
+  {
+   "s": 182.045,
+   "e": 183.955,
    "text": "So a transparent settlement layer,"
   },
   {
-   "s": 164.756,
-   "e": 167.886,
+   "s": 183.995,
+   "e": 187.125,
    "text": "plus machine work that can be checked before delivery,"
   },
   {
-   "s": 167.926,
-   "e": 171.562,
+   "s": 187.165,
+   "e": 190.801,
    "text": "makes outcome-based pricing for services possible."
   },
   {
-   "s": 173.812,
-   "e": 176.338,
+   "s": 193.051,
+   "e": 195.577,
    "text": "One trust assumption remains: today,"
   },
   {
-   "s": 176.378,
-   "e": 180.262,
+   "s": 195.617,
+   "e": 199.501,
    "text": "the buyer trusts that Aomi's simulation ran honestly."
   },
   {
-   "s": 180.302,
-   "e": 182.387,
+   "s": 199.541,
+   "e": 201.626,
    "text": "Next, we plan to run the harness in"
   },
   {
-   "s": 182.427,
-   "e": 184.604,
+   "s": 201.666,
+   "e": 203.843,
    "text": "a trusted execution environment,"
   },
   {
-   "s": 184.644,
-   "e": 187.537,
+   "s": 203.883,
+   "e": 206.776,
    "text": "so buying a service becomes trustless."
   },
   {
-   "s": 189.587,
-   "e": 193.216,
+   "s": 208.826,
+   "e": 212.455,
    "text": "The Task API is live, settling in USDC on Arc."
   },
   {
-   "s": 193.256,
-   "e": 195.742,
+   "s": 212.495,
+   "e": 214.981,
    "text": "Try it at aomi.dev."
   }
  ],
@@ -709,21 +798,27 @@
    "dur": 14.907
   },
   {
+   "id": 9,
+   "file": "vo/line09.mp3",
+   "start": 154.806,
+   "dur": 26.239
+  },
+  {
    "id": 10,
    "file": "vo/line10.mp3",
-   "start": 162.806,
+   "start": 182.045,
    "dur": 8.406
   },
   {
    "id": 11,
    "file": "vo/line11.mp3",
-   "start": 173.812,
+   "start": 193.051,
    "dur": 13.375
   },
   {
    "id": 12,
    "file": "vo/line12.mp3",
-   "start": 189.587,
+   "start": 208.826,
    "dur": 5.805
   }
  ]

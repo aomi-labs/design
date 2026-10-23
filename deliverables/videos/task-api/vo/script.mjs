@@ -2,10 +2,11 @@
 // Times are on the film's original (silent) clock. `start` is where the line begins, `anchors` pin a spoken
 // word to the moment its animation happens, `end` is where the line should finish.
 // skills/slide-to-video/scripts/build-timeline.mjs stretches the film between these points so picture follows the voice.
-// Line 9 ("watch it live") is written once the screen recording is in.
+// Line 9 ("watch it live") narrates the live take: footage where the capture is clear, the session log where it went black.
 export const OLD_END = 108;   // last frame of the silent cut (DUR in film.html)
 export const END_HOLD = 1.5;  // extra hold on the logo after the last line
 export const DISPLAY = [      // spoken → subtitle form (longest first)
+  ['point zero zero nine', '0.009'], ['point one', '0.1'], ['point two', '0.2'],
   ['twenty-two thousand', '22,000'], ['twenty-five thousand', '25,000'], ['six hundred and sixty', '660'],
   ['fifteen basis points', '15 bps'], ['nineteen basis points', '19 bps'], ['three percent', '3%'],
   ['aomi dot dev', 'aomi.dev'], ['x four oh two', 'x402'],
@@ -42,6 +43,9 @@ export const LINES = [
   { id: 13, start: 75.2, end: 80.6,
     text: "Then it signs and broadcasts the bundle itself. Aomi never holds its keys or its funds. What Aomi sells is the work: a harness that runs complex money-lego intents faster, more reliably, and with fewer tokens.",
     anchors: [['signs', 1, 75.8], ['keys', 1, 76.8], ['work', 1, 78.4], ['faster', 1, 79.4]] },
+  { id: 9, start: 81.6, end: 88.8,
+    text: "Here's a real run on Arc Mainnet. The agent asks to send point one and point two USDC to two ops wallets, and pays one cent over x four oh two to prepare. It polls for free until the simulation passes every check. Retrieval costs three percent of the thirty cents moved, so point zero zero nine USDC. Then its own wallet signs, both transfers confirm onchain, and the recipient balances are verified.",
+    anchors: [['real', 1, 81.8], ['wallets', 1, 82.1], ['cent', 1, 82.5], ['free', 1, 83.3], ['passes', 1, 84.3], ['three', 1, 85.0], ['signs', 1, 85.9], ['confirm', 1, 87.4], ['verified', 1, 88.6]] },
   { id: 10, start: 89.6, end: 92.4,
     text: 'So a transparent settlement layer, plus machine work that can be checked before delivery, makes outcome-based pricing for services possible.',
     anchors: [['transparent', 1, 90.0], ['checked', 1, 90.8], ['outcome-based', 1, 91.6]] },
