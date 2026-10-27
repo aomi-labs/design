@@ -1,0 +1,243 @@
+1
+00:00:01,000 --> 00:00:03,440
+Announcing Aomi Task API.
+
+2
+00:00:06,490 --> 00:00:08,168
+Here's a treasury agent on Arc
+
+3
+00:00:08,208 --> 00:00:09,945
+sending one long instruction:
+
+4
+00:00:09,985 --> 00:00:14,159
+rebalance into EURC, JPYC and MXNB,
+
+5
+00:00:14,199 --> 00:00:19,697
+fill within 15 bps of mid, keep 25,000 USDC for payroll,
+
+6
+00:00:19,737 --> 00:00:22,769
+and revert everything if any leg fails.
+
+7
+00:00:25,019 --> 00:00:28,114
+Aomi's harness turns that into transactions
+
+8
+00:00:28,154 --> 00:00:30,203
+across StableFX and Arc pools,
+
+9
+00:00:30,243 --> 00:00:32,491
+so the agent never writes calldata.
+
+10
+00:00:32,531 --> 00:00:35,834
+Then it runs the whole batch on an internal fork of Arc,
+
+11
+00:00:35,874 --> 00:00:39,255
+and checks every constraint against the result.
+
+12
+00:00:40,505 --> 00:00:42,566
+What comes back is an outcome fingerprint,
+
+13
+00:00:42,606 --> 00:00:48,964
+signed by Aomi: 22,000 USDC out, EURC and JPYC in,
+
+14
+00:00:49,004 --> 00:00:52,853
+every constraint passed, and the MXNB leg skipped,
+
+15
+00:00:52,893 --> 00:00:56,301
+because the best fill was 19 bps from mid.
+
+16
+00:00:56,341 --> 00:00:58,576
+Getting this far costs one cent.
+
+17
+00:00:58,616 --> 00:01:00,155
+The buyer sees the outcome before
+
+18
+00:01:00,195 --> 00:01:02,170
+anything touches its wallet.
+
+19
+00:01:04,021 --> 00:01:05,200
+Now the buyer decides.
+
+20
+00:01:05,240 --> 00:01:06,233
+If it wants the batch,
+
+21
+00:01:06,273 --> 00:01:09,600
+it pays 3% of the USDC leaving its wallet,
+
+22
+00:01:09,640 --> 00:01:15,842
+here 660 USDC, over x402, and gets the full bundle.
+
+23
+00:01:18,692 --> 00:01:21,891
+Then it signs and broadcasts the bundle itself.
+
+24
+00:01:21,931 --> 00:01:24,840
+Aomi never holds its keys or its funds.
+
+25
+00:01:24,880 --> 00:01:27,023
+What Aomi sells is the work:
+
+26
+00:01:27,063 --> 00:01:30,842
+a harness that runs complex money-lego intents faster,
+
+27
+00:01:30,882 --> 00:01:33,949
+more reliably, and with fewer tokens.
+
+28
+00:01:34,799 --> 00:01:37,011
+Watch a real run on Arc Mainnet.
+
+29
+00:01:37,051 --> 00:01:38,764
+The agent asks to send 0.1 and
+
+30
+00:01:38,804 --> 00:01:41,702
+0.2 USDC to two ops wallets,
+
+31
+00:01:41,742 --> 00:01:45,696
+and pays one cent over x402 to prepare.
+
+32
+00:01:45,736 --> 00:01:49,191
+It polls for free until the simulation passes every check.
+
+33
+00:01:49,231 --> 00:01:52,348
+Retrieval costs 3% of the thirty cents moved,
+
+34
+00:01:52,388 --> 00:01:54,961
+so 0.009 USDC.
+
+35
+00:01:55,001 --> 00:01:58,618
+Then its own wallet signs, both transfers confirm onchain,
+
+36
+00:01:58,658 --> 00:02:01,202
+and the recipient balances are verified.
+
+37
+00:02:02,052 --> 00:02:03,382
+Why does this matter?
+
+38
+00:02:03,422 --> 00:02:06,656
+x402 already lets agents pay for data.
+
+39
+00:02:06,696 --> 00:02:09,280
+The chain sits in between as a neutral rail,
+
+40
+00:02:09,320 --> 00:02:11,876
+so neither side has to trust the other.
+
+41
+00:02:12,426 --> 00:02:14,743
+But what if an agent wants to buy a service?
+
+42
+00:02:14,783 --> 00:02:16,438
+The outcome of the work cannot
+
+43
+00:02:16,478 --> 00:02:19,185
+be pre-verified before delivery.
+
+44
+00:02:20,635 --> 00:02:22,162
+People haven't solved this either.
+
+45
+00:02:22,202 --> 00:02:23,904
+You cannot tell whether a contractor
+
+46
+00:02:23,944 --> 00:02:26,558
+does good jobs before seeing them work.
+
+47
+00:02:28,208 --> 00:02:31,036
+This loop never completes in the human economy.
+
+48
+00:02:31,076 --> 00:02:32,162
+Machines can do better,
+
+49
+00:02:32,202 --> 00:02:33,915
+because their service is usually
+
+50
+00:02:33,955 --> 00:02:36,040
+the result of processing data,
+
+51
+00:02:36,080 --> 00:02:38,508
+which can be checked before it's delivered.
+
+52
+00:02:39,263 --> 00:02:41,034
+A transparent settlement layer,
+
+53
+00:02:41,074 --> 00:02:44,320
+plus machine work that can be checked before delivery,
+
+54
+00:02:44,360 --> 00:02:48,065
+makes outcome-based pricing for services possible.
+
+55
+00:02:49,115 --> 00:02:51,641
+One trust assumption remains: today,
+
+56
+00:02:51,681 --> 00:02:55,565
+the buyer trusts that Aomi's simulation ran honestly.
+
+57
+00:02:55,605 --> 00:02:57,690
+Next, we plan to run the harness in
+
+58
+00:02:57,730 --> 00:02:59,907
+a trusted execution environment,
+
+59
+00:02:59,947 --> 00:03:02,840
+so buying a service becomes trustless.
+
+60
+00:03:04,890 --> 00:03:08,519
+The Task API is live, settling in USDC on Arc.
+
+61
+00:03:08,559 --> 00:03:11,045
+Try it at aomi.dev.

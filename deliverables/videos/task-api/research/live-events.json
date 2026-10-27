@@ -1,0 +1,844 @@
+[
+  {
+    "t": 0.001,
+    "at": "2026-10-23T14:40:51.071Z",
+    "kind": "start",
+    "text": "Task API purchase · Arc Mainnet."
+  },
+  {
+    "t": 0.324,
+    "at": "2026-10-23T14:40:51.394Z",
+    "kind": "intent",
+    "text": "INTENT: Send 0.10 + 0.20 USDC to two ops wallets."
+  },
+  {
+    "t": 0.324,
+    "at": "2026-10-23T14:40:51.394Z",
+    "kind": "requestbody",
+    "text": "  sender: 0x5D907BEa404e6F821d467314a9cA07663CF64c9B"
+  },
+  {
+    "t": 0.325,
+    "at": "2026-10-23T14:40:51.395Z",
+    "kind": "requestbody",
+    "text": "  recipient 1: 0x0B90b138503fd9F70cb568c9F6ba5a03C340a2d3 · 0.1 USDC"
+  },
+  {
+    "t": 0.325,
+    "at": "2026-10-23T14:40:51.395Z",
+    "kind": "requestbody",
+    "text": "  recipient 2: 0x4aa57d25699184fB581d391EF4bE145794e9E011 · 0.2 USDC"
+  },
+  {
+    "t": 0.325,
+    "at": "2026-10-23T14:40:51.395Z",
+    "kind": "requestbody",
+    "text": "  constraints: max outgoing 0.30 USDC · max gas 100000 · explicit target allowlist"
+  },
+  {
+    "t": 0.325,
+    "at": "2026-10-23T14:40:51.395Z",
+    "kind": "preflight",
+    "text": "Arc Mainnet · chain 5042 · wallet 0.397183 USDC"
+  },
+  {
+    "t": 0.326,
+    "at": "2026-10-23T14:40:51.396Z",
+    "kind": "policy",
+    "text": "2 transfers · principal 0.30 · service cap 0.019 USDC"
+  },
+  {
+    "t": 0.34,
+    "at": "2026-10-23T14:40:51.410Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/build"
+  },
+  {
+    "t": 1.349,
+    "at": "2026-10-23T14:40:52.419Z",
+    "kind": "http",
+    "text": "← HTTP 402 · 1009 ms"
+  },
+  {
+    "t": 1.351,
+    "at": "2026-10-23T14:40:52.421Z",
+    "kind": "challenge",
+    "text": "  x402: 0.01 USDC · eip155:5042 · merchant 0xdA65d415cC9d5dDC2a08Bdffc996750755fc3CF0"
+  },
+  {
+    "t": 1.361,
+    "at": "2026-10-23T14:40:52.431Z",
+    "kind": "authorize",
+    "text": "Authorize 0.01 USDC · Arc payment"
+  },
+  {
+    "t": 1.402,
+    "at": "2026-10-23T14:40:52.472Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/build · payment authorization attached"
+  },
+  {
+    "t": 4.097,
+    "at": "2026-10-23T14:40:55.167Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 2695 ms"
+  },
+  {
+    "t": 4.099,
+    "at": "2026-10-23T14:40:55.169Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 4.099,
+    "at": "2026-10-23T14:40:55.169Z",
+    "kind": "paid",
+    "text": "✓ Preparation payment accepted · 9a631c33-5232-456d-a4e0-3e9578f8f849",
+    "stage": "preparation",
+    "gatewayTransferId": "9a631c33-5232-456d-a4e0-3e9578f8f849"
+  },
+  {
+    "t": 6.125,
+    "at": "2026-10-23T14:40:57.195Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 6.542,
+    "at": "2026-10-23T14:40:57.612Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 417 ms"
+  },
+  {
+    "t": 6.544,
+    "at": "2026-10-23T14:40:57.614Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 8.557,
+    "at": "2026-10-23T14:40:59.627Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 9.536,
+    "at": "2026-10-23T14:41:00.606Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 979 ms"
+  },
+  {
+    "t": 9.537,
+    "at": "2026-10-23T14:41:00.607Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 11.556,
+    "at": "2026-10-23T14:41:02.626Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 12.024,
+    "at": "2026-10-23T14:41:03.094Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 468 ms"
+  },
+  {
+    "t": 12.028,
+    "at": "2026-10-23T14:41:03.098Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 14.048,
+    "at": "2026-10-23T14:41:05.118Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 14.483,
+    "at": "2026-10-23T14:41:05.553Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 435 ms"
+  },
+  {
+    "t": 14.485,
+    "at": "2026-10-23T14:41:05.555Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 16.503,
+    "at": "2026-10-23T14:41:07.573Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 17.409,
+    "at": "2026-10-23T14:41:08.479Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 906 ms"
+  },
+  {
+    "t": 17.411,
+    "at": "2026-10-23T14:41:08.481Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 19.427,
+    "at": "2026-10-23T14:41:10.497Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 20.355,
+    "at": "2026-10-23T14:41:11.425Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 928 ms"
+  },
+  {
+    "t": 20.356,
+    "at": "2026-10-23T14:41:11.426Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 22.377,
+    "at": "2026-10-23T14:41:13.447Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 22.803,
+    "at": "2026-10-23T14:41:13.873Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 426 ms"
+  },
+  {
+    "t": 22.805,
+    "at": "2026-10-23T14:41:13.875Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 24.832,
+    "at": "2026-10-23T14:41:15.902Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 25.299,
+    "at": "2026-10-23T14:41:16.369Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 467 ms"
+  },
+  {
+    "t": 25.3,
+    "at": "2026-10-23T14:41:16.370Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 27.323,
+    "at": "2026-10-23T14:41:18.393Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 27.772,
+    "at": "2026-10-23T14:41:18.842Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 449 ms"
+  },
+  {
+    "t": 27.774,
+    "at": "2026-10-23T14:41:18.844Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 29.795,
+    "at": "2026-10-23T14:41:20.865Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 30.662,
+    "at": "2026-10-23T14:41:21.732Z",
+    "kind": "http",
+    "text": "← HTTP 202 · 867 ms"
+  },
+  {
+    "t": 30.664,
+    "at": "2026-10-23T14:41:21.734Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: preparing · next poll 2s"
+  },
+  {
+    "t": 32.683,
+    "at": "2026-10-23T14:41:23.753Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 33.707,
+    "at": "2026-10-23T14:41:24.777Z",
+    "kind": "http",
+    "text": "← HTTP 200 · 1024 ms"
+  },
+  {
+    "t": 33.714,
+    "at": "2026-10-23T14:41:24.784Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: ready"
+  },
+  {
+    "t": 33.742,
+    "at": "2026-10-23T14:41:24.812Z",
+    "kind": "simulation",
+    "text": "✓ 2 actions simulated · Arc block 27469341",
+    "block": 27469341,
+    "summary": {
+      "transactionSafety": {
+        "assessment": {
+          "version": 1,
+          "assessmentDigest": "0x1ab8a2dc2bf39b244edfd5eba9a995abe40dfdb357e12d40e14ac5ad23597ffc",
+          "candidateDigest": "0x3c92e61601898975ceab80134e8b4b154f327e2e4cf63533ee060216ff981104",
+          "registryVersion": "0x3bf737b2aff5c2c350c10a396584572e9a6092ae0397f77e7011496500d2fd0d",
+          "coverage": "generic",
+          "state": "complete",
+          "supportedOperationCount": 0,
+          "totalOperationCount": 2,
+          "checks": [],
+          "findings": [],
+          "limitations": [
+            {
+              "code": "unsupported_operation",
+              "operationIds": [
+                "0"
+              ],
+              "message": "This deployment and operation has no supported guard profile"
+            },
+            {
+              "code": "unsupported_operation",
+              "operationIds": [
+                "1"
+              ],
+              "message": "This deployment and operation has no supported guard profile"
+            }
+          ]
+        },
+        "decision": {
+          "assessmentDigest": "0x1ab8a2dc2bf39b244edfd5eba9a995abe40dfdb357e12d40e14ac5ad23597ffc",
+          "mode": "balanced",
+          "policyRevision": 1,
+          "eligibility": "eligible",
+          "reasonCode": "limited_coverage",
+          "bypassedFindingIds": [],
+          "bypassedRequirements": []
+        },
+        "authority": {
+          "eligibility": "eligible",
+          "reasonCode": "authority_valid"
+        },
+        "simulationStatus": "passed"
+      },
+      "interpretedTask": "Send 0.10 native USDC to 0x0B90b138503fd9F70cb568c9F6ba5a03C340a2d3 and 0.20 native USDC to 0x4aa57d25699184fB581d391EF4bE145794e9E011 on Arc Mainnet. Two simple native transfers only. Do not add any approvals, swaps, bridges or other calls.",
+      "expectedEffects": [
+        {
+          "account": "0x5d907bea404e6f821d467314a9ca07663cf64c9b",
+          "asset": "native",
+          "amount": "100000000000000000",
+          "direction": "out",
+          "symbol": "USDC",
+          "decimals": 18,
+          "chainId": 5042,
+          "cluster": null,
+          "standard": "native",
+          "name": null,
+          "tokenId": null,
+          "counterparty": null,
+          "step": 1
+        },
+        {
+          "account": "0x5d907bea404e6f821d467314a9ca07663cf64c9b",
+          "asset": "native",
+          "amount": "200000000000000000",
+          "direction": "out",
+          "symbol": "USDC",
+          "decimals": 18,
+          "chainId": 5042,
+          "cluster": null,
+          "standard": "native",
+          "name": null,
+          "tokenId": null,
+          "counterparty": null,
+          "step": 2
+        }
+      ],
+      "approvals": [],
+      "gas": {
+        "units": "42000",
+        "priceWei": null,
+        "nativeCost": null
+      },
+      "constraints": [
+        {
+          "name": "max_outgoing_usdc_wei",
+          "status": "passed",
+          "message": null
+        },
+        {
+          "name": "max_gas_units",
+          "status": "passed",
+          "message": null
+        },
+        {
+          "name": "allowed_targets",
+          "status": "passed",
+          "message": null
+        }
+      ],
+      "source": {
+        "chainId": 5042,
+        "blockNumber": 27469341,
+        "blockHash": "0x71afcffe62539acf50101a7ea51ea89d7cc401c17c0ab230e02fca16e01d22e1",
+        "engine": "arc-foundry/f567f940c9187c64f1ac65364280e5381a542c77/replay-v2",
+        "rules": "arc/zero6/call-v1"
+      },
+      "senderBinding": {
+        "executionKind": "eoa_transactions",
+        "counterfactual": false,
+        "simulationScope": "wallet_transactions"
+      },
+      "requestHash": "090a4818443b5b428852d06cbfa6038932fe21a4e38d275d9a706e2198b0337f",
+      "payerIdentity": "payment:eip155:5042:0x5d907bea404e6f821d467314a9ca07663cf64c9b",
+      "actionCount": 2,
+      "outgoingUsdcWei": "300000000000000000"
+    }
+  },
+  {
+    "t": 33.744,
+    "at": "2026-10-23T14:41:24.814Z",
+    "kind": "trace",
+    "text": "SIMULATION  chain=5042 block=27469341"
+  },
+  {
+    "t": 33.745,
+    "at": "2026-10-23T14:41:24.815Z",
+    "kind": "trace",
+    "text": "  engine: arc-foundry/f567f940c9187c64f1ac65364280e5381a542c77/replay-v2"
+  },
+  {
+    "t": 33.746,
+    "at": "2026-10-23T14:41:24.816Z",
+    "kind": "trace",
+    "text": "  result: passed"
+  },
+  {
+    "t": 33.747,
+    "at": "2026-10-23T14:41:24.817Z",
+    "kind": "trace",
+    "text": "  actions: 2 | outgoing: 0.3 USDC"
+  },
+  {
+    "t": 33.748,
+    "at": "2026-10-23T14:41:24.818Z",
+    "kind": "trace",
+    "text": "  check max_outgoing_usdc_wei: passed"
+  },
+  {
+    "t": 33.753,
+    "at": "2026-10-23T14:41:24.823Z",
+    "kind": "trace",
+    "text": "  check max_gas_units: passed"
+  },
+  {
+    "t": 33.754,
+    "at": "2026-10-23T14:41:24.824Z",
+    "kind": "trace",
+    "text": "  check allowed_targets: passed"
+  },
+  {
+    "t": 33.755,
+    "at": "2026-10-23T14:41:24.825Z",
+    "kind": "trace",
+    "text": "  effect: out 0.1 USDC · 0x5d907bea404e6f821d467314a9ca07663cf64c9b"
+  },
+  {
+    "t": 33.756,
+    "at": "2026-10-23T14:41:24.826Z",
+    "kind": "trace",
+    "text": "  effect: out 0.2 USDC · 0x5d907bea404e6f821d467314a9ca07663cf64c9b"
+  },
+  {
+    "t": 33.757,
+    "at": "2026-10-23T14:41:24.827Z",
+    "kind": "trace",
+    "text": "  coverage: This deployment and operation has no supported guard profile"
+  },
+  {
+    "t": 33.757,
+    "at": "2026-10-23T14:41:24.827Z",
+    "kind": "trace",
+    "text": "  coverage: This deployment and operation has no supported guard profile"
+  },
+  {
+    "t": 33.758,
+    "at": "2026-10-23T14:41:24.828Z",
+    "kind": "verified",
+    "text": "✓ Attestation verified · constraints passed"
+  },
+  {
+    "t": 33.759,
+    "at": "2026-10-23T14:41:24.829Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/status"
+  },
+  {
+    "t": 34.42,
+    "at": "2026-10-23T14:41:25.490Z",
+    "kind": "http",
+    "text": "← HTTP 200 · 661 ms"
+  },
+  {
+    "t": 34.424,
+    "at": "2026-10-23T14:41:25.494Z",
+    "kind": "status",
+    "text": "  job 1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352: ready"
+  },
+  {
+    "t": 34.444,
+    "at": "2026-10-23T14:41:25.514Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/result"
+  },
+  {
+    "t": 35.577,
+    "at": "2026-10-23T14:41:26.647Z",
+    "kind": "http",
+    "text": "← HTTP 402 · 1133 ms"
+  },
+  {
+    "t": 35.579,
+    "at": "2026-10-23T14:41:26.649Z",
+    "kind": "challenge",
+    "text": "  x402: 0.009 USDC · eip155:5042 · merchant 0xdA65d415cC9d5dDC2a08Bdffc996750755fc3CF0"
+  },
+  {
+    "t": 35.847,
+    "at": "2026-10-23T14:41:26.917Z",
+    "kind": "authorize",
+    "text": "Authorize 0.009 USDC · Arc payment"
+  },
+  {
+    "t": 35.865,
+    "at": "2026-10-23T14:41:26.935Z",
+    "kind": "request",
+    "text": "→ POST https://api-staging.aomi.dev/v1/task/1be9f902-dfdc-42dd-9f3d-a8f0ad4ef352/result · payment authorization attached"
+  },
+  {
+    "t": 38.753,
+    "at": "2026-10-23T14:41:29.823Z",
+    "kind": "http",
+    "text": "← HTTP 200 · 2888 ms"
+  },
+  {
+    "t": 38.755,
+    "at": "2026-10-23T14:41:29.825Z",
+    "kind": "paid",
+    "text": "✓ Retrieval payment accepted · c11c1906-f113-4793-a369-9c57e509362e",
+    "stage": "retrieval",
+    "gatewayTransferId": "c11c1906-f113-4793-a369-9c57e509362e"
+  },
+  {
+    "t": 38.771,
+    "at": "2026-10-23T14:41:29.841Z",
+    "kind": "delivery",
+    "text": "✓ Verified bytes delivered · ready for wallet review",
+    "artifactHash": "7e844b3b52ae9fc8749bf9009cc7f65c4db0ff50783a57860c73dda0aff9c437"
+  },
+  {
+    "t": 38.771,
+    "at": "2026-10-23T14:41:29.841Z",
+    "kind": "review",
+    "text": "Reviewing the returned chain, sender, recipients, amounts and calldata."
+  },
+  {
+    "t": 38.773,
+    "at": "2026-10-23T14:41:29.843Z",
+    "kind": "hash",
+    "text": "  artifact SHA-256: 7e844b3b52ae9fc8749bf9009cc7f65c4db0ff50783a57860c73dda0aff9c437"
+  },
+  {
+    "t": 38.774,
+    "at": "2026-10-23T14:41:29.844Z",
+    "kind": "trace",
+    "text": "PLANNER OPERATIONS (returned with the completed build)"
+  },
+  {
+    "t": 38.775,
+    "at": "2026-10-23T14:41:29.845Z",
+    "kind": "trace",
+    "text": "  evm_stage_tx · chain=5042 · to=0x0B90b138503fd9F70cb568c9F6ba5a03C340a2d3 · value=0.1 USDC"
+  },
+  {
+    "t": 38.776,
+    "at": "2026-10-23T14:41:29.846Z",
+    "kind": "trace",
+    "text": "  evm_stage_tx · chain=5042 · to=0x4aa57d25699184fB581d391EF4bE145794e9E011 · value=0.2 USDC"
+  },
+  {
+    "t": 38.777,
+    "at": "2026-10-23T14:41:29.847Z",
+    "kind": "trace",
+    "text": "RETURNED TRANSACTIONS"
+  },
+  {
+    "t": 38.777,
+    "at": "2026-10-23T14:41:29.847Z",
+    "kind": "trace",
+    "text": "  [1] Send USDC"
+  },
+  {
+    "t": 38.778,
+    "at": "2026-10-23T14:41:29.848Z",
+    "kind": "trace",
+    "text": "      chain: 5042 | from: 0x5d907bea404e6f821d467314a9ca07663cf64c9b"
+  },
+  {
+    "t": 38.779,
+    "at": "2026-10-23T14:41:29.849Z",
+    "kind": "trace",
+    "text": "      to:    0x0B90b138503fd9F70cb568c9F6ba5a03C340a2d3"
+  },
+  {
+    "t": 38.78,
+    "at": "2026-10-23T14:41:29.850Z",
+    "kind": "trace",
+    "text": "      value: 0.1 USDC | gas limit: 21000"
+  },
+  {
+    "t": 38.78,
+    "at": "2026-10-23T14:41:29.850Z",
+    "kind": "trace",
+    "text": "      calldata: 0x"
+  },
+  {
+    "t": 38.781,
+    "at": "2026-10-23T14:41:29.851Z",
+    "kind": "trace",
+    "text": "  [2] Send USDC"
+  },
+  {
+    "t": 38.782,
+    "at": "2026-10-23T14:41:29.852Z",
+    "kind": "trace",
+    "text": "      chain: 5042 | from: 0x5d907bea404e6f821d467314a9ca07663cf64c9b"
+  },
+  {
+    "t": 38.782,
+    "at": "2026-10-23T14:41:29.852Z",
+    "kind": "trace",
+    "text": "      to:    0x4aa57d25699184fB581d391EF4bE145794e9E011"
+  },
+  {
+    "t": 38.784,
+    "at": "2026-10-23T14:41:29.854Z",
+    "kind": "trace",
+    "text": "      value: 0.2 USDC | gas limit: 21000"
+  },
+  {
+    "t": 38.784,
+    "at": "2026-10-23T14:41:29.855Z",
+    "kind": "trace",
+    "text": "      calldata: 0x"
+  },
+  {
+    "t": 38.785,
+    "at": "2026-10-23T14:41:29.855Z",
+    "kind": "trace",
+    "text": "SIMULATOR CALL TRACE"
+  },
+  {
+    "t": 38.786,
+    "at": "2026-10-23T14:41:29.856Z",
+    "kind": "trace",
+    "text": "  [1] CALL 0x0b90b138503fd9f70cb568c9f6ba5a03c340a2d3 value=0.1 USDC data=0x"
+  },
+  {
+    "t": 38.786,
+    "at": "2026-10-23T14:41:29.856Z",
+    "kind": "trace",
+    "text": "      succeeded | gas used: 21000 | return: 0x"
+  },
+  {
+    "t": 38.787,
+    "at": "2026-10-23T14:41:29.857Z",
+    "kind": "trace",
+    "text": "      sender balance: 0.39718261424139933 USDC -> 0.29718261424139933 USDC (simulation)"
+  },
+  {
+    "t": 38.788,
+    "at": "2026-10-23T14:41:29.858Z",
+    "kind": "trace",
+    "text": "      LOG 0xfffffffffffffffffffffffffffffffffffffffe topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef data=0x000000000000000000000000000000000000000000000000016345785d8a0000"
+  },
+  {
+    "t": 38.789,
+    "at": "2026-10-23T14:41:29.859Z",
+    "kind": "trace",
+    "text": "  [2] CALL 0x4aa57d25699184fb581d391ef4be145794e9e011 value=0.2 USDC data=0x"
+  },
+  {
+    "t": 38.789,
+    "at": "2026-10-23T14:41:29.859Z",
+    "kind": "trace",
+    "text": "      succeeded | gas used: 21000 | return: 0x"
+  },
+  {
+    "t": 38.79,
+    "at": "2026-10-23T14:41:29.860Z",
+    "kind": "trace",
+    "text": "      sender balance: 0.29718261424139933 USDC -> 0.09718261424139933 USDC (simulation)"
+  },
+  {
+    "t": 38.791,
+    "at": "2026-10-23T14:41:29.861Z",
+    "kind": "trace",
+    "text": "      LOG 0xfffffffffffffffffffffffffffffffffffffffe topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef data=0x00000000000000000000000000000000000000000000000002c68af0bb140000"
+  },
+  {
+    "t": 38.878,
+    "at": "2026-10-23T14:41:29.948Z",
+    "kind": "execution",
+    "text": "Local wallet authorizes the reviewed transactions."
+  },
+  {
+    "t": 38.88,
+    "at": "2026-10-23T14:41:29.950Z",
+    "kind": "rpc",
+    "text": "→ eth_call + eth_estimateGas · transaction 1"
+  },
+  {
+    "t": 39.107,
+    "at": "2026-10-23T14:41:30.177Z",
+    "kind": "rpc",
+    "text": "  success · gas=21000 · maximum fee=0.00042002415 USDC"
+  },
+  {
+    "t": 39.34,
+    "at": "2026-10-23T14:41:30.410Z",
+    "kind": "broadcast",
+    "text": "→ 0.1 USDC broadcast",
+    "hash": "0x82df82ebaf9f2d5854189f91ac82f44dcac97b8b033dc403a1c848e4fbb3767a",
+    "index": 0
+  },
+  {
+    "t": 39.343,
+    "at": "2026-10-23T14:41:30.413Z",
+    "kind": "txhash",
+    "text": "  transaction hash: 0x82df82ebaf9f2d5854189f91ac82f44dcac97b8b033dc403a1c848e4fbb3767a"
+  },
+  {
+    "t": 43.528,
+    "at": "2026-10-23T14:41:34.598Z",
+    "kind": "confirmed",
+    "text": "✓ 0.1 USDC confirmed · Ops 2",
+    "hash": "0x82df82ebaf9f2d5854189f91ac82f44dcac97b8b033dc403a1c848e4fbb3767a",
+    "block": "27469366",
+    "index": 0
+  },
+  {
+    "t": 43.529,
+    "at": "2026-10-23T14:41:34.599Z",
+    "kind": "receipt",
+    "text": "  receipt: success · block 27469366 · gas 21000"
+  },
+  {
+    "t": 43.531,
+    "at": "2026-10-23T14:41:34.601Z",
+    "kind": "explorer",
+    "text": "  https://explorer.arc.io/tx/0x82df82ebaf9f2d5854189f91ac82f44dcac97b8b033dc403a1c848e4fbb3767a"
+  },
+  {
+    "t": 43.532,
+    "at": "2026-10-23T14:41:34.602Z",
+    "kind": "rpc",
+    "text": "→ eth_call + eth_estimateGas · transaction 2"
+  },
+  {
+    "t": 43.866,
+    "at": "2026-10-23T14:41:34.936Z",
+    "kind": "rpc",
+    "text": "  success · gas=21000 · maximum fee=0.000420021 USDC"
+  },
+  {
+    "t": 44.089,
+    "at": "2026-10-23T14:41:35.159Z",
+    "kind": "broadcast",
+    "text": "→ 0.2 USDC broadcast",
+    "hash": "0x8d7a865a05c45318ffc63e1287ba7ad33d90c93baaa1a67d646ffd8594f5c7ad",
+    "index": 1
+  },
+  {
+    "t": 44.091,
+    "at": "2026-10-23T14:41:35.161Z",
+    "kind": "txhash",
+    "text": "  transaction hash: 0x8d7a865a05c45318ffc63e1287ba7ad33d90c93baaa1a67d646ffd8594f5c7ad"
+  },
+  {
+    "t": 48.257,
+    "at": "2026-10-23T14:41:39.327Z",
+    "kind": "confirmed",
+    "text": "✓ 0.2 USDC confirmed · Ops 3",
+    "hash": "0x8d7a865a05c45318ffc63e1287ba7ad33d90c93baaa1a67d646ffd8594f5c7ad",
+    "block": "27469376",
+    "index": 1
+  },
+  {
+    "t": 48.258,
+    "at": "2026-10-23T14:41:39.328Z",
+    "kind": "receipt",
+    "text": "  receipt: success · block 27469376 · gas 21000"
+  },
+  {
+    "t": 48.259,
+    "at": "2026-10-23T14:41:39.329Z",
+    "kind": "explorer",
+    "text": "  https://explorer.arc.io/tx/0x8d7a865a05c45318ffc63e1287ba7ad33d90c93baaa1a67d646ffd8594f5c7ad"
+  },
+  {
+    "t": 48.34,
+    "at": "2026-10-23T14:41:39.410Z",
+    "kind": "balance",
+    "text": "  Ops 2: 0.2 -> 0.3 USDC · exact +0.1 verified"
+  },
+  {
+    "t": 48.342,
+    "at": "2026-10-23T14:41:39.412Z",
+    "kind": "balance",
+    "text": "  Ops 3: 0.4 -> 0.6 USDC · exact +0.2 verified"
+  },
+  {
+    "t": 48.344,
+    "at": "2026-10-23T14:41:39.414Z",
+    "kind": "proof",
+    "text": "✓ Exact recipient balance increases verified"
+  },
+  {
+    "t": 48.345,
+    "at": "2026-10-23T14:41:39.415Z",
+    "kind": "end",
+    "text": "0.30 USDC delivered · gas 0.00084004515 USDC"
+  },
+  {
+    "t": 48.345,
+    "at": "2026-10-23T14:41:39.415Z",
+    "kind": "cost",
+    "text": "Total including principal + API fees + gas: 0.31984004515 USDC"
+  }
+]
