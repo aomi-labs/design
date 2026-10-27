@@ -1,0 +1,81 @@
+{
+  "name": "aomi-video-kit",
+  "version": 1,
+  "frame": { "width": 1920, "height": 1080, "fps": 30 },
+
+  "voice": {
+    "provider": "elevenlabs",
+    "id": "sWsBiVcjjowceAScTnu3",
+    "model": "eleven_multilingual_v2",
+    "output_format": "mp3_44100_128",
+    "settings": { "stability": 0.5, "similarity_boost": 0.75, "style": 0, "use_speaker_boost": true },
+    "seed": 7,
+    "words_per_second": 2.5,
+    "env": {
+      "key": "ELEVEN_API_KEY",
+      "id": "ELEVEN_VOICE_ID",
+      "model": "ELEVEN_MODEL"
+    }
+  },
+
+  "fonts": {
+    "stylesheet": "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap",
+    "display": "PT Serif",
+    "sans": "Geist",
+    "mono": "Geist Mono",
+    "wordmark": "Source Serif 4"
+  },
+
+  "colors": {
+    "ink": "#09090b",
+    "paper": "#fcf7f6",
+    "white": "#ffffff",
+    "sky": "#5288c2",
+    "sky-deep": "#416cac",
+    "sky-400": "#7facd6",
+    "sky-300": "#aecbe8",
+    "rose": "#df5d90",
+    "cool-100": "#f4f4f5",
+    "cool-200": "#e4e4e7",
+    "cool-300": "#d4d4d8",
+    "cool-400": "#a1a1aa",
+    "cool-500": "#71717a",
+    "cool-600": "#52525b",
+    "cool-700": "#3f3f46",
+    "success": "#2e9e6b",
+    "warning": "#d9982b",
+    "danger": "#d2495b"
+  },
+
+  "title": { "seconds": 3.4, "eyebrow": "Aomi Labs" },
+  "outro": { "seconds": 4.6, "link": "aomi.dev · @aomi_labs" },
+
+  "subtitles": { "font": "500 34px/1.3 Geist", "max_chars": 58, "tail_seconds": 0.35 },
+
+  "music": {
+    "tempo": 100,
+    "key": "D",
+    "progression": [
+      { "name": "Dadd9", "notes": [50, 57, 64, 66], "bass": 38 },
+      { "name": "Bm7",   "notes": [47, 54, 57, 62], "bass": 35 },
+      { "name": "Gmaj7", "notes": [43, 50, 54, 59], "bass": 43 },
+      { "name": "A",     "notes": [45, 52, 57, 61], "bass": 33 }
+    ],
+    "outro_chord": { "name": "Dmaj9", "notes": [50, 57, 61, 64, 66], "bass": 38 },
+    "signature_chime": [86, 81],
+    "bed_gain": 0.22
+  },
+
+  "mix": {
+    "lufs": -16,
+    "true_peak": -1.5,
+    "lra": 11,
+    "duck": { "threshold": 0.012, "ratio": 6, "attack": 25, "release": 500 }
+  },
+
+  "encode": { "crf": 18, "preview_crf": 24, "preview_max_mb": 30 },
+
+  "platforms": { "x_max_seconds": 140 },
+
+  "words_to_avoid": ["revolutionize", "game-changing", "game changing", "unleash", "supercharge", "seamless", "seamlessly", "magic", "magical"]
+}

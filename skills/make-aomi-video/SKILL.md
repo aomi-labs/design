@@ -21,6 +21,8 @@ Create a bespoke story for the subject, then reuse the production workflow. Do n
 
 Read [aomi-motion-language.md](references/aomi-motion-language.md) before designing. Use the repository's current tokens and assets as the source of truth. Partner or ecosystem branding may influence a campaign, but Aomi should remain visibly present.
 
+The parts every Aomi video shares (fonts, colours, the title card, subtitles, the outro lockup, the team voice, the music bed, the mix and the delivery format) come from `skills/aomi-video-kit`: scaffold with its `new.mjs`, load `kit/kit.css` and `kit/kit.js` in the animation, and voice, mix and check through its scripts. Its `check.mjs` must print `all good` before delivery.
+
 Prefer HTML, CSS, SVG, Canvas, or WebGL according to the idea. Do not introduce a framework when a self-contained HTML document is sufficient. Use real screenshots, logos, product surfaces, or generated imagery when they carry the story better than abstract geometry.
 
 ## Capture Commands

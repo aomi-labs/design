@@ -14,17 +14,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
+import { KIT } from '../../aomi-video-kit/scripts/kit.mjs';
+import { words, displayer, cues as cuesOf, tidy, srt } from '../../aomi-video-kit/scripts/subtitles.mjs';
 
 const dir = path.resolve(process.argv[2] || '.'), slug = path.basename(dir);
 const { META = {}, STEPS, DISPLAY = [] } = await import(pathToFileURL(path.join(dir, 'walkthrough.mjs')).href);
 const rec = JSON.parse(fs.readFileSync(path.join(dir, 'rec/record.json'), 'utf8'));
-const { w: VW, h: VH } = rec.viewport, INTRO = META.intro ?? 3.4, OUTRO = META.outro ?? 4.6, GAP = 1.2, CUT = .3;
+const { w: VW, h: VH } = rec.viewport, INTRO = META.intro ?? KIT.title.seconds, OUTRO = META.outro ?? KIT.outro.seconds, GAP = 1.2, CUT = .3;
 const cl = (x, a, b) => Math.min(b, Math.max(a, x));
-const display = t => DISPLAY.reduce((s, [a, b]) => s.replace(new RegExp(a, 'gi'), b), t);
-const words = al => { const out = []; let cur = null;
-  al.characters.forEach((ch, i) => { if (/\s/.test(ch)) { if (cur) out.push(cur); cur = null; return; }
-    if (!cur) cur = { w: '', s: al.character_start_times_seconds[i], e: 0 }; cur.w += ch; cur.e = al.character_end_times_seconds[i]; });
-  if (cur) out.push(cur); return out; };
+const display = displayer(DISPLAY);
 
 const map = [], segs = [], zooms = [[0, VW / 2, VH / 2, 1]], cues = [], vo = [];
 const keyZoom = (T, cx, cy, s) => { const last = zooms.at(-1); zooms.push([Math.max(T, last[0] + .01), cx, cy, s]); };
@@ -48,14 +46,7 @@ STEPS.forEach((st, i) => {
     const off = st.voAt === 'end' ? actionsEnd + .1 : .35, start = T0 + off;
     len = Math.max(effective, off + Math.max(dur, ws.at(-1)?.e ?? 0) + .45);
     vo.push({ id: st.id, file: `vo/step${id}.mp3`, start: +start.toFixed(3), dur: +dur.toFixed(3) });
-    const text = w => display(w.map(x => x.w).join(' '));
-    const split = w => { if (text(w).length <= 58) return [w];
-      const total = text(w).length; let best = -1, bs = Infinity;
-      for (const clause of [true, false]) { w.forEach((x, k) => { if (k === w.length - 1 || (clause && !/[,;:]$/.test(x.w))) return;
-          const left = text(w.slice(0, k + 1)).length; if (left < 12 || total - left < 12) return; const sc = Math.abs(left - total / 2); if (sc < bs) { bs = sc; best = k; } });
-        if (best >= 0 && (!clause || bs < total * .3)) break; best = -1; bs = Infinity; }
-      return [...split(w.slice(0, best + 1)), ...split(w.slice(best + 1))]; };
-    let sent = []; ws.forEach((x, k) => { sent.push(x); if (/[.?!]$/.test(x.w) || k === ws.length - 1) { split(sent).forEach(c => cues.push({ s: start + c[0].s, e: start + c.at(-1).e + .35, text: text(c) })); sent = []; } });
+    cues.push(...cuesOf(ws, start, display));
   }
   if (len > effective) map.push([T0 + len, r.t1]); // hold the last frame while the voice finishes
   // camera: zoom toward each focused element, back out at the end of the step
@@ -71,14 +62,13 @@ STEPS.forEach((st, i) => {
 });
 const dur = T + OUTRO;
 map.unshift([0, map[0][1]]); map.push([dur, map.at(-1)[1]]);
-cues.forEach((c, k) => { if (cues[k + 1]) c.e = Math.min(c.e, cues[k + 1].s - .04); c.s = +c.s.toFixed(3); c.e = +c.e.toFixed(3); });
+tidy(cues);
 const r3 = a => a.map(v => +(+v).toFixed(3));
 const tl = { meta: { title: META.title, subtitle: META.subtitle, eyebrow: META.eyebrow, link: META.link }, viewport: rec.viewport, intro: INTRO, outro: OUTRO,
   dur: +dur.toFixed(3), map: map.map(r3), zooms: zooms.map(r3), steps: segs, cues, vo, frames: rec.frames };
 fs.writeFileSync(path.join(dir, 'timeline.js'), `window.EA = ${JSON.stringify(tl)};\n`);
 fs.mkdirSync(path.join(dir, 'vo'), { recursive: true });
 fs.writeFileSync(path.join(dir, 'vo/timeline.json'), JSON.stringify({ dur: tl.dur, vo, cues, steps: segs }, null, 1));
-const ts = t => { const ms = Math.round(t * 1000); return `${String(Math.floor(ms / 3600000)).padStart(2, '0')}:${String(Math.floor(ms / 60000) % 60).padStart(2, '0')}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')},${String(ms % 1000).padStart(3, '0')}`; };
-fs.writeFileSync(path.join(dir, `${slug}.srt`), cues.map((c, k) => `${k + 1}\n${ts(c.s)} --> ${ts(c.e)}\n${c.text}\n`).join('\n'));
+fs.writeFileSync(path.join(dir, `${slug}.srt`), srt(cues));
 console.log(`video ${tl.dur.toFixed(1)}s · ${segs.length} steps · ${vo.length} voice lines · ${cues.length} subtitle cues`);
 segs.forEach(s => console.log(`  ${String(s.id).padStart(2)} ${s.T0.toFixed(1).padStart(6)}s → ${s.T1.toFixed(1).padStart(6)}s  ${s.title || ''}`));

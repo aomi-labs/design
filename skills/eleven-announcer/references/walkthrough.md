@@ -66,7 +66,7 @@ tabs stay open. Use a current Playwright version for Chrome extension compatibil
 
 For macOS draft narration, set `EA_SAY_VOICE` to a voice installed on your Mac and
 `EA_SAY_RATE` to the speaking rate in words per minute. The default rate is 175.
-These settings apply only to `tts.mjs --draft`.
+These settings apply only to `voice.mjs --draft` (the kit's voice script; `tts.mjs` here forwards to it).
 
 ## Selectors
 

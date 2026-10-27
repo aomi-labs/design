@@ -44,7 +44,7 @@ Ask before any action with real side effects: spending funds, sending messages, 
 
 ### 4. Script the walkthrough (approval gate)
 
-Copy `assets/walkthrough-template.mjs` to `deliverables/videos/<slug>/walkthrough.mjs` (along with `assets/compositor.html` and `assets/music.mjs`). Write `META` (title, subtitle, eyebrow, link) and the `STEPS`. One step is one thing the viewer should notice, with one voice line. Format details are in `references/walkthrough.md`.
+Scaffold the production: `node skills/aomi-video-kit/scripts/new.mjs deliverables/videos/<slug> --walkthrough`. It copies `walkthrough.mjs`, `compositor.html` and `kit/` (the brand kit: fonts, title card, subtitles, outro, voice settings; see `skills/aomi-video-kit/SKILL.md`). Write `META` (title, subtitle, eyebrow, link) and the `STEPS`. One step is one thing the viewer should notice, with one voice line. Format details are in `references/walkthrough.md`.
 
 Show the user a table (step → what happens on screen → voice line) and wait for approval. Narration changes are cheap now and costly after voicing.
 
@@ -60,9 +60,9 @@ Follow `TONE.md`: concrete, no hype words, the product's own names. Spell out an
 
 ```bash
 node skills/eleven-announcer/scripts/record.mjs deliverables/videos/<slug>          # add --headed to watch it
-node skills/eleven-announcer/scripts/tts.mjs deliverables/videos/<slug> --draft      # macOS voice, timings estimated
+node skills/aomi-video-kit/scripts/voice.mjs deliverables/videos/<slug> --draft      # macOS voice, timings estimated
 node skills/eleven-announcer/scripts/compose.mjs deliverables/videos/<slug>
-node skills/slide-to-video/scripts/render.mjs deliverables/videos/<slug>/compositor.html --out /tmp/<slug>-stills --stills 2,8,15,22
+node skills/aomi-video-kit/scripts/render.mjs deliverables/videos/<slug>/compositor.html --out /tmp/<slug>-stills --stills 2,8,15,22
 ```
 
 - If a step fails, `record.mjs` names it and saves `rec/error-step-N.png`. Fix the selector or wait, then re-run.
@@ -72,15 +72,16 @@ node skills/slide-to-video/scripts/render.mjs deliverables/videos/<slug>/composi
 ### 6. Final voice and delivery
 
 ```bash
-ELEVEN_API_KEY=… ELEVEN_VOICE_ID=… node skills/eleven-announcer/scripts/tts.mjs deliverables/videos/<slug> --force
+ELEVEN_API_KEY=… node skills/aomi-video-kit/scripts/voice.mjs deliverables/videos/<slug> --force
 node skills/eleven-announcer/scripts/compose.mjs deliverables/videos/<slug>
-node skills/slide-to-video/scripts/render.mjs deliverables/videos/<slug>/compositor.html --out /tmp/<slug>-frames
-node skills/slide-to-video/scripts/finish.mjs deliverables/videos/<slug> /tmp/<slug>-frames
+node skills/aomi-video-kit/scripts/render.mjs deliverables/videos/<slug>/compositor.html --out /tmp/<slug>-frames
+node skills/aomi-video-kit/scripts/finish.mjs deliverables/videos/<slug> /tmp/<slug>-frames
+node skills/aomi-video-kit/scripts/check.mjs deliverables/videos/<slug>
 ```
 
-`finish.mjs` places each voice line, ducks the music, levels to -16 LUFS, and writes `<slug>.mp4` and `<slug>-preview.mp4`; the preview stays under 30 MB so it reaches a phone.
+The voice is the team voice in `kit.json`; only the key comes from the environment. `finish.mjs` places each voice line, lays the kit's signature bed under it, ducks it, levels to -16 LUFS, and writes `<slug>.mp4` and `<slug>-preview.mp4`; the preview stays under 30 MB so it reaches a phone. `check.mjs` must print `all good` before delivery.
 - Send the preview and `<slug>.srt`, and give the full-quality path.
-- Commit `walkthrough.mjs`, `vo/` and the `.srt`. Keep `rec/` (raw frames), the `.mp4` files and session files out of git.
+- Commit `walkthrough.mjs`, `kit/`, `vo/` and the `.srt`. `rec/` (raw frames), the `.mp4` files and session files are git-ignored.
 - The ElevenLabs key comes from the environment only, never a file. If the user pasted it in chat, suggest rotating it.
 
 ## How the edit works
@@ -97,10 +98,8 @@ Details and failure modes are in `references/editing.md`.
 
 - `scripts/login.mjs`: the user signs in once and the session is saved outside the repo.
 - `scripts/record.mjs`: replays `walkthrough.mjs` with a drawn cursor and records repaint-timed frames.
-- `scripts/tts.mjs`: ElevenLabs clips with word timings, or `--draft` with the macOS voice.
 - `scripts/compose.mjs`: the edit, subtitles and `.srt`.
 - `scripts/browser.mjs`: finds Playwright and its browsers.
-- `assets/compositor.html`: the branded video page, using the `__AOMI_VIDEO__` contract.
-- `assets/music.mjs`: a light synthesized bed that changes chord per step.
+- `assets/compositor.html`: the browser window; title card, subtitles, outro and playback come from `kit/`.
 - `assets/walkthrough-template.mjs`: the step format, with examples.
-- Rendering and mixing reuse `skills/slide-to-video/scripts/render.mjs`, `finish.mjs` and `contact-sheet.sh`.
+- Voice, music, rendering, mixing and the brand check are `skills/aomi-video-kit/scripts/` (`voice.mjs`, `music.mjs`, `render.mjs`, `finish.mjs`, `check.mjs`); review sheets are `skills/slide-to-video/scripts/contact-sheet.sh`.

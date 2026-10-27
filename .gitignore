@@ -13,3 +13,7 @@ tsup.config.bundled_*.mjs
 # Brand assets: keep full-res masters in Drive, commit only optimized + manifest
 assets/brand/
 assets/*.zip
+
+# Video productions: frames, encodes and recordings stay out of git (commit the film, script, vo/ and .srt)
+deliverables/videos/**/*.mp4
+deliverables/videos/**/rec/
