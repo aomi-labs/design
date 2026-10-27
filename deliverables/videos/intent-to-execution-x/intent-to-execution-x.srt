@@ -1,0 +1,151 @@
+1
+00:00:00,500 --> 00:00:02,027
+Here's a normal DeFi request:
+
+2
+00:00:02,067 --> 00:00:06,509
+stake ETH with Lido and borrow USDC against it on Aave.
+
+3
+00:00:06,549 --> 00:00:09,766
+Same thing on Solana, with Marinade and Kamino.
+
+4
+00:00:11,816 --> 00:00:14,597
+On the left, Claude Code with no harness.
+
+5
+00:00:14,637 --> 00:00:18,347
+It hunts for contract addresses, asks you for an RPC,
+
+6
+00:00:18,387 --> 00:00:21,877
+hits a revert because Aave takes wstETH,
+
+7
+00:00:21,917 --> 00:00:26,196
+not stETH, and then wants your private key in a .env file.
+
+8
+00:00:26,236 --> 00:00:29,621
+On the right, the same model through Aomi reads the state,
+
+9
+00:00:29,661 --> 00:00:32,971
+simulates every step, and ships one bundle.
+
+10
+00:00:33,122 --> 00:00:35,091
+The point of a harness is performance,
+
+11
+00:00:35,131 --> 00:00:37,529
+token efficiency, and security.
+
+12
+00:00:37,569 --> 00:00:40,245
+Frontier models can kind of transact without one,
+
+13
+00:00:40,285 --> 00:00:42,184
+but a harness makes them work better,
+
+14
+00:00:42,224 --> 00:00:45,191
+so if you want to productionize agentic finance,
+
+15
+00:00:45,231 --> 00:00:46,475
+it's a no-brainer.
+
+16
+00:00:47,025 --> 00:00:49,620
+Reading chain and wallet state is deterministic,
+
+17
+00:00:49,660 --> 00:00:52,836
+so Aomi shrinks it to a software function:
+
+18
+00:00:52,876 --> 00:00:55,316
+one call instead of a dozen.
+
+19
+00:00:57,166 --> 00:00:59,297
+Every call runs on a fork first.
+
+20
+00:00:59,337 --> 00:01:02,223
+A revert comes back to the model as back pressure,
+
+21
+00:01:02,263 --> 00:01:04,533
+like failing tests for a coding agent,
+
+22
+00:01:04,573 --> 00:01:06,804
+and only a green run gets committed.
+
+23
+00:01:07,354 --> 00:01:08,649
+Once everything passes,
+
+24
+00:01:08,689 --> 00:01:11,993
+Aomi compresses the sequence into one transaction:
+
+25
+00:01:12,033 --> 00:01:14,268
+a smart wallet bundle on Ethereum,
+
+26
+00:01:14,308 --> 00:01:16,939
+one versioned transaction on Solana.
+
+27
+00:01:16,979 --> 00:01:19,244
+That saves gas and settlement time,
+
+28
+00:01:19,707 --> 00:01:21,404
+and the model does less.
+
+29
+00:01:21,954 --> 00:01:24,190
+And the key never goes to the model.
+
+30
+00:01:24,230 --> 00:01:27,289
+Commit hands your wallet a signable transaction,
+
+31
+00:01:27,329 --> 00:01:28,323
+and you sign it,
+
+32
+00:01:28,363 --> 00:01:31,318
+or a scoped session or an agent wallet
+
+33
+00:01:31,358 --> 00:01:33,292
+signs within the limits you set.
+
+34
+00:01:33,332 --> 00:01:38,047
+On Solana, a Swig role enforces those limits onchain.
+
+35
+00:01:38,797 --> 00:01:41,933
+Performance, token efficiency, and security.
+
+36
+00:01:44,483 --> 00:01:46,277
+The model interprets the intent,
+
+37
+00:01:46,317 --> 00:01:47,682
+your wallet holds the key,
+
+38
+00:01:47,722 --> 00:01:51,056
+and Aomi facilitates everything in between.

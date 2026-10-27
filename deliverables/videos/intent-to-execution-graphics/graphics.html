@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Intent to Execution Graphics</title>
+<!--
+  Five key-moment graphics for "From intent to execution", rebuilt as designed compositions from the film's
+  elements (terminal, Aomi trace, pillar cards, back-pressure diagram, bundle and wallet). Each <section> is a
+  1920×1080 canvas; render each one to PNG by screenshotting the section.
+  Colours follow the film: sky = EVM / passed, green = Solana, rose = failed.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#09090b;--muted:#71717a;--line:#e4e4e7;--sky:#5288c2;--sky2:#416cac;--skybg:#f1f7fc;--skyline:#c9d9ea;--rose:#df5d90;--rosebg:#fdf2f7;--grn:#2e9e6b;--grn2:#23805a;--grnbg:#eaf7f0;
+  --term:#141416;--termbar:#26262b;--ttext:#e4e4e7;--tdim:#8b8b94;--tgreen:#4eba65;--tred:#ef6b6b;--torange:#d97757}
+*{box-sizing:border-box}
+html,body{margin:0;background:#ffffff}
+body{display:flex;flex-direction:column;gap:40px;padding:40px;align-items:flex-start;background:#f4f4f5}
+.g{position:relative;width:1920px;height:1080px;background:#ffffff;overflow:hidden;font-family:'Geist',sans-serif;color:var(--ink);flex:none}
+.g .eyebrow{position:absolute;left:112px;top:92px;font:500 20px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);display:flex;gap:14px;align-items:center}
+.g .eyebrow i{width:10px;height:10px;border-radius:50%;background:var(--sky)}
+.g h1{position:absolute;left:112px;top:136px;margin:0;font:700 66px/1.05 'PT Serif',serif;letter-spacing:-.015em;max-width:1700px}
+.g .sub{position:absolute;left:112px;top:228px;margin:0;font:italic 400 30px/1.3 'PT Serif',serif;color:var(--muted);max-width:1600px}
+.g .brand{position:absolute;right:72px;bottom:60px;display:flex;align-items:center;gap:16px}
+.g .brand svg{width:50px;height:50px} .g .brand span{font:600 40px/1 'Source Serif 4',serif;letter-spacing:-.01em}
+.mono{font-family:'Geist Mono',monospace}
+
+/* 1 · side by side */
+.duo{position:absolute;left:112px;right:112px;top:330px;display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.term{background:var(--term);border-radius:18px;overflow:hidden;height:500px;box-shadow:0 30px 60px rgba(9,9,11,.12)}
+.term .bar{height:46px;background:var(--termbar);display:flex;align-items:center;gap:9px;padding:0 20px;position:relative}
+.term .bar b{width:13px;height:13px;border-radius:50%} .term .bar span{position:absolute;left:0;right:0;text-align:center;font:500 16px 'Geist',sans-serif;color:#a1a1aa}
+.term .body{padding:24px 28px;font:400 21px/1.55 'Geist Mono',monospace;color:var(--ttext);white-space:pre}
+.t-ok{color:var(--tgreen)} .t-bad{color:var(--tred)} .t-dim{color:var(--tdim)} .t-b{font-weight:700} .t-ask{background:#222226;display:block;margin:2px -12px;padding:0 12px;border-radius:6px}
+.aomi{border:2.5px solid var(--sky);border-radius:18px;height:500px;background:#fff;overflow:hidden}
+.aomi .bar{height:62px;border-bottom:1.5px solid var(--skyline);display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 24px 'Geist',sans-serif}
+.aomi .bar span{font:600 16px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--sky2)}
+.aomi .body{padding:24px 28px;font:500 21px/1.55 'Geist Mono',monospace}
+.aomi .ok::before{content:'✓ ';color:var(--sky)} .aomi .val{color:var(--sky2);padding-left:28px;font-weight:400} .aomi .done{color:var(--sky2);font-weight:600}
+.stats{display:flex;gap:44px;margin-top:30px;padding-left:6px}
+.stat b{display:block;font:700 54px/1 'Geist Mono',monospace} .stat small{display:block;margin-top:8px;font:500 16px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stats.bad b{color:var(--ink)} .stats.bad .hot b{color:var(--rose)} .stats.good b{color:var(--sky2)}
+.label{font:600 18px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px}
+
+/* 2 · why a harness */
+.pillars{position:absolute;left:112px;right:112px;top:330px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.pillar{background:var(--skybg);border:2.5px solid var(--sky);border-radius:26px;height:560px;padding:44px 48px;display:flex;flex-direction:column}
+.pillar h2{margin:0;font:700 44px 'PT Serif',serif}
+.pillar .big{margin-top:44px;font:700 104px/1 'Geist Mono',monospace;color:var(--sky2);letter-spacing:-.03em}
+.pillar .cap{margin-top:14px;font:500 18px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.pillar ul{margin:auto 0 0;padding:0;list-style:none;font:500 25px/1.5 'Geist',sans-serif}
+.pillar li{padding-left:30px;position:relative} .pillar li::before{content:'';position:absolute;left:4px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky)}
+
+/* 3 · context instantiation */
+.ctx{position:absolute;left:112px;right:112px;top:340px;display:grid;grid-template-columns:600px 1fr 560px;align-items:center;gap:0}
+.alone{border:2.5px dashed var(--rose);background:var(--rosebg);border-radius:22px;padding:30px 32px}
+.alone .label{color:var(--rose)}
+.alone .row{font:400 21px/1.75 'Geist Mono',monospace;color:#52525b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alone .row.bad{color:var(--rose)}
+.alone .count{margin-top:18px;font:700 50px/1 'Geist Mono',monospace;color:var(--rose)} .alone .count small{font:500 18px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-left:10px}
+.mid{display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 28px}
+.call{border-radius:999px;padding:16px 26px;font:600 22px 'Geist Mono',monospace;white-space:nowrap}
+.call.sky{background:var(--sky);color:#fff} .call.grn{background:var(--grn);color:#fff}
+.mid .note{font:italic 400 24px 'PT Serif',serif;color:var(--muted);text-align:center;line-height:1.35}
+.held{border:2.5px solid var(--ink);border-radius:22px;padding:32px 34px}
+.held .label{color:var(--muted)}
+.held div.f{font:500 26px/1.95 'Geist',sans-serif;display:flex;align-items:center;gap:16px} .held div.f::before{content:'';width:11px;height:11px;border-radius:50%;background:var(--sky);flex:none}
+.held div.f.s{color:var(--grn2)} .held div.f.s::before{background:var(--grn)}
+.held .count{margin-top:12px;font:700 50px/1 'Geist Mono',monospace;color:var(--sky2)} .held .count small{font:500 18px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-left:10px}
+
+/* 5 · one transaction, key in your wallet */
+.aa{position:absolute;left:112px;right:112px;top:330px;height:620px}
+.lane{position:absolute;left:0;display:flex;align-items:center;gap:12px}
+.lane .tag{position:absolute;top:-46px;left:0;font:600 18px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase}
+.chip{border:2px solid var(--ink);border-radius:999px;padding:9px 18px;font:500 20px 'Geist Mono',monospace;background:#fff;white-space:nowrap}
+.bundle{position:absolute;border-radius:999px;padding:16px 28px;font:600 24px 'Geist Mono',monospace;color:#fff;white-space:nowrap}
+.gate{position:absolute;left:1100px;top:120px;width:22px;height:280px;border-radius:11px;background:var(--sky)}
+.gate-l{position:absolute;left:1040px;top:64px;padding:10px 20px;border-radius:999px;background:var(--sky);color:#fff;font:600 22px 'Geist Mono',monospace}
+.gate-n{position:absolute;left:1010px;top:418px;width:200px;text-align:center;font:500 18px/1.4 'Geist Mono',monospace;color:var(--sky2)}
+.wallet{position:absolute;left:1250px;top:110px;width:446px;border:2.5px solid var(--ink);border-radius:22px;padding:30px 32px;background:#fff}
+.wallet h3{margin:0;font:600 34px 'Geist',sans-serif;display:flex;align-items:center;gap:16px}
+.wallet p{margin:10px 0 0;font:400 23px 'Geist',sans-serif;color:var(--muted)}
+.modes{position:absolute;left:1250px;top:322px;display:flex;flex-direction:column;gap:12px}
+.swig{position:absolute;left:1250px;top:500px;width:446px;border:2.5px solid var(--grn);background:var(--grnbg);border-radius:18px;padding:18px 24px}
+.swig b{display:block;font:600 16px 'Geist Mono',monospace;letter-spacing:.16em;color:var(--grn2)} .swig span{font:500 22px 'Geist',sans-serif}
+svg.wire{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- the Aomi mark, reused in every corner -->
+<template id="mark"><svg viewBox="0 0 362 362"><g fill="#09090b"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g></svg><span>aomi labs</span></template>
+
+<!-- 1 · same model, same prompt, side by side -->
+<section class="g" id="g1">
+  <div class="eyebrow"><i></i>Same model · same prompt</div>
+  <h1>Claude Code alone vs. Claude through Aomi</h1>
+  <p class="sub">“Stake 5 ETH with Lido, then use it as collateral on Aave and borrow 1000 USDC.”</p>
+  <div class="duo">
+    <div>
+      <div class="term"><div class="bar"><b style="background:#ff5f57"></b><b style="background:#febc2e"></b><b style="background:#28c840"></b><span>defi — claude — no harness</span></div>
+<div class="body"><span class="t-ok">⏺</span> <span class="t-b">Web Search</span>("Lido stETH contract address")
+<span class="t-bad">⏺</span> <span class="t-b">Fetch</span>(api.etherscan.io … getabi)
+<span class="t-dim">  ⎿  </span><span class="t-bad">Missing/Invalid API Key</span>
+<span class="t-ask">⏺ Can you add ETHERSCAN_API_KEY and RPC_URL to .env?</span><span class="t-bad">⏺</span> <span class="t-b">Bash</span>(npx tsx stake-and-borrow.ts)
+<span class="t-dim">  ⎿  </span><span class="t-bad">Error: execution reverted: 27</span>
+<span class="t-ask">⏺ Add PRIVATE_KEY to .env and I'll send the rest.</span><span class="t-ok">⏺</span> <span class="t-b">Bash</span>(npx tsx stake-and-borrow.ts --send)
+<span class="t-dim">  ⎿  6 txs sent · 0 simulated</span></div></div>
+      <div class="stats bad"><div class="stat"><b>9</b><small>tool calls</small></div><div class="stat hot"><b>2</b><small>asks you</small></div><div class="stat hot"><b>0</b><small>simulations</small></div><div class="stat"><b>6</b><small>signatures</small></div></div>
+    </div>
+    <div>
+      <div class="aomi"><div class="bar">Claude through Aomi <span>aomi harness</span></div>
+        <div class="body"><div class="ok">Read wstETH per stETH rate</div><div class="val">1 stETH → 0.8059 wstETH</div>
+          <div class="ok">Simulate Lido stake of 5 ETH</div><div class="val">5 ETH → ~4.0297 wstETH</div>
+          <div class="ok">LTV check · 1000 USDC is safe</div>
+          <div class="ok">Stage stake → wrap → supply → borrow</div>
+          <div class="ok">Simulate full 6-tx flow · all 6 pass</div>
+          <div class="done">→ 6 transactions → 1 bundle → sign</div></div></div>
+      <div class="stats good"><div class="stat"><b>5</b><small>tool calls</small></div><div class="stat"><b>0</b><small>asks you</small></div><div class="stat"><b>2</b><small>simulations</small></div><div class="stat"><b>1</b><small>signature</small></div></div>
+    </div>
+  </div>
+  <div class="brand"></div>
+</section>
+
+<!-- 2 · why a harness -->
+<section class="g" id="g2">
+  <div class="eyebrow"><i></i>Why a harness</div>
+  <h1>Performance, token efficiency, security</h1>
+  <p class="sub">Frontier models can transact without a harness. With one, they work better, and that's what production needs.</p>
+  <div class="pillars">
+    <div class="pillar"><h2>Performance</h2><div class="big">9 → 5</div><div class="cap">tool calls, same request</div>
+      <ul><li>6 signatures → 1</li><li>one bundle, one transaction</li></ul></div>
+    <div class="pillar"><h2>Token efficiency</h2><div class="big">12 → 1</div><div class="cap">calls to read context</div>
+      <ul><li>no explorer scraping</li><li>no relearning protocol rules</li></ul></div>
+    <div class="pillar"><h2>Security</h2><div class="big">0 → 2</div><div class="cap">simulations before sending</div>
+      <ul><li>no private key in .env</li><li>result checked after settlement</li></ul></div>
+  </div>
+  <div class="brand"></div>
+</section>
+
+<!-- 3 · context instantiation -->
+<section class="g" id="g3">
+  <div class="eyebrow"><i></i>Step 1 · Context instantiation</div>
+  <h1>One call instead of a dozen</h1>
+  <p class="sub">Reading chain state and wallet state is deterministic, so the harness shrinks it to a software function.</p>
+  <div class="ctx">
+    <div class="alone"><div class="label">Claude alone</div>
+      <div class="row">Web Search("Lido stETH contract address")</div><div class="row">Fetch(docs.lido.fi/deployed-contracts)</div>
+      <div class="row">Web Search("Aave v3 Pool contract address")</div><div class="row bad">⎿ Missing/Invalid API Key</div>
+      <div class="row">ABI fragments typed by hand</div><div class="row">asks you for an RPC endpoint</div>
+      <div class="count">~12<small>calls</small></div></div>
+    <div class="mid"><div class="call sky">get_contract(addr, chain)</div><div class="call grn">svm_get_program(id)</div>
+      <div class="note">own nodes · verified contracts<br>and programs · human units</div></div>
+    <div class="held"><div class="label">Context the model holds</div>
+      <div class="f">Aave v3 Pool · verified</div><div class="f">1 stETH → 0.8059 wstETH</div><div class="f">Aave takes wstETH, not stETH</div>
+      <div class="f s">Marinade + Kamino IDLs</div><div class="f s">1 SOL → 0.8213 mSOL</div>
+      <div class="count">1<small>call · ~200 ms</small></div></div>
+  </div>
+  <svg class="wire"><defs><marker id="a3" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a1a1aa"/></marker></defs>
+    <path d="M722 640H760" stroke="#a1a1aa" stroke-width="3" marker-end="url(#a3)"/><path d="M1206 640H1238" stroke="#a1a1aa" stroke-width="3" marker-end="url(#a3)"/></svg>
+  <div class="brand"></div>
+</section>
+
+<!-- 4 · back pressure (three-gates slide 6) -->
+<section class="g" id="g4">
+  <div class="eyebrow"><i></i>Step 3 · Simulation</div>
+  <h1>Back pressure that enforces correctness</h1>
+  <p class="sub">A revert goes back to the model like a failing test. Only a green run gets committed.</p>
+  <svg viewBox="0 0 1096 380" style="position:absolute;left:150px;top:320px;width:1620px;height:562px;overflow:visible">
+    <defs>
+      <marker id="ka" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#09090b"/></marker>
+      <marker id="kr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#df5d90"/></marker>
+      <marker id="ks" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5288c2"/></marker>
+      <marker id="kf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a1a1aa"/></marker>
+    </defs>
+    <text x="548" y="36" text-anchor="middle" style="font:700 28px 'PT Serif',serif">model</text>
+    <path d="M78 128 V258 A92 20 0 0 0 262 258 V128" fill="#f1f7fc" stroke="#09090b" stroke-width="1.8"/><ellipse cx="170" cy="128" rx="92" ry="20" fill="#e2eef8" stroke="#09090b" stroke-width="1.8"/>
+    <text x="170" y="190" text-anchor="middle" style="font:700 18px 'PT Serif',serif">Chain sandbox</text>
+    <text x="170" y="212" text-anchor="middle" style="font:400 10.5px 'Geist Mono',monospace" fill="#71717a">fork of live state · ~200 ms</text>
+    <text x="170" y="229" text-anchor="middle" style="font:600 10.5px 'Geist Mono',monospace" fill="#23805a">LiteSVM on Solana</text>
+    <path d="M492 70 L280 142" stroke="#09090b" stroke-width="1.8" fill="none" marker-end="url(#ka)"/>
+    <text x="372" y="80" text-anchor="middle" transform="rotate(-18 372 80)" style="font:600 16px 'Geist Mono',monospace">eth_call</text>
+    <text x="384" y="100" text-anchor="middle" transform="rotate(-18 384 100)" style="font:600 13px 'Geist Mono',monospace" fill="#23805a">svm_simulate_ix</text>
+    <path d="M280 236 L470 250" stroke="#09090b" stroke-width="1.8" fill="none" marker-end="url(#ka)"/>
+    <rect x="483" y="222" width="130" height="40" rx="12" fill="#fdf2f7" stroke="#df5d90" stroke-width="1.5"/><text x="548" y="247" text-anchor="middle" style="font:700 14px 'Geist Mono',monospace" fill="#df5d90">revert</text>
+    <path d="M548 214 V78" stroke="#df5d90" stroke-width="1.8" fill="none" marker-end="url(#kr)"/><circle cx="548" cy="150" r="5" fill="#df5d90"/>
+    <text x="562" y="150" style="font:700 16px 'Geist Mono',monospace" fill="#df5d90">back pressure</text>
+    <text x="562" y="174" style="font:400 12.5px 'Geist Mono',monospace" fill="#52525b">read state · fix the call · retry</text>
+    <rect x="483" y="282" width="130" height="40" rx="12" fill="#f1f7fc" stroke="#5288c2" stroke-width="1.5"/><text x="548" y="307" text-anchor="middle" style="font:700 14px 'Geist Mono',monospace" fill="#416cac">success</text>
+    <path d="M470 304 L280 262" stroke="#5288c2" stroke-width="1.8" fill="none" marker-end="url(#ks)"/>
+    <text x="372" y="312" text-anchor="middle" style="font:600 16px 'Geist Mono',monospace" fill="#416cac">commit_txs</text>
+    <g fill="none" stroke="#a1a1aa" stroke-width="1.6" stroke-dasharray="7 6"><path d="M834 128 V258 A92 20 0 0 0 1018 258 V128"/><ellipse cx="926" cy="128" rx="92" ry="20"/>
+      <path d="M604 70 L816 142" marker-end="url(#kf)"/><path d="M816 236 L626 250" marker-end="url(#kf)"/><path d="M626 304 L816 262" marker-end="url(#kf)"/></g>
+    <text x="926" y="198" text-anchor="middle" style="font:700 17px 'PT Serif',serif" fill="#71717a">GitHub CI sandbox</text>
+    <text x="926" y="220" text-anchor="middle" style="font:400 10.5px 'Geist Mono',monospace" fill="#71717a">the coding-agent version</text>
+    <text x="724" y="80" text-anchor="middle" transform="rotate(18 724 80)" style="font:500 16px 'Geist Mono',monospace" fill="#71717a">push PR</text>
+    <text x="726" y="228" text-anchor="middle" style="font:500 16px 'Geist Mono',monospace" fill="#71717a">tests fail</text>
+    <text x="726" y="312" text-anchor="middle" style="font:500 16px 'Geist Mono',monospace" fill="#71717a">merge code</text>
+  </svg>
+  <div style="position:absolute;left:112px;right:112px;top:900px;border-top:1.5px solid var(--line);padding-top:18px;display:flex;gap:90px;font:500 21px 'Geist',sans-serif;color:var(--muted)">
+    <span><b style="color:var(--ink)">— Aomi</b> · the fork runs the call; the chain only sees what passed</span>
+    <span><b style="color:var(--ink)">- - Coding agent</b> · CI runs the code; main only gets what passed</span></div>
+  <div class="brand"></div>
+</section>
+
+<!-- 5 · one transaction, and the key stays in your wallet -->
+<section class="g" id="g5">
+  <div class="eyebrow"><i></i>Steps 4–5 · Account abstraction · Signing</div>
+  <h1>One transaction. The key stays in your wallet.</h1>
+  <p class="sub">The harness compresses deterministic work so the model does less, and commit is the only way out.</p>
+  <div class="aa">
+    <svg class="wire"><defs>
+        <marker id="m5s" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5288c2"/></marker>
+        <marker id="m5g" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2e9e6b"/></marker>
+        <marker id="m5i" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#09090b"/></marker></defs>
+      <path d="M440 132V170" stroke="#a1a1aa" stroke-width="2.5" stroke-dasharray="6 6"/><path d="M370 412V450" stroke="#a1a1aa" stroke-width="2.5" stroke-dasharray="6 6"/>
+      <path d="M776 206C900 206 970 250 1092 252" stroke="#5288c2" stroke-width="3.5" fill="none" marker-end="url(#m5s)"/>
+      <path d="M702 486C900 486 970 300 1092 272" stroke="#2e9e6b" stroke-width="3.5" fill="none" marker-end="url(#m5g)"/>
+      <path d="M1124 260C1180 260 1200 196 1244 194" stroke="#09090b" stroke-width="3" fill="none" marker-end="url(#m5i)"/></svg>
+    <div class="lane" style="top:90px"><span class="tag" style="color:var(--sky2)">Ethereum</span>
+      <span class="chip">stake</span><span class="chip">approve</span><span class="chip">wrap</span><span class="chip">approve</span><span class="chip">supply</span><span class="chip">borrow</span></div>
+    <div class="bundle" style="left:280px;top:178px;background:var(--sky)">1 bundle · ERC-4337 / EIP-7702</div>
+    <div class="lane" style="top:370px"><span class="tag" style="color:var(--grn2)">Solana</span>
+      <span class="chip">deposit</span><span class="chip">create account</span><span class="chip">refresh</span><span class="chip">supply</span><span class="chip">borrow</span></div>
+    <div class="bundle" style="left:220px;top:458px;background:var(--grn)">1 versioned tx · lookup table</div>
+    <div class="gate-l">commit_txs</div><div class="gate"></div><div class="gate-n">the only door out,<br>like git commit</div>
+    <div class="wallet"><h3><svg width="44" height="28" viewBox="0 0 44 28" fill="none" stroke="#09090b" stroke-width="3.5" stroke-linecap="round"><circle cx="14" cy="14" r="10"/><path d="M24 14H42M36 14V22M42 14V20"/></svg>Your wallet</h3><p>signs a signable transaction.<br>The model never holds a key.</p></div>
+    <div class="modes"><span class="chip">manual · you sign each one</span><span class="chip">auto-approve · scoped session</span><span class="chip">agent wallet · held in a TEE</span></div>
+    <div class="swig"><b>SOLANA · SWIG ROLE</b><span>caps · program allowlist · expiry, enforced onchain</span></div>
+  </div>
+  <div class="brand"></div>
+</section>
+
+<script>
+const mark = document.getElementById('mark');
+document.querySelectorAll('.brand').forEach(b => b.appendChild(mark.content.cloneNode(true)));
+document.fonts.ready.then(() => { window.__GRAPHICS_READY__ = true; });
+</script>
+</body>
+</html>
