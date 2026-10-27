@@ -21,8 +21,8 @@ Read the deck end to end, plus any research post it came from. Then settle these
 
 - **Which deck and slides.** "The whole deck" is common. Note which slides are diagrams and which are prose.
 - **Where it will play, and how long it can be.** X caps uploads at 2:20 for non-Premium accounts. Explainers with real narration run about 15–25 seconds per slide, so a 13-slide deck lands around 3–3.5 minutes. Say this early; it decides how much script fits.
-- **Voice.** ElevenLabs voice ID, and a key passed as an environment variable at run time. Never write it into a file. If the key was pasted into chat, suggest rotating it afterwards.
-- **Sound.** The default is the synthesized music bed in `assets/music-template.mjs`, which needs no licensing. Use the user's own track if they give one.
+- **Voice.** The team voice, fixed in `skills/aomi-video-kit/kit.json`. Only `ELEVEN_API_KEY` comes from the environment at run time; never write it into a file, and if it was pasted into chat, suggest rotating it afterwards.
+- **Sound.** The default is the kit's signature bed (`skills/aomi-video-kit/scripts/music.mjs`), which `finish.mjs` plays when the production has no `music.mjs`. Write a bed of its own from `assets/music-template.mjs` only when the film's scenes need their own chord changes and accents; it plays on the kit's instruments. Use the user's own track if they give one.
 
 Don't propose a competing structure to the user's deck or outline. Map *their* slides to scenes.
 
@@ -36,18 +36,16 @@ Show the table and wait for approval. Users rewrite lines here, often heavily, a
 
 ### 3. Build the silent film
 
-Make the production folder `deliverables/videos/<slug>/` and copy in the template and music:
+Scaffold the production folder with the brand kit in it:
 
 ```bash
-mkdir -p deliverables/videos/<slug>/vo
-cp skills/slide-to-video/assets/film-template.html deliverables/videos/<slug>/film.html
-cp skills/slide-to-video/assets/music-template.mjs deliverables/videos/<slug>/music.mjs
+node skills/aomi-video-kit/scripts/new.mjs deliverables/videos/<slug> --film
 ```
 
-Replace the example scenes with yours. Keep the silent timeline brisk, about 5–8 seconds per scene; the voice will stretch it. While building, check stills, not videos:
+That gives `film.html`, `vo/script.mjs`, `music.mjs` and `kit/` (fonts, colours, title card, subtitles, outro lockup and the playback contract, from `skills/aomi-video-kit`; the film calls `K.title`, `K.outro`, `K.chapter` and `K.film`). Replace the example scenes with yours. Keep the silent timeline brisk, about 5–8 seconds per scene; the voice will stretch it. While building, check stills, not videos:
 
 ```bash
-node skills/slide-to-video/scripts/render.mjs deliverables/videos/<slug>/film.html --out /tmp/<slug>-stills --stills 2,6.5,9,14
+node skills/aomi-video-kit/scripts/render.mjs deliverables/videos/<slug>/film.html --out /tmp/<slug>-stills --stills 2,6.5,9,14
 bash skills/slide-to-video/scripts/contact-sheet.sh /tmp/<slug>-sheet.jpg /tmp/<slug>-stills/*.jpg   # up to 4 per sheet
 ```
 
@@ -58,8 +56,8 @@ Look at every sheet before a full render. A scene that reads wrong as a still re
 Render the silent cut, make a preview under 30 MB (that size reaches the user's phone) and send it:
 
 ```bash
-node skills/slide-to-video/scripts/render.mjs deliverables/videos/<slug>/film.html --out /tmp/<slug>-frames
-node skills/slide-to-video/scripts/finish.mjs deliverables/videos/<slug> /tmp/<slug>-frames --no-voice
+node skills/aomi-video-kit/scripts/render.mjs deliverables/videos/<slug>/film.html --out /tmp/<slug>-frames
+node skills/aomi-video-kit/scripts/finish.mjs deliverables/videos/<slug> /tmp/<slug>-frames --no-voice
 ```
 
 Users usually give notes in several messages ("hold on, there's more"). When they say so, acknowledge each note with how you'll fix it, then wait until they say they're done before changing anything. Batching saves a re-render per note and lets fixes stay consistent with each other.
@@ -69,39 +67,40 @@ Users usually give notes in several messages ("hold on, there's more"). When the
 1. Write `vo/script.mjs` from `assets/script-template.mjs`. Each line has a film-clock `start` and `end`, plus **anchors**: `[spoken word, occurrence, film time]` pairs that pin a word to the moment its animation happens. Anchor the word that names the motion: "fails" when the card turns rose, "rules" when the rules appear. About 3–8 anchors per line.
 2. Voice it. Each line is its own clip, with word timestamps:
    ```bash
-   ELEVEN_API_KEY=… ELEVEN_VOICE_ID=… node skills/slide-to-video/scripts/tts.mjs deliverables/videos/<slug>
+   ELEVEN_API_KEY=… node skills/aomi-video-kit/scripts/voice.mjs deliverables/videos/<slug>
    ```
-   Re-voice single lines by id after edits: `… tts.mjs <dir> 4 7`.
+   Re-voice single lines by id after edits: `… voice.mjs <dir> 4 7`. `--draft` uses the macOS voice for dry runs.
 3. Build the timeline. This writes the time-warp, the subtitle cues and `<slug>.srt`:
    ```bash
-   node skills/slide-to-video/scripts/build-timeline.mjs deliverables/videos/<slug>
+   node skills/aomi-video-kit/scripts/timeline.mjs deliverables/videos/<slug>
    ```
    Fix any "speeds up" or "non-monotonic" warnings by moving an anchor or the animation time. If the picture has to run faster than the voice, the line is describing something the scene doesn't show yet.
 4. Check narrated stills (time is now the narrated clock), then render, mix and encode:
    ```bash
-   node skills/slide-to-video/scripts/render.mjs deliverables/videos/<slug>/film.html --out /tmp/<slug>-frames
-   node skills/slide-to-video/scripts/finish.mjs deliverables/videos/<slug> /tmp/<slug>-frames
+   node skills/aomi-video-kit/scripts/render.mjs deliverables/videos/<slug>/film.html --out /tmp/<slug>-frames
+   node skills/aomi-video-kit/scripts/finish.mjs deliverables/videos/<slug> /tmp/<slug>-frames
+   node skills/aomi-video-kit/scripts/check.mjs deliverables/videos/<slug>
    ```
-   `finish.mjs` places each clip, ducks the music under the voice, levels to -16 LUFS, and writes `<slug>.mp4` and `<slug>-preview.mp4`.
+   `finish.mjs` places each clip, ducks the music under the voice, levels to -16 LUFS, and writes `<slug>.mp4` and `<slug>-preview.mp4`. `check.mjs` grades the result against the kit; it must print `all good`.
 
 ### 6. Deliver
 
-Send the preview (and the `.srt`) to the user and give the full-quality path. Report the length against the platform limit. Keep the `.mp4` files and frames out of git: commit the source, `vo/` and the `.srt`. Before encoding, `references/pipeline.md` has a list of failure modes worth knowing.
+Send the preview (and the `.srt`) to the user and give the full-quality path. Report the length against the platform limit. The `.mp4` files and frames are git-ignored: commit the source, `kit/`, `vo/` and the `.srt`. Before encoding, `references/pipeline.md` has a list of failure modes worth knowing.
 
 ## Non-negotiables, and why
 
 - **Explain, don't decorate.** Every shot answers "what is happening to the object right now?" A 3D shot that only looks good, like rings flying past or a black ball, gets cut in review. Ask what each moving thing *means* before animating it.
 - **2D wherever a concept is explained.** Diagrams are clearer than perspective. Use the slide's own diagram and labels, built up step by step. Never show it all at once.
 - **The problem and the payoff share one picture.** If a slide sets up risks, show the same pills or lanes again when they get resolved, so the payoff is visibly the answer to the setup.
-- **Brand.** Use the current tokens (`src/tokens/tokens.css`); 3D structure is grey, never black. Sky means passed and rose means failed. The lilac ramp is retired. Use the real logo and icons from `assets/`, and end on the real mark.
+- **Brand.** Fonts, colours, the title card, subtitles and the ending come from `kit/` (`skills/aomi-video-kit`); nothing brand is written by hand in the film. 3D structure is grey, never black. Sky means passed and rose means failed. The lilac ramp is retired. Use the real icons from `assets/`.
 - **The picture follows the voice.** Never speed up speech to fit a scene. Subtitles come from the word timings, so they're always in sync.
 - **Secrets.** API keys go in environment variables, never into files, commits or logs.
 
 ## Files
 
-- `assets/film-template.html`: the film machinery plus three example scenes (3D intent, 2D pipeline, 3D gate) and the logo outro. It exposes `window.__AOMI_VIDEO__`, the same seek contract as `skills/make-aomi-video`, so that skill's capture tools work on it too.
-- `assets/script-template.mjs`, `assets/music-template.mjs`: the voice-over script and music bed, both written on the silent film clock.
-- `scripts/render.mjs`: parallel JPEG frames or stills. `scripts/tts.mjs`: ElevenLabs clips. `scripts/build-timeline.mjs`: the warp, subtitles and .srt. `scripts/finish.mjs`: mix and encode. `scripts/contact-sheet.sh`: 2×2 review sheets.
+- `assets/film-template.html`: the film machinery plus three example scenes (3D intent, 2D pipeline, 3D gate), on the kit for the title card, subtitles, outro and the `window.__AOMI_VIDEO__` contract (shared with `skills/make-aomi-video`, so that skill's capture tools work on it too).
+- `assets/script-template.mjs`, `assets/music-template.mjs`: the voice-over script and a film-specific music bed, both written on the silent film clock.
+- `scripts/contact-sheet.sh`: 2×2 review sheets. Voice, timeline, render, mix and the brand check live in `skills/aomi-video-kit/scripts/` (`voice.mjs`, `timeline.mjs`, `render.mjs`, `finish.mjs`, `check.mjs`); the old `tts.mjs`, `build-timeline.mjs`, `render.mjs` and `finish.mjs` paths here forward to them.
 - `references/visual-grammar.md`: deciding 3D vs 2D, the flatten move, scene recipes and continuity devices. Read it before planning scenes.
 - `references/narration.md`: writing the script, choosing anchors, subtitle rules, length budgeting.
 - `references/pipeline.md`: how the clocks and warp work, rendering, mixing, and the failure modes we've hit.

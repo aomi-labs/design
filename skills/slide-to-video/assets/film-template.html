@@ -10,18 +10,15 @@
       into an SVG diagram (the "2D moment") drawn in the same place and scale
     · a time warp (vo/timeline.js) that stretches the film to the voice-over, plus burned-in subtitles
   The whole frame is a pure function of time: seek(t). Replace the example scenes; keep the machinery.
-  Read skills/slide-to-video/references/visual-grammar.md before designing scenes.
+  Fonts, colours, the title card, subtitles, the outro lockup and the playback contract come from kit/
+  (skills/aomi-video-kit). Read skills/slide-to-video/references/visual-grammar.md before designing scenes.
 -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit/kit.css">
 <style>
-/* tokens: keep in step with src/tokens/tokens.css (lilac is retired — use cool greys) */
-:root{--ink:#09090b;--paper:#fcf7f6;--sky:#5288c2;--sky2:#416cac;--sky4:#7facd6;--rose:#df5d90;--g200:#e4e4e7;--g400:#a1a1aa;--muted:#71717a}
-html,body{margin:0;background:var(--paper)}
-#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--paper)}
-body.fit #stage{transform-origin:0 0}
-#gl,#labels,#hud,#veil,#vig,#flat{position:absolute;inset:0}
-#labels,#hud,#vig,#flat,#sub{pointer-events:none}
+/* film-only aliases of the kit's tokens (lilac is retired — use cool greys) */
+:root{--sky2:var(--sky-deep);--sky4:var(--sky-400);--g200:var(--cool-200);--g400:var(--cool-400)}
+#gl,#labels,#hud,#vig,#flat{position:absolute;inset:0}
+#labels,#hud,#vig,#flat{pointer-events:none}
 canvas{display:block}
 #vig{background:linear-gradient(180deg,rgba(252,247,246,.78) 0,rgba(252,247,246,0) 170px,rgba(252,247,246,0) 700px,rgba(252,247,246,.85) 1080px)}
 .lbl{position:absolute;left:0;top:0;font:500 17px 'Geist Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);white-space:nowrap;opacity:0}
@@ -29,20 +26,6 @@ canvas{display:block}
 .lbl.zone{font:600 21px 'Geist Mono',monospace;letter-spacing:.16em;background:rgba(252,247,246,.88);padding:7px 16px;border:1.5px dashed rgba(9,9,11,.45);border-radius:999px}
 .lbl.rule{font:500 19px 'Geist Mono',monospace;letter-spacing:0;text-transform:none;background:rgba(252,247,246,.92);padding:5px 12px;border:1.5px solid rgba(9,9,11,.25);border-radius:8px}
 .lbl.rule.ok{color:#fff;background:var(--sky);border-color:var(--sky)}
-.chap{position:absolute;left:96px;top:78px;font:500 20px 'Geist Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:14px;opacity:0}
-.chap i{width:10px;height:10px;border-radius:50%;background:var(--sky)}
-#title{position:absolute;left:96px;bottom:190px;opacity:0}
-#title .eyebrow{font:500 20px 'Geist Mono',monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
-#title h1{margin:0;font:700 120px/0.95 'PT Serif',serif;letter-spacing:-.025em;color:var(--ink)}
-#title p{margin:14px 0 0;font:italic 400 48px 'PT Serif',serif;color:var(--sky2)}
-#veil{background:var(--paper);opacity:0}
-#outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
-#outro .lock{display:flex;align-items:center;gap:48px}
-#mark{width:140px;height:140px;overflow:visible;display:block}
-#outro .wm{font:600 140px/1 'Source Serif 4',serif;letter-spacing:-.02em;color:var(--ink);opacity:0}
-#outro .sub{font:italic 400 44px 'PT Serif',serif;color:var(--ink);margin-top:46px;opacity:0}
-#outro .url{font:500 22px 'Geist Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:30px;opacity:0}
-#sub{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);max-width:1600px;text-align:center;font:500 34px/1.3 'Geist',sans-serif;color:#fff;background:rgba(9,9,11,.82);padding:10px 24px;border-radius:10px;opacity:0;white-space:nowrap}
 /* 2D layer */
 #flat{opacity:0}
 #flat .st{fill:none;stroke:#09090b;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
@@ -53,7 +36,7 @@ canvas{display:block}
 </style>
 </head>
 <body>
-<div id="stage">
+<div id="stage" class="aomi-stage plain">
   <div id="gl"></div>
   <div id="vig"></div>
   <div id="labels"></div>
@@ -67,30 +50,10 @@ canvas{display:block}
     <rect width="1920" height="1080" fill="#fcf7f6"/>
     <rect width="1920" height="1080" fill="url(#grid)" opacity=".7"/>
   </svg>
-  <div id="hud">
-    <div id="title"><div class="eyebrow">Aomi Labs Research</div><h1>Deck title</h1><p>one-line promise</p></div>
-  </div>
-  <div id="veil"></div>
-  <div id="outro">
-    <div class="lock">
-      <svg id="mark" viewBox="0 0 362 362">
-        <g id="morph" fill="none">
-          <path id="a1" stroke="#09090b" pathLength="1" stroke-dasharray="1"/>
-          <path id="a2" stroke="#416cac" pathLength="1" stroke-dasharray="1"/>
-          <path id="a3" stroke="#5288c2" pathLength="1" stroke-dasharray="1"/>
-          <circle id="dot" cx="181" cy="181" r="15" fill="#df5d90" stroke="#09090b" stroke-width="0"/>
-        </g>
-        <!-- paths copied from assets/logo/aomi-mark.svg — re-copy if the mark changes -->
-        <g id="logo" fill="#09090b" opacity="0"><path d="M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z"/><path d="M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z"/></g>
-      </svg>
-      <div class="wm">aomi</div>
-    </div>
-    <div class="sub">Deck title, one line</div>
-    <div class="url">aomi.dev/research &nbsp;·&nbsp; @aomi_labs</div>
-  </div>
-  <div id="sub"></div>
+  <div id="hud"></div>
 </div>
 <script src="vo/timeline.js" onerror="void 0"></script>
+<script src="kit/kit.js"></script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
 </script>
@@ -100,6 +63,9 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 
 // ---------- timeline (seconds on the silent "original" clock; the voice-over warps it later) ----------
 const W = 1920, H = 1080, DUR = 22;
+const K = window.AOMI_KIT, stage = document.getElementById('stage');
+const META = { eyebrow: 'Aomi Labs Research', title: 'Deck title', subtitle: 'one-line promise', link: 'aomi.dev/research · @aomi_labs' };
+const titleCard = K.title(stage, META), outro = K.outro(stage, META);
 
 // ---------- math ----------
 const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
@@ -220,8 +186,7 @@ function label(html, cls, pos, a, b) { const el = document.createElement('div');
 label('source contract', '', V(1.6, .35, -40.5), 12.6, 17);
 const ruleL = label('amount ≤ cap', 'rule', V(-1.6, 2.2, -40), 13.2, 17);
 const CHAPTERS = [['The intent', .3, 3.8], ['Slide 2 · a 2D explanation', 4.6, 11.2], ['Slide 3 · a 3D mechanism', 11.6, 17.2]];
-const hud = document.getElementById('hud');
-const chapEls = CHAPTERS.map(([txt]) => { const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `<i></i>${txt}`; hud.appendChild(d); return d; });
+const chapEls = CHAPTERS.map(([txt]) => K.chapter(document.getElementById('hud'), txt));
 
 // ---------- 2D layer helpers ----------
 const svg = document.getElementById('flat'), NS = 'http://www.w3.org/2000/svg';
@@ -269,26 +234,8 @@ function seek2D(t) {
   op(s2Tag.g, seg(t, 8.6, 8.9));
 }
 
-// ---------- outro: brand shapes become the real logo, then the lockup ----------
-const veil = document.getElementById('veil'), outro = document.getElementById('outro'), markEl = document.getElementById('mark'), morphEl = document.getElementById('morph'), logoEl = document.getElementById('logo');
-const wmEl = outro.querySelector('.wm'), osubEl = outro.querySelector('.sub'), urlEl = outro.querySelector('.url');
-const arcEls = ['a1', 'a2', 'a3'].map(id => document.getElementById(id)), dot = document.getElementById('dot');
-const arcD = (r, a0, a1) => { const p = a => `${(181 + r * Math.cos(deg(a))).toFixed(2)} ${(181 + r * Math.sin(deg(a))).toFixed(2)}`; return `M${p(a0)} A${r.toFixed(2)} ${r.toFixed(2)} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${p(a1)}`; };
-const O = 17.2; // outro start
-function seekOutro(t) {
-  veil.style.opacity = eio(seg(t, O, O + 1.1)); outro.style.opacity = seg(t, O + .4, O + .7);
-  const m = eio(seg(t, O + 2.2, O + 3.2));
-  [155.14, 103, 52].forEach((r0, i) => { const a = arcEls[i], r = i === 0 ? r0 : lerp(r0, 1, m);
-    a.setAttribute('d', i === 0 ? arcD(r, lerp(180, 4, m), lerp(360, 266, m)) : arcD(r, 180, 360)); a.setAttribute('stroke-width', i === 0 ? lerp(6.5, 51.7, m) : 6.5);
-    a.setAttribute('stroke-dashoffset', (1 - eio(seg(t, O + .7 + i * .2, O + 1.6 + i * .2))).toFixed(4)); a.setAttribute('opacity', i === 0 ? 1 : 1 - m); });
-  const rise = eio(seg(t, O + 1.4, O + 2.2));
-  dot.setAttribute('cx', lerp(181, 267.765, m)); dot.setAttribute('cy', lerp(lerp(181, 26, rise), 94.235, m));
-  dot.setAttribute('r', lerp(15, 74.12, m)); dot.setAttribute('stroke-width', lerp(0, 40.2, m)); dot.setAttribute('fill-opacity', 1 - m); dot.setAttribute('opacity', seg(t, O + 1.35, O + 1.5));
-  logoEl.setAttribute('opacity', seg(t, O + 3.1, O + 3.3)); morphEl.setAttribute('opacity', 1 - seg(t, O + 3.15, O + 3.35));
-  const lk = eio(seg(t, O + 3.3, O + 4.0)); markEl.style.transform = `translateX(${(wmEl.offsetWidth + 48) / 2 * (1 - lk)}px) scale(${lerp(1.5, 1, m)})`;
-  wmEl.style.opacity = seg(t, O + 3.4, O + 4.0); wmEl.style.transform = `translateX(${(1 - eout(seg(t, O + 3.4, O + 4.1))) * -18}px)`;
-  [[osubEl, O + 3.9], [urlEl, O + 4.2]].forEach(([e, a]) => { e.style.opacity = seg(t, a, a + .6); e.style.transform = `translateY(${(1 - eout(seg(t, a, a + .8))) * 18}px)`; });
-}
+// ---------- outro: the kit's lockup (veil → mark + wordmark → title → link) ----------
+const O = DUR - 4.6; // outro start
 
 // ---------- seek(t): the whole film as a pure function of the original clock ----------
 const tmp = V(0, 0, 0);
@@ -325,45 +272,18 @@ function seek(t) {
   labels.forEach(L => { const o = win(t, L.a, L.b, .35); if (o <= 0) { L.el.style.opacity = 0; return; }
     tmp.copy(L.pos).project(camera); if (tmp.z > 1) { L.el.style.opacity = 0; return; }
     L.el.style.opacity = o; L.el.style.transform = `translate(${(tmp.x + 1) / 2 * W}px,${(1 - tmp.y) / 2 * H}px) translate(-50%,-50%)`; });
-  CHAPTERS.forEach(([, a, b], i) => { chapEls[i].style.opacity = win(t, a, b, .35); });
-  const title = document.getElementById('title'); title.style.opacity = win(t, 1.2, 3.6, .5);
+  CHAPTERS.forEach(([, a, b], i) => chapEls[i].seek(t, a, b));
+  titleCard.seek(t, 3.8);
 
-  seek2D(t); seekOutro(t);
+  seek2D(t); outro.seek(t, O);
   renderer.render(scene, camera);
 }
 
-// ---------- narrated clock → original clock (vo/timeline.js from build-timeline.mjs), subtitles ----------
-const TL = window.VO_TL || null, captionEl = document.getElementById('sub');
-function oldTime(T) {
-  if (!TL) return T; const A = TL.anchors; if (T <= A[0][0]) return A[0][1];
-  for (let i = 0; i < A.length - 1; i++) { const [n0, o0] = A[i], [n1, o1] = A[i + 1]; if (T <= n1) return o0 + (o1 - o0) * (T - n0) / (n1 - n0); }
-  return A[A.length - 1][1];
-}
-function seekFilm(T) {
-  seek(oldTime(T));
-  const c = TL && TL.cues.find(q => T >= q.s && T < q.e);
-  captionEl.textContent = c ? c.text : ''; captionEl.style.opacity = c ? Math.min(seg(T, c.s, c.s + .1), 1 - seg(T, c.e - .1, c.e)) : 0;
-}
-
-// ---------- playback contract (shared with skills/make-aomi-video) ----------
-const params = new URLSearchParams(location.search);
-let playing = false, t0 = 0, from = 0;
-window.__AOMI_VIDEO__ = {
-  duration: TL ? TL.dur : DUR,
-  seek: seekFilm,
-  play() { playing = true; t0 = performance.now(); const loop = () => { if (!playing) return; seekFilm((from + (performance.now() - t0) / 1000) % this.duration); requestAnimationFrame(loop); }; loop(); },
-  pause() { playing = false; },
-};
+// ---------- playback: K.film applies the voice-over warp (vo/timeline.js), draws subtitles, wires __AOMI_VIDEO__ ----------
 await document.fonts.ready;
 fits.forEach(f => f());
 iconCache.forEach(v => { drawIcon(v.cv, v.ink); v.tx.needsUpdate = true; }); // icon text needs the web font
-seekFilm(+(params.get('t') || 0));
-window.__AOMI_VIDEO_READY__ = true;
-if (!params.has('render') && !params.has('t')) {
-  document.body.classList.add('fit');
-  const fit = () => { document.getElementById('stage').style.transform = `scale(${Math.min(innerWidth / W, innerHeight / H)})`; };
-  fit(); addEventListener('resize', fit); window.__AOMI_VIDEO__.play();
-}
+K.film({ duration: DUR, seek, stage });
 </script>
 </body>
 </html>

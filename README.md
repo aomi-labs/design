@@ -9,6 +9,8 @@ The Aomi design system — design tokens and core React components for the agent
 
 Rule of thumb: defines the brand → system; the map should track it → `deliverables/<type>/`; makes deliverables → `skills/`; neither yet → `lab/`.
 
+For video, the brand (voice, type, colour, title card, subtitles, outro, music, mix, delivery) is one kit: [`skills/aomi-video-kit`](skills/aomi-video-kit/SKILL.md). The story skills (`slide-to-video`, `eleven-announcer`, `make-aomi-video`) render through it, and it can be copied into another repo whole.
+
 ## What's in here
 
 - **Tokens** — colors, typography, spacing, radius, elevation, and motion, authored as CSS custom properties (`src/tokens/tokens.css`) with a typed mirror for JS (`src/tokens/tokens.ts`).

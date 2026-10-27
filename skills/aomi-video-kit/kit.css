@@ -1,0 +1,57 @@
+/* Aomi video kit: the shared look of every Aomi video.
+   Fonts, colours (mirroring src/tokens/tokens.css), the 1920×1080 stage, the title card, chapter tags,
+   subtitles and the outro lockup. Load it from the production folder: <link rel="stylesheet" href="kit/kit.css">.
+   Values are checked against kit.json by scripts/check.mjs; edit kit.json first, then this file. */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:wght@600;700&display=swap');
+
+:root {
+  --ink: #09090b; --paper: #fcf7f6; --white: #ffffff;
+  --sky: #5288c2; --sky-deep: #416cac; --sky-400: #7facd6; --sky-300: #aecbe8;
+  --rose: #df5d90;
+  --cool-100: #f4f4f5; --cool-200: #e4e4e7; --cool-300: #d4d4d8; --cool-400: #a1a1aa; --cool-500: #71717a; --cool-600: #52525b; --cool-700: #3f3f46;
+  --success: #2e9e6b; --warning: #d9982b; --danger: #d2495b;
+  --muted: var(--cool-500);
+  --font-display: 'PT Serif', ui-serif, Georgia, serif;
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+  --font-wordmark: 'Source Serif 4', ui-serif, Georgia, serif;
+}
+
+html, body { margin: 0; background: var(--paper); }
+/* the stage: paper with the faint brand grid; every rendered frame is exactly this box */
+.aomi-stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--paper);
+  background-image: linear-gradient(var(--cool-200) 1px, transparent 1px), linear-gradient(90deg, var(--cool-200) 1px, transparent 1px);
+  background-size: 60px 60px; background-position: -1px -1px; }
+.aomi-stage::before { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, rgba(252,247,246,.55), rgba(252,247,246,.92) 75%); }
+.aomi-stage.plain { background-image: none; } .aomi-stage.plain::before { display: none; }
+body.fit .aomi-stage { transform-origin: 0 0; }
+
+/* title card: eyebrow with a sky dot, serif headline, one-line subtitle */
+.aomi-title { position: absolute; left: 160px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; opacity: 0; pointer-events: none; }
+.aomi-title .eyebrow { font: 500 22px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--sky-deep); margin-bottom: 22px; display: flex; align-items: center; gap: 14px; }
+.aomi-title .eyebrow i { width: 11px; height: 11px; border-radius: 50%; background: var(--sky); }
+.aomi-title h1 { margin: 0; font: 700 104px/1 var(--font-display); letter-spacing: -.025em; color: var(--ink); max-width: 1500px; }
+.aomi-title p { margin: 22px 0 0; font: 400 36px/1.35 var(--font-sans); color: var(--muted); max-width: 1300px; }
+
+/* chapter tag, top left */
+.aomi-chap { position: absolute; left: 96px; top: 78px; font: 500 20px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink); display: flex; align-items: center; gap: 14px; opacity: 0; }
+.aomi-chap i { width: 10px; height: 10px; border-radius: 50%; background: var(--sky); }
+
+/* labels pinned to things */
+.aomi-label { font: 500 17px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+.aomi-label.sky { color: var(--sky-deep); } .aomi-label.rose { color: var(--rose); }
+.aomi-label.zone { font: 600 21px var(--font-mono); letter-spacing: .16em; background: rgba(252,247,246,.88); padding: 7px 16px; border: 1.5px dashed rgba(9,9,11,.45); border-radius: 999px; }
+
+/* subtitles: white Geist on a dark box, bottom centre. Keep key UI out of the bottom 120 px. */
+.aomi-sub { position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); max-width: 1600px; text-align: center; z-index: 5;
+  font: 500 34px/1.3 var(--font-sans); color: var(--white); background: rgba(9,9,11,.82); padding: 10px 24px; border-radius: 10px; opacity: 0; white-space: nowrap; pointer-events: none; }
+
+/* outro: paper veil, then the mark + wordmark, a one-line title, the link */
+.aomi-veil { position: absolute; inset: 0; background: var(--paper); opacity: 0; pointer-events: none; }
+.aomi-outro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
+.aomi-outro .lock { display: flex; align-items: center; gap: 44px; }
+.aomi-outro .lock svg { width: 128px; height: 128px; display: block; }
+.aomi-outro .wm { font: 600 128px/1 var(--font-wordmark); letter-spacing: -.02em; color: var(--ink); }
+.aomi-outro .t { font: italic 400 42px var(--font-display); color: var(--ink); margin-top: 44px; opacity: 0; }
+.aomi-outro .l { font: 500 22px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 26px; opacity: 0; }
