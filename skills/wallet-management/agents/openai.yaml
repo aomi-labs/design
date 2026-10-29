@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wallet Management"
+  short_description: "Plan, execute, and reconcile authorized wallet operations"
+  default_prompt: "Review my wallet catalog and complete this authorized wallet operation with live verification and ledger reconciliation."

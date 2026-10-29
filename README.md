@@ -11,6 +11,8 @@ Rule of thumb: defines the brand → system; the map should track it → `delive
 
 For video, the brand (voice, type, colour, title card, subtitles, outro, music, mix, delivery) is one kit: [`skills/aomi-video-kit`](skills/aomi-video-kit/SKILL.md). The story skills (`slide-to-video`, `eleven-announcer`, `make-aomi-video`) render through it, and it can be copied into another repo whole.
 
+For treasury and operational wallet work, [`skills/wallet-management`](skills/wallet-management/SKILL.md) provides the verification, signing-boundary, receipt, and append-only ledger workflow.
+
 ## What's in here
 
 - **Tokens** — colors, typography, spacing, radius, elevation, and motion, authored as CSS custom properties (`src/tokens/tokens.css`) with a typed mirror for JS (`src/tokens/tokens.ts`).
