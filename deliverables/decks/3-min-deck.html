@@ -1203,6 +1203,141 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
 </body>
 </html>
 "></iframe>
+  <iframe class="frame" data-title="Agentic fuzzer · Arc Studio" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;aomi — agentic fuzzer&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;700&amp;family=PT+Serif:ital,wght@0,400;0,700;1,400&amp;family=Source+Serif+4:wght@600;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;style&gt;
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef;
+  --sans:&quot;Geist&quot;,ui-sans-serif,system-ui,sans-serif;
+  --mono:&quot;Geist Mono&quot;,ui-monospace,Menlo,monospace;
+  --serif:&quot;PT Serif&quot;,ui-serif,Georgia,serif;
+  --wm:&quot;Source Serif 4&quot;,ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.04;color:var(--ink)}
+.i{color:var(--hl);font-style:normal}
+
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}.d4{animation-delay:.42s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+
+/* ============ HERO ============ */
+#s1 .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#s1 .orbit{position:relative;width:230px;height:230px;margin-bottom:6px}
+#s1 .orbit .ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(82,136,194,.45)}
+#s1 .orbit .ring.r2{inset:26px;border-color:rgba(223,93,144,.38)}
+#s1 .r1{animation:spin 26s linear infinite}
+#s1 .r2{animation:spinr 20s linear infinite}
+#s1 .orbit .sat{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--hl2);
+  top:-5px;left:calc(50% - 4.5px);box-shadow:0 1px 6px rgba(82,136,194,.5)}
+#s1 .orbit .sat.b{background:var(--somm);box-shadow:0 1px 6px rgba(223,93,144,.5)}
+#s1 .core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#s1 .core svg{width:96px;height:96px;color:var(--ink);filter:drop-shadow(0 4px 18px rgba(13,13,15,.14))}
+#s1 .wm{font-family:var(--wm);font-weight:700;font-size:104px;line-height:.9;letter-spacing:-.02em;margin-top:8px}
+#s1 h1{font-size:33px;margin-top:26px}
+#s1 .sub{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--mut);margin-top:22px;max-width:640px;line-height:1.7}
+#s1 .pw{font-family:var(--mono);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);margin-bottom:30px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* Browser window, traffic dots and grid adapted from arc-fuzzer/compositor.html
+   at 28e37e012c139dd12c32a64c224de9705f00c23f. No recorded screenshots survive there. */
+#fuzzer{padding:108px 76px 48px}
+#fuzzer .eyebrow{font:12px var(--mono);letter-spacing:.2em;color:var(--hl);text-transform:uppercase}
+#fuzzer h1{font-size:43px;margin-top:14px}
+#fuzzer .intro{font-size:17px;line-height:1.5;color:var(--mut);margin-top:12px}
+#fuzzer .window{margin-top:27px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 18px 45px -25px rgba(9,9,11,.28)}
+#fuzzer .bar{height:42px;display:flex;align-items:center;gap:16px;padding:0 18px;border-bottom:1px solid var(--line)}
+#fuzzer .dots{display:flex;gap:7px}#fuzzer .dots b{width:9px;height:9px;border-radius:50%;background:var(--line)}
+#fuzzer .url{font:10px var(--mono);color:var(--dim);background:var(--panel2);padding:5px 14px;border-radius:99px;margin:auto}
+#fuzzer .flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;padding:30px;background-image:linear-gradient(#e4e4e7 1px,transparent 1px),linear-gradient(90deg,#e4e4e7 1px,transparent 1px);background-size:40px 40px}
+#fuzzer .step{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:12px;padding:22px 20px;min-height:174px}
+#fuzzer .num{font:11px var(--mono);color:var(--hl);letter-spacing:.12em}
+#fuzzer h2{font:700 23px var(--serif);margin:10px 0}
+#fuzzer .step p{font-size:14px;line-height:1.55;color:var(--mut)}
+#fuzzer .guard{font:11px var(--mono);color:var(--dim);margin-top:18px;text-align:center}
+#fuzzer .links{display:flex;align-items:center;gap:20px;margin-top:24px;font:12px var(--mono)}
+#fuzzer a{color:var(--hl);text-decoration:none;border-bottom:1px solid var(--tintline);padding-bottom:3px}
+#fuzzer .caption{font:10px var(--mono);color:var(--dim);margin-top:12px;line-height:1.5}
+
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;fit&quot;&gt;&lt;div id=&quot;stage&quot;&gt;
+
+  &lt;div class=&quot;chrome&quot; id=&quot;brand&quot;&gt;
+    &lt;svg viewBox=&quot;0 0 362 362&quot; fill=&quot;currentColor&quot;&gt;&lt;path d=&quot;M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z&quot;/&gt;&lt;path d=&quot;M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z&quot;/&gt;&lt;/svg&gt;
+    &lt;b&gt;aomi&lt;/b&gt;&lt;span class=&quot;tag&quot;&gt;investor overview&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;chrome&quot; id=&quot;pageno&quot;&gt;&lt;i class=&quot;cur&quot;&gt;01&lt;/i&gt; / &lt;span&gt;06&lt;/span&gt;&lt;/div&gt;
+
+  &lt;section class=&quot;slide active&quot; id=&quot;fuzzer&quot; data-title=&quot;Agentic fuzzer&quot;&gt;
+  &lt;div class=&quot;eyebrow&quot;&gt;Aomi agentic fuzzer · Arc Studio apps&lt;/div&gt;
+  &lt;h1&gt;A builder’s protocol, &lt;span class=&quot;i&quot;&gt;fuzzed whole.&lt;/span&gt;&lt;/h1&gt;
+  &lt;p class=&quot;intro&quot;&gt;From source and compiled artifact to a finding that reproduces on a private fork.&lt;/p&gt;
+  &lt;div class=&quot;window&quot;&gt;
+    &lt;div class=&quot;bar&quot;&gt;&lt;div class=&quot;dots&quot;&gt;&lt;b&gt;&lt;/b&gt;&lt;b&gt;&lt;/b&gt;&lt;b&gt;&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;url&quot;&gt;arc-studio-fuzz.vercel.app&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;flow&quot;&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;01 →&lt;/div&gt;&lt;h2&gt;The agent proposes&lt;/h2&gt;&lt;p&gt;Reads source + artifact.&lt;br&gt;Threat model → executable rules,&lt;br&gt;actor roles and ordered calls.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;02 →&lt;/div&gt;&lt;h2&gt;The engine judges&lt;/h2&gt;&lt;p&gt;Deterministic search.&lt;br&gt;Rejects uncheckable plans.&lt;br&gt;Minimizes; requires two clean replays.&lt;/p&gt;&lt;/div&gt;
+      &lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;03&lt;/div&gt;&lt;h2&gt;The fork executes&lt;/h2&gt;&lt;p&gt;Private Arc fork.&lt;br&gt;Pinned at one block.&lt;br&gt;Every sequence runs here.&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;guard&quot;&gt;No transactions signed, contracts deployed or calls broadcast. No contract is called safe.&lt;/div&gt;
+  &lt;div class=&quot;links&quot;&gt;&lt;a href=&quot;https://drive.google.com/file/d/1fL9HKpoOaq0uEWu50Js-0Kv2APRrOwH4/view&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;▶ Watch the interface demo ↗&lt;/a&gt;&lt;a href=&quot;https://arc-studio-fuzz.vercel.app&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Open live preview ↗&lt;/a&gt;&lt;/div&gt;
+  &lt;div class=&quot;caption&quot;&gt;Video: product design preview — not a recording of the verified test-contract run.&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;script&gt;
+(function(){
+  var stage=document.getElementById(&#x27;stage&#x27;);
+  function fit(){ stage.style.transform=&#x27;scale(&#x27;+Math.min(window.innerWidth/1280, window.innerHeight/720)+&#x27;)&#x27;; }
+  window.addEventListener(&#x27;resize&#x27;,fit); fit();
+})();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
   <iframe class="frame" data-title="Pricing model" srcdoc="<!DOCTYPE html>
 <html lang=&quot;en&quot;>
 <head>
@@ -1795,16 +1930,16 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
 </body>
 </html>
 "></iframe>
-  <iframe class="frame" data-title="Presenter notes" srcdoc="<!DOCTYPE html>
-<html lang=&quot;en&quot;>
-<head>
-<meta charset=&quot;UTF-8&quot;>
-<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
-<title>aomi — presenter notes</title>
-<link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;>
-<link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin>
-<link href=&quot;https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;700&amp;family=PT+Serif:ital,wght@0,400;0,700;1,400&amp;family=Source+Serif+4:wght@600;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
-<style>
+  <iframe class="frame" data-title="Presenter notes" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;aomi — presenter notes&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;700&amp;family=PT+Serif:ital,wght@0,400;0,700;1,400&amp;family=Source+Serif+4:wght@600;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;style&gt;
 :root{
   --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
   --line:#e4e4e7; --line2:#d4d4d8;
@@ -1866,77 +2001,52 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
   letter-spacing:.08em;color:var(--faint);border-top:1px dashed var(--line2);padding-top:9px}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
-</style>
-</head>
-<body>
-<div id=&quot;fit&quot;><div id=&quot;stage&quot;>
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;fit&quot;&gt;&lt;div id=&quot;stage&quot;&gt;
 
-  <div class=&quot;chrome&quot; id=&quot;brand&quot;>
-    <svg viewBox=&quot;0 0 362 362&quot; fill=&quot;currentColor&quot;><path d=&quot;M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z&quot;/><path d=&quot;M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z&quot;/></svg>
-    <b>aomi</b><span class=&quot;tag&quot;>investor overview</span>
-  </div>
-  <div class=&quot;chrome&quot; id=&quot;pageno&quot;><i class=&quot;cur&quot;>07</i> / <span>07</span></div>
+  &lt;div class=&quot;chrome&quot; id=&quot;brand&quot;&gt;
+    &lt;svg viewBox=&quot;0 0 362 362&quot; fill=&quot;currentColor&quot;&gt;&lt;path d=&quot;M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z&quot;/&gt;&lt;path d=&quot;M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z&quot;/&gt;&lt;/svg&gt;
+    &lt;b&gt;aomi&lt;/b&gt;&lt;span class=&quot;tag&quot;&gt;investor overview&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;chrome&quot; id=&quot;pageno&quot;&gt;&lt;i class=&quot;cur&quot;&gt;07&lt;/i&gt; / &lt;span&gt;07&lt;/span&gt;&lt;/div&gt;
 
-  <section class=&quot;slide active&quot; id=&quot;notes&quot; data-title=&quot;Presenter notes&quot;>
-    <div class=&quot;pad&quot;>
-      <div class=&quot;head rise&quot;>
-        <div>
-          <div class=&quot;eyebrow&quot;>Presenter notes</div>
-          <h1>The <span class=&quot;i&quot;>3-minute</span> script.</h1>
-        </div>
-        <div class=&quot;hsub&quot;>Notes · 07/24 · one card per slide</div>
-      </div>
+  &lt;section class=&quot;slide active&quot; id=&quot;notes&quot; data-title=&quot;Presenter notes&quot;&gt;
+    &lt;div class=&quot;pad&quot;&gt;
+      &lt;div class=&quot;head rise&quot;&gt;
+        &lt;div&gt;
+          &lt;div class=&quot;eyebrow&quot;&gt;Presenter notes&lt;/div&gt;
+          &lt;h1&gt;The &lt;span class=&quot;i&quot;&gt;3-minute&lt;/span&gt; script.&lt;/h1&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;hsub&quot;&gt;Arc Demo Day · 13 Nov 2026 · 16:37–16:40 London&lt;/div&gt;
+      &lt;/div&gt;
 
-      <div class=&quot;cols rise&quot;>
-        <div class=&quot;card&quot;>
-          <div class=&quot;nl&quot;><span class=&quot;num&quot;>1</span><span class=&quot;nm&quot;>Cover · intro</span></div>
-          <p>Hi everyone, my name is Cecilia, and I'm building <b>Aomi Labs</b> — a hosted harness built natively on blockchain. In a nutshell, we operate on the state of EVM and SVM just like Claude Code runs on your OS and filesystem, so we support generic, complicated operations like <i>&quot;find the highest-yielding pool across supported EVM chains, then bridge and stake my money.&quot;</i></p>
-          <p>That said, it's not impressive to see a crypto agent in 2026 — so <b>why does it matter?</b></p>
-        </div>
+      &lt;div class=&quot;cols rise&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;nl&quot;&gt;&lt;span class=&quot;num&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;nm&quot;&gt;Cover · 0:00–0:10&lt;/span&gt;&lt;/div&gt;&lt;p&gt;Hi, I’m Cecilia, building Aomi: the blockchain harness for agentic AI. Bring your API, ship it as an agent, and let Aomi handle onchain execution.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;nl&quot;&gt;&lt;span class=&quot;num&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;nm&quot;&gt;Problem · 0:10–0:35&lt;/span&gt;&lt;/div&gt;&lt;p&gt;Enterprises want AI on crypto rails, but execution still means assembling simulation, account abstraction, signing, infrastructure and monitoring. Each piece takes time and introduces another failure point. Aomi brings that execution stack together so teams can focus on their own product and workflows.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;nl&quot;&gt;&lt;span class=&quot;num&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;nm&quot;&gt;Runtime · 0:35–1:05&lt;/span&gt;&lt;/div&gt;&lt;p&gt;Developers bring their tools and business logic as Aomi Apps. We host the runtime and expose it across product surfaces. With Sommelier, that means wrapping their liquidity-management APIs, then using our SDK for the interface and Aomi for execution. The same app can reach users through web UI, Telegram or other supported surfaces, with observability in one dashboard.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;nl&quot;&gt;&lt;span class=&quot;num&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;nm&quot;&gt;Architecture · 1:05–1:25&lt;/span&gt;&lt;/div&gt;&lt;p&gt;Underneath, the runtime coordinates tools, transaction preparation and execution. Background threads support ongoing workflows. Account and wallet access control sit inside the platform, so clients can build around their own logic instead of rebuilding that plumbing.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;nl&quot;&gt;&lt;span class=&quot;num&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;nm&quot;&gt;Agentic fuzzer · 1:25–1:55&lt;/span&gt;&lt;/div&gt;&lt;p&gt;Here’s another application: our agentic fuzzer for Arc Studio apps. The agent reads source and compiled artifacts, then proposes a threat model, executable rules, actor roles and ordered calls. It never decides what is a bug. The deterministic engine rejects plans it cannot check, minimizes violations and requires two clean replays. Every sequence runs on a private Arc fork pinned at one block. Nothing is signed, deployed or broadcast, and we never call a contract safe. The linked video is an interface design preview.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;nl&quot;&gt;&lt;span class=&quot;num&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;nm&quot;&gt;Pricing · 1:55–2:15&lt;/span&gt;&lt;/div&gt;&lt;p&gt;Our business model combines app hosting, a share of paid tool calls, and outcome-based fees. Teams can charge for their tools or define a contract-state outcome. Aomi earns when it provides the runtime and execution behind that service.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;nl&quot;&gt;&lt;span class=&quot;num&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;nm&quot;&gt;Go-to-market · 2:15–3:00&lt;/span&gt;&lt;/div&gt;&lt;p&gt;Our path starts with developers building onchain agents, expands through wallet and fintech integrations, and aims toward enterprise digital-asset workflows. The market scenarios on this slide are projections, not achieved revenue. The common need is a ready-to-use execution layer: teams bring their expertise and APIs; Aomi handles the runtime. The fuzzer shows how the same approach can support a focused developer workflow, with the agent proposing and deterministic code checking its work. If you’re building an Arc Studio app or bringing a financial workflow onchain, come talk to me. Thank you.&lt;/p&gt;&lt;/div&gt;
+      &lt;/div&gt;
 
-        <div class=&quot;card&quot;>
-          <div class=&quot;nl&quot;><span class=&quot;num&quot;>2</span><span class=&quot;nm&quot;>Problem</span></div>
-          <p>The hard reality: <b>enterprises still lack an out-of-the-box solution</b> to automate their operations on crypto. The trend is fintech converging onchain — but if you're a fund manager trying to leverage AI in your allocation, agentic finance isn't solved yet. Zoom into this sector with blockchain and here's everything you'd have to build. Say you want simulation infrastructure to make sure your transactions are safe, bundle that with account abstraction, or send it to Jito for Solana — how much money, time and effort is that going to take you as an enterprise?</p>
-        </div>
+      &lt;div class=&quot;foot rise&quot;&gt;180-second speaker guide · 7 audience slides · no Q&amp;amp;A · video linked for follow-up&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
 
-        <div class=&quot;card&quot;>
-          <div class=&quot;nl&quot;><span class=&quot;num&quot;>3</span><span class=&quot;nm&quot;>Runtime</span></div>
-          <p><b>Aomi is the SaaS that makes it ready to go.</b> Aside from the core Tx pipeline, we host plugins built by developers and enterprises to bring in their own tools and workflows. These plugins — we call them <b>Aomi Apps</b> — are written in Rust, so they're Turing-complete: flexible enough for your trading-bot logic or asset-allocation scheme.</p>
-          <p>For example, in our new partnership with <span class=&quot;co&quot;>Sommelier</span>, they built their liquidity-manager app wrapping their internal APIs; we give them an SDK for WebUI, Telegram, Slack — every product surface — and do the execution for them. They get observability on a Vercel-style dashboard. What would have cost them 6 months became <span class=&quot;ok&quot;>one-shot</span>.</p>
-        </div>
+&lt;/div&gt;&lt;/div&gt;
 
-        <div class=&quot;card&quot;>
-          <div class=&quot;nl&quot;><span class=&quot;num&quot;>4</span><span class=&quot;nm&quot;>Architecture</span></div>
-          <p>This is the architecture — fairly self-explanatory. Like other AI harnesses, we support <b>multi-threading running in the background</b> so you can trade 24/7. We also did a lot of plumbing around authentication: crypto has self-custody addresses and embedded providers, and resolving those under one account — supporting multiple wallets across multiple threads with access control — actually becomes a hazard. We aim to be <b>enterprise-ready</b>, so all that complexity is hidden from our clients.</p>
-        </div>
-
-        <div class=&quot;card&quot;>
-          <div class=&quot;nl&quot;><span class=&quot;num&quot;>5</span><span class=&quot;nm&quot;>Pricing</span></div>
-          <p>This is how we make money — intuitively very similar to Vercel. Hosting one app is <b>$10</b>; we take <b>10%</b> from tools if an app wants to x402-gate its API. The one thing we do differently from Vercel is <span class=&quot;co&quot;>outcome-based pricing</span>, based on the state of a contract. Say an app defines the outcome as moving money between two pools and takes 100 bips — we take <b>30 of those 100 bips</b>. It's basically a sales tax between the end user and the enterprise, based on the outcome.</p>
-        </div>
-
-        <div class=&quot;card&quot;>
-          <div class=&quot;nl&quot;><span class=&quot;num&quot;>6</span><span class=&quot;nm&quot;>Go-to-market</span></div>
-          <p>We currently have <b>1,734 users, 23k downloads, and ~30 apps</b>. We project three wedges for our GTM over the next five years. The trivial case is an onchain agent platform, where hosting takes a big share — but crypto retail doesn't have much growth space. Go for wallet / retail-fintech products and the addressable market gets bigger. The ideal case is becoming the ready-to-go AI solution for digital assets — <b>WorkOS for Auth</b> — where the total market goes up to billions and most revenue comes from outcome.</p>
-          <p>These are all <i>projected</i> numbers — none of them are real yet, and we're trying to get there. So if you're a developer or enterprise who needs our services, <b>come talk to me.</b></p>
-        </div>
-      </div>
-
-      <div class=&quot;foot rise&quot;>Speaker script — for the presenter, not the audience · aomi · 3-min pitch · 07/24</div>
-    </div>
-  </section>
-
-</div></div>
-
-<script>
+&lt;script&gt;
 (function(){
-  var stage=document.getElementById('stage');
-  function fit(){ stage.style.transform='scale('+Math.min(window.innerWidth/1280, window.innerHeight/720)+')'; }
-  window.addEventListener('resize',fit); fit();
+  var stage=document.getElementById(&#x27;stage&#x27;);
+  function fit(){ stage.style.transform=&#x27;scale(&#x27;+Math.min(window.innerWidth/1280, window.innerHeight/720)+&#x27;)&#x27;; }
+  window.addEventListener(&#x27;resize&#x27;,fit); fit();
 })();
-</script>
-</body>
-</html>
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 "></iframe>
 </div>
 <button class="navbtn" id="prev" aria-label="previous"></button>
