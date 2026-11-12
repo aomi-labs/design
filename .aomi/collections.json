@@ -127,6 +127,9 @@
       "name": "Shape Rotator",
       "kind": "campaign",
       "intent": "Accelerator (Shape Rotator) demo-day collateral — poster, deck, one-pager. Not for socials."
+    },
+    "untagged": {
+      "sector": "retail-chatbot"
     }
   }
 }
