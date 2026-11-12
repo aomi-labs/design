@@ -1203,6 +1203,366 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
 </body>
 </html>
 "></iframe>
+  <iframe class="frame" data-title="Fuzzer · The agent proposes" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;aomi — agentic fuzzer&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;700&amp;family=PT+Serif:ital,wght@0,400;0,700;1,400&amp;family=Source+Serif+4:wght@600;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;style&gt;
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef;
+  --sans:&quot;Geist&quot;,ui-sans-serif,system-ui,sans-serif;
+  --mono:&quot;Geist Mono&quot;,ui-monospace,Menlo,monospace;
+  --serif:&quot;PT Serif&quot;,ui-serif,Georgia,serif;
+  --wm:&quot;Source Serif 4&quot;,ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.04;color:var(--ink)}
+.i{color:var(--hl);font-style:normal}
+
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}.d4{animation-delay:.42s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+
+/* ============ HERO ============ */
+#s1 .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#s1 .orbit{position:relative;width:230px;height:230px;margin-bottom:6px}
+#s1 .orbit .ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(82,136,194,.45)}
+#s1 .orbit .ring.r2{inset:26px;border-color:rgba(223,93,144,.38)}
+#s1 .r1{animation:spin 26s linear infinite}
+#s1 .r2{animation:spinr 20s linear infinite}
+#s1 .orbit .sat{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--hl2);
+  top:-5px;left:calc(50% - 4.5px);box-shadow:0 1px 6px rgba(82,136,194,.5)}
+#s1 .orbit .sat.b{background:var(--somm);box-shadow:0 1px 6px rgba(223,93,144,.5)}
+#s1 .core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#s1 .core svg{width:96px;height:96px;color:var(--ink);filter:drop-shadow(0 4px 18px rgba(13,13,15,.14))}
+#s1 .wm{font-family:var(--wm);font-weight:700;font-size:104px;line-height:.9;letter-spacing:-.02em;margin-top:8px}
+#s1 h1{font-size:33px;margin-top:26px}
+#s1 .sub{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--mut);margin-top:22px;max-width:640px;line-height:1.7}
+#s1 .pw{font-family:var(--mono);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);margin-bottom:30px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* Browser window, traffic dots and grid adapted from arc-fuzzer/compositor.html
+   at 28e37e012c139dd12c32a64c224de9705f00c23f. No recorded screenshots survive there. */
+#fuzzer{padding:108px 76px 48px}
+#fuzzer .eyebrow{font:12px var(--mono);letter-spacing:.2em;color:var(--hl);text-transform:uppercase}
+#fuzzer h1{font-size:43px;margin-top:14px}
+#fuzzer .intro{font-size:17px;line-height:1.5;color:var(--mut);margin-top:12px}
+#fuzzer .window{margin-top:27px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 18px 45px -25px rgba(9,9,11,.28)}
+#fuzzer .bar{height:42px;display:flex;align-items:center;gap:16px;padding:0 18px;border-bottom:1px solid var(--line)}
+#fuzzer .dots{display:flex;gap:7px}#fuzzer .dots b{width:9px;height:9px;border-radius:50%;background:var(--line)}
+#fuzzer .url{font:10px var(--mono);color:var(--dim);background:var(--panel2);padding:5px 14px;border-radius:99px;margin:auto}
+#fuzzer .flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;padding:30px;background-image:linear-gradient(#e4e4e7 1px,transparent 1px),linear-gradient(90deg,#e4e4e7 1px,transparent 1px);background-size:40px 40px}
+#fuzzer .step{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:12px;padding:22px 20px;min-height:210px}
+#fuzzer .num{font:11px var(--mono);color:var(--hl);letter-spacing:.12em}
+#fuzzer h2{font:700 22px var(--serif);margin:10px 0}
+#fuzzer .step p{font-size:14px;line-height:1.55;color:var(--mut)}
+#fuzzer .guard{font:12px var(--mono);color:var(--dim);margin-top:24px;text-align:center}
+#fuzzer .links{display:flex;align-items:center;gap:20px;margin-top:24px;font:12px var(--mono)}
+#fuzzer a{color:var(--hl);text-decoration:none;border-bottom:1px solid var(--tintline);padding-bottom:3px}
+#fuzzer .caption{font:10px var(--mono);color:var(--dim);margin-top:12px;line-height:1.5}
+
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;fit&quot;&gt;&lt;div id=&quot;stage&quot;&gt;
+
+  &lt;div class=&quot;chrome&quot; id=&quot;brand&quot;&gt;
+    &lt;svg viewBox=&quot;0 0 362 362&quot; fill=&quot;currentColor&quot;&gt;&lt;path d=&quot;M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z&quot;/&gt;&lt;path d=&quot;M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z&quot;/&gt;&lt;/svg&gt;
+    &lt;b&gt;aomi&lt;/b&gt;&lt;span class=&quot;tag&quot;&gt;investor overview&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;chrome&quot; id=&quot;pageno&quot;&gt;&lt;i class=&quot;cur&quot;&gt;01&lt;/i&gt; / &lt;span&gt;06&lt;/span&gt;&lt;/div&gt;
+
+  &lt;section class=&quot;slide active&quot; id=&quot;fuzzer&quot; data-title=&quot;The agent proposes&quot;&gt;&lt;div class=&quot;eyebrow&quot;&gt;Aomi agentic fuzzer · 1 / 3&lt;/div&gt;&lt;h1&gt;The agent &lt;span class=&quot;i&quot;&gt;proposes&lt;/span&gt;&lt;/h1&gt;&lt;p class=&quot;intro&quot;&gt;Source → threat model → executable plan&lt;/p&gt;&lt;div class=&quot;window&quot;&gt;&lt;div class=&quot;bar&quot;&gt;&lt;div class=&quot;dots&quot;&gt;&lt;b&gt;&lt;/b&gt;&lt;b&gt;&lt;/b&gt;&lt;b&gt;&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;url&quot;&gt;Arc Studio apps · arc-studio-fuzz.vercel.app&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;flow&quot;&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;01 · READ&lt;/div&gt;&lt;h2&gt;Source + compiled artifact&lt;/h2&gt;&lt;p&gt;The agent reads the app’s source and compiled artifact.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;02 · MODEL&lt;/div&gt;&lt;h2&gt;Rules and actor roles&lt;/h2&gt;&lt;p&gt;It writes the threat model and turns it into executable rules and actor roles.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;03 · PROPOSE&lt;/div&gt;&lt;h2&gt;Ordered call sequences&lt;/h2&gt;&lt;p&gt;It proposes the call sequences to explore. It never decides whether something is a bug.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;guard&quot;&gt;The agent proposes a testable plan. It does not judge the result.&lt;/div&gt;&lt;div class=&quot;caption&quot;&gt;The agent proposes → the engine judges → the fork executes.&lt;/div&gt;&lt;/section&gt;
+
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;script&gt;
+(function(){
+  var stage=document.getElementById(&#x27;stage&#x27;);
+  function fit(){ stage.style.transform=&#x27;scale(&#x27;+Math.min(window.innerWidth/1280, window.innerHeight/720)+&#x27;)&#x27;; }
+  window.addEventListener(&#x27;resize&#x27;,fit); fit();
+})();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+  <iframe class="frame" data-title="Fuzzer · The engine judges" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;aomi — agentic fuzzer&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;700&amp;family=PT+Serif:ital,wght@0,400;0,700;1,400&amp;family=Source+Serif+4:wght@600;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;style&gt;
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef;
+  --sans:&quot;Geist&quot;,ui-sans-serif,system-ui,sans-serif;
+  --mono:&quot;Geist Mono&quot;,ui-monospace,Menlo,monospace;
+  --serif:&quot;PT Serif&quot;,ui-serif,Georgia,serif;
+  --wm:&quot;Source Serif 4&quot;,ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.04;color:var(--ink)}
+.i{color:var(--hl);font-style:normal}
+
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}.d4{animation-delay:.42s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+
+/* ============ HERO ============ */
+#s1 .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#s1 .orbit{position:relative;width:230px;height:230px;margin-bottom:6px}
+#s1 .orbit .ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(82,136,194,.45)}
+#s1 .orbit .ring.r2{inset:26px;border-color:rgba(223,93,144,.38)}
+#s1 .r1{animation:spin 26s linear infinite}
+#s1 .r2{animation:spinr 20s linear infinite}
+#s1 .orbit .sat{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--hl2);
+  top:-5px;left:calc(50% - 4.5px);box-shadow:0 1px 6px rgba(82,136,194,.5)}
+#s1 .orbit .sat.b{background:var(--somm);box-shadow:0 1px 6px rgba(223,93,144,.5)}
+#s1 .core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#s1 .core svg{width:96px;height:96px;color:var(--ink);filter:drop-shadow(0 4px 18px rgba(13,13,15,.14))}
+#s1 .wm{font-family:var(--wm);font-weight:700;font-size:104px;line-height:.9;letter-spacing:-.02em;margin-top:8px}
+#s1 h1{font-size:33px;margin-top:26px}
+#s1 .sub{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--mut);margin-top:22px;max-width:640px;line-height:1.7}
+#s1 .pw{font-family:var(--mono);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);margin-bottom:30px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* Browser window, traffic dots and grid adapted from arc-fuzzer/compositor.html
+   at 28e37e012c139dd12c32a64c224de9705f00c23f. No recorded screenshots survive there. */
+#fuzzer{padding:108px 76px 48px}
+#fuzzer .eyebrow{font:12px var(--mono);letter-spacing:.2em;color:var(--hl);text-transform:uppercase}
+#fuzzer h1{font-size:43px;margin-top:14px}
+#fuzzer .intro{font-size:17px;line-height:1.5;color:var(--mut);margin-top:12px}
+#fuzzer .window{margin-top:27px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 18px 45px -25px rgba(9,9,11,.28)}
+#fuzzer .bar{height:42px;display:flex;align-items:center;gap:16px;padding:0 18px;border-bottom:1px solid var(--line)}
+#fuzzer .dots{display:flex;gap:7px}#fuzzer .dots b{width:9px;height:9px;border-radius:50%;background:var(--line)}
+#fuzzer .url{font:10px var(--mono);color:var(--dim);background:var(--panel2);padding:5px 14px;border-radius:99px;margin:auto}
+#fuzzer .flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;padding:30px;background-image:linear-gradient(#e4e4e7 1px,transparent 1px),linear-gradient(90deg,#e4e4e7 1px,transparent 1px);background-size:40px 40px}
+#fuzzer .step{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:12px;padding:22px 20px;min-height:210px}
+#fuzzer .num{font:11px var(--mono);color:var(--hl);letter-spacing:.12em}
+#fuzzer h2{font:700 22px var(--serif);margin:10px 0}
+#fuzzer .step p{font-size:14px;line-height:1.55;color:var(--mut)}
+#fuzzer .guard{font:12px var(--mono);color:var(--dim);margin-top:24px;text-align:center}
+#fuzzer .links{display:flex;align-items:center;gap:20px;margin-top:24px;font:12px var(--mono)}
+#fuzzer a{color:var(--hl);text-decoration:none;border-bottom:1px solid var(--tintline);padding-bottom:3px}
+#fuzzer .caption{font:10px var(--mono);color:var(--dim);margin-top:12px;line-height:1.5}
+
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;fit&quot;&gt;&lt;div id=&quot;stage&quot;&gt;
+
+  &lt;div class=&quot;chrome&quot; id=&quot;brand&quot;&gt;
+    &lt;svg viewBox=&quot;0 0 362 362&quot; fill=&quot;currentColor&quot;&gt;&lt;path d=&quot;M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z&quot;/&gt;&lt;path d=&quot;M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z&quot;/&gt;&lt;/svg&gt;
+    &lt;b&gt;aomi&lt;/b&gt;&lt;span class=&quot;tag&quot;&gt;investor overview&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;chrome&quot; id=&quot;pageno&quot;&gt;&lt;i class=&quot;cur&quot;&gt;01&lt;/i&gt; / &lt;span&gt;06&lt;/span&gt;&lt;/div&gt;
+
+  &lt;section class=&quot;slide active&quot; id=&quot;fuzzer&quot; data-title=&quot;The engine judges&quot;&gt;&lt;div class=&quot;eyebrow&quot;&gt;Aomi agentic fuzzer · 2 / 3&lt;/div&gt;&lt;h1&gt;The engine &lt;span class=&quot;i&quot;&gt;judges&lt;/span&gt;&lt;/h1&gt;&lt;p class=&quot;intro&quot;&gt;Deterministic search → minimized violation → two replays&lt;/p&gt;&lt;div class=&quot;window&quot;&gt;&lt;div class=&quot;bar&quot;&gt;&lt;div class=&quot;dots&quot;&gt;&lt;b&gt;&lt;/b&gt;&lt;b&gt;&lt;/b&gt;&lt;b&gt;&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;url&quot;&gt;Arc Studio apps · arc-studio-fuzz.vercel.app&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;flow&quot;&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;01 · CHECK&lt;/div&gt;&lt;h2&gt;Reject uncheckable plans&lt;/h2&gt;&lt;p&gt;Deterministic code owns the search and rejects plans it cannot check.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;02 · MINIMIZE&lt;/div&gt;&lt;h2&gt;Reduce each violation&lt;/h2&gt;&lt;p&gt;The engine minimizes a violation to the sequence needed to reproduce it.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;03 · REPLAY&lt;/div&gt;&lt;h2&gt;Require two clean replays&lt;/h2&gt;&lt;p&gt;A finding must reproduce in two clean replays before it counts.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;guard&quot;&gt;A model’s claim is not a finding. The engine requires reproducible evidence.&lt;/div&gt;&lt;div class=&quot;caption&quot;&gt;The agent proposes → the engine judges → the fork executes.&lt;/div&gt;&lt;/section&gt;
+
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;script&gt;
+(function(){
+  var stage=document.getElementById(&#x27;stage&#x27;);
+  function fit(){ stage.style.transform=&#x27;scale(&#x27;+Math.min(window.innerWidth/1280, window.innerHeight/720)+&#x27;)&#x27;; }
+  window.addEventListener(&#x27;resize&#x27;,fit); fit();
+})();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+  <iframe class="frame" data-title="Fuzzer · The fork executes" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;aomi — agentic fuzzer&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;700&amp;family=PT+Serif:ital,wght@0,400;0,700;1,400&amp;family=Source+Serif+4:wght@600;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;style&gt;
+:root{
+  --bg:#ffffff; --bg2:#fafafa; --panel:#ffffff; --panel2:#f4f4f5;
+  --line:#e4e4e7; --line2:#d4d4d8;
+  --ink:#09090b; --ink2:#3f3f46; --mut:#52525b; --dim:#71717a; --faint:#a1a1aa;
+  --hl:#416cac; --hl2:#5288c2; --hlsoft:#7facd6; --tint:#e2eef8; --tintline:#aecbe8; --tintline2:#cfe1f3;
+  --somm:#df5d90; --sommtext:#c8527f; --sommtint:#fbe4ef;
+  --sans:&quot;Geist&quot;,ui-sans-serif,system-ui,sans-serif;
+  --mono:&quot;Geist Mono&quot;,ui-monospace,Menlo,monospace;
+  --serif:&quot;PT Serif&quot;,ui-serif,Georgia,serif;
+  --wm:&quot;Source Serif 4&quot;,ui-serif,Georgia,serif;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg2);overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center}
+
+#fit{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(82,136,194,.10),transparent 55%),
+    radial-gradient(90% 80% at 10% 100%,rgba(223,93,144,.06),transparent 52%),
+    var(--bg);
+  overflow:hidden;border:1px solid var(--line)}
+
+.chrome{position:absolute;z-index:40;font-family:var(--mono);pointer-events:none}
+#brand{left:54px;top:44px;display:flex;align-items:center;gap:9px}
+#brand svg{width:20px;height:20px;color:var(--ink)}
+#brand b{font-family:var(--wm);font-weight:600;font-size:19px;letter-spacing:-.01em}
+#brand .tag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border-left:1px solid var(--line2);padding-left:9px;margin-left:2px}
+#pageno{right:54px;top:46px;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+#pageno i{color:var(--ink);font-style:normal}
+
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s var(--ease);z-index:1}
+.slide.active{opacity:1;visibility:visible;z-index:2}
+h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.04;color:var(--ink)}
+.i{color:var(--hl);font-style:normal}
+
+.rise{opacity:0;transform:translateY(16px)}
+.slide.active .rise{animation:rise .8s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.d1{animation-delay:.06s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}.d4{animation-delay:.42s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+
+/* ============ HERO ============ */
+#s1 .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#s1 .orbit{position:relative;width:230px;height:230px;margin-bottom:6px}
+#s1 .orbit .ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(82,136,194,.45)}
+#s1 .orbit .ring.r2{inset:26px;border-color:rgba(223,93,144,.38)}
+#s1 .r1{animation:spin 26s linear infinite}
+#s1 .r2{animation:spinr 20s linear infinite}
+#s1 .orbit .sat{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--hl2);
+  top:-5px;left:calc(50% - 4.5px);box-shadow:0 1px 6px rgba(82,136,194,.5)}
+#s1 .orbit .sat.b{background:var(--somm);box-shadow:0 1px 6px rgba(223,93,144,.5)}
+#s1 .core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#s1 .core svg{width:96px;height:96px;color:var(--ink);filter:drop-shadow(0 4px 18px rgba(13,13,15,.14))}
+#s1 .wm{font-family:var(--wm);font-weight:700;font-size:104px;line-height:.9;letter-spacing:-.02em;margin-top:8px}
+#s1 h1{font-size:33px;margin-top:26px}
+#s1 .sub{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--mut);margin-top:22px;max-width:640px;line-height:1.7}
+#s1 .pw{font-family:var(--mono);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--dim);margin-bottom:30px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* Browser window, traffic dots and grid adapted from arc-fuzzer/compositor.html
+   at 28e37e012c139dd12c32a64c224de9705f00c23f. No recorded screenshots survive there. */
+#fuzzer{padding:108px 76px 48px}
+#fuzzer .eyebrow{font:12px var(--mono);letter-spacing:.2em;color:var(--hl);text-transform:uppercase}
+#fuzzer h1{font-size:43px;margin-top:14px}
+#fuzzer .intro{font-size:17px;line-height:1.5;color:var(--mut);margin-top:12px}
+#fuzzer .window{margin-top:27px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 18px 45px -25px rgba(9,9,11,.28)}
+#fuzzer .bar{height:42px;display:flex;align-items:center;gap:16px;padding:0 18px;border-bottom:1px solid var(--line)}
+#fuzzer .dots{display:flex;gap:7px}#fuzzer .dots b{width:9px;height:9px;border-radius:50%;background:var(--line)}
+#fuzzer .url{font:10px var(--mono);color:var(--dim);background:var(--panel2);padding:5px 14px;border-radius:99px;margin:auto}
+#fuzzer .flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;padding:30px;background-image:linear-gradient(#e4e4e7 1px,transparent 1px),linear-gradient(90deg,#e4e4e7 1px,transparent 1px);background-size:40px 40px}
+#fuzzer .step{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:12px;padding:22px 20px;min-height:210px}
+#fuzzer .num{font:11px var(--mono);color:var(--hl);letter-spacing:.12em}
+#fuzzer h2{font:700 22px var(--serif);margin:10px 0}
+#fuzzer .step p{font-size:14px;line-height:1.55;color:var(--mut)}
+#fuzzer .guard{font:12px var(--mono);color:var(--dim);margin-top:24px;text-align:center}
+#fuzzer .links{display:flex;align-items:center;gap:20px;margin-top:24px;font:12px var(--mono)}
+#fuzzer a{color:var(--hl);text-decoration:none;border-bottom:1px solid var(--tintline);padding-bottom:3px}
+#fuzzer .caption{font:10px var(--mono);color:var(--dim);margin-top:12px;line-height:1.5}
+
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;fit&quot;&gt;&lt;div id=&quot;stage&quot;&gt;
+
+  &lt;div class=&quot;chrome&quot; id=&quot;brand&quot;&gt;
+    &lt;svg viewBox=&quot;0 0 362 362&quot; fill=&quot;currentColor&quot;&gt;&lt;path d=&quot;M321.778 94.2349C321.778 64.4045 297.595 40.2222 267.765 40.2222C237.935 40.2222 213.752 64.4045 213.752 94.2349C213.752 124.065 237.935 148.248 267.765 148.248C297.595 148.248 321.778 124.065 321.778 94.2349ZM362 94.2349C362 146.279 319.81 188.47 267.765 188.47C215.721 188.47 173.53 146.279 173.53 94.2349C173.53 42.1904 215.721 1.33271e-06 267.765 0C319.81 0 362 42.1904 362 94.2349Z&quot;/&gt;&lt;path d=&quot;M181 0C184.792 0 188.556 0.116399 192.289 0.346221C189.506 2.74481 186.833 5.26892 184.28 7.90977C170.997 20.759 160.669 36.6452 154.42 54.4509C95.7682 66.7078 51.7143 118.709 51.7143 181C51.7143 252.403 109.597 310.286 181 310.286C243.292 310.286 295.291 266.231 307.547 207.58C325.364 201.327 341.259 190.99 354.113 177.695C356.745 175.149 359.261 172.486 361.653 169.71C361.883 173.444 362 177.208 362 181C362 280.964 280.964 362 181 362C81.0365 362 0 280.964 0 181C0 81.0365 81.0365 0 181 0Z&quot;/&gt;&lt;/svg&gt;
+    &lt;b&gt;aomi&lt;/b&gt;&lt;span class=&quot;tag&quot;&gt;investor overview&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;chrome&quot; id=&quot;pageno&quot;&gt;&lt;i class=&quot;cur&quot;&gt;01&lt;/i&gt; / &lt;span&gt;06&lt;/span&gt;&lt;/div&gt;
+
+  &lt;section class=&quot;slide active&quot; id=&quot;fuzzer&quot; data-title=&quot;The fork executes&quot;&gt;&lt;div class=&quot;eyebrow&quot;&gt;Aomi agentic fuzzer · 3 / 3&lt;/div&gt;&lt;h1&gt;The fork &lt;span class=&quot;i&quot;&gt;executes&lt;/span&gt;&lt;/h1&gt;&lt;p class=&quot;intro&quot;&gt;Private Arc fork → pinned block → every sequence&lt;/p&gt;&lt;div class=&quot;window&quot;&gt;&lt;div class=&quot;bar&quot;&gt;&lt;div class=&quot;dots&quot;&gt;&lt;b&gt;&lt;/b&gt;&lt;b&gt;&lt;/b&gt;&lt;b&gt;&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;url&quot;&gt;Arc Studio apps · arc-studio-fuzz.vercel.app&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;flow&quot;&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;01 · ISOLATE&lt;/div&gt;&lt;h2&gt;A private Arc fork&lt;/h2&gt;&lt;p&gt;The campaign runs against a private fork of the app’s deployment.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;02 · PIN&lt;/div&gt;&lt;h2&gt;One fixed block&lt;/h2&gt;&lt;p&gt;The fork is pinned at one block, giving each sequence a fixed starting state.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;step&quot;&gt;&lt;div class=&quot;num&quot;&gt;03 · EXECUTE&lt;/div&gt;&lt;h2&gt;Run every sequence&lt;/h2&gt;&lt;p&gt;Every proposed sequence executes on that fork. Nothing is broadcast.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;guard&quot;&gt;No transactions signed. No contracts deployed. No calls broadcast. No contract is called safe.&lt;/div&gt;&lt;div class=&quot;caption&quot;&gt;The agent proposes → the engine judges → the fork executes.&lt;/div&gt;&lt;/section&gt;
+
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;script&gt;
+(function(){
+  var stage=document.getElementById(&#x27;stage&#x27;);
+  function fit(){ stage.style.transform=&#x27;scale(&#x27;+Math.min(window.innerWidth/1280, window.innerHeight/720)+&#x27;)&#x27;; }
+  window.addEventListener(&#x27;resize&#x27;,fit); fit();
+})();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
 </div>
 <button class="navbtn" id="prev" aria-label="previous"></button>
 <button class="navbtn" id="next" aria-label="next"></button>
