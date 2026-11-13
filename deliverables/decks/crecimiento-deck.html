@@ -2063,12 +2063,12 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>
-  <iframe class="frame" data-title="Fuzzer · Deterministic search on a fork" srcdoc="&lt;!DOCTYPE html&gt;
+  <iframe class="frame" data-title="Fuzzer · How it works" srcdoc="&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
 &lt;meta charset=&quot;UTF-8&quot;&gt;
 &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-&lt;title&gt;aomi — Fuzzer · Deterministic search on a fork&lt;/title&gt;
+&lt;title&gt;aomi — Fuzzer · How it works&lt;/title&gt;
 &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
 &lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
 &lt;link href=&quot;https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;700&amp;family=PT+Serif:ital,wght@0,400;0,700;1,400&amp;family=Source+Serif+4:wght@600;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
@@ -2164,7 +2164,45 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
 #fz .path{font:16px/1.9 var(--mono);background:#fafafa;border:1px solid var(--line);border-radius:10px;padding:16px;margin-top:19px}
 #fz .evidence{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:21px}
 #fz .evidence h2{font:700 21px var(--serif);margin-bottom:9px}#fz .evidence p{font-size:15px;line-height:1.55;color:var(--mut)}
-&lt;/style&gt;
+
+#hw{position:absolute;inset:0;padding:82px 76px 20px;font-family:var(--sans)}
+#hw .eyebrow{font:11px var(--mono);letter-spacing:.2em;color:var(--hl);text-transform:uppercase}
+#hw h1{font-size:34px;line-height:1.08;margin-top:8px}
+#hw h1 .i{color:var(--hl2)}
+#hw .lede{font-size:14.5px;line-height:1.5;color:var(--mut);margin-top:8px;max-width:1100px}
+#hw .def{display:flex;gap:20px;align-items:baseline;border-left:3px solid var(--hl2);padding:4px 0 4px 16px;margin-top:10px}
+#hw .def b{font:700 18px var(--serif);white-space:nowrap}
+#hw .def p{font-size:12.5px;line-height:1.5;color:var(--ink2)}
+#hw .grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:14px;align-items:stretch}
+#hw .dia{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px 10px}
+#hw .dia .hd{display:flex;justify-content:space-between;align-items:baseline}
+#hw .dia h2{font:700 16px var(--serif)}
+#hw .dia .ex{font:10.5px var(--mono);color:var(--dim)}
+#hw .dia svg{display:block;width:100%;height:305px;margin-top:4px;font-family:var(--mono)}
+#hw .legend{display:flex;gap:16px;font-size:10.5px;color:var(--mut);margin-top:6px}
+#hw .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;border:1.4px solid #09090b;margin-right:5px;vertical-align:-1px}
+#hw .legend i.p{border-color:#a1a1aa;border-style:dashed}#hw .legend i.b{border-color:#dc2634;background:#fbe9eb}#hw .legend i.o{border-color:#2e9e6b;background:#e4f3ec}
+#hw .cards{display:flex;flex-direction:column;gap:9px}
+#hw .card{border-radius:12px;padding:10px 14px;background:#f4f4f5;flex:1}
+#hw .card.a{background:#dbe8f6}
+#hw .pill{display:inline-block;font:9.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#fff;border-radius:999px;padding:3px 9px}
+#hw .a .pill{background:#5288c2}#hw .j .pill{background:#09090b}#hw .f .pill{background:#2e9e6b}
+#hw .card h3{font:700 15px var(--serif);margin-top:6px}
+#hw .card p{font-size:11.5px;line-height:1.45;color:var(--ink2);margin-top:3px}
+#hw .card .n{font-size:11px;color:var(--dim);border-left:1px solid var(--line2);padding-left:8px;margin-top:5px}
+#hw .n-box{fill:#fff;stroke:#d4d4d8;stroke-width:1.2}
+#hw .n-kept{stroke:#09090b}
+#hw .n-pruned{stroke:#a1a1aa;stroke-dasharray:4 3}
+#hw .n-bad{fill:#fbe9eb;stroke:#dc2634;stroke-width:1.8}
+#hw .n-ok{fill:#e4f3ec;stroke:#2e9e6b;stroke-width:1.8}
+#hw .edge{stroke:#d4d4d8;stroke-width:1.4;fill:none}
+#hw .edge-hot{stroke:#dc2634;stroke-width:2}
+#hw .t-main{fill:#09090b;font-size:12.5px}
+#hw .t-sub{fill:#71717a;font-size:11px}
+#hw .t-bad{fill:#dc2634;font-size:11px;font-weight:500}
+#hw .t-ok{fill:#2e9e6b;font-size:11px;font-weight:500}
+#hw .t-pruned{fill:#a1a1aa;font-size:12.5px}
+#hw .t-axis{fill:#71717a;font-size:11px;letter-spacing:.08em}&lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;&lt;!-- Sources: Drive 99 Sources ZIP 1pGDornZkPCfDnclwe2bYy356Fr1Ib3tX, 21 Oct 2026: documents 01–06, aomi.css and original screen-2/screen-9. Browser frame adapted from arc-fuzzer/compositor.html at 28e37e012c139dd12c32a64c224de9705f00c23f. Screens are interface previews/fixtures, not verified-run screenshots. --&gt;
 &lt;div id=&quot;fit&quot;&gt;&lt;div id=&quot;stage&quot;&gt;
@@ -2175,7 +2213,7 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
   &lt;/div&gt;
   &lt;div class=&quot;chrome&quot; id=&quot;pageno&quot;&gt;&lt;i class=&quot;cur&quot;&gt;01&lt;/i&gt; / &lt;span&gt;06&lt;/span&gt;&lt;/div&gt;
 
-  &lt;section class=&quot;slide active&quot; id=&quot;fz&quot;&gt;&lt;div class=&quot;eyebrow&quot;&gt;Agentic fuzzer · 02 / 03 · How the search works&lt;/div&gt;&lt;h1&gt;&lt;span class=&quot;i&quot;&gt;Code decides&lt;/span&gt; what breaks.&lt;/h1&gt;&lt;p class=&quot;lede&quot;&gt;Deterministic search rejects uncheckable plans, prunes repeat states and minimizes violations.&lt;/p&gt;&lt;div class=&quot;diagram&quot;&gt;&lt;svg viewBox=&quot;0 0 900 350&quot; width=&quot;100%&quot; role=&quot;img&quot; aria-label=&quot;Search tree from baseline through depth-one and depth-two calls; bob withdraw after alice deposit breaks the rule and is minimized and replayed twice.&quot;&gt;
+  &lt;section class=&quot;slide active&quot; id=&quot;hw&quot;&gt;&lt;div class=&quot;eyebrow&quot;&gt;Agentic fuzzing · the method&lt;/div&gt;&lt;h1&gt;&lt;span class=&quot;i&quot;&gt;How it works:&lt;/span&gt; breadth-first search&lt;br&gt;under security-auditing principles.&lt;/h1&gt;&lt;p class=&quot;lede&quot;&gt;A fuzzer treats a contract as a state machine and asks whether any reachable state breaks a rule that should always hold. Agentic fuzzing keeps that discipline and hands the setup to a model.&lt;/p&gt;&lt;div class=&quot;def&quot;&gt;&lt;b&gt;Agentic fuzzing&lt;/b&gt;&lt;p&gt;Stateful fuzzing where an AI agent writes the threat model, the rules and the actions, and deterministic code on a held chain fork decides what counts as a finding. The model proposes; it is never the judge.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div class=&quot;dia&quot;&gt;&lt;div class=&quot;hd&quot;&gt;&lt;h2&gt;Breadth-first search over call sequences&lt;/h2&gt;&lt;span class=&quot;ex&quot;&gt;example: UnsafeVault on Arc fork 5042&lt;/span&gt;&lt;/div&gt;&lt;svg viewBox=&quot;0 0 900 350&quot; width=&quot;100%&quot; role=&quot;img&quot; aria-label=&quot;Search tree from baseline through depth-one and depth-two calls; bob withdraw after alice deposit breaks the rule and is minimized and replayed twice.&quot;&gt;
       &lt;text class=&quot;t-axis&quot; x=&quot;20&quot; y=&quot;18&quot;&gt;DEPTH 0&lt;/text&gt;&lt;text class=&quot;t-axis&quot; x=&quot;250&quot; y=&quot;18&quot;&gt;DEPTH 1 · ONE CALL&lt;/text&gt;&lt;text class=&quot;t-axis&quot; x=&quot;560&quot; y=&quot;18&quot;&gt;DEPTH 2 · TWO CALLS&lt;/text&gt;
       &lt;path class=&quot;edge&quot; d=&quot;M150 176 C 200 176, 200 66, 250 66&quot;/&gt;&lt;path class=&quot;edge edge-hot&quot; d=&quot;M150 176 C 200 176, 200 146, 250 146&quot;/&gt;&lt;path class=&quot;edge&quot; d=&quot;M150 176 C 200 176, 200 226, 250 226&quot;/&gt;&lt;path class=&quot;edge&quot; d=&quot;M150 176 C 200 176, 200 306, 250 306&quot;/&gt;
       &lt;path class=&quot;edge&quot; d=&quot;M450 146 C 500 146, 510 76, 560 76&quot;/&gt;&lt;path class=&quot;edge edge-hot&quot; d=&quot;M450 146 C 500 146, 510 166, 560 166&quot;/&gt;&lt;path class=&quot;edge&quot; d=&quot;M450 146 C 500 146, 510 256, 560 256&quot;/&gt;
@@ -2189,7 +2227,7 @@ h1{font-family:var(--serif);font-weight:700;letter-spacing:-.02em;line-height:1.
       &lt;rect class=&quot;n-box n-kept&quot; x=&quot;560&quot; y=&quot;230&quot; width=&quot;200&quot; height=&quot;52&quot; rx=&quot;8&quot;/&gt;&lt;text class=&quot;t-main&quot; x=&quot;574&quot; y=&quot;252&quot;&gt;alice · withdraw(5)&lt;/text&gt;&lt;text class=&quot;t-sub&quot; x=&quot;574&quot; y=&quot;270&quot;&gt;expected, rule holds&lt;/text&gt;
       &lt;path class=&quot;edge edge-hot&quot; d=&quot;M760 166 L 790 166&quot;/&gt;
       &lt;rect class=&quot;n-box n-ok&quot; x=&quot;790&quot; y=&quot;118&quot; width=&quot;100&quot; height=&quot;96&quot; rx=&quot;8&quot;/&gt;&lt;text class=&quot;t-ok&quot; x=&quot;802&quot; y=&quot;142&quot;&gt;minimize&lt;/text&gt;&lt;text class=&quot;t-ok&quot; x=&quot;802&quot; y=&quot;162&quot;&gt;replay ×1 ✓&lt;/text&gt;&lt;text class=&quot;t-ok&quot; x=&quot;802&quot; y=&quot;182&quot;&gt;replay ×2 ✓&lt;/text&gt;&lt;text class=&quot;t-main&quot; x=&quot;802&quot; y=&quot;202&quot;&gt;finding&lt;/text&gt;
-    &lt;/svg&gt;&lt;/div&gt;&lt;div class=&quot;strip&quot;&gt;&lt;strong&gt;The engine judges. The fork executes.&lt;/strong&gt; Every sequence runs on a private Arc fork pinned at one block.&lt;/div&gt;&lt;/section&gt;
+    &lt;/svg&gt;&lt;div class=&quot;legend&quot;&gt;&lt;span&gt;&lt;i&gt;&lt;/i&gt;kept: new state&lt;/span&gt;&lt;span&gt;&lt;i class=&quot;p&quot;&gt;&lt;/i&gt;pruned: repeat or dead end&lt;/span&gt;&lt;span&gt;&lt;i class=&quot;b&quot;&gt;&lt;/i&gt;rule broken&lt;/span&gt;&lt;span&gt;&lt;i class=&quot;o&quot;&gt;&lt;/i&gt;confirmed by replay&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;cards&quot;&gt;&lt;div class=&quot;card a&quot;&gt;&lt;span class=&quot;pill&quot;&gt;The agent proposes&lt;/span&gt;&lt;h3&gt;Threat model and plan&lt;/h3&gt;&lt;p&gt;Reads source and attack surface; chooses actors, rules and actions; revises when calls revert; drafts the fix.&lt;/p&gt;&lt;div class=&quot;n&quot;&gt;Never decides whether something is a bug.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;card j&quot;&gt;&lt;span class=&quot;pill&quot;&gt;The engine judges&lt;/span&gt;&lt;h3&gt;Search state and truth&lt;/h3&gt;&lt;p&gt;Rejects plans it cannot check; owns the frontier, dedup and priorities; minimizes and demands two replays.&lt;/p&gt;&lt;div class=&quot;n&quot;&gt;Deterministic code in an Aomi app, not model memory.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;card f&quot;&gt;&lt;span class=&quot;pill&quot;&gt;The fork executes&lt;/span&gt;&lt;h3&gt;What actually happened&lt;/h3&gt;&lt;p&gt;A held Arc fork pinned at one block installs or targets the contract, replays sequences, reports balances and reverts.&lt;/p&gt;&lt;div class=&quot;n&quot;&gt;Never signs or broadcasts to Arc.&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
 
 &lt;/div&gt;&lt;/div&gt;
 
